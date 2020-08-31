@@ -91,8 +91,7 @@ class StudentNewPost: UIViewController {
         view.backgroundColor = .white
         configureCollectionView()
         configure()
-        
-        
+        hideKeyboardWhenTappedAround()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -162,31 +161,30 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
 extension StudentNewPost: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
-        let size = CGSize(width: view.frame.width, height: 300)
+        let size = CGSize(width: view.frame.width, height: 150)
         let estimatedSize = textView.sizeThatFits(size)
         
-        if textView.contentSize.height >= 300
+        if textView.contentSize.height >= 150
         {
             textView.isScrollEnabled = true
-
-             
         }
         else
         {
             textView.frame.size.height = textView.contentSize.height
             heigth = textView.contentSize.height
-            textView.isScrollEnabled = true // textView.isScrollEnabled = false for swift 4.0
-                textView.setNeedsLayout()
+            textView.isScrollEnabled = false // textView.isScrollEnabled = false for swift 4.0
+               
         }
         textView.constraints.forEach { (constraint) in
             if constraint.firstAttribute == .height {
-                
-                if textView.contentSize.height >= 300
+
+                if textView.contentSize.height >= 150
                 {
                     textView.isScrollEnabled = true
-                    constraint.constant = 100
-                    heigth = textView.contentSize.height
-                    textView.setNeedsLayout()
+                    constraint.constant = 150
+                    textView.frame.size.height = 150
+                    heigth = 150
+                  
                 }
                 else
                 {
@@ -194,9 +192,9 @@ extension StudentNewPost: UITextViewDelegate {
                     textView.isScrollEnabled = true // textView.isScrollEnabled = false for swift 4.0
                     constraint.constant = estimatedSize.height
                     heigth = estimatedSize.height
-                        textView.setNeedsLayout()
+         
                 }
-                //  constraint.constant = estimatedSize.height
+//                  constraint.constant = estimatedSize.height
             }
         }
     }
