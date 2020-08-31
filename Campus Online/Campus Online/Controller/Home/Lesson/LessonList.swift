@@ -367,6 +367,7 @@ extension LessonList : ActionSheetLauncherDelegate {
             break
         case .choosePicture(_):
             break
+            
         }
     }
     
