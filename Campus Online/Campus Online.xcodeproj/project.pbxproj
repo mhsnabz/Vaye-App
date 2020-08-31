@@ -12,6 +12,8 @@
 		6608990224FC72530023E53B /* newton.json in Resources */ = {isa = PBXBuildFile; fileRef = 6608990124FC72530023E53B /* newton.json */; };
 		6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990524FD0BD60023E53B /* ChooseLessonTB.swift */; };
 		6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990724FD15DB0023E53B /* StudentNewPost.swift */; };
+		6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990A24FD70310023E53B /* NewPostHeader.swift */; };
+		6608990D24FD70B60023E53B /* NewPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990C24FD70B60023E53B /* NewPostCell.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -94,6 +96,8 @@
 		6608990124FC72530023E53B /* newton.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = newton.json; sourceTree = "<group>"; };
 		6608990524FD0BD60023E53B /* ChooseLessonTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLessonTB.swift; sourceTree = "<group>"; };
 		6608990724FD15DB0023E53B /* StudentNewPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentNewPost.swift; sourceTree = "<group>"; };
+		6608990A24FD70310023E53B /* NewPostHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostHeader.swift; sourceTree = "<group>"; };
+		6608990C24FD70B60023E53B /* NewPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -214,6 +218,15 @@
 				6608990724FD15DB0023E53B /* StudentNewPost.swift */,
 			);
 			path = "Student New Post";
+			sourceTree = "<group>";
+		};
+		6608990924FD6FBD0023E53B /* Student New Post View */ = {
+			isa = PBXGroup;
+			children = (
+				6608990A24FD70310023E53B /* NewPostHeader.swift */,
+				6608990C24FD70B60023E53B /* NewPostCell.swift */,
+			);
+			path = "Student New Post View";
 			sourceTree = "<group>";
 		};
 		661333DB24F36C63002677AB /* Setting */ = {
@@ -413,6 +426,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				6608990924FD6FBD0023E53B /* Student New Post View */,
 				6687921224FB0A8200A43A41 /* ActionSheetCell */,
 				66E326A724F991A8004CB61D /* LessonListView */,
 				66F25F1324F6E8CE005B0591 /* Fakulte&Bolum cell */,
@@ -845,6 +859,7 @@
 				66D9122324EEABEC002D760A /* HomeMenuCell.swift in Sources */,
 				66F25F1124F6BD39005B0591 /* FakulteTB.swift in Sources */,
 				66F25F1724F78618005B0591 /* BolumTB.swift in Sources */,
+				6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */,
 				66E326A424F98C28004CB61D /* LessonList.swift in Sources */,
 				661333EA24F3B44B002677AB /* ProfileHeader.swift in Sources */,
 				6613340824F4E9C1002677AB /* SchoolModel.swift in Sources */,
@@ -852,6 +867,7 @@
 				660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */,
 				661333E524F395B2002677AB /* HomeMenuController.swift in Sources */,
 				66D9121424EEAB49002D760A /* HomeVC.swift in Sources */,
+				6608990D24FD70B60023E53B /* NewPostCell.swift in Sources */,
 				661333EC24F3D1D2002677AB /* ProfileFilterView.swift in Sources */,
 				66D9121924EEAB74002D760A /* CampusOnlineVC.swift in Sources */,
 				6613341124F6886E002677AB /* StudentNumberVC.swift in Sources */,
