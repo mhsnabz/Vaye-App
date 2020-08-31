@@ -10,6 +10,7 @@
 		5D0FE7ED85B9850171B990DD /* Pods_Campus_OnlineTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E94D3F655BFAA559064463 /* Pods_Campus_OnlineTests.framework */; };
 		660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660898FE24FC50810023E53B /* FullScreenImage.swift */; };
 		6608990224FC72530023E53B /* newton.json in Resources */ = {isa = PBXBuildFile; fileRef = 6608990124FC72530023E53B /* newton.json */; };
+		6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990524FD0BD60023E53B /* ChooseLessonTB.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -90,6 +91,7 @@
 		623A35EDE107A4A79EC2E453 /* Pods-Campus Online.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus Online.release.xcconfig"; path = "Target Support Files/Pods-Campus Online/Pods-Campus Online.release.xcconfig"; sourceTree = "<group>"; };
 		660898FE24FC50810023E53B /* FullScreenImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImage.swift; sourceTree = "<group>"; };
 		6608990124FC72530023E53B /* newton.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = newton.json; sourceTree = "<group>"; };
+		6608990524FD0BD60023E53B /* ChooseLessonTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLessonTB.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -193,6 +195,22 @@
 				6608990124FC72530023E53B /* newton.json */,
 			);
 			path = anim;
+			sourceTree = "<group>";
+		};
+		6608990324FD0BA80023E53B /* New Post */ = {
+			isa = PBXGroup;
+			children = (
+				6608990424FD0BB10023E53B /* Student New Post */,
+			);
+			path = "New Post";
+			sourceTree = "<group>";
+		};
+		6608990424FD0BB10023E53B /* Student New Post */ = {
+			isa = PBXGroup;
+			children = (
+				6608990524FD0BD60023E53B /* ChooseLessonTB.swift */,
+			);
+			path = "Student New Post";
 			sourceTree = "<group>";
 		};
 		661333DB24F36C63002677AB /* Setting */ = {
@@ -373,6 +391,7 @@
 		66D911FF24EEAA1E002D760A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				6608990324FD0BA80023E53B /* New Post */,
 				660898FD24FC505E0023E53B /* FullScreenImage */,
 				6613340924F5124B002677AB /* TermsOfService */,
 				661333F424F3FDBD002677AB /* Login Register ForgetPassword */,
@@ -802,6 +821,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				66E326A924F991BB004CB61D /* LessonCell.swift in Sources */,
+				6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */,
 				66D9122024EEABA3002D760A /* ProfileVC.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
 				661333FC24F4206A002677AB /* ChooseSchool.swift in Sources */,

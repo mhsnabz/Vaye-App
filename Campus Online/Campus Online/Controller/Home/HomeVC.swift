@@ -10,6 +10,8 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 class HomeVC: UIViewController {
+    
+    //MARK: -properties
     var centerController : UIViewController!
     var delegate : HomeControllerDelegate?
     var currentUser : CurrentUser?{
@@ -22,6 +24,17 @@ class HomeVC: UIViewController {
     var barTitle : String?
     var menu = UIButton()
     
+    let newPostButton : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.clipsToBounds = true
+        btn.setImage(UIImage(named: "new-post")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setBackgroundColor(color: .mainColor(), forState: .normal)
+       
+  
+        return btn
+    }()
+    
+    //MARK:- lifeCycle
     
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
@@ -50,6 +63,24 @@ class HomeVC: UIViewController {
         UserService.shared.fetchUser {[weak self] (currentUser) in
             self?.currentUser = currentUser
         }
+        
+        view.addSubview(newPostButton)
+        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
+
+        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
+        newPostButton.layer.cornerRadius = 25
+    
+    }
+    //MARK: - functions
+    @objc func newPost(){
+        guard let currentUser = currentUser else {
+            return
+        }
+        let vc = ChooseLessonTB(currentUser: currentUser)
+        centerController = UINavigationController(rootViewController: vc)
+        centerController.modalPresentationStyle = .fullScreen
+        self.present(centerController, animated: true, completion: nil)
+        
     }
     @objc func setLessons(){
         guard let user = currentUser else { return }
