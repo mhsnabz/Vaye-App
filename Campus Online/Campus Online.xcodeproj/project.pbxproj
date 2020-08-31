@@ -11,6 +11,7 @@
 		660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660898FE24FC50810023E53B /* FullScreenImage.swift */; };
 		6608990224FC72530023E53B /* newton.json in Resources */ = {isa = PBXBuildFile; fileRef = 6608990124FC72530023E53B /* newton.json */; };
 		6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990524FD0BD60023E53B /* ChooseLessonTB.swift */; };
+		6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990724FD15DB0023E53B /* StudentNewPost.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -92,6 +93,7 @@
 		660898FE24FC50810023E53B /* FullScreenImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImage.swift; sourceTree = "<group>"; };
 		6608990124FC72530023E53B /* newton.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = newton.json; sourceTree = "<group>"; };
 		6608990524FD0BD60023E53B /* ChooseLessonTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLessonTB.swift; sourceTree = "<group>"; };
+		6608990724FD15DB0023E53B /* StudentNewPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentNewPost.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				6608990524FD0BD60023E53B /* ChooseLessonTB.swift */,
+				6608990724FD15DB0023E53B /* StudentNewPost.swift */,
 			);
 			path = "Student New Post";
 			sourceTree = "<group>";
@@ -826,6 +829,7 @@
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
 				661333FC24F4206A002677AB /* ChooseSchool.swift in Sources */,
 				6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */,
+				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,
 				6613340B24F51272002677AB /* KullanımKosulları.swift in Sources */,
 				661333E124F370B4002677AB /* EditProfile.swift in Sources */,
 				6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */,

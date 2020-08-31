@@ -70,9 +70,13 @@ class ChooseLessonTB: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching {
-            
+            let vc = StudentNewPost(currentUser: currentUser)
+            vc.selectedLesson = dataSourceFilter[indexPath.row]
+            navigationController?.pushViewController(vc, animated: true)
         }else {
-            
+            let vc = StudentNewPost(currentUser: currentUser)
+            vc.selectedLesson = dataSource[indexPath.row]
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
 
