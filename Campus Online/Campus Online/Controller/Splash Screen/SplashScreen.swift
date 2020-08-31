@@ -1,0 +1,211 @@
+//
+//  SplashScreen.swift
+//  Campus Online
+//
+//  Created by mahsun abuzeyitoğlu on 24.08.2020.
+//  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
+//
+
+import UIKit
+import RevealingSplashView
+import FirebaseAuth
+import FirebaseFirestore
+import Lottie
+class SplashScreen: UIViewController {
+    var navControl : UIViewController!
+    var currentUser : CurrentUser?
+    var waitAnimation = AnimationView()
+    let splahScreen  = RevealingSplashView(iconImage: UIImage(named: "logo")!, iconInitialSize: CGSize(width: 100 , height: 100), backgroundColor: .white)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = .white
+        navigationController?.navigationBar.isHidden = true
+        waitAnimation = .init(name : "newton")
+        waitAnimation.animationSpeed = 1
+        waitAnimation.loopMode = .loop
+        view.addSubview(splahScreen)
+        
+        view.addSubview(waitAnimation)
+        waitAnimation.anchor(top: nil, left: nil, bottom: view.bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 150, heigth: 303)
+        waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        waitAnimation.play()
+        splahScreen.animationType = .twitter
+        
+        if Auth.auth().currentUser?.uid != nil {
+            
+          //  Utilities.waitProgress(msg: nil)
+            let db = Firestore.firestore().collection("status").document(Auth.auth().currentUser!.uid)
+            db.getDocument { (docSnap, err) in
+                if err == nil {
+                    if docSnap!.exists {
+                        let status = docSnap?.get("status") as! Bool
+                        if status
+                        {
+                         
+                            let dbc = Firestore.firestore().collection("user").document(Auth.auth().currentUser!.uid)
+                            dbc.getDocument { (doc, err) in
+                                self.waitAnimation.removeFromSuperview()
+                                self.splahScreen.startAnimation {
+                                    let vc = MainTabbar()
+                                    vc.currentUser = CurrentUser.init(dic: doc!.data()!)
+                                    vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                                    self.present(vc, animated: true, completion: nil)
+                                    
+                                }
+                            }
+                           
+                        }
+                        else
+                        {
+                            self.checkIsCompelte(withUid: Auth.auth().currentUser!.uid)
+                            
+                        }
+                    }
+                    else
+                    {
+                        self.goToNextViewController()
+                    }
+                    
+                }
+                
+            }
+            
+        }else{
+             goToNextViewController()
+            
+        }
+        
+        
+    }
+    
+    private func goToNextViewController(){
+        splahScreen.startAnimation {
+            self.waitAnimation.removeFromSuperview()
+                      let vc = LoginVC()
+                      vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                      self.present(vc, animated: true, completion: nil)
+                  }
+    
+   
+    }
+    
+    private func checkIsCompelte(withUid uid : String){
+        let db = Firestore.firestore().collection("priority").document(uid)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                if docSnap!.exists {
+                    let priority = docSnap?.get("priority") as! String
+                    if priority == "student"
+                    {
+                        self.checkHasExistStudent(withUid: uid)
+                    }
+                    else if priority == "teacher"
+                    {
+                        self.checkHasExistTeacher(withUid : uid)
+                    }
+                }
+                else{
+                    self.waitAnimation.removeFromSuperview()
+                }
+            }
+        }
+        
+    }
+    func checkHasExistTeacher(withUid uid : String!){
+        let db = Firestore.firestore().collection("user").document(uid)
+        db.getDocument { (doc, err) in
+            if err == nil {
+                if !doc!.exists
+                {
+                    //                        self.progres.dismiss()
+                    //                       let vc = TeacherVC()
+                    //                        vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                    //                       self.present(vc, animated: true, completion: nil)
+                    
+                }
+                else if (doc?.get("name") ) == nil {
+                    //                       self.progres.dismiss()
+                    //                                          let vc = TeacherVC()
+                    //                                           vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                    //                                          self.present(vc, animated: true, completion: nil)
+                }
+                else
+                {
+                    let value = doc!.get("hasClasses") as! Bool
+                    
+                    if !value
+                    {
+                        //                            self.progres.dismiss()
+                        //                           let vc = SetTeacherFakulte()
+                        //                           vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                        //                           self.present(vc, animated: true, completion: nil)
+                        //
+                    }
+                    
+                    
+                }
+            }
+        }
+    }
+    
+    func checkHasExistStudent(withUid uid : String!){
+        let db = Firestore.firestore().collection("user").document(uid)
+        db.getDocument { (doc, err) in
+            if err == nil {
+                
+                //
+                //                if doc!.get("number") == nil {
+                //                    self.splahScreen.startAnimation{
+                //                        Utilities.dismissProgress()
+                //                        let vc = StudentNumberVC()
+                //                        vc.currentUser =  CurrentUser.init(dic: doc!.data()!)
+                //                        self.navControl = UINavigationController(rootViewController: vc)
+                //                        self.navControl.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                //                        self.present(self.navControl, animated: true, completion: nil)
+                //                    }
+                //
+                //                }else
+                if doc!.get("fakulte") == nil {
+                    self.waitAnimation.removeFromSuperview()
+                    self.splahScreen.startAnimation{
+                        
+                        let vc = StudentNumberVC()
+                        vc.currentUser =  CurrentUser.init(dic: doc!.data()!)
+                        self.navControl = UINavigationController(rootViewController: vc)
+                        self.navControl.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                        self.present(self.navControl, animated: true, completion: nil)
+                    }
+                    
+                    
+                }else if doc!.get("bolum") == nil
+                {
+                    self.waitAnimation.removeFromSuperview()
+                    self.splahScreen.startAnimation{
+                        
+                        let vc = StudentNumberVC()
+                        vc.currentUser =  CurrentUser.init(dic: doc!.data()!)
+                        self.navControl = UINavigationController(rootViewController: vc)
+                        self.navControl.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+                        self.present(self.navControl, animated: true, completion: nil)
+                    }
+                    
+                }
+                else{
+                    self.waitAnimation.removeFromSuperview()
+                    self.splahScreen.startAnimation{
+                        
+                        return
+                    }
+                    
+                }
+                
+                
+                
+                
+            }
+        }
+    }
+    
+    
+}
