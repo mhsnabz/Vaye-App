@@ -7,12 +7,13 @@
 //
 
 import UIKit
-
-class NewPostCell: UICollectionViewCell {
+import PDFKit
+class NewPostImageCell: UICollectionViewCell {
     
+ 
     let img : UIImageView = {
        let img = UIImageView()
-        img.contentMode = .scaleAspectFit
+        img.contentMode = .scaleToFill
         img.backgroundColor = .lightGray
         return img
     }()

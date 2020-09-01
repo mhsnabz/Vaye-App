@@ -13,7 +13,7 @@
 		6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990524FD0BD60023E53B /* ChooseLessonTB.swift */; };
 		6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990724FD15DB0023E53B /* StudentNewPost.swift */; };
 		6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990A24FD70310023E53B /* NewPostHeader.swift */; };
-		6608990D24FD70B60023E53B /* NewPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990C24FD70B60023E53B /* NewPostCell.swift */; };
+		6608990D24FD70B60023E53B /* NewPostImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990C24FD70B60023E53B /* NewPostImageCell.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -38,8 +38,10 @@
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
 		6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */; };
-		665E5CCA24FE5B0C00B5B5E3 /* UploadImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CC924FE5B0C00B5B5E3 /* UploadImages.swift */; };
+		665E5CCA24FE5B0C00B5B5E3 /* UploadDataToDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */; };
 		665E5CCE24FE7FD300B5B5E3 /* SelectedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */; };
+		665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */; };
+		665E5CD224FEF3EB00B5B5E3 /* NewPostDocCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CD124FEF3EB00B5B5E3 /* NewPostDocCell.swift */; };
 		6687921124FABC2700A43A41 /* ActionSheetLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */; };
 		6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921324FB0AA500A43A41 /* ActionSheetCell.swift */; };
 		6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921624FBB96800A43A41 /* ActionSheetViewModel.swift */; };
@@ -99,7 +101,7 @@
 		6608990524FD0BD60023E53B /* ChooseLessonTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLessonTB.swift; sourceTree = "<group>"; };
 		6608990724FD15DB0023E53B /* StudentNewPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentNewPost.swift; sourceTree = "<group>"; };
 		6608990A24FD70310023E53B /* NewPostHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostHeader.swift; sourceTree = "<group>"; };
-		6608990C24FD70B60023E53B /* NewPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell.swift; sourceTree = "<group>"; };
+		6608990C24FD70B60023E53B /* NewPostImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostImageCell.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -124,8 +126,10 @@
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
 		6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuFooter.swift; sourceTree = "<group>"; };
-		665E5CC924FE5B0C00B5B5E3 /* UploadImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImages.swift; sourceTree = "<group>"; };
+		665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadDataToDatabase.swift; sourceTree = "<group>"; };
 		665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedData.swift; sourceTree = "<group>"; };
+		665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostPdfCell.swift; sourceTree = "<group>"; };
+		665E5CD124FEF3EB00B5B5E3 /* NewPostDocCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostDocCell.swift; sourceTree = "<group>"; };
 		6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetLauncher.swift; sourceTree = "<group>"; };
 		6687921324FB0AA500A43A41 /* ActionSheetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetCell.swift; sourceTree = "<group>"; };
 		6687921624FBB96800A43A41 /* ActionSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetViewModel.swift; sourceTree = "<group>"; };
@@ -228,7 +232,9 @@
 			isa = PBXGroup;
 			children = (
 				6608990A24FD70310023E53B /* NewPostHeader.swift */,
-				6608990C24FD70B60023E53B /* NewPostCell.swift */,
+				6608990C24FD70B60023E53B /* NewPostImageCell.swift */,
+				665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */,
+				665E5CD124FEF3EB00B5B5E3 /* NewPostDocCell.swift */,
 			);
 			path = "Student New Post View";
 			sourceTree = "<group>";
@@ -314,7 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */,
-				665E5CC924FE5B0C00B5B5E3 /* UploadImages.swift */,
+				665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -847,7 +853,7 @@
 				6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */,
 				66D9122024EEABA3002D760A /* ProfileVC.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
-				665E5CCA24FE5B0C00B5B5E3 /* UploadImages.swift in Sources */,
+				665E5CCA24FE5B0C00B5B5E3 /* UploadDataToDatabase.swift in Sources */,
 				661333FC24F4206A002677AB /* ChooseSchool.swift in Sources */,
 				6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */,
 				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,
@@ -874,7 +880,7 @@
 				660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */,
 				661333E524F395B2002677AB /* HomeMenuController.swift in Sources */,
 				66D9121424EEAB49002D760A /* HomeVC.swift in Sources */,
-				6608990D24FD70B60023E53B /* NewPostCell.swift in Sources */,
+				6608990D24FD70B60023E53B /* NewPostImageCell.swift in Sources */,
 				661333EC24F3D1D2002677AB /* ProfileFilterView.swift in Sources */,
 				66D9121924EEAB74002D760A /* CampusOnlineVC.swift in Sources */,
 				6613341124F6886E002677AB /* StudentNumberVC.swift in Sources */,
@@ -890,9 +896,11 @@
 				66D9120924EEAA85002D760A /* ContainerController.swift in Sources */,
 				661333DF24F36C85002677AB /* Setting.swift in Sources */,
 				6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */,
+				665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */,
 				6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */,
 				66E326A624F98FE7004CB61D /* LessonsModel.swift in Sources */,
 				6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */,
+				665E5CD224FEF3EB00B5B5E3 /* NewPostDocCell.swift in Sources */,
 				6687921124FABC2700A43A41 /* ActionSheetLauncher.swift in Sources */,
 				661333F824F3FDE2002677AB /* RegisterVC.swift in Sources */,
 			);

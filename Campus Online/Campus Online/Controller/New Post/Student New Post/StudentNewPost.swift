@@ -7,7 +7,9 @@
 //
 
 import UIKit
-private let cellID = "cellId"
+private let imageCell = "cellId"
+private let pdfCell = "pdfCell"
+private let docCell = "docCell"
 private let headerId = "headerId"
 import SDWebImage
 import MobileCoreServices
@@ -15,6 +17,7 @@ import ImagePicker
 import Lightbox
 import Gallery
 import SVProgressHUD
+import PDFKit
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
     
     
@@ -173,8 +176,10 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        collectionview.register(NewPostCell.self, forCellWithReuseIdentifier: cellID)
+        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 20, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
+        collectionview.register(NewPostPdfCell.self, forCellWithReuseIdentifier: pdfCell)
+        collectionview.register(NewPostDocCell.self, forCellWithReuseIdentifier: docCell)
         
     }
     
@@ -204,8 +209,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
      
             dataType.append(data[number].type)
         }
-        UploadImages.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
-//        UploadImages.saveImages(currentUser: currentUser, lessonName: <#T##String#>, images: <#T##[UIImage]#>)
+        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
     }
     @objc func _addUser(){
         
@@ -310,17 +314,32 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostCell
-        cell.backgroundColor = .white
-        cell.img.image = UIImage(data: data[indexPath.row].data)
-        return cell
+        if data[indexPath.row].type == "jpeg"
+        {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! NewPostImageCell
+                  cell.backgroundColor = .white
+                  cell.img.image = UIImage(data: data[indexPath.row].data)
+              return cell
+        }else if data[indexPath.row].type == "pdf" {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdfCell, for: indexPath) as! NewPostPdfCell
+                  cell.backgroundColor = .white
+            cell.pdfView.document = PDFDocument(data: data[indexPath.row].data)
+              return cell
+        }else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: docCell, for: indexPath) as! NewPostDocCell
+            
+              return cell
+        }
+        
+      
+      
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width  = (view.frame.width-20)/3
+        let width  = (view.frame.width - 30 ) / 3
         return CGSize(width: width, height: width)
     }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-           return 0
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,                                minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+           return 1
        }
        
 }
@@ -373,7 +392,43 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         guard let myURL = urls.first else {
             return
         }
-        print("import result : \(myURL)")
+        print("import result : \( myURL.uti)")
+        if myURL.uti == "com.microsoft.word.doc"
+        {
+                do {
+                    self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: "doc"))
+                    self.collectionview.reloadData()
+                }
+                catch{
+                    print(error)
+                }
+            
+        }else if myURL.uti == "com.adobe.pdf"
+        {
+            do {
+                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: "pdf"))
+                self.collectionview.reloadData()
+            }
+            catch{
+                print(error)
+            }
+        }else if myURL.uti == "org.openxmlformats.wordprocessingml.document"
+        {
+            do {
+                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: "doc"))
+                self.collectionview.reloadData()
+            }
+            catch{
+                print(error)
+            }
+        }
+        else {
+            Utilities.errorProgress(msg: "Bilinmeyen Tür")
+        }
+
+        
+        
+        
     }
     func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
         documentPicker.delegate = self
@@ -381,5 +436,13 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
     }
     
     
+}
+
+extension URL {
+
+    var uti: String {
+        return (try? self.resourceValues(forKeys: [.typeIdentifierKey]))?.typeIdentifier ?? "public.data"
+    }
+
 }
 

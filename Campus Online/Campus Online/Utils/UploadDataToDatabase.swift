@@ -10,7 +10,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseStorage
 import SVProgressHUD
-class UploadImages : NSObject {
+class UploadDataToDatabase : NSObject {
     
     static func uploadDataBase(postDate : String ,currentUser : CurrentUser ,lessonName : String, type : [String] , data : [Data]){
         
@@ -22,47 +22,6 @@ class UploadImages : NSObject {
         
     }
     
-    
-//    static func upload_images(currentUser : CurrentUser ,lessonName : String, images : [UIImage],completionHandler: @escaping ([String]) -> ()){
-//        var uploadedImageUrlsArray = [String]()
-//        var uploadCount = 0
-//        let imagesCount = images.count
-//        for image in images {
-//            let imageName = Date().millisecondsSince1970.description
-//            let metaDataForImage = StorageMetadata()
-//            metaDataForImage.contentType = "image/jpeg"
-//            guard let uploadData = image.jpegData(compressionQuality: 0.8) else { return }
-//            let filename = imageName + ".jpg"
-//            let storageRef = Storage.storage().reference().child(currentUser.short_school)
-//                .child(currentUser.schoolName).child("lessonName").child(imageName).child(filename)
-//            let uploadTask = storageRef.putData(uploadData, metadata: nil) { (result, err) in
-//                if err != nil {
-//                    print(err as Any)
-//                    return
-//                }
-//                Storage.storage().reference().child(currentUser.short_school)
-//                    .child(currentUser.schoolName).child("lessonName").child(imageName).child(filename).downloadURL {(downloadUrl, err) in
-//                        guard let imageUrl = downloadUrl?.absoluteString else {
-//                            print("DEBUG : profile Image url is null")
-//                            return
-//                        }
-//                        uploadedImageUrlsArray.append(imageUrl)
-//                        uploadCount += 1
-//                        print("Number of images successfully uploaded: \(uploadCount)")
-//                        if uploadCount == imagesCount{
-//                            NSLog("All Images are uploaded successfully, uploadedImageUrlsArray: \(uploadedImageUrlsArray)")
-//                            completionHandler(uploadedImageUrlsArray)
-//                        }
-//                }
-//
-//
-//
-//            }
-//            //          observeUploadTaskFailureCases(uploadTask : uploadTask)
-//            //          uploadFiles(uploadTask: uploadTask , count : uploadCount)
-//
-//        }
-//    }
     static func save_datas ( date : String ,currentUser : CurrentUser , lessonName : String , type : [String] , datas : [Data] ,completionHandler: @escaping ([String]) -> () ){
         var uploadedImageUrlsArray = [String]()
         var uploadCount = 0
