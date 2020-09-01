@@ -4,60 +4,64 @@
 target 'Campus Online' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-    pod 'RevealingSplashView'
-
-    pod 'TweeTextField'
-
-
-    pod 'Firebase'
-
-    pod 'Firebase/Auth'
-
-    pod 'Firebase/Firestore'
-
-    pod 'Firebase/Storage'
-
-
-    pod 'Firebase/Analytics'
-
-    pod 'Firebase/Messaging'
-
-    pod 'Firebase/Crashlytics'
-
-
-
-    pod 'SDWebImage', '~> 5.0'
-
-    pod 'JJFloatingActionButton'
-
-    pod "JDropDownAlert"
-
-    pod 'SVProgressHUD'
-
-    pod 'PopupDialog', '~> 1.1'
-
-    pod 'SwiftyAttributes'
-
-
-
-    pod 'ActiveLabel'
-
-    pod 'OEMentions'
-
-    pod 'lottie-ios'
-
-    
+  pod 'RevealingSplashView'
+  
+  pod 'TweeTextField'
+  
+  
+  pod 'Firebase'
+  
+  pod 'Firebase/Auth'
+  
+  pod 'Firebase/Firestore'
+  
+  pod 'Firebase/Storage'
+  
+  
+  pod 'Firebase/Analytics'
+  
+  pod 'Firebase/Messaging'
+  
+  pod 'Firebase/Crashlytics'
+  
+  
+  
+  pod 'SDWebImage', '~> 5.0'
+  
+  pod 'JJFloatingActionButton'
+  
+  pod "JDropDownAlert"
+  
+  pod 'SVProgressHUD'
+  
+  pod 'PopupDialog', '~> 1.1'
+  
+  pod 'SwiftyAttributes'
+  
+  
+  
+  pod 'ActiveLabel'
+  
+  pod 'OEMentions'
+  
+  pod 'lottie-ios'
+  
+  pod 'ImagePicker'
+  
+  pod 'Lightbox'
+  
+  pod 'Gallery'
   # Pods for Campus Online
   target 'Campus OnlineTests' do
     
-
-
+    
+    
     inherit! :search_paths
     # Pods for testing
   end
-
+  
   target 'Campus OnlineUITests' do
     # Pods for testing
   end
-
+  
 end

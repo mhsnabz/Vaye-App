@@ -21,6 +21,7 @@ class HomeMenuController: UITableViewController {
     var imageStartingFrame : CGRect?
     var scroolView : UIScrollView?
     var blackBackGround : UIView?
+    var uploadTask : StorageUploadTask?
     //    private let target : String
     private var actionSheet : ActionSheetLauncher
     let verticalLine : UIView = {
@@ -28,6 +29,14 @@ class HomeMenuController: UITableViewController {
         v.backgroundColor = .darkGray
         return v
     }()
+    
+    //MARK: -lifeCycle
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        guard let task = uploadTask else { return }
+        task.removeAllObservers(for: .progress)
+        task.removeAllObservers()
+    }
     
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
@@ -294,7 +303,7 @@ extension HomeMenuController : UIImagePickerControllerDelegate,UINavigationContr
         SVProgressHUD.setBorderColor(.white)
         
         SVProgressHUD.setForegroundColor(.white)
-        let uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage) {
+         uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage) {
             (metadata , err ) in
             if err != nil {
                 print("failed upload image")
@@ -346,15 +355,18 @@ extension HomeMenuController : UIImagePickerControllerDelegate,UINavigationContr
             }
             
         }
-        _ = uploadTask.observe(.progress) { snapshot in
-            
-            
-            let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
-                / Float(snapshot.progress!.totalUnitCount)
-            
-            SVProgressHUD.showProgress(percentComplete, status: "Resim Yükleniyor \n \(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
-            
-            print(percentComplete) // NSProgress object
+        if uploadTask != nil {
+            _ = uploadTask!.observe(.progress) { snapshot in
+                
+                
+                let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
+                    / Float(snapshot.progress!.totalUnitCount)
+                
+                SVProgressHUD.showProgress(percentComplete, status: "Resim Yükleniyor \n \(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
+                
+                print(percentComplete) // NSProgress object
+            }
         }
+       
     }
 }

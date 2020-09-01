@@ -10,11 +10,20 @@ import UIKit
 private let cellID = "cellId"
 private let headerId = "headerId"
 import SDWebImage
-class StudentNewPost: UIViewController {
+import MobileCoreServices
+import ImagePicker
+import Lightbox
+import Gallery
+import SVProgressHUD
+class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
     
+    
+    
+    var gallery: GalleryController!
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
     var heigth : CGFloat = 0.0
+    var data = [SelectedData]()
     var selectedLesson : String? {
         didSet {
             navigationItem.title = selectedLesson
@@ -47,17 +56,15 @@ class StudentNewPost: UIViewController {
     }()
     lazy var text : UITextView = {
         let text = UITextView()
-        text.backgroundColor = .clear
+        text.backgroundColor = .white
         text.font = UIFont(name: Utilities.font, size: 14)
         text.isEditable = true
- 
-        text.text = "Yeni Bir Duyuru Yap.."
-        text.textColor = UIColor.lightGray
+        
         text.isScrollEnabled = false
         text.isUserInteractionEnabled = true
         text.isScrollEnabled = true
-     
-      
+        
+        
         return text
     }()
     
@@ -72,6 +79,31 @@ class StudentNewPost: UIViewController {
         lessonName.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: userName.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 18)
         
         return view
+    }()
+    
+    let addUser : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(named: "add-user")!.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(_addUser), for: .touchUpInside)
+        return btn
+    }()
+    let addDoc : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(named: "doc")!.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(_addDoc), for: .touchUpInside)
+        return btn
+    }()
+    let addPdf : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(named: "pdf")!.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(_addPdf), for: .touchUpInside)
+        return btn
+    }()
+    let addImage : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(named: "gallery")!.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(_addImage), for: .touchUpInside)
+        return btn
     }()
     
     //MARK:- lifeCycle
@@ -92,13 +124,67 @@ class StudentNewPost: UIViewController {
         configureCollectionView()
         configure()
         hideKeyboardWhenTappedAround()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         text.becomeFirstResponder()
     }
     //MARK: - func
-    
+    @objc func setNewPost()
+    {
+        let date = Date().timeIntervalSince1970.description
+          var val = [Data]()
+               var dataType = [String]()
+        for number in 0..<(data.count) {
+            
+            val.append(data[number].data)
+     
+            dataType.append(data[number].type)
+        }
+        UploadImages.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
+//        UploadImages.saveImages(currentUser: currentUser, lessonName: <#T##String#>, images: <#T##[UIImage]#>)
+    }
+    @objc func _addUser(){
+        
+    }
+    @objc func _addPdf(){
+        let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
+        importMenu.delegate = self
+        importMenu.modalPresentationStyle = .formSheet
+        self.present(importMenu, animated: true, completion: nil)
+    }
+    @objc func _addDoc(){
+        let importMenu = UIDocumentPickerViewController(documentTypes: ["com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"], in: .import)
+        importMenu.delegate = self
+        importMenu.modalPresentationStyle = .formSheet
+        self.present(importMenu, animated: true, completion: nil)
+    }
+    @objc func _addImage(){
+        //        let vc = UIImagePickerController()
+        //          vc.sourceType = .photoLibrary
+        //          vc.delegate = self
+        //          vc.allowsEditing = true
+        //          present(vc, animated: true, completion: nil)
+        //        let config = Configuration()
+        //        config.doneButtonTitle = "Finish"
+        //        config.noImagesTitle = "Sorry! There are no images here!"
+        //        config.recordLocation = false
+        //        config.allowVideoSelection = true
+        //
+        //        let imagePicker = ImagePickerController(configuration: config)
+        //        imagePicker.delegate = self
+        //        imagePicker.modalPresentationStyle = .fullScreen
+        //
+        //        present(imagePicker, animated: true, completion: nil)
+  
+        Config.Camera.recordLocation = false
+        Config.tabsToShow = [.imageTab]
+        gallery = GalleryController()
+        gallery.delegate = self
+        gallery.modalPresentationStyle = .fullScreen
+        present(gallery, animated: true, completion: nil)
+    }
     private func configure(){
         
         name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
@@ -110,9 +196,66 @@ class StudentNewPost: UIViewController {
         
     }
     
+    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
+        
+    }
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        controller.dismiss(animated: true, completion: nil)
+        
+    }
+    func showLightbox(images: [UIImage]) {
+        guard images.count > 0 else {
+            return
+        }
+        
+        let lightboxImages = images.map({ LightboxImage(image: $0) })
+        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
+        lightbox.dismissalDelegate = self
+        lightbox.modalPresentationStyle = .fullScreen
+        
+        gallery.present(lightbox, animated: true, completion: nil)
+    }
+    
+    
+    //MARK: - imagePickerController
+    
+    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        
+        controller.dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true) {
+           
+            for image  in images {
+                image.resolve { (img) in
+                    if let img_data = img!.jpegData(compressionQuality: 0.8){
+                        self.data.append(SelectedData.init(data : img_data , type : "jpeg"))
+                    }
+                    
+                }
+            }
+        }
+        gallery = nil
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+        
+    }
+    
+    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+        LightboxConfig.DeleteButton.enabled = true
+        
+        SVProgressHUD.show()
+        Image.resolve(images: images, completion: { [weak self] resolvedImages in
+            SVProgressHUD.dismiss()
+            self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
+        })
+    }
+    
+    func galleryControllerDidCancel(_ controller: GalleryController) {
+        controller.dismiss(animated: true, completion: nil)
+        gallery = nil
+    }
+    
     fileprivate func configureCollectionView() {
-        
-        
         view.addSubview(headerView)
         headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 80)
         
@@ -122,7 +265,15 @@ class StudentNewPost: UIViewController {
         text.delegate = self
         text.isScrollEnabled = true
         textViewDidChange(text)
-        textViewDidBeginEditing(text)
+        
+        let stack = UIStackView(arrangedSubviews: [addUser,addImage,addDoc,addPdf])
+        stack.axis = .horizontal
+        stack.spacing = (view.frame.width - 20) / (100)
+        stack.alignment = .center
+        stack.distribution = .fillEqually
+        
+        view.addSubview(stack)
+        stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -130,7 +281,7 @@ class StudentNewPost: UIViewController {
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionview.register(NewPostCell.self, forCellWithReuseIdentifier: cellID)
         
     }
@@ -141,7 +292,7 @@ class StudentNewPost: UIViewController {
 extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return 6
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -150,7 +301,7 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostCell
-        cell.backgroundColor = .lightGray
+        cell.backgroundColor = .white
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -173,18 +324,18 @@ extension StudentNewPost: UITextViewDelegate {
             textView.frame.size.height = textView.contentSize.height
             heigth = textView.contentSize.height
             textView.isScrollEnabled = false // textView.isScrollEnabled = false for swift 4.0
-               
+            
         }
         textView.constraints.forEach { (constraint) in
             if constraint.firstAttribute == .height {
-
+                
                 if textView.contentSize.height >= 150
                 {
                     textView.isScrollEnabled = true
                     constraint.constant = 150
                     textView.frame.size.height = 150
                     heigth = 150
-                  
+                    
                 }
                 else
                 {
@@ -192,17 +343,75 @@ extension StudentNewPost: UITextViewDelegate {
                     textView.isScrollEnabled = true // textView.isScrollEnabled = false for swift 4.0
                     constraint.constant = estimatedSize.height
                     heigth = estimatedSize.height
-         
+                    
                 }
-//                  constraint.constant = estimatedSize.height
+                //                  constraint.constant = estimatedSize.height
             }
         }
     }
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.lightGray {
-            textView.text = nil
-            textView.textColor = UIColor.black
-        }
-    }
+    
     
 }
+extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let myURL = urls.first else {
+            return
+        }
+        print("import result : \(myURL)")
+    }
+    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
+        documentPicker.delegate = self
+        present(documentPicker, animated: true, completion: nil)
+    }
+    
+    
+}
+
+//extension StudentNewPost : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
+//    {
+//        picker.dismiss(animated: true, completion: nil)
+//        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return}
+//        print(selectedImage.description)
+//        let arrayOfImages = [selectedImage]
+//        UploadImages.saveImages(currentUser: currentUser, lessonName: self.selectedLesson!, images: arrayOfImages)
+//
+//    }
+//    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+//        picker.dismiss(animated: true, completion: nil)
+//    }
+//}
+//extension StudentNewPost : ImagePickerDelegate {
+//    func wrapperDidPress(_ imagePicker: ImagePickerController, images: [UIImage]) {
+//
+//          guard images.count > 0 else { return }
+//          let lightboxImages = images.map {
+//            return LightboxImage(image: $0)
+//          }
+//
+//
+//          let controller = LightboxController(images: lightboxImages, startIndex: 0)
+//        // Set delegates.
+//        controller.pageDelegate = self
+//        controller.dismissalDelegate = self
+//        controller.modalPresentationStyle = .fullScreen
+//
+//        // Use dynamic background.
+////        controller.dynamicBackground = true
+//          imagePicker.present(controller, animated: true, completion: nil)
+//
+//    }
+//
+//    func doneButtonDidPress(_ imagePicker: ImagePickerController, images: [UIImage]) {
+//
+//        imagePicker.dismiss(animated: true, completion: nil)
+//    }
+//
+//    func cancelButtonDidPress(_ imagePicker: ImagePickerController) {
+//        imagePicker.dismiss(animated: true, completion: nil)
+//
+//    }
+//
+//
+//}
+
