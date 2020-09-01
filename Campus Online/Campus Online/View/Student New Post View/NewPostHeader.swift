@@ -50,6 +50,7 @@ class NewPostHeader: UICollectionViewCell
         text.isScrollEnabled = false
         return text
     }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(profileImage)

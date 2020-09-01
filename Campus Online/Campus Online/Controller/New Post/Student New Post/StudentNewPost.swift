@@ -68,6 +68,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         return text
     }()
     
+  
     lazy var headerView : UIView = {
         let view = UIView()
         view.addSubview(profileImage)
@@ -159,7 +160,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         stack.distribution = .fillEqually
         
         view.addSubview(stack)
+        
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
+//
+//        view.addSubview(sizeOfData)
+//        sizeOfData.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil
+//            , rigth: nil, marginTop: 2, marginLeft: 2, marginBottom: 0, marginRigth: 0, width: 0, heigth: 16)
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -170,6 +176,21 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionview.register(NewPostCell.self, forCellWithReuseIdentifier: cellID)
         
+    }
+    
+    private func getSizeOfData(data : [SelectedData]) -> String {
+        var val : Int64 = 0
+        for item in data {
+            let bcf = ByteCountFormatter()
+            bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
+            bcf.countStyle = .file
+            
+            val += Int64(item.data.count)
+           
+        }
+        
+        return "\(val) mb"
+
     }
     
     @objc func setNewPost()
@@ -241,7 +262,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
         
-        controller.dismiss(animated: true, completion: nil)
+     
         controller.dismiss(animated: true) {
            
             for image  in images {
@@ -249,10 +270,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                     if let img_data = img!.jpegData(compressionQuality: 0.8){
                         self.data.append(SelectedData.init(data : img_data , type : "jpeg"))
                         self.collectionview.reloadData()
+                        
                     }
                     
                 }
             }
+//            self.sizeOfData.text = self.getSizeOfData(data: self.data)
         }
         gallery = nil
     }
