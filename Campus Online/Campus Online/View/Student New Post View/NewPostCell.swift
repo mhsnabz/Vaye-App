@@ -10,8 +10,16 @@ import UIKit
 
 class NewPostCell: UICollectionViewCell {
     
+    let img : UIImageView = {
+       let img = UIImageView()
+        img.contentMode = .scaleAspectFit
+        img.backgroundColor = .lightGray
+        return img
+    }()
     override init(frame: CGRect) {
         super.init(frame: frame)
+        addSubview(img)
+        img.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
     }
     
     required init?(coder: NSCoder) {

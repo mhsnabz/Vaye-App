@@ -76,7 +76,7 @@ class UploadImages : NSObject {
                 
                 metaDataForImage.contentType = "image/jpeg"
             }
-            Utilities.waitProgress(msg: "\(0). / \(imagesCount) Dosya Yükleniyor ")
+            Utilities.waitProgress(msg: "\(1). / \(imagesCount) Dosya Yükleniyor ")
             let storageRef = Storage.storage().reference().child(currentUser.short_school)
                 .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + ".jpg")
             let uploadTask = storageRef.putData(datas[data], metadata: nil) { (result, err) in

@@ -130,125 +130,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         super.viewWillAppear(animated)
         text.becomeFirstResponder()
     }
+    
+    
+    
+    
     //MARK: - func
-    @objc func setNewPost()
-    {
-        let date = Date().timeIntervalSince1970.description
-          var val = [Data]()
-               var dataType = [String]()
-        for number in 0..<(data.count) {
-            
-            val.append(data[number].data)
-     
-            dataType.append(data[number].type)
-        }
-        UploadImages.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
-//        UploadImages.saveImages(currentUser: currentUser, lessonName: <#T##String#>, images: <#T##[UIImage]#>)
-    }
-    @objc func _addUser(){
-        
-    }
-    @objc func _addPdf(){
-        let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
-        importMenu.delegate = self
-        importMenu.modalPresentationStyle = .formSheet
-        self.present(importMenu, animated: true, completion: nil)
-    }
-    @objc func _addDoc(){
-        let importMenu = UIDocumentPickerViewController(documentTypes: ["com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"], in: .import)
-        importMenu.delegate = self
-        importMenu.modalPresentationStyle = .formSheet
-        self.present(importMenu, animated: true, completion: nil)
-    }
-    @objc func _addImage(){
-        //        let vc = UIImagePickerController()
-        //          vc.sourceType = .photoLibrary
-        //          vc.delegate = self
-        //          vc.allowsEditing = true
-        //          present(vc, animated: true, completion: nil)
-        //        let config = Configuration()
-        //        config.doneButtonTitle = "Finish"
-        //        config.noImagesTitle = "Sorry! There are no images here!"
-        //        config.recordLocation = false
-        //        config.allowVideoSelection = true
-        //
-        //        let imagePicker = ImagePickerController(configuration: config)
-        //        imagePicker.delegate = self
-        //        imagePicker.modalPresentationStyle = .fullScreen
-        //
-        //        present(imagePicker, animated: true, completion: nil)
-  
-        Config.Camera.recordLocation = false
-        Config.tabsToShow = [.imageTab]
-        gallery = GalleryController()
-        gallery.delegate = self
-        gallery.modalPresentationStyle = .fullScreen
-        present(gallery, animated: true, completion: nil)
-    }
-    private func configure(){
-        
-        name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-        name.append(NSAttributedString(string: " \(currentUser.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
-        userName.attributedText = name
-        lessonName.text = selectedLesson
-        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
-        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
-        
-    }
-    
-    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
-        
-    }
-    func lightboxControllerWillDismiss(_ controller: LightboxController) {
-        controller.dismiss(animated: true, completion: nil)
-        
-    }
-    func showLightbox(images: [UIImage]) {
-        guard images.count > 0 else {
-            return
-        }
-        
-        let lightboxImages = images.map({ LightboxImage(image: $0) })
-        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
-        lightbox.dismissalDelegate = self
-        lightbox.modalPresentationStyle = .fullScreen
-        
-        gallery.present(lightbox, animated: true, completion: nil)
-    }
-    
-    
-    //MARK: - imagePickerController
-    
-    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
-        
-        controller.dismiss(animated: true, completion: nil)
-        controller.dismiss(animated: true) {
-           
-            for image  in images {
-                image.resolve { (img) in
-                    if let img_data = img!.jpegData(compressionQuality: 0.8){
-                        self.data.append(SelectedData.init(data : img_data , type : "jpeg"))
-                    }
-                    
-                }
-            }
-        }
-        gallery = nil
-    }
-    
-    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
-        
-    }
-    
-    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
-        LightboxConfig.DeleteButton.enabled = true
-        
-        SVProgressHUD.show()
-        Image.resolve(images: images, completion: { [weak self] resolvedImages in
-            SVProgressHUD.dismiss()
-            self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
-        })
-    }
     
     func galleryControllerDidCancel(_ controller: GalleryController) {
         controller.dismiss(animated: true, completion: nil)
@@ -281,10 +167,111 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionview.register(NewPostCell.self, forCellWithReuseIdentifier: cellID)
         
     }
+    
+    @objc func setNewPost()
+    {
+        let date = Date().timeIntervalSince1970.description
+          var val = [Data]()
+               var dataType = [String]()
+        for number in 0..<(data.count) {
+            
+            val.append(data[number].data)
+     
+            dataType.append(data[number].type)
+        }
+        UploadImages.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
+//        UploadImages.saveImages(currentUser: currentUser, lessonName: <#T##String#>, images: <#T##[UIImage]#>)
+    }
+    @objc func _addUser(){
+        
+    }
+    @objc func _addPdf(){
+        let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
+        importMenu.delegate = self
+        importMenu.modalPresentationStyle = .formSheet
+        self.present(importMenu, animated: true, completion: nil)
+    }
+    @objc func _addDoc(){
+        let importMenu = UIDocumentPickerViewController(documentTypes: ["com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"], in: .import)
+        importMenu.delegate = self
+        importMenu.modalPresentationStyle = .formSheet
+        self.present(importMenu, animated: true, completion: nil)
+    }
+    @objc func _addImage(){
+
+        Config.Camera.recordLocation = false
+        Config.tabsToShow = [.imageTab]
+        gallery = GalleryController()
+        gallery.delegate = self
+        gallery.modalPresentationStyle = .fullScreen
+        present(gallery, animated: true, completion: nil)
+    }
+    private func configure(){
+        
+        name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+        name.append(NSAttributedString(string: " \(currentUser.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        userName.attributedText = name
+        lessonName.text = selectedLesson
+        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
+        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
+        
+    }
+    
+      //MARK: - imagePickerController
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        controller.dismiss(animated: true, completion: nil)
+        
+    }
+    func showLightbox(images: [UIImage]) {
+        guard images.count > 0 else {
+            return
+        }
+        
+        let lightboxImages = images.map({ LightboxImage(image: $0) })
+        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
+        lightbox.dismissalDelegate = self
+        lightbox.modalPresentationStyle = .fullScreen
+        
+        gallery.present(lightbox, animated: true, completion: nil)
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        
+        controller.dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true) {
+           
+            for image  in images {
+                image.resolve { (img) in
+                    if let img_data = img!.jpegData(compressionQuality: 0.8){
+                        self.data.append(SelectedData.init(data : img_data , type : "jpeg"))
+                        self.collectionview.reloadData()
+                    }
+                    
+                }
+            }
+        }
+        gallery = nil
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+        
+    }
+    
+    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+        LightboxConfig.DeleteButton.enabled = true
+        
+        SVProgressHUD.show()
+        Image.resolve(images: images, completion: { [weak self] resolvedImages in
+            SVProgressHUD.dismiss()
+            self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
+        })
+    }
+    
+    
     
     
     
@@ -292,7 +279,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
 extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 6
+        return data.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -302,11 +289,17 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostCell
         cell.backgroundColor = .white
+        cell.img.image = UIImage(data: data[indexPath.row].data)
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 60)
+        let width  = (view.frame.width-20)/3
+        return CGSize(width: width, height: width)
     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+           return 0
+       }
+       
 }
 
 extension StudentNewPost: UITextViewDelegate {
@@ -366,52 +359,4 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
     
     
 }
-
-//extension StudentNewPost : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
-//    {
-//        picker.dismiss(animated: true, completion: nil)
-//        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return}
-//        print(selectedImage.description)
-//        let arrayOfImages = [selectedImage]
-//        UploadImages.saveImages(currentUser: currentUser, lessonName: self.selectedLesson!, images: arrayOfImages)
-//
-//    }
-//    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-//        picker.dismiss(animated: true, completion: nil)
-//    }
-//}
-//extension StudentNewPost : ImagePickerDelegate {
-//    func wrapperDidPress(_ imagePicker: ImagePickerController, images: [UIImage]) {
-//
-//          guard images.count > 0 else { return }
-//          let lightboxImages = images.map {
-//            return LightboxImage(image: $0)
-//          }
-//
-//
-//          let controller = LightboxController(images: lightboxImages, startIndex: 0)
-//        // Set delegates.
-//        controller.pageDelegate = self
-//        controller.dismissalDelegate = self
-//        controller.modalPresentationStyle = .fullScreen
-//
-//        // Use dynamic background.
-////        controller.dynamicBackground = true
-//          imagePicker.present(controller, animated: true, completion: nil)
-//
-//    }
-//
-//    func doneButtonDidPress(_ imagePicker: ImagePickerController, images: [UIImage]) {
-//
-//        imagePicker.dismiss(animated: true, completion: nil)
-//    }
-//
-//    func cancelButtonDidPress(_ imagePicker: ImagePickerController) {
-//        imagePicker.dismiss(animated: true, completion: nil)
-//
-//    }
-//
-//
-//}
 
