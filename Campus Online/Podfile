@@ -38,7 +38,7 @@ target 'Campus Online' do
   
   pod 'SwiftyAttributes'
   
-  
+
   
   pod 'ActiveLabel'
   
@@ -51,6 +51,9 @@ target 'Campus Online' do
   pod 'Lightbox'
   
   pod 'Gallery'
+  
+  
+  
   # Pods for Campus Online
   target 'Campus OnlineTests' do
     

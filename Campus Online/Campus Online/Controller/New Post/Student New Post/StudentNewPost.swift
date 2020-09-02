@@ -19,10 +19,10 @@ import Gallery
 import SVProgressHUD
 import PDFKit
 import ActiveLabel
+
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
-    
-    
-    
+   
+    private var actionSheet : ActionSheetLauncher
     var gallery: GalleryController!
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
@@ -123,6 +123,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     //MARK:- lifeCycle
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
+        self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.drive.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -211,6 +212,9 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         
     }
     
+
+  
+    
     private func getSizeOfData(data : [SelectedData]) -> String {
         var val : Int64 = 0
         for item in data {
@@ -255,7 +259,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         self.present(importMenu, animated: true, completion: nil)
     }
     @objc func _addLink(){
-        
+        actionSheet.show()
     }
     @objc func _addImage(){
 
@@ -493,3 +497,4 @@ extension String {
         return ceil(boundingBox.width)
     }
 }
+

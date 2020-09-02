@@ -77,7 +77,7 @@ class ActionSheetLauncher : NSObject {
         blackView.frame = window.frame
         
         window.addSubview(tableView)
-        let heigth = CGFloat( viewModel.options.count * 50 ) + 60
+        let heigth = CGFloat( viewModel.imageOptions.count * 50 ) + 60
         self.tableViewHeight = heigth
         tableView.frame = CGRect(x: 0, y: window.frame.height,
                                  width: window.frame.width, height: heigth)
@@ -102,7 +102,7 @@ class ActionSheetLauncher : NSObject {
     }
     @objc  func handleDismiss(){
         UIView.animate(withDuration: 0.5) {
-            let heigth = CGFloat( self.viewModel.options.count * 50 ) + 60
+            let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
             self.blackView.alpha = 0
             self.tableView.frame.origin.y += heigth
         }
@@ -110,12 +110,12 @@ class ActionSheetLauncher : NSObject {
 }
 extension ActionSheetLauncher : UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.options.count
+        return viewModel.imageOptions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id",for: indexPath) as! ActionSheetCell
-        cell.options = viewModel.options[indexPath.row]
+        cell.options = viewModel.imageOptions[indexPath.row]
         return cell
     }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -126,7 +126,7 @@ extension ActionSheetLauncher : UITableViewDataSource,UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let option = viewModel.options[indexPath.row]
+        let option = viewModel.imageOptions[indexPath.row]
         delegate?.didSelect(option: option)
         UIView.animate(withDuration: 0.5, animations: {
                 self.blackView.alpha = 0

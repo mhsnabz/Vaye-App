@@ -368,6 +368,16 @@ extension LessonList : ActionSheetLauncherDelegate {
         case .choosePicture(_):
             break
             
+        case .googleDrive(_):
+            break
+        case .dropBox(_):
+            break
+        case .yandexDisk(_):
+            break
+        case .iClould(_):
+            break
+        case .oneDrive(_):
+            break
         }
     }
     
