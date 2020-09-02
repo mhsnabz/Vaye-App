@@ -16,7 +16,22 @@ class PopUpWindow : UIView {
    weak var delegate: PopUpDelegate?
     var target : String? {
         didSet {
-            configure()
+            guard let target = target else { return }
+            configure(val : target)
+            
+            if target == DriveLinks.googleDrive.descrpiton{
+                btnGo.setTitle("Google Drive Git", for: .normal)
+            }else if target == DriveLinks.onedrive.descrpiton{
+                   btnGo.setTitle("OneDrive Git", for: .normal)
+            }else if target == DriveLinks.yandex.descrpiton{
+                   btnGo.setTitle("Yandex Disk'e Git", for: .normal)
+            }else if target == DriveLinks.dropbox.descrpiton{
+                   btnGo.setTitle("Dropbox'a Git", for: .normal)
+            }else if target == DriveLinks.icloud.descrpiton{
+                   btnGo.setTitle("iClould'a Git", for: .normal)
+            }
+            btnAdd.addTarget(self, action: #selector(addLink), for: .touchUpInside)
+            btnGo.addTarget(self, action: #selector(go), for: .touchUpInside)
         }
     }
     var showSuccessMessage: Bool?
@@ -49,10 +64,11 @@ class PopUpWindow : UIView {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "x") ,for: .normal)
         btn.tintColor = .black
+        btn.addTarget(self, action: #selector(handleDismissal), for: .touchUpInside)
         return btn
     }()
    
-    let btnGo : UIButton = {
+    let  btnGo : UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Drive Git", for: .normal)
         btn.titleLabel?.font = UIFont(name: Utilities.font, size: 14)
@@ -60,6 +76,7 @@ class PopUpWindow : UIView {
         btn.layer.cornerRadius = 5
         btn.setBackgroundColor(color: .mainColor(), forState: .normal)
         btn.setTitleColor(.white, for: .normal)
+     
         return btn
     }()
     let btnAdd : UIButton = {
@@ -68,8 +85,9 @@ class PopUpWindow : UIView {
          btn.titleLabel?.font = UIFont(name: Utilities.font, size: 14)
          btn.clipsToBounds = true
          btn.layer.cornerRadius = 5
-         btn.setBackgroundColor(color: .darkGray, forState: .normal)
+         btn.setBackgroundColor(color: .lightRed, forState: .normal)
          btn.setTitleColor(.white, for: .normal)
+      
          return btn
      }()
     // MARK: - Init
@@ -82,15 +100,15 @@ class PopUpWindow : UIView {
    
         
     }
-    
-    private func configure(){
+  
+    private func configure(val : String!){
         
         addSubview(btnCancel)
         btnCancel.anchor(top: topAnchor, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 30, heigth: 30)
         
         addSubview(link)
         
-        link.anchor(top: btnCancel.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 20, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 50)
+        link.anchor(top: btnCancel.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 50)
   
       
         let stack = UIStackView(arrangedSubviews: [btnGo,btnAdd])
@@ -112,4 +130,12 @@ class PopUpWindow : UIView {
     @objc func handleDismissal() {
         delegate?.handleDismissal()
     }
+    @objc func addLink(){
+        guard let _target = target else { return }
+        delegate?.addTarget(_target)
+      }
+    @objc func go(){
+          guard let _target = target else { return }
+        delegate?.goDrive(_target)
+      }
 }

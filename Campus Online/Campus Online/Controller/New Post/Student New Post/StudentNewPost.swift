@@ -170,6 +170,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     
     //MARK: - func
     
+    private func goToLink(_ target : String)
+    {  if let url = URL(string: target){
+                        UIApplication.shared.open(url) }
+        
+    }
     fileprivate func rigtBarButton() {
            //        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
            
@@ -244,18 +249,21 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
       popUpWindow.heightAnchor.constraint(equalToConstant: view.frame.width - 200).isActive = true
       popUpWindow.widthAnchor.constraint(equalToConstant: view.frame.width - 44).isActive = true
       
-      popUpWindow.showSuccessMessage = success
+//      popUpWindow.showSuccessMessage = success
         popUpWindow.target = target
 //      success = !success
       
-      popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-      popUpWindow.alpha = 0
+   
+//      popUpWindow.alpha = 0
       
       UIView.animate(withDuration: 0.5) {
+        self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
           self.visualEffectView.alpha = 1
           self.popUpWindow.alpha = 1
           self.popUpWindow.transform = CGAffineTransform.identity
+           
       }
+    return
   }
     
     private func getSizeOfData(data : [SelectedData]) -> String {
@@ -563,26 +571,16 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
         case .choosePicture(_):
             break
         case .googleDrive(_):
-            handleShowPopUp(target: "google drive")
-//            if let url = URL(string: "https://drive.google.com") {
-//                UIApplication.shared.open(url)
-//            }
+            handleShowPopUp(target: DriveLinks.googleDrive.descrpiton)
         case .dropBox(_):
-            if let url = URL(string: "https://www.dropbox.com"){
-                UIApplication.shared.open(url)
-            }
+            handleShowPopUp(target: DriveLinks.dropbox.descrpiton)
         case .yandexDisk(_):
-            if let url = URL(string: "https://disk.yandex.com.tr"){
-                UIApplication.shared.open(url)
-            }
+            handleShowPopUp(target: DriveLinks.yandex.descrpiton)
         case .iClould(_):
-            if let url = URL(string: "https://www.icloud.com"){
-                UIApplication.shared.open(url)
-            }
+            handleShowPopUp(target: DriveLinks.icloud.descrpiton)
         case .oneDrive(_):
-            if let url = URL(string: "https://onedrive.live.com/"){
-                UIApplication.shared.open(url)
-            }
+            handleShowPopUp(target: DriveLinks.onedrive.descrpiton)
+
         }
     }
     
@@ -590,6 +588,24 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
 }
 
 extension StudentNewPost: PopUpDelegate {
+    func addTarget(_ target: String?)
+    {
+        UIView.animate(withDuration: 0.5, animations: {
+                  self.visualEffectView.alpha = 0
+                  self.popUpWindow.alpha = 0
+                  self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+              }) { (_) in
+                  self.popUpWindow.removeFromSuperview()
+                    print("text \(self.popUpWindow.link.text)")
+                    self.popUpWindow.link.text = ""
+              }
+    }
+    
+    func goDrive(_ target: String?) {
+        guard let target = target else { return }
+        goToLink(target)
+    }
+    
     
     func handleDismissal() {
         UIView.animate(withDuration: 0.5, animations: {
@@ -604,3 +620,5 @@ extension StudentNewPost: PopUpDelegate {
     
     
 }
+
+

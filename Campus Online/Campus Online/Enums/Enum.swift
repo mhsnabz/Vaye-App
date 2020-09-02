@@ -47,4 +47,25 @@ enum MenuOption : Int ,CustomStringConvertible {
        }
 }
 
- 
+ enum DriveLinks {
+     case googleDrive
+     case dropbox
+     case icloud
+     case yandex
+     case onedrive
+     var descrpiton : String {
+         switch self {
+             
+         case .googleDrive:
+             return "https://drive.google.com"
+         case .dropbox:
+              return "https://www.dropbox.com"
+         case .icloud:
+              return "https://www.icloud.com"
+         case .yandex:
+              return "https://disk.yandex.com"
+         case .onedrive:
+              return "https://onedrive.live.com/"
+         }
+     }
+ }

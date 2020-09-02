@@ -24,4 +24,6 @@ protocol ActionSheetLauncherDelegate : class {
 }
 protocol PopUpDelegate : class {
     func handleDismissal()
+    func addTarget(_ target : String?)
+    func goDrive(_ target : String?)
 }
