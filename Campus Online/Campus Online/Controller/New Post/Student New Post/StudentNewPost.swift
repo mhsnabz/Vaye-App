@@ -18,6 +18,7 @@ import Lightbox
 import Gallery
 import SVProgressHUD
 import PDFKit
+import ActiveLabel
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
     
     
@@ -42,12 +43,16 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         let imagee = UIImageView()
         imagee.clipsToBounds = true
         imagee.contentMode = .scaleAspectFit
+        imagee.layer.borderColor = UIColor.lightGray.cgColor
+        imagee.layer.borderWidth = 0.5
+        
         return imagee
         
     }()
     let userName : UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .left
+        
         return lbl
     }()
     let lessonName : UILabel = {
@@ -57,20 +62,22 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         lbl.textColor = .darkGray
         return lbl
     }()
-    lazy var text : UITextView = {
-        let text = UITextView()
-        text.backgroundColor = .white
-        text.font = UIFont(name: Utilities.font, size: 14)
-        text.isEditable = true
-        
-        text.isScrollEnabled = false
-        text.isUserInteractionEnabled = true
-        text.isScrollEnabled = true
-        
-        
-        return text
+//    lazy var text : UITextView = {
+//        let text = UITextView()
+//        text.backgroundColor = .white
+//        text.font = UIFont(name: Utilities.font, size: 14)
+//        text.isEditable = true
+//        text.dataDetectorTypes = [.all]
+//        text.isScrollEnabled = false
+//        text.isUserInteractionEnabled = true
+//        text.isScrollEnabled = true
+//        text.isSelectable = true
+//        return text
+//    }()
+    let text : ActiveLabel = {
+        let lbl = ActiveLabel()
+        return lbl
     }()
-    
   
     lazy var headerView : UIView = {
         let view = UIView()
@@ -152,9 +159,9 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         view.addSubview(text)
         
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 100)
-        text.delegate = self
-        text.isScrollEnabled = true
-        textViewDidChange(text)
+//        text.delegate = self
+//        text.isScrollEnabled = true
+//        textViewDidChange(text)
         
         let stack = UIStackView(arrangedSubviews: [addUser,addImage,addDoc,addPdf])
         stack.axis = .horizontal
@@ -446,3 +453,18 @@ extension URL {
 
 }
 
+extension String {
+    func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+
+        return ceil(boundingBox.height)
+    }
+
+    func width(withConstrainedHeight height: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+
+        return ceil(boundingBox.width)
+    }
+}
