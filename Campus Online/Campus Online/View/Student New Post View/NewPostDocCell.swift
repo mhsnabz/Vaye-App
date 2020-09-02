@@ -13,7 +13,7 @@ class NewPostDocCell: UICollectionViewCell {
         let img = UIImageView()
          img.contentMode = .scaleToFill
          img.backgroundColor = .white
-         img.image = #imageLiteral(resourceName: "doc-holder")
+         img.image = UIImage(named: "doc-holder")
          return img
      }()
      override init(frame: CGRect) {

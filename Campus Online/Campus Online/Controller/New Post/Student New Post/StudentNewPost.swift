@@ -35,7 +35,30 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             navigationItem.title = "Yeni Gönderi"
         }
     }
-    
+    let lbl = UILabel(frame: .zero)
+    let cloudImage : UIImageView = {
+       let img = UIImageView()
+        img.contentMode = .scaleAspectFit
+       
+        return img
+    }()
+    let cloudLink : UIButton = {
+        let btn = UIButton(type: .system)
+
+        btn.titleLabel?.font = UIFont(name: Utilities.font, size: 14)
+        btn.setTitleColor(.systemBlue, for: .normal)
+        return btn
+    }()
+    lazy var cloudDriveLink : UIView = {
+        let v = UIView()
+        v.backgroundColor = .white
+        v.addSubview(cloudImage)
+        cloudImage.anchor(top: nil, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 5, marginLeft: 0, marginBottom: 5, marginRigth: 0, width: 20, heigth: 20)
+        v.addSubview(cloudLink)
+        cloudLink.anchor(top: nil, left: cloudImage.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        cloudLink.centerYAnchor.constraint(equalTo: cloudImage.centerYAnchor).isActive = true
+        return v
+    }()
     var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
@@ -169,7 +192,36 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     
     
     //MARK: - func
-    
+    private func detectLink(_ link : String){
+        let url = NSURL(string: link)
+        let domain = url?.host
+        guard let link = domain else { return }
+        print(link)
+        if link == "drive.google.com" || link == "www.drive.google.com" {
+            self.cloudDriveLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "google-drive")
+            self.cloudLink.setTitle("Google Drive Bağlantısı", for: .normal)
+        }else if link == "dropbox.com" || link == "www.dropbox.com"{
+              self.cloudDriveLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "dropbox")
+            self.cloudLink.setTitle("Dropbox Bağlantısı", for: .normal)
+        }else if link == "icloud.com" || link == "www.icloud.com"{
+              self.cloudDriveLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "icloud")
+            self.cloudLink.setTitle("iCloud Bağlantısı", for: .normal)
+        }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com"{
+              self.cloudDriveLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "yandex-disk")
+            self.cloudLink.setTitle("Yandex Disk Bağlantısı", for: .normal)
+        }else if link == "onedrive.live.com" || link == "www.onedrive.live.com"{
+              self.cloudDriveLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "onedrive")
+            self.cloudLink.setTitle("OneDrive Bağlantısı", for: .normal)
+        }else{
+              self.cloudDriveLink.isHidden = true
+        }
+       
+    }
     private func goToLink(_ target : String)
     {  if let url = URL(string: target){
                         UIApplication.shared.open(url) }
@@ -216,6 +268,9 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         view.addSubview(stack)
         
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
+        view.addSubview(cloudDriveLink)
+        cloudDriveLink.anchor(top: stack.bottomAnchor, left: stack.leftAnchor, bottom: nil, rigth: nil, marginTop: 5, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
+        cloudDriveLink.isHidden = true
 //
 //        view.addSubview(sizeOfData)
 //        sizeOfData.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil
@@ -227,7 +282,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 20, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.anchor(top: cloudDriveLink.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 5, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
         collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
         collectionview.register(NewPostPdfCell.self, forCellWithReuseIdentifier: pdfCell)
         collectionview.register(NewPostDocCell.self, forCellWithReuseIdentifier: docCell)
@@ -594,10 +649,13 @@ extension StudentNewPost: PopUpDelegate {
                   self.visualEffectView.alpha = 0
                   self.popUpWindow.alpha = 0
                   self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-              }) { (_) in
-                  self.popUpWindow.removeFromSuperview()
-                    print("text \(self.popUpWindow.link.text)")
-                    self.popUpWindow.link.text = ""
+              }) {[weak self] (_) in
+                  self?.popUpWindow.removeFromSuperview()
+                if let url = self?.popUpWindow.link.text {
+                   self?.detectLink(url)
+                    self?.popUpWindow.link.text = ""
+                }
+                    
               }
     }
     

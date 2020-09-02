@@ -65,7 +65,7 @@ enum MenuOption : Int ,CustomStringConvertible {
          case .yandex:
               return "https://disk.yandex.com"
          case .onedrive:
-              return "https://onedrive.live.com/"
+              return "https://onedrive.live.com"
          }
      }
  }
