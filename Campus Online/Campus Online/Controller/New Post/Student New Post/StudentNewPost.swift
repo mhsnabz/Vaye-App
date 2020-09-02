@@ -30,7 +30,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var data = [SelectedData]()
     var selectedLesson : String? {
         didSet {
-            navigationItem.title = selectedLesson
+            navigationItem.title = "Yeni Gönderi"
         }
     }
     
@@ -62,22 +62,19 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         lbl.textColor = .darkGray
         return lbl
     }()
-//    lazy var text : UITextView = {
-//        let text = UITextView()
-//        text.backgroundColor = .white
-//        text.font = UIFont(name: Utilities.font, size: 14)
-//        text.isEditable = true
-//        text.dataDetectorTypes = [.all]
-//        text.isScrollEnabled = false
-//        text.isUserInteractionEnabled = true
-//        text.isScrollEnabled = true
-//        text.isSelectable = true
-//        return text
-//    }()
-    let text : ActiveLabel = {
-        let lbl = ActiveLabel()
-        return lbl
+    lazy var text : CaptionText = {
+        let text = CaptionText()
+        text.backgroundColor = .white
+        text.font = UIFont(name: Utilities.font, size: 14)
+        text.isEditable = true
+        text.dataDetectorTypes = [.all]
+        text.isScrollEnabled = false
+        text.isUserInteractionEnabled = true
+        text.isScrollEnabled = true
+        text.isSelectable = true
+        return text
     }()
+  
   
     lazy var headerView : UIView = {
         let view = UIView()
@@ -116,6 +113,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         btn.addTarget(self, action: #selector(_addImage), for: .touchUpInside)
         return btn
     }()
+    let addLink : UIButton = {
+           let btn = UIButton(type: .system)
+           btn.setImage(UIImage(named: "link")!.withRenderingMode(.alwaysOriginal), for: .normal)
+           btn.addTarget(self, action: #selector(_addLink), for: .touchUpInside)
+           return btn
+       }()
     
     //MARK:- lifeCycle
     init(currentUser : CurrentUser) {
@@ -128,6 +131,8 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     
     
+   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setNavigationBar()
@@ -135,7 +140,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         configureCollectionView()
         configure()
         hideKeyboardWhenTappedAround()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
+        rigtBarButton()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -146,6 +151,22 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     
     
     //MARK: - func
+    
+    fileprivate func rigtBarButton() {
+           //        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
+           
+        let button: UIButton = UIButton(type: .custom)
+           //set image for button
+        button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
+           //add function for button
+        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
+           //set frame
+        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+           
+           let barButton = UIBarButtonItem(customView: button)
+           //assign button to navigationbar
+           self.navigationItem.rightBarButtonItem = barButton
+       }
     
     func galleryControllerDidCancel(_ controller: GalleryController) {
         controller.dismiss(animated: true, completion: nil)
@@ -159,11 +180,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         view.addSubview(text)
         
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 100)
-//        text.delegate = self
-//        text.isScrollEnabled = true
-//        textViewDidChange(text)
+        text.delegate = self
+        text.isScrollEnabled = true
+        textViewDidChange(text)
         
-        let stack = UIStackView(arrangedSubviews: [addUser,addImage,addDoc,addPdf])
+        let stack = UIStackView(arrangedSubviews: [addUser,addImage,addDoc,addPdf,addLink])
         stack.axis = .horizontal
         stack.spacing = (view.frame.width - 20) / (100)
         stack.alignment = .center
@@ -232,6 +253,9 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         importMenu.delegate = self
         importMenu.modalPresentationStyle = .formSheet
         self.present(importMenu, animated: true, completion: nil)
+    }
+    @objc func _addLink(){
+        
     }
     @objc func _addImage(){
 
@@ -350,7 +374,7 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
        }
        
 }
-
+//MARK: - UITextViewDelegate
 extension StudentNewPost: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
@@ -391,6 +415,7 @@ extension StudentNewPost: UITextViewDelegate {
             }
         }
     }
+    
     
     
 }
