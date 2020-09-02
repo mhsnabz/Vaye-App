@@ -28,6 +28,8 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var collectionview: UICollectionView!
     var heigth : CGFloat = 0.0
     var data = [SelectedData]()
+    var success = true
+    
     var selectedLesson : String? {
         didSet {
             navigationItem.title = "Yeni Gönderi"
@@ -37,6 +39,21 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
+    }()
+    
+    lazy var popUpWindow: PopUpWindow = {
+        let view = PopUpWindow()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 5
+        view.delegate = self
+        return view
+    }()
+    
+    let visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
+        let view = UIVisualEffectView(effect: blurEffect)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     let profileImage : UIImageView = {
@@ -209,11 +226,37 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
         collectionview.register(NewPostPdfCell.self, forCellWithReuseIdentifier: pdfCell)
         collectionview.register(NewPostDocCell.self, forCellWithReuseIdentifier: docCell)
+        view.addSubview(visualEffectView)
+            visualEffectView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+            visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+            visualEffectView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+            
+            visualEffectView.alpha = 0
         
     }
     
 
-  
+    func handleShowPopUp(target : String) {
+      view.addSubview(popUpWindow)
+      popUpWindow.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -80).isActive = true
+      popUpWindow.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+      popUpWindow.heightAnchor.constraint(equalToConstant: view.frame.width - 200).isActive = true
+      popUpWindow.widthAnchor.constraint(equalToConstant: view.frame.width - 44).isActive = true
+      
+      popUpWindow.showSuccessMessage = success
+        popUpWindow.target = target
+//      success = !success
+      
+      popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+      popUpWindow.alpha = 0
+      
+      UIView.animate(withDuration: 0.5) {
+          self.visualEffectView.alpha = 1
+          self.popUpWindow.alpha = 1
+          self.popUpWindow.transform = CGAffineTransform.identity
+      }
+  }
     
     private func getSizeOfData(data : [SelectedData]) -> String {
         var val : Int64 = 0
@@ -259,7 +302,10 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         self.present(importMenu, animated: true, completion: nil)
     }
     @objc func _addLink(){
+        
+        actionSheet.delegate = self
         actionSheet.show()
+        
     }
     @objc func _addImage(){
 
@@ -498,3 +544,63 @@ extension String {
     }
 }
 
+extension StudentNewPost : ActionSheetLauncherDelegate {
+    func didSelect(option: ActionSheetOptions) {
+        switch option {
+        
+        case .removeLesson(_):
+            break
+        case .lessonInfo(_):
+            break
+        case .reportLesson(_):
+            break
+        case .showPicture(_):
+            break
+        case .removePicture(_):
+            break
+        case .takePicture(_):
+            break
+        case .choosePicture(_):
+            break
+        case .googleDrive(_):
+            handleShowPopUp(target: "google drive")
+//            if let url = URL(string: "https://drive.google.com") {
+//                UIApplication.shared.open(url)
+//            }
+        case .dropBox(_):
+            if let url = URL(string: "https://www.dropbox.com"){
+                UIApplication.shared.open(url)
+            }
+        case .yandexDisk(_):
+            if let url = URL(string: "https://disk.yandex.com.tr"){
+                UIApplication.shared.open(url)
+            }
+        case .iClould(_):
+            if let url = URL(string: "https://www.icloud.com"){
+                UIApplication.shared.open(url)
+            }
+        case .oneDrive(_):
+            if let url = URL(string: "https://onedrive.live.com/"){
+                UIApplication.shared.open(url)
+            }
+        }
+    }
+    
+    
+}
+
+extension StudentNewPost: PopUpDelegate {
+    
+    func handleDismissal() {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popUpWindow.alpha = 0
+            self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { (_) in
+            self.popUpWindow.removeFromSuperview()
+            print("Did remove pop up window..")
+        }
+    }
+    
+    
+}

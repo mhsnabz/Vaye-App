@@ -43,9 +43,7 @@ struct ActionSheetViewModel {
     
     
 }
-enum ActionSheetOptions    {
-    
-    
+enum ActionSheetOptions{
     case removeLesson(CurrentUser)
     case lessonInfo(CurrentUser)
     case reportLesson(CurrentUser)

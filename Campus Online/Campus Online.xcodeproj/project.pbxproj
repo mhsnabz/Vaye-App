@@ -35,6 +35,7 @@
 		6613340D24F51294002677AB /* GizlilikPolitikasi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6613340C24F51294002677AB /* GizlilikPolitikasi.swift */; };
 		6613341124F6886E002677AB /* StudentNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6613341024F6886E002677AB /* StudentNumberVC.swift */; };
 		6613341324F68DFF002677AB /* CurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6613341224F68DFF002677AB /* CurrentUser.swift */; };
+		6618F6A825003840005E5873 /* PopUpWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6618F6A725003840005E5873 /* PopUpWindow.swift */; };
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
 		6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */; };
@@ -124,6 +125,7 @@
 		6613340C24F51294002677AB /* GizlilikPolitikasi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GizlilikPolitikasi.swift; sourceTree = "<group>"; };
 		6613341024F6886E002677AB /* StudentNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentNumberVC.swift; sourceTree = "<group>"; };
 		6613341224F68DFF002677AB /* CurrentUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUser.swift; sourceTree = "<group>"; };
+		6618F6A725003840005E5873 /* PopUpWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpWindow.swift; sourceTree = "<group>"; };
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
 		6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuFooter.swift; sourceTree = "<group>"; };
@@ -324,6 +326,7 @@
 				6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */,
 				665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */,
 				665E5CD324FFB5BE00B5B5E3 /* CaptionText.swift */,
+				6618F6A725003840005E5873 /* PopUpWindow.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -892,6 +895,7 @@
 				665E5CCE24FE7FD300B5B5E3 /* SelectedData.swift in Sources */,
 				66F25F1524F6E8E9005B0591 /* FakulteCell.swift in Sources */,
 				6613340624F43CD5002677AB /* ChooseSchoolCell.swift in Sources */,
+				6618F6A825003840005E5873 /* PopUpWindow.swift in Sources */,
 				66D911CF24EEA9E8002D760A /* AppDelegate.swift in Sources */,
 				661333FA24F3FDF2002677AB /* ForgetPasswordVC.swift in Sources */,
 				66D9120524EEAA5B002D760A /* Enum.swift in Sources */,
