@@ -53,6 +53,7 @@ enum MenuOption : Int ,CustomStringConvertible {
      case icloud
      case yandex
      case onedrive
+    case mega
      var descrpiton : String {
          switch self {
              
@@ -66,6 +67,8 @@ enum MenuOption : Int ,CustomStringConvertible {
               return "https://disk.yandex.com"
          case .onedrive:
               return "https://onedrive.live.com"
+         case .mega:
+            return "https://mega.nz"
          }
      }
  }

@@ -209,14 +209,18 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
               self.cloudDriveLink.isHidden = false
             self.cloudImage.image = UIImage(named: "icloud")
             self.cloudLink.setTitle("iCloud Bağlantısı", for: .normal)
-        }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com"{
+        }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com" || link == "yadi.sk"{
               self.cloudDriveLink.isHidden = false
             self.cloudImage.image = UIImage(named: "yandex-disk")
             self.cloudLink.setTitle("Yandex Disk Bağlantısı", for: .normal)
-        }else if link == "onedrive.live.com" || link == "www.onedrive.live.com"{
+        }else if link == "onedrive.live.com" || link == "www.onedrive.live.com" || link == "1drv.ms"{
               self.cloudDriveLink.isHidden = false
             self.cloudImage.image = UIImage(named: "onedrive")
             self.cloudLink.setTitle("OneDrive Bağlantısı", for: .normal)
+        }else if link == "mega.nz" || link == "www.mega.nz"{
+              self.cloudDriveLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "mega")
+            self.cloudLink.setTitle("Mega.nz Bağlantısı", for: .normal)
         }else{
               self.cloudDriveLink.isHidden = true
         }
@@ -224,7 +228,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     private func goToLink(_ target : String)
     {  if let url = URL(string: target){
-                        UIApplication.shared.open(url) }
+        UIApplication.shared.open(url) }
         
     }
     fileprivate func rigtBarButton() {
@@ -635,7 +639,8 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
             handleShowPopUp(target: DriveLinks.icloud.descrpiton)
         case .oneDrive(_):
             handleShowPopUp(target: DriveLinks.onedrive.descrpiton)
-
+        case .mega(_):
+            handleShowPopUp(target: DriveLinks.mega.descrpiton)
         }
     }
     
@@ -651,6 +656,7 @@ extension StudentNewPost: PopUpDelegate {
                   self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
               }) {[weak self] (_) in
                   self?.popUpWindow.removeFromSuperview()
+             
                 if let url = self?.popUpWindow.link.text {
                    self?.detectLink(url)
                     self?.popUpWindow.link.text = ""

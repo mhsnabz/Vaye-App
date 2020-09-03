@@ -27,6 +27,7 @@ struct ActionSheetViewModel {
                   result.append(.oneDrive(currentUser))
                   result.append(.dropBox(currentUser))
                   result.append(.yandexDisk(currentUser))
+                  result.append(.mega(currentUser))
                   result.append(.iClould(currentUser))
               }
         
@@ -56,6 +57,7 @@ enum ActionSheetOptions{
     case yandexDisk(CurrentUser)
     case iClould(CurrentUser)
     case oneDrive(CurrentUser)
+    case mega(CurrentUser)
     var description : String {
         switch self {
         case .lessonInfo(_): return "Ders Hakkında"
@@ -70,6 +72,7 @@ enum ActionSheetOptions{
         case .yandexDisk(_): return "Yandex Disk"
         case .iClould(_):  return "Apple iCloud"
         case .oneDrive(_):return "Microsoft OneDrive"
+        case .mega(_):  return "Mega.nz"
         }
     }
     var image : UIImage {
@@ -99,6 +102,8 @@ enum ActionSheetOptions{
             return UIImage(named: "icloud")!.withRenderingMode(.alwaysOriginal)
         case .oneDrive(_):
              return UIImage(named: "onedrive")!.withRenderingMode(.alwaysOriginal)
+        case .mega(_):
+            return UIImage(named: "mega")!.withRenderingMode(.alwaysOriginal)
         }
     }
 }

@@ -378,6 +378,8 @@ extension LessonList : ActionSheetLauncherDelegate {
             break
         case .oneDrive(_):
             break
+        case .mega(_):
+            break
         }
     }
     

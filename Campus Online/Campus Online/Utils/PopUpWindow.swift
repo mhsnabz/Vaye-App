@@ -29,6 +29,8 @@ class PopUpWindow : UIView {
                    btnGo.setTitle("Dropbox'a Git", for: .normal)
             }else if target == DriveLinks.icloud.descrpiton{
                    btnGo.setTitle("iClould'a Git", for: .normal)
+            }else if target == DriveLinks.mega.descrpiton{
+                 btnGo.setTitle("Mega.nz'ye Git", for: .normal)
             }
             btnAdd.addTarget(self, action: #selector(addLink), for: .touchUpInside)
             btnGo.addTarget(self, action: #selector(go), for: .touchUpInside)

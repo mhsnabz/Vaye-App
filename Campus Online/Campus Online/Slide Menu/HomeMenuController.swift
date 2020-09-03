@@ -268,6 +268,8 @@ extension HomeMenuController : ActionSheetLauncherDelegate {
             break
         case .oneDrive(_):
             break
+        case .mega(_):
+            break
         }
         
     }
