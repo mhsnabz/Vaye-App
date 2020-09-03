@@ -105,7 +105,7 @@ class ActionSheetLauncher : NSObject {
             let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
             self.blackView.alpha = 0
             self.tableView.frame.origin.y += heigth
-            self.tableView.reloadData()
+          
         }
     }
 }
@@ -133,6 +133,7 @@ extension ActionSheetLauncher : UITableViewDataSource,UITableViewDelegate {
                 self.blackView.alpha = 0
                 self.showTableView(false)
         }) { (_) in
+             self.tableView.reloadData()
             self.delegate?.didSelect(option: option)
         }
     }
