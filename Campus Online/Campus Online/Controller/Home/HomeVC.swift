@@ -14,12 +14,7 @@ class HomeVC: UIViewController {
     //MARK: -properties
     var centerController : UIViewController!
     var delegate : HomeControllerDelegate?
-    var currentUser : CurrentUser?{
-        didSet{
-            navigationItem.title = currentUser?.bolum
-            
-        }
-    }
+    var currentUser : CurrentUser
     var isMenuOpen : Bool = false
     var barTitle : String?
     var menu = UIButton()
@@ -58,7 +53,7 @@ class HomeVC: UIViewController {
             navigationItem.leftBarButtonItem = rigthBtn
             navigationItem.rightBarButtonItem = leftBtn
         }
-        
+        navigationItem.title = currentUser.bolum
         setNavigationBar()
         UserService.shared.fetchUser {[weak self] (currentUser) in
             self?.currentUser = currentUser
@@ -69,13 +64,12 @@ class HomeVC: UIViewController {
 
         newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
         newPostButton.layer.cornerRadius = 25
+       
     
     }
     //MARK: - functions
     @objc func newPost(){
-        guard let currentUser = currentUser else {
-            return
-        }
+      
         let vc = ChooseLessonTB(currentUser: currentUser)
         centerController = UINavigationController(rootViewController: vc)
         centerController.modalPresentationStyle = .fullScreen
@@ -83,9 +77,9 @@ class HomeVC: UIViewController {
         
     }
     @objc func setLessons(){
-        guard let user = currentUser else { return }
-        let vc = LessonList(currentUser: user)
-        vc.currentUser = user
+
+        let vc = LessonList(currentUser: currentUser)
+        vc.currentUser = currentUser
         vc.modalPresentationStyle = .fullScreen
         if #available(iOS 13.0, *) {
             vc.isModalInPresentation = true
@@ -109,7 +103,7 @@ class HomeVC: UIViewController {
     // /İSTE/lesson/Bilgisayar Mühendisliği
     
     private func getBolumName(fakulteName : String){
-        guard let currentUser = currentUser else { return }
+
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("fakulte").collection("fakulte").document(fakulteName)
         db.getDocument { (docSnap, err) in

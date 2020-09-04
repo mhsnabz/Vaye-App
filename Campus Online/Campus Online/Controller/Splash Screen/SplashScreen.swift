@@ -27,7 +27,7 @@ class SplashScreen: UIViewController {
         view.addSubview(splahScreen)
         
         view.addSubview(waitAnimation)
-        waitAnimation.anchor(top: nil, left: nil, bottom: view.bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 150, heigth: 303)
+        waitAnimation.anchor(top: nil, left: nil, bottom: view.bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 100, heigth: 200)
         waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waitAnimation.play()
         splahScreen.animationType = .twitter

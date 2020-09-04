@@ -72,3 +72,46 @@ enum MenuOption : Int ,CustomStringConvertible {
          }
      }
  }
+
+enum DataTypes {
+    case image
+    case pdf
+    case doc
+    case pptx
+    var description : String {
+        switch self {
+        case .image:
+            return "jpeg"
+        case .pdf:
+            return "pdf"
+        case .doc:
+            return "doc"
+        case .pptx:
+            return "pptx"
+        }
+    }
+    var contentType : String {
+        switch self {
+        case .image:
+            return "image/jpeg"
+        case .pdf:
+             return "application/pdf"
+        case .doc:
+             return "application/msword"
+        case .pptx:
+             return "application/vnd.ms-powerpoint"
+        }
+    }
+    var mimeType : String {
+        switch self {
+        case .image:
+            return ".jpg"
+        case .pdf:
+            return ".pdf"
+        case .doc:
+            return ".doc"
+        case .pptx:
+            return ".ppt"
+        }
+    }
+}

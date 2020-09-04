@@ -26,47 +26,114 @@ class UploadDataToDatabase : NSObject {
         var uploadedImageUrlsArray = [String]()
         var uploadCount = 0
         let imagesCount = datas.count
-        print(imagesCount)
+
         for data  in 0..<(datas.count) {
-            let dataName = Date().millisecondsSince1970.description
-            
-            let metaDataForImage = StorageMetadata()
-            if type[data] == "jpeg" {
-                
-                metaDataForImage.contentType = "image/jpeg"
+            Utilities.waitProgress(msg: " \(imagesCount) Dosya Yükleniyor ")
+            saveDataToDataBase(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data], uploadCount, imagesCount) { (url) in
+                uploadedImageUrlsArray.append(url)
+                uploadCount += 1
+                print("Number of images successfully uploaded: \(uploadCount)")
+                Utilities.waitProgress(msg: "\(uploadCount). Dosya Yüklendi")
+                if uploadCount == imagesCount{
+                     SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
+                    NSLog("All Images are uploaded successfully, uploadedImageUrlsArray: \(uploadedImageUrlsArray)")
+                    completionHandler(uploadedImageUrlsArray)
+                }
             }
-            Utilities.waitProgress(msg: "\(1). / \(imagesCount) Dosya Yükleniyor ")
-            let storageRef = Storage.storage().reference().child(currentUser.short_school)
-                .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + ".jpg")
-            let uploadTask = storageRef.putData(datas[data], metadata: nil) { (result, err) in
-                if err != nil {
-                    print(err as Any)
-                    return
-                }
-                Storage.storage().reference().child(currentUser.short_school)
-                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + ".jpg").downloadURL {(downloadUrl, err) in
-                        guard let imageUrl = downloadUrl?.absoluteString else {
-                            print("DEBUG :  Image url is null")
-                            return
-                        }
-                        uploadedImageUrlsArray.append(imageUrl)
-                        uploadCount += 1
-                        print("Number of images successfully uploaded: \(uploadCount)")
-                        Utilities.waitProgress(msg: "\(uploadCount). Dosya Yüklendi")
-                         
-                        if uploadCount == imagesCount{
-                             SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
-                            NSLog("All Images are uploaded successfully, uploadedImageUrlsArray: \(uploadedImageUrlsArray)")
-                            completionHandler(uploadedImageUrlsArray)
-                        }
-                }
-                
-                
                 
             }
-            observeUploadTaskFailureCases(uploadTask : uploadTask)
-            uploadFiles(uploadTask: uploadTask , count : uploadCount)
+
         }
+        
+    }
+
+
+
+func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
+    let metaDataForData = StorageMetadata()
+    let dataName = Date().millisecondsSince1970.description
+ 
+    if type == DataTypes.doc.description
+    {
+        metaDataForData.contentType = DataTypes.doc.contentType
+        let storageRef = Storage.storage().reference().child(currentUser.short_school)
+            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType)
+        let uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
+            if err != nil
+            {  print("err \(err as Any)") }
+            else {
+               Storage.storage().reference().child(currentUser.short_school)
+                .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
+                    guard let dataUrl = url?.absoluteString else {
+                        print("DEBUG :  Image url is null")
+                        return
+                    }
+                    completion(dataUrl)
+                    
+                }
+            }
+            
+        }
+        observeUploadTaskFailureCases(uploadTask : uploadTask)
+//        uploadFiles(uploadTask: uploadTask , count : uploadCount)
+
+        
+    }else if type == DataTypes.pdf.description
+    {
+        metaDataForData.contentType = DataTypes.pdf.contentType
+        
+        metaDataForData.contentType = DataTypes.pdf.contentType
+              let storageRef = Storage.storage().reference().child(currentUser.short_school)
+                  .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
+              let uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
+                  if err != nil
+                  {  print("err \(err as Any)") }
+                  else {
+                     Storage.storage().reference().child(currentUser.short_school)
+                      .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
+                          guard let dataUrl = url?.absoluteString else {
+                              print("DEBUG :  Image url is null")
+                              return
+                          }
+                          completion(dataUrl)
+                          
+                      }
+                  }
+                  
+              }
+              observeUploadTaskFailureCases(uploadTask : uploadTask)
+//              uploadFiles(uploadTask: uploadTask , count : uploadCount)
+        
+    }else if type == DataTypes.pptx.description
+    {
+        metaDataForData.contentType = DataTypes.pptx.contentType
+        
+    }else if type == DataTypes.image.description
+    {
+        metaDataForData.contentType = DataTypes.image.contentType
+     
+ 
+              let storageRef = Storage.storage().reference().child(currentUser.short_school)
+                  .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
+              let uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
+                  if err != nil
+                  {  print("err \(err as Any)") }
+                  else {
+                     Storage.storage().reference().child(currentUser.short_school)
+                      .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                          guard let dataUrl = url?.absoluteString else {
+                              print("DEBUG :  Image url is null")
+                              return
+                          }
+                          completion(dataUrl)
+                          
+                      }
+                  }
+                  
+              }
+              observeUploadTaskFailureCases(uploadTask : uploadTask)
+//              uploadFiles(uploadTask: uploadTask , count : uploadCount)
+        
         
     }
 }
@@ -94,39 +161,38 @@ func observeUploadTaskFailureCases(uploadTask : StorageUploadTask){
         }
     }
 }
-func uploadFiles(uploadTask : StorageUploadTask , count : Int)
-{
-    uploadTask.observe(.progress) {  snapshot in
+//func uploadFiles(uploadTask : StorageUploadTask , count : Int)
+//{
+//    uploadTask.observe(.progress) {  snapshot in
 //        print(snapshot.progress as Any) //
 //        print("dosya \(count) yükleniyor")
 //        let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
 //            / Float(snapshot.progress!.totalUnitCount)
-//
-//        SVProgressHUD.showProgress(percentComplete, status: "Resim Yükleniyor \n \(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
-//           Utilities.waitProgress(msg: "Dosylar Yükleniyor")
-    }
-//    uploadTask.observe(.success) { (snap) in
-//
-//        switch (snap.status) {
-//
-//        case .unknown:
-//            break
-//        case .resume:
-//            break
-//        case .progress:
-//
-//            break
-//        case .pause:
-//            break
-//        case .success:
-//            break:
-////            SVProgressHUD.showSuccess(withStatus: "Yüklendi")
-//        case .failure:
-//            break
-//        @unknown default:
-//            break
-//        }
-//
+//        print("upload : \(percentComplete)")
+//        SVProgressHUD.showProgress(percentComplete, status: "\(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
 //    }
-    
-}
+////    uploadTask.observe(.success) { (snap) in
+////
+////        switch (snap.status) {
+////
+////        case .unknown:
+////            break
+////        case .resume:
+////            break
+////        case .progress:
+////
+////            break
+////        case .pause:
+////            break
+////        case .success:
+////            break:
+//////            SVProgressHUD.showSuccess(withStatus: "Yüklendi")
+////        case .failure:
+////            break
+////        @unknown default:
+////            break
+////        }
+////
+////    }
+//
+//}
