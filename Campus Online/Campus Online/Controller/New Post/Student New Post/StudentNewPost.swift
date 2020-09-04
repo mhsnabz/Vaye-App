@@ -23,6 +23,7 @@ import ActiveLabel
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
     
     private var actionSheet : ActionSheetLauncher
+    private var addUserSheet : AddUserLaunher
     var gallery: GalleryController!
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
@@ -164,6 +165,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
         self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.drive.description)
+        self.addUserSheet = AddUserLaunher(currentUser: currentUser)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -347,8 +349,9 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         }
         UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
     }
-    @objc func _addUser(){
-        
+    @objc func _addUser()
+    {
+        addUserSheet.show()
     }
     @objc func _addPdf(){
         let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
@@ -407,17 +410,14 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
-        
-        
         controller.dismiss(animated: true) {
-            
             for image  in images {
                 image.resolve { (img) in
                     if let img_data = img!.jpegData(compressionQuality: 0.8){
                         self.data.append(SelectedData.init(data : img_data , type : DataTypes.image.description))
                         self.collectionview.reloadData()
                         
-                    } 
+                    }
                 }
             }
         }
@@ -518,9 +518,7 @@ extension StudentNewPost: UITextViewDelegate {
                     textView.isScrollEnabled = true // textView.isScrollEnabled = false for swift 4.0
                     constraint.constant = estimatedSize.height
                     heigth = estimatedSize.height
-                    
                 }
-                //                  constraint.constant = estimatedSize.height
             }
         }
     }
@@ -571,7 +569,8 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         
         
     }
-    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
+    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController)
+    {
         documentPicker.delegate = self
         present(documentPicker, animated: true, completion: nil)
     }
