@@ -17,7 +17,7 @@ class SettingCell: UITableViewCell {
     }()
     let lbl : UILabel = {
        let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.fontBold, size: 15)
+        lbl.font = UIFont(name: Utilities.font, size: 13)
         lbl.textColor = .black
         lbl.textAlignment = .left
         return lbl
@@ -35,7 +35,7 @@ class SettingCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: "id")
         addSubview(img)
-        img.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 40, heigth: 40)
+        img.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 25, heigth: 25)
         img.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         addSubview(lbl)
         lbl.anchor(top: nil, left: img.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
