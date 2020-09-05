@@ -252,9 +252,9 @@ class LessonList: UITableViewController {
                 //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
                 let abc = Firestore.firestore().collection(currentUser.short_school)
                     .document("lesson").collection(currentUser.bolum)
-                    .document(lessonName!).collection("fallowers").document(currentUser.uid)
+                    .document(lessonName!).collection("fallowers").document(currentUser.username)
             
-                let dict = ["name":currentUser.name as Any,"email":currentUser.email as Any,"number":currentUser.number as Any,"thumb_image":currentUser.thumb_image ?? ""] as [String:Any]
+                let dict = ["username":currentUser.username as Any,"name":currentUser.name as Any,"email":currentUser.email as Any,"number":currentUser.number as Any,"thumb_image":currentUser.thumb_image ?? ""] as [String:Any]
                 abc.setData(dict, merge: true) { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg : "Ders Eklendi")

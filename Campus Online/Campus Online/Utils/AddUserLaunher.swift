@@ -15,7 +15,7 @@ class AddUserLaunher : NSObject {
     private var tableViewHeight : CGFloat?
     private let tableView = UITableView()
     private var window : UIWindow?
-    
+    let searchBar = UISearchBar()
     //MARK: -properties
     private lazy var cancelButton : UIButton = {
         let button = UIButton(type: .system)
@@ -37,12 +37,18 @@ class AddUserLaunher : NSObject {
         cancelButton.layer.cornerRadius = 20
         return view
     }()
+    private lazy var headerView : UIView = {
+        let view = UIView()
+        view.addSubview(searchBar)
+        searchBar.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        searchBar.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 0)
+        return view
+    }()
     
     private lazy var blackView : UIView = {
         let view = UIView()
         view.alpha = 0
         view.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismiss))
         view.addGestureRecognizer(tap)
         return view
@@ -53,6 +59,8 @@ class AddUserLaunher : NSObject {
         self.currentUser = currentUser
         super.init()
         configureTableView()
+        hideKeyboardWhenTappedAround()
+        
     }
     
     //MARK:-functions
@@ -87,7 +95,8 @@ class AddUserLaunher : NSObject {
         self.window = window
         window.addSubview(blackView)
         blackView.frame = window.frame
-        
+        window.addSubview(searchBar)
+        searchBar.anchor(top: window.topAnchor, left: window.leftAnchor, bottom: nil, rigth: window.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
         window.addSubview(tableView)
         let heigth = CGFloat( 300 )
         self.tableViewHeight = heigth
@@ -100,13 +109,22 @@ class AddUserLaunher : NSObject {
         }
         
     }
-    
+    func hideKeyboardWhenTappedAround() {
+        guard let window = UIApplication.shared.windows.first(where: { ($0.isKeyWindow)}) else { return }
+           let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+           tap.cancelsTouchesInView = false
+           window.addGestureRecognizer(tap)
+       }
+
+       @objc func dismissKeyboard() {
+           searchBar.endEditing(true)
+       }
     @objc  func handleDismiss(){
         UIView.animate(withDuration: 0.5) {
             let heigth = CGFloat( 300 )
             self.blackView.alpha = 0
             self.tableView.frame.origin.y += heigth
-            
+          
         }
     }
     
@@ -122,6 +140,11 @@ extension AddUserLaunher : UITableViewDataSource , UITableViewDelegate {
         return cell
     }
   
-       
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return headerView
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
     
 }

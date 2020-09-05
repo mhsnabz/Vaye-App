@@ -21,9 +21,17 @@ import PDFKit
 import ActiveLabel
 
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
-    
+    var viewController : UIViewController!
     private var actionSheet : ActionSheetLauncher
     private var addUserSheet : AddUserLaunher
+    var users : [String]?{
+        didSet{
+            guard let user = users else { return }
+            for i in user {
+                text.text += i
+            }
+        }
+    }
     var gallery: GalleryController!
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
@@ -351,7 +359,10 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     @objc func _addUser()
     {
-        addUserSheet.show()
+        let vc = AddUserTB(currentUser: currentUser)
+        viewController = UINavigationController(rootViewController: vc)
+        viewController.modalPresentationStyle = .fullScreen
+        self.present(viewController, animated: false, completion: nil)
     }
     @objc func _addPdf(){
         let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)

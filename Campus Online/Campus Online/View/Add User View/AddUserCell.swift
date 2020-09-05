@@ -46,12 +46,11 @@ class AddUserCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: "id")
         addSubview(img)
-        img.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 45, heigth: 45)
-        img.layer.cornerRadius = 45 / 2
+        img.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 40, heigth: 40)
+        img.layer.cornerRadius = 40 / 2
         img.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         let stac = UIStackView(arrangedSubviews: [name,userName])
         stac.axis = .vertical
-        stac.spacing = 4
         stac.distribution = .fillEqually
         stac.alignment = .leading
         
