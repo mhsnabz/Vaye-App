@@ -11,8 +11,10 @@ private let cellId = "cellId"
 import FirebaseFirestore
 import SDWebImage
 class AddUserTB: UITableViewController {
+ 
     
     //MARK:- properties
+  
     let searchBar = UISearchBar()
     var currentUser : CurrentUser
     var users = [LessonFallowerUser]()
@@ -91,21 +93,16 @@ class AddUserTB: UITableViewController {
           return 50
       }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-     
-    
-        user?.append(self.users[indexPath.row].username!)
-        self.dismiss(animated: false) {
-        
-        }
+  
        
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-            let vc = StudentNewPost(currentUser: currentUser)
-            vc.users = self.user
+       
     }
 
 }
+
 extension AddUserTB : UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {

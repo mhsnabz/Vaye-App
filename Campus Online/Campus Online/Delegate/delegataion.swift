@@ -27,3 +27,6 @@ protocol PopUpDelegate : class {
     func addTarget(_ target : String?)
     func goDrive(_ target : String?)
 }
+protocol AddUserDelegate : class {
+    func addUser(username : String?)
+}

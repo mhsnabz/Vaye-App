@@ -19,6 +19,7 @@
 		660F5ACD2502D06C00F72558 /* AddUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F5ACC2502D06C00F72558 /* AddUserCell.swift */; };
 		660F5ACF2502E3ED00F72558 /* AddUserTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F5ACE2502E3ED00F72558 /* AddUserTB.swift */; };
 		660F5AD12502F65300F72558 /* LessonFallowerUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F5AD02502F65300F72558 /* LessonFallowerUser.swift */; };
+		660F5AD425033E9600F72558 /* SettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F5AD325033E9600F72558 /* SettingCell.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -113,6 +114,7 @@
 		660F5ACC2502D06C00F72558 /* AddUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserCell.swift; sourceTree = "<group>"; };
 		660F5ACE2502E3ED00F72558 /* AddUserTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserTB.swift; sourceTree = "<group>"; };
 		660F5AD02502F65300F72558 /* LessonFallowerUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonFallowerUser.swift; sourceTree = "<group>"; };
+		660F5AD325033E9600F72558 /* SettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCell.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -258,6 +260,14 @@
 				660F5ACE2502E3ED00F72558 /* AddUserTB.swift */,
 			);
 			path = "Add User View";
+			sourceTree = "<group>";
+		};
+		660F5AD225033C6100F72558 /* Setting View */ = {
+			isa = PBXGroup;
+			children = (
+				660F5AD325033E9600F72558 /* SettingCell.swift */,
+			);
+			path = "Setting View";
 			sourceTree = "<group>";
 		};
 		661333DB24F36C63002677AB /* Setting */ = {
@@ -463,6 +473,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				660F5AD225033C6100F72558 /* Setting View */,
 				660F5ACB2502D04D00F72558 /* Add User View */,
 				6608990924FD6FBD0023E53B /* Student New Post View */,
 				6687921224FB0A8200A43A41 /* ActionSheetCell */,
@@ -882,6 +893,7 @@
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
 				665E5CCA24FE5B0C00B5B5E3 /* UploadDataToDatabase.swift in Sources */,
 				661333FC24F4206A002677AB /* ChooseSchool.swift in Sources */,
+				660F5AD425033E9600F72558 /* SettingCell.swift in Sources */,
 				6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */,
 				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,
 				6613340B24F51272002677AB /* KullanımKosulları.swift in Sources */,

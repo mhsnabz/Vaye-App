@@ -21,17 +21,11 @@ import PDFKit
 import ActiveLabel
 
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
+
     var viewController : UIViewController!
     private var actionSheet : ActionSheetLauncher
     private var addUserSheet : AddUserLaunher
-    var users : [String]?{
-        didSet{
-            guard let user = users else { return }
-            for i in user {
-                text.text += i
-            }
-        }
-    }
+
     var gallery: GalleryController!
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
@@ -273,7 +267,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         text.isScrollEnabled = true
         textViewDidChange(text)
         
-        let stack = UIStackView(arrangedSubviews: [addUser,addImage,addDoc,addPdf,addLink])
+        let stack = UIStackView(arrangedSubviews: [addImage,addDoc,addPdf,addLink])
         stack.axis = .horizontal
         stack.spacing = (view.frame.width - 20) / (100)
         stack.alignment = .center
@@ -309,7 +303,29 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         visualEffectView.alpha = 0
         
     }
-    
+    func convertHashtags(text:String) -> NSAttributedString {
+        let attrString = NSMutableAttributedString(string: text)
+        attrString.beginEditing()
+        // match all hashtags
+        do {
+            // Find all the hashtags in our string
+            let regex = try NSRegularExpression(pattern: "(?:\\s|^)(@(?:[a-zA-Z].*?|\\d+[a-zA-Z]+.*?))\\b", options: NSRegularExpression.Options.anchorsMatchLines)
+            let results = regex.matches(in: text,
+                                        options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, text.count))
+            let array = results.map { (text as NSString).substring(with: $0.range) }
+            for hashtag in array {
+                // get range of the hashtag in the main string
+                let range = (attrString.string as NSString).range(of: hashtag)
+                // add a colour to the hashtag
+                attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemBlue , range: range)
+            }
+            attrString.endEditing()
+        }
+        catch {
+            attrString.endEditing()
+        }
+        return attrString
+    }
     
     func handleShowPopUp(target : String) {
         view.addSubview(popUpWindow)
@@ -346,23 +362,32 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     
     @objc func setNewPost()
     {
-        let date = Date().timeIntervalSince1970.description
-        var val = [Data]()
-        var dataType = [String]()
-        for number in 0..<(data.count) {
-            
-            val.append(data[number].data)
-            
-            dataType.append(data[number].type)
+        
+        guard let text = text.text else { return }
+        let val = text.findMentionText()
+        for i in val {
+              print(i)
         }
-        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
+     
+//        let date = Date().timeIntervalSince1970.description
+//        var val = [Data]()
+//        var dataType = [String]()
+//        for number in 0..<(data.count) {
+//
+//            val.append(data[number].data)
+//
+//            dataType.append(data[number].type)
+//        }
+//        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
+        
     }
     @objc func _addUser()
     {
-        let vc = AddUserTB(currentUser: currentUser)
-        viewController = UINavigationController(rootViewController: vc)
-        viewController.modalPresentationStyle = .fullScreen
-        self.present(viewController, animated: false, completion: nil)
+//        let vc = AddUserTB(currentUser: currentUser)
+//        delegate = self
+//        viewController = UINavigationController(rootViewController: vc)
+//        viewController.modalPresentationStyle = .fullScreen
+//        self.present(viewController, animated: false, completion: nil)
     }
     @objc func _addPdf(){
         let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
@@ -497,7 +522,9 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
 //MARK: - UITextViewDelegate
 extension StudentNewPost: UITextViewDelegate {
     
-    func textViewDidChange(_ textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView)
+    {
+        textView.attributedText = convertHashtags(text: textView.text)
         let size = CGSize(width: view.frame.width, height: 150)
         let estimatedSize = textView.sizeThatFits(size)
         
@@ -532,6 +559,9 @@ extension StudentNewPost: UITextViewDelegate {
                 }
             }
         }
+    }
+    func textViewDidEndEditing(_ textView: UITextView) {
+        textView.attributedText = convertHashtags(text: textView.text)
     }
     
     
@@ -686,5 +716,15 @@ extension StudentNewPost: PopUpDelegate {
     
     
 }
-
-
+extension String {
+    func findMentionText() -> [String] {
+        var arr_hasStrings:[String] = []
+        let regex = try? NSRegularExpression(pattern: "(?:\\s|^)(@(?:[a-zA-Z].*?|\\d+[a-zA-Z]+.*?))\\b", options: [])
+        if let matches = regex?.matches(in: self, options:[], range:NSMakeRange(0, self.count)) {
+            for match in matches {
+                arr_hasStrings.append(NSString(string: self).substring(with: NSRange(location:match.range.location, length: match.range.length )))
+            }
+        }
+        return arr_hasStrings
+    }
+}

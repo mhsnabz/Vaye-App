@@ -108,9 +108,9 @@ class ContainerController: UIViewController {
             self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
             break
         case .set:
-            let vc = Setting()
-            vc.barTitle = "Ayarlar"
-            navigationController?.pushViewController(vc, animated: true)
+            let vc = Setting(currentUser : currentUser)
+            vc.modalPresentationStyle = .fullScreen
+            self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
             break
         case .rate:
             break
@@ -119,6 +119,7 @@ class ContainerController: UIViewController {
                 Utilities.waitProgress(msg: "Çıkış Yapılıyor")
                 try  Auth.auth().signOut()
                 let vc = SplashScreen()
+                vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true) {
                     Utilities.dismissProgress()
                 }
