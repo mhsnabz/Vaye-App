@@ -9,7 +9,7 @@
 import UIKit
 
 class KullanımKosulları: UIViewController {
-    
+
     
     let htmlString = """
     <!DOCTYPE html>
@@ -111,6 +111,7 @@ class KullanımKosulları: UIViewController {
         view.backgroundColor = .white
         self.navigationController?.navigationBar.isHidden = false
         self.navigationItem.title = "Hizmet Koşulları"
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "down-arrow"), style: .plain, target: self, action: #selector(dismis))
         view.addSubview(webView)
         webView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
@@ -120,15 +121,6 @@ class KullanımKosulları: UIViewController {
     @objc func dismis(){
         self.dismiss(animated: true, completion: nil)
     }
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
+  
     
 }

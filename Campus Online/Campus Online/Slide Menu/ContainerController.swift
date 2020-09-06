@@ -110,6 +110,12 @@ class ContainerController: UIViewController {
         case .set:
             let vc = Setting(currentUser : currentUser)
             vc.modalPresentationStyle = .fullScreen
+            if #available(iOS 13.0, *) {
+                     vc.isModalInPresentation = true
+                 } else {
+                     // Fallback on earlier versions
+                 }
+                 
             self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
             break
         case .rate:
