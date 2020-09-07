@@ -46,7 +46,8 @@
 		6618F6A825003840005E5873 /* PopUpWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6618F6A725003840005E5873 /* PopUpWindow.swift */; };
 		6622C23D2505CE2200E3B3F0 /* LessonInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C23C2505CE2200E3B3F0 /* LessonInfo.swift */; };
 		6622C2402505D1DD00E3B3F0 /* LessonInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C23F2505D1DD00E3B3F0 /* LessonInfoCell.swift */; };
-		6622C2422505EA8B00E3B3F0 /* LessonInfoHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeader.swift */; };
+		6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */; };
+		6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */; };
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
 		6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */; };
@@ -147,7 +148,8 @@
 		6618F6A725003840005E5873 /* PopUpWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpWindow.swift; sourceTree = "<group>"; };
 		6622C23C2505CE2200E3B3F0 /* LessonInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfo.swift; sourceTree = "<group>"; };
 		6622C23F2505D1DD00E3B3F0 /* LessonInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoCell.swift; sourceTree = "<group>"; };
-		6622C2412505EA8B00E3B3F0 /* LessonInfoHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeader.swift; sourceTree = "<group>"; };
+		6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeaderOne.swift; sourceTree = "<group>"; };
+		6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
 		6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuFooter.swift; sourceTree = "<group>"; };
@@ -372,8 +374,9 @@
 		6622C23E2505D1C800E3B3F0 /* Lesson Info View */ = {
 			isa = PBXGroup;
 			children = (
+				6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */,
 				6622C23F2505D1DD00E3B3F0 /* LessonInfoCell.swift */,
-				6622C2412505EA8B00E3B3F0 /* LessonInfoHeader.swift */,
+				6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */,
 			);
 			path = "Lesson Info View";
 			sourceTree = "<group>";
@@ -983,6 +986,7 @@
 				66D9120524EEAA5B002D760A /* Enum.swift in Sources */,
 				661333F124F3F858002677AB /* SplashScreen.swift in Sources */,
 				6613341324F68DFF002677AB /* CurrentUser.swift in Sources */,
+				6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */,
 				66D9120924EEAA85002D760A /* ContainerController.swift in Sources */,
 				661333DF24F36C85002677AB /* Setting.swift in Sources */,
 				6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */,
@@ -991,7 +995,7 @@
 				6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */,
 				66E326A624F98FE7004CB61D /* LessonsModel.swift in Sources */,
 				6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */,
-				6622C2422505EA8B00E3B3F0 /* LessonInfoHeader.swift in Sources */,
+				6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */,
 				665E5CD224FEF3EB00B5B5E3 /* NewPostDocCell.swift in Sources */,
 				6687921124FABC2700A43A41 /* ActionSheetLauncher.swift in Sources */,
 				661333F824F3FDE2002677AB /* RegisterVC.swift in Sources */,

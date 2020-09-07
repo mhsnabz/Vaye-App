@@ -9,7 +9,8 @@
 import UIKit
 import FirebaseFirestore
 private let cellId = "Cell"
-private let headerId = "header"
+private let headerIdOne = "header"
+private let headerTwo = "head"
 class LessonInfo: UIViewController {
     var collectionview: UICollectionView!
     var list = [LessonFallowerUser]()
@@ -73,7 +74,8 @@ class LessonInfo: UIViewController {
              collectionview.delegate = self
         collectionview.backgroundColor = .white
         collectionview.register(LessonInfoCell.self, forCellWithReuseIdentifier: cellId)
-        collectionview.register(LessonInfoHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionview.register(LessonInfoHeaderOne.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdOne)
+        collectionview.register(LessonInfoHeaderTwo.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerTwo)
         view.addSubview(collectionview)
         collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
     }
@@ -96,19 +98,20 @@ extension LessonInfo : UICollectionViewDelegate , UICollectionViewDelegateFlowLa
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! LessonInfoHeader
-        if !isExist {
-            
-            header.headerOne.isHidden = false
+        
+        if isExist {
+              let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerIdOne, for: indexPath) as! LessonInfoHeaderOne
             header.headerOne.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 114)
+                   return header
         }else {
-            header.headerTwo.isHidden = false
+              let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerTwo, for: indexPath) as! LessonInfoHeaderTwo
             header.headerTwo.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 40)
+                   return header
         }
-        return header
+ 
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if !isExist{
+        if isExist{
             return CGSize(width: self.view.frame.width, height: 114)
         }else{
             return CGSize(width: self.view.frame.width, height: 40)
