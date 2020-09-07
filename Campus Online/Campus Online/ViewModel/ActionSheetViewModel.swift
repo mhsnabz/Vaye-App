@@ -14,7 +14,7 @@ struct ActionSheetViewModel {
     var imageOptions : [ActionSheetOptions] {
         var result = [ActionSheetOptions]()
         if target == Target.lessonEdit.description {
-            result.append(.removeLesson(currentUser))
+            result.append(.addLesson(currentUser))
             result.append(.lessonInfo(currentUser))
             result.append(.reportLesson(currentUser))
         }else if target == Target.profileEdit.description {
@@ -45,7 +45,7 @@ struct ActionSheetViewModel {
     
 }
 enum ActionSheetOptions{
-    case removeLesson(CurrentUser)
+    case addLesson(CurrentUser)
     case lessonInfo(CurrentUser)
     case reportLesson(CurrentUser)
     case showPicture(CurrentUser)
@@ -61,7 +61,7 @@ enum ActionSheetOptions{
     var description : String {
         switch self {
         case .lessonInfo(_): return "Ders Hakkında"
-        case .removeLesson(_) :  return "Dersi Takip Etmeyi Bırak"
+        case .addLesson(_) :  return "Dersi Takip Et"
         case .reportLesson(_) : return "Problem Bildir"
         case .showPicture(_): return  "Profil Resmini Gör"
         case .removePicture(_): return  "Profil Resmini Sil"
@@ -78,8 +78,9 @@ enum ActionSheetOptions{
     var image : UIImage {
         switch self {
             
-        case .removeLesson(_):
-            return UIImage(named: "cancel")!
+        case .addLesson(_):
+            return UIImage(named: "add")!
+           
         case .lessonInfo(_):
             return UIImage(named: "info")!
         case .reportLesson(_):

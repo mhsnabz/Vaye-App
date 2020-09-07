@@ -647,7 +647,7 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
     func didSelect(option: ActionSheetOptions) {
         switch option {
             
-        case .removeLesson(_):
+        case .addLesson(_):
             break
         case .lessonInfo(_):
             break

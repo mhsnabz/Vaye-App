@@ -23,4 +23,22 @@ struct UserService {
             
         }
     }
+    ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/fallowers
+    func fetchFallowers(_ sorthSchoolName: String! , _ major : String!  , _ lessonName : String!,completion : @escaping(LessonFallowerUser) -> Void)
+    {
+        let db = Firestore.firestore().collection(sorthSchoolName)
+            .document("lesson").collection(major).document(lessonName).collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+            if let snapShot = querySnap {
+                    for doc in snapShot.documents {
+                        completion(LessonFallowerUser.init(username: doc.documentID, dic: doc.data()))
+                    }
+                }
+            }else {
+                print("err : \(err?.localizedDescription as Any)")
+            }
+            
+        }
+    }
 }

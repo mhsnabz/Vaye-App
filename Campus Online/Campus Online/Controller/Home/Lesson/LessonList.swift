@@ -5,7 +5,6 @@
 //  Created by mahsun abuzeyitoğlu on 28.08.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
-
 import UIKit
 import FirebaseFirestore
 private let cellId = "cellId"
@@ -21,41 +20,32 @@ class LessonList: UITableViewController {
     var teacherName : String?
     var teacher_id : String?
     var teacher_email : String?
-   
+    
     private var actionSheet : ActionSheetLauncher
     //MARK: -lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-//        let serialQueue = DispatchQueue(label: "serialQueue")
-//        let group = DispatchGroup()
-//        serialQueue.async {
-//
-////            group.leave()
-//        }
-//        DispatchQueue.main.async{
-//            group.wait()
-//            Utilities.dismissProgress()
-//        }
+       
         setNavigationBar()
         self.navigationController?.navigationBar.isHidden = false
         navigationItem.title = "Ders Ekle - Çıkar"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "down-arrow"), style: .plain, target: self, action: #selector(dismissController))
-       
+        
         tableView.separatorStyle = .none
         
         searchBar.sizeToFit()
         searchBar.delegate = self
         showSearchBar(shouldShow: true)
         tableView.register(LessonCell.self, forCellReuseIdentifier: cellId)
-       getLessons()
-       
+        getLessons()
+        
         
     }
-        
+    
     init(currentUser : CurrentUser ){
         self.currentUser = currentUser
         self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.lessonEdit.description)
-       super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -66,21 +56,21 @@ class LessonList: UITableViewController {
     
     private func getLessons(){
         
-            Utilities.waitProgress(msg: nil)
+        Utilities.waitProgress(msg: nil)
         guard let user = currentUser else {
             Utilities.dismissProgress()
             return }
-            //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
-            let db = Firestore.firestore().collection(user.short_school)
-                .document("lesson").collection(user.bolum)
-            db.getDocuments { [weak self] (querySnap, err) in
-                if err == nil {
-                    for doc in querySnap!.documents {
-                        self?.dataSource.append(LessonsModel.init( dic: doc.data()))
-                        self?.tableView.reloadData()
-                    }
+        //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
+        let db = Firestore.firestore().collection(user.short_school)
+            .document("lesson").collection(user.bolum)
+        db.getDocuments { [weak self] (querySnap, err) in
+            if err == nil {
+                for doc in querySnap!.documents {
+                    self?.dataSource.append(LessonsModel.init( dic: doc.data()))
+                    self?.tableView.reloadData()
                 }
             }
+        }
         Utilities.dismissProgress()
         
         
@@ -143,9 +133,9 @@ class LessonList: UITableViewController {
         if isSearching {
             checkExitLesson(lessonName: dataSourceFiltred[indexPath.row].lessonName) { (val) in
                 if val {
-                    cell.mark.image = UIImage(named: "cancel")
-                }else{
                     cell.mark.image = UIImage(named: "add")
+                }else{
+                    cell.mark.image = UIImage(named: "cancel")
                 }
             }
             if currentUser != nil {
@@ -195,39 +185,42 @@ class LessonList: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-           search(shouldShow: false)
+        search(shouldShow: false)
         if isSearching {
             
             checkExitLesson(lessonName: dataSourceFiltred[indexPath.row].lessonName) {[weak self] (val) in
                 if val {
+                    self?.removeLesson(lessonName: self?.dataSourceFiltred[indexPath.row].lessonName, teacherName: self?.dataSourceFiltred[indexPath.row].teacherName, teacherID: self?.dataSourceFiltred[indexPath.row].teacherId, teacherEmail: self?.dataSourceFiltred[indexPath.row].teacherEmail)
+                    
+                    
+                    
+                }else{
                     self?.actionSheet.show()
                     self?.actionSheet.delegate = self
                     self?.teacher_id = self?.dataSourceFiltred[indexPath.row].teacherId
                     self?.teacherName = self?.dataSourceFiltred[indexPath.row].teacherName
                     self?.lesson_name =  self?.dataSourceFiltred[indexPath.row].lessonName
                     self?.teacher_email = self?.dataSourceFiltred[indexPath.row].teacherEmail
-                 
-                }else{
-                    self?.addLesson(lessonName: self?.dataSourceFiltred[indexPath.row].lessonName, teacherName: self?.dataSourceFiltred[indexPath.row].teacherName, teacherID: self?.dataSourceFiltred[indexPath.row].teacherId, teacherEmail: self?.dataSourceFiltred[indexPath.row].teacherEmail)
                 }
             }
             
-           
         }else{
             checkExitLesson(lessonName: dataSource[indexPath.row].lessonName) {[weak self] (val) in
                 if val {
-                       self?.actionSheet.show()
-                      self?.actionSheet.delegate = self
+                    self?.removeLesson(lessonName: self?.dataSource[indexPath.row].lessonName, teacherName: self?.dataSource[indexPath.row].teacherName, teacherID: self?.dataSource[indexPath.row].teacherId, teacherEmail: self?.dataSource[indexPath.row].teacherEmail)
+                    
+                    
+                    
+                }else{
+                    self?.actionSheet.show()
+                    self?.actionSheet.delegate = self
                     self?.teacher_id = self?.dataSource[indexPath.row].teacherId
                     self?.teacherName = self?.dataSource[indexPath.row].teacherName
                     self?.lesson_name =  self?.dataSource[indexPath.row].lessonName
                     self?.teacher_email = self?.dataSource[indexPath.row].teacherEmail
-                   
-                }else{
-                    self?.addLesson(lessonName: self?.dataSource[indexPath.row].lessonName, teacherName: self?.dataSource[indexPath.row].teacherName, teacherID: self?.dataSource[indexPath.row].teacherId, teacherEmail: self?.dataSource[indexPath.row].teacherEmail)
                 }
             }
-     
+            
         }
     }
     
@@ -239,37 +232,37 @@ class LessonList: UITableViewController {
         guard let currentUser = currentUser else {
             Utilities.errorProgress(msg: "Eklenemedi")
             return }
-       
+        
         let dic = ["teacherName":teacherName as Any,
                    "teacherId":teacherID as Any,
                    "teacherEmail":teacherEmail as Any,
                    "lessonName":lessonName!] as [String:Any]
         
-             Firestore.firestore().collection("user")
-                   .document(currentUser.uid).collection("lesson")
-                .document(lessonName!).setData(dic, merge: true) { (err) in
-            if err == nil {
-                //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
-                let abc = Firestore.firestore().collection(currentUser.short_school)
-                    .document("lesson").collection(currentUser.bolum)
-                    .document(lessonName!).collection("fallowers").document(currentUser.username)
-            
-                let dict = ["username":currentUser.username as Any,"name":currentUser.name as Any,"email":currentUser.email as Any,"number":currentUser.number as Any,"thumb_image":currentUser.thumb_image ?? ""] as [String:Any]
-                abc.setData(dict, merge: true) { (err) in
-                    if err == nil {
-                        Utilities.succesProgress(msg : "Ders Eklendi")
-                        self.tableView.reloadData()
-                    }else{
-                        Utilities.errorProgress(msg: "Eklenemedi")
+        Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!).setData(dic, merge: true) { (err) in
+                if err == nil {
+                    //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
+                    let abc = Firestore.firestore().collection(currentUser.short_school)
+                        .document("lesson").collection(currentUser.bolum)
+                        .document(lessonName!).collection("fallowers").document(currentUser.username)
+                    
+                    let dict = ["username":currentUser.username as Any,"name":currentUser.name as Any,"email":currentUser.email as Any,"number":currentUser.number as Any,"thumb_image":currentUser.thumb_image ?? ""] as [String:Any]
+                    abc.setData(dict, merge: true) { (err) in
+                        if err == nil {
+                            Utilities.succesProgress(msg : "Ders Eklendi")
+                            self.tableView.reloadData()
+                        }else{
+                            Utilities.errorProgress(msg: "Eklenemedi")
+                        }
                     }
+                }else{
+                    Utilities.errorProgress(msg: "Eklenemedi")
                 }
-            }else{
-                Utilities.errorProgress(msg: "Eklenemedi")
-            }
         }
     }
     private func checkExitLesson(lessonName : String? ,completion : @escaping (Bool) -> Void){
-       
+        
         guard let lessonName = lessonName else { return }
         guard let user = currentUser else { return }
         let db = Firestore.firestore().collection("user").document(user.uid).collection("lesson").document(lessonName)
@@ -285,18 +278,18 @@ class LessonList: UITableViewController {
     }
     
     private func removeLesson (lessonName : String! ,teacherName : String!, teacherID : String! , teacherEmail : String! ){
-                Utilities.waitProgress(msg: "Ders Siliniyor")
+        Utilities.waitProgress(msg: "Ders Siliniyor")
         guard let currentUser = currentUser else {
-                  Utilities.errorProgress(msg: "Ders Silinemedi")
-                  return }
+            Utilities.errorProgress(msg: "Ders Silinemedi")
+            return }
         let db = Firestore.firestore().collection("user")
-           .document(currentUser.uid).collection("lesson")
-        .document(lessonName!)
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!)
         db.delete { (err) in
             if err == nil {
                 let abc = Firestore.firestore().collection(currentUser.short_school)
-                                  .document("lesson").collection(currentUser.bolum)
-                                  .document(lessonName!).collection("fallowers").document(currentUser.uid)
+                    .document("lesson").collection(currentUser.bolum)
+                    .document(lessonName!).collection("fallowers").document(currentUser.username)
                 abc.delete { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg : "Ders Silindi")
@@ -331,7 +324,6 @@ extension LessonList : UISearchBarDelegate {
         }
         else
         {
-            
             isSearching = true
             dataSourceFiltred = dataSource
             
@@ -349,16 +341,22 @@ extension LessonList : UISearchBarDelegate {
 extension LessonList : ActionSheetLauncherDelegate {
     func didSelect(option: ActionSheetOptions) {
         switch option
-        { 
-        case .removeLesson(_):
-           removeLesson(lessonName: lesson_name!, teacherName: teacherName!, teacherID: teacher_id, teacherEmail: teacher_email!)
+        {
+        case .addLesson(_):
+            addLesson(lessonName: lesson_name!, teacherName: teacherName!, teacherID: teacher_id, teacherEmail: teacher_email!)
             break
         case .lessonInfo(_):
-            print("lesson info")
+            guard let currentUser = currentUser else { return }
+            let vc = LessonInfo(lessonName: lesson_name!, major: currentUser.bolum, sorthSchoolName: currentUser.short_school)
+            centrelController = UINavigationController(rootViewController: vc)
+            centrelController.modalPresentationStyle = .fullScreen
+            self.present(centrelController, animated: true) {
+                return
+            }
             break
         case .reportLesson(_):
             print("report lesson")
-                break
+            break
         case .showPicture(_):
             break
         case .removePicture(_):

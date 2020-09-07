@@ -202,7 +202,7 @@ extension HomeMenuController : MenuHeaderDelegate {
 extension HomeMenuController : ActionSheetLauncherDelegate {
     func didSelect(option: ActionSheetOptions) {
         switch option {
-        case .removeLesson(_):
+        case .addLesson(_):
             break
         case .lessonInfo(_):
             break
@@ -249,6 +249,8 @@ extension HomeMenuController : ActionSheetLauncherDelegate {
                             
                         }
                     }
+                }else{
+                    print("profile image delete err : \(err?.localizedDescription as Any)")
                 }
             }
             break
