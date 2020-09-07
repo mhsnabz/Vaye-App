@@ -22,6 +22,7 @@ class HomeMenuController: UITableViewController {
     var scroolView : UIScrollView?
     var blackBackGround : UIView?
     var uploadTask : StorageUploadTask?
+    var centerController : UIViewController!
     //    private let target : String
     private var actionSheet : ActionSheetLauncher
     let verticalLine : UIView = {
@@ -165,16 +166,9 @@ extension HomeMenuController : MenuHeaderDelegate {
         
         let vc = EditProfile(currentUser : currentUser)
         vc.barTitle = "Profilini Düzenle"
-        
-        vc.modalPresentationStyle = .fullScreen
-        if #available(iOS 13.0, *) {
-            vc.isModalInPresentation = true
-        } else {
-            // Fallback on earlier versions
-        }
-        
-        vc.modalPresentationStyle = .fullScreen
-        self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
+        centerController = UINavigationController(rootViewController: vc)
+        centerController.modalPresentationStyle = .fullScreen
+        self.present(centerController, animated: true, completion: nil)
     }
     
     func dismisMenu() {

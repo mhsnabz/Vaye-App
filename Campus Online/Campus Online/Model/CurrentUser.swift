@@ -20,6 +20,10 @@ class CurrentUser {
     var fakulte : String!
     var uid : String!
     var username : String!
+    var linkedin : String!
+    var instagram : String!
+    var twitter : String!
+    var github : String!
     init(dic : Dictionary<String,Any>) {
         if let email = dic["email"] as? String {
             self.email = email
@@ -57,5 +61,17 @@ class CurrentUser {
         if let username = dic["username"] as? String {
             self.username = username
         }
+        if let instagram = dic["instagram"] as? String {
+                   self.instagram = instagram
+               }
+        if let github = dic["github"] as? String {
+                   self.github = github
+               }
+        if let linkedin = dic["linkedin"] as? String {
+                   self.linkedin = linkedin
+               }
+        if let twitter = dic["twitter"] as? String {
+                   self.twitter = twitter
+               }
     }
 }

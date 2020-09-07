@@ -19,22 +19,37 @@ class EditProfile: UIViewController {
     
     
     //MARK: -init
-    let imageView : UIImageView = {
+    let twitter : UIImageView = {
         let img = UIImageView()
-        img.clipsToBounds = true
-        img.contentMode = .scaleAspectFill
-        img.backgroundColor = .darkGray
-        img.isUserInteractionEnabled = true
-        return img
-    }()
-    let addImage : UIImageView = {
-        let img = UIImageView()
-        img.clipsToBounds = true
         img.contentMode = .scaleAspectFit
-        img.image = UIImage(named: "add")
-        img.isUserInteractionEnabled = true
+        img.image = #imageLiteral(resourceName: "twitter")
         return img
     }()
+    let instagram : UIImageView = {
+        let img = UIImageView()
+        img.contentMode = .scaleAspectFit
+        img.image = #imageLiteral(resourceName: "ig")
+        return img
+    }()
+    let linkedin : UIImageView = {
+        let img = UIImageView()
+        img.contentMode = .scaleAspectFit
+        img.image = #imageLiteral(resourceName: "linkedin")
+        return img
+    }()
+    let username : UIImageView = {
+        let img = UIImageView()
+        img.contentMode = .scaleAspectFit
+        img.image = #imageLiteral(resourceName: "username")
+        return img
+    }()
+    let github : UIImageView = {
+        let img = UIImageView()
+        img.contentMode = .scaleAspectFit
+        img.image = #imageLiteral(resourceName: "github")
+        return img
+    }()
+    
     let userName : TweeAttributedTextField = {
         let txt = TweeAttributedTextField()
         txt.placeholder = "@kullanıcı adınınzı belirleyin"
@@ -43,9 +58,7 @@ class EditProfile: UIViewController {
         txt.lineColor = .darkGray
         txt.textAlignment = .center
         txt.activeLineWidth = 1.5
-        
         txt.animationDuration = 0.7
-        
         txt.infoFontSize = UIFont.smallSystemFontSize
         txt.infoTextColor = .red
         txt.infoAnimationDuration = 0.4
@@ -53,18 +66,86 @@ class EditProfile: UIViewController {
         txt.autocorrectionType = .no
         txt.autocapitalizationType = .none
         txt.returnKeyType = .continue
-        
-        
         return txt
     }()
-    let reg : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle("Kaydet", for: .normal)
-        btn.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 16)
-        btn.addTarget(self, action: #selector(updateUsername), for: .touchUpInside)
-        return btn
+    let _github : TweeAttributedTextField = {
+        let txt = TweeAttributedTextField()
+        txt.placeholder = "@github"
+        txt.font = UIFont(name: Utilities.font, size: 14)!
+        txt.activeLineColor =   UIColor.mainColor()
+        txt.lineColor = .darkGray
+        txt.textAlignment = .center
+        txt.activeLineWidth = 1.5
+        txt.animationDuration = 0.7
+        txt.infoFontSize = UIFont.smallSystemFontSize
+        txt.infoTextColor = .red
+        txt.infoAnimationDuration = 0.4
+        txt.textContentType = .givenName
+        txt.autocorrectionType = .no
+        txt.autocapitalizationType = .none
+        txt.returnKeyType = .continue
+        return txt
     }()
-//  MARK: - lifeCycle
+    
+    let _instagram : TweeAttributedTextField = {
+        let txt = TweeAttributedTextField()
+        txt.placeholder = "@instagram"
+        txt.font = UIFont(name: Utilities.font, size: 14)!
+        txt.activeLineColor =   UIColor.mainColor()
+        txt.lineColor = .darkGray
+        txt.textAlignment = .center
+        txt.activeLineWidth = 1.5
+        txt.animationDuration = 0.7
+        txt.infoFontSize = UIFont.smallSystemFontSize
+        txt.infoTextColor = .red
+        txt.infoAnimationDuration = 0.4
+        txt.textContentType = .givenName
+        txt.autocorrectionType = .no
+        txt.autocapitalizationType = .none
+        txt.returnKeyType = .continue
+        return txt
+    }()
+    
+    let _twitter : TweeAttributedTextField = {
+        let txt = TweeAttributedTextField()
+        txt.placeholder = "@twitter"
+        txt.font = UIFont(name: Utilities.font, size: 14)!
+        txt.activeLineColor =   UIColor.mainColor()
+        txt.lineColor = .darkGray
+        txt.textAlignment = .center
+        txt.activeLineWidth = 1.5
+        txt.animationDuration = 0.7
+        txt.infoFontSize = UIFont.smallSystemFontSize
+        txt.infoTextColor = .red
+        txt.infoAnimationDuration = 0.4
+        txt.textContentType = .givenName
+        txt.autocorrectionType = .no
+        txt.autocapitalizationType = .none
+        txt.returnKeyType = .continue
+        return txt
+    }()
+    
+    let _linkedin : TweeAttributedTextField = {
+        let txt = TweeAttributedTextField()
+        txt.placeholder = "Linked.in profil linki"
+        txt.font = UIFont(name: Utilities.font, size: 14)!
+        txt.activeLineColor =   UIColor.mainColor()
+        txt.lineColor = .darkGray
+        txt.textAlignment = .center
+        txt.activeLineWidth = 1.5
+        txt.animationDuration = 0.7
+        txt.infoFontSize = UIFont.smallSystemFontSize
+        txt.infoTextColor = .red
+        txt.infoAnimationDuration = 0.4
+        txt.textContentType = .givenName
+        txt.autocorrectionType = .no
+        txt.autocapitalizationType = .none
+        txt.returnKeyType = .continue
+        return txt
+    }()
+    
+    
+    //  MARK: - lifeCycle
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
@@ -80,29 +161,75 @@ class EditProfile: UIViewController {
         setNavigationBar()
         navigationItem.title = barTitle ?? ""
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "down-arrow")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(dismis))
-        // Do any additional setup after loading the view.
-        view.addSubview(imageView)
-        imageView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 125, heigth: 125)
-        imageView.layer.cornerRadius = 125 / 2
-        imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive =  true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(imgTapped))
-        imageView.addGestureRecognizer(tap)
-        view.addSubview(addImage)
-        addImage.anchor(top: nil, left: nil, bottom: imageView.bottomAnchor, rigth: imageView.rightAnchor, marginTop: -25, marginLeft: -25, marginBottom: 0, marginRigth:0, width: 25, heigth: 25)
-        let tab = UITapGestureRecognizer(target: self, action: #selector(imgTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Kaydet", style: .plain, target: self, action: #selector(saveDatabase))
+        configureUI()
         
-        addImage.addGestureRecognizer(tab)
-        
+        userName.text = currentUser.username
+        userName.becomeFirstResponder()
+        load()
+    }
+    
+    private func  load() {
+        if currentUser.instagram != ""{
+            _instagram.text = currentUser.instagram
+        }
+        if currentUser.github != ""{
+            _github.text = currentUser.github
+        }
+        if currentUser.twitter != ""{
+            _twitter.text = currentUser.twitter
+        }
+        if currentUser.linkedin != ""{
+            _linkedin.text = currentUser.linkedin
+        }
+    }
+    
+    private func configureUI()
+    {
+        view.addSubview(username)
+        username.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
         view.addSubview(userName)
-        userName.anchor(top: imageView.bottomAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 50, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: view.frame.width - 80 , heigth: 50)
-        userName.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        view.addSubview(reg)
-        reg.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: userName.rightAnchor, marginTop: 12, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
-        Utilities.styleFilledButton(reg)
+        userName.anchor(top: nil, left: username.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 40)
+        userName.centerYAnchor.constraint(equalTo: username.centerYAnchor).isActive = true
+        
+        view.addSubview(github)
+        github.anchor(top: username.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 30, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
+        view.addSubview(_github)
+        _github.anchor(top: nil, left: username.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 40)
+        _github.centerYAnchor.constraint(equalTo: github.centerYAnchor).isActive = true
+        
+        view.addSubview(linkedin)
+        linkedin.anchor(top: github.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 30, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
+        view.addSubview(_linkedin)
+        _linkedin.anchor(top: nil, left: linkedin.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 40)
+        _linkedin.centerYAnchor.constraint(equalTo: linkedin.centerYAnchor).isActive = true
+        
+        view.addSubview(instagram)
+        instagram.anchor(top: linkedin.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 30, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
+        view.addSubview(_instagram)
+        _instagram.anchor(top: nil, left: instagram.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 40)
+        _instagram.centerYAnchor.constraint(equalTo: instagram.centerYAnchor).isActive = true
+        
+        
+        view.addSubview(twitter)
+        twitter.anchor(top: instagram.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 30, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
+        view.addSubview(_twitter)
+        _twitter.anchor(top: nil, left: twitter.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 40)
+        _twitter.centerYAnchor.constraint(equalTo: twitter.centerYAnchor).isActive = true
+        
+        
         
     }
-    @objc func updateUsername(){
+    
+    func updateUsername(){
         guard  userName.text  != nil else {
+            Utilities.dismissProgress()
+            return
+        }
+        if currentUser.username == userName.text {
+            Utilities.dismissProgress()
+            Utilities.succesProgress(msg: "Güncellendi")
+            dismiss(animated: true, completion: nil)
             return
         }
         Utilities.waitProgress(msg: "Lütfen Bekleyin")
@@ -129,6 +256,7 @@ class EditProfile: UIViewController {
                                             if err == nil {
                                                 Utilities.dismissProgress()
                                                 SVProgressHUD.showSuccess(withStatus: "Güncellendi")
+                                                self?.dismiss(animated: true, completion: nil)
                                             }
                                         }
                                         
@@ -136,155 +264,98 @@ class EditProfile: UIViewController {
                                 }
                             }
                         }
-                        
-                        
+                    
                     }
                 }
             }
         }
         
     }
-    func setUserName(){
-        let textInput = userName.text
-        let str2 = textInput!.replacingOccurrences(of: "\\,*,',?,%,$,^,#", with: "", options: .literal, range: nil)
+    func setUserName() {
+        guard let text = userName.text else { return }
+        let textInput = text
+        let str2 = textInput.replacingOccurrences(of: "\\,*,',?,%,$,^,#", with: "", options: .literal, range: nil)
         let username = str2.removingAllWhitespaces.lowercased().stripped
         userName.text  = "@" + username
+        self.currentUser.username = userName.text
         
+        
+    }
+    func setGithub() ->String{
+        guard let text = _github.text else {
+            return ""
+        }
+        
+        if text.isEmpty {
+            self.currentUser.github = ""
+            return ""
+        }
+        
+        let textInput = text
+        let str2 = textInput.replacingOccurrences(of: "@,\\,*,',?,%,$,^,#", with: "", options: .literal, range: nil)
+        let username = str2.removingAllWhitespaces.lowercased().stripped
+        _github.text  = "@" + username
+        self.currentUser.github = _github.text
+        return "@" + username
+    }
+    func setTwitter() -> String{
+        guard let text = _twitter.text else { return ""}
+        if text.isEmpty {
+            self.currentUser.twitter = ""
+            return ""
+        }
+        let textInput = text
+        let str2 = textInput.replacingOccurrences(of: "@,\\,*,',?,%,$,^,#", with: "", options: .literal, range: nil)
+        let username = str2.removingAllWhitespaces.lowercased().stripped
+        _twitter.text  = "@" + username
+        self.currentUser.twitter = _twitter.text
+        return "@" + username
+    }
+    func setInstagram() -> String{
+        guard let text = _instagram.text else { return ""}
+        if text.isEmpty {
+            self.currentUser.instagram = ""
+            return ""
+        }
+        let textInput = text
+        let str2 = textInput.replacingOccurrences(of: "@,\\,*,',?,%,$,^,#", with: "", options: .literal, range: nil)
+        let username = str2.removingAllWhitespaces.lowercased().stripped
+        _instagram.text  = "@" + username
+        self.currentUser.instagram = _instagram.text
+        return "@" + username
+    }
+    func setLinkendin() -> String {
+        guard let url = _linkedin.text else { return ""}
+        if url.isEmpty {
+            self.currentUser.linkedin = ""
+            return ""
+        }
+        self.currentUser.linkedin = url
+        return url
     }
     
     @objc func dismis(){
         self.dismiss(animated: true, completion: nil)
     }
-    @objc func imgTapped(){
-        presentPhotoActionSheet()
+    @objc func saveDatabase()
+    {
+        Utilities.waitProgress(msg: "Güncelleniyor")
+        let dic = ["instagram":setInstagram() , "twitter": setTwitter()  ,"github":setGithub() ,"linkedin":setLinkendin()] as [String:Any]
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+        db.setData(dic, merge: true) { (err) in
+            if err != nil {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                print("profile update err : \(err?.localizedDescription as Any)")
+                return
+            }else {
+                self.updateUsername()
+               
+            }
+            
+        }
     }
     
 }
 
-extension EditProfile : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-    
-    func presentPhotoActionSheet(){
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.addAction(UIAlertAction(title: "Vazgeç", style: .cancel, handler: nil))
-        actionSheet.addAction(UIAlertAction(title: "Profil Resmini Gör", style: .default, handler: {_ in
-            
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Profil Resmini Sil", style: .default, handler: {_ in
-            
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Yeni Bir Resim Çek", style: .default, handler: {[weak self]_ in
-            self?.presentCamera()
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Galeriden Resim Seç", style: .default, handler: {[weak self]_ in
-            self?.presentPhotoPicker()
-        }))
-        present(actionSheet, animated: true)
-        
-    }
-    
-    
-    func presentCamera()
-    {
-        let vc = UIImagePickerController()
-        vc.sourceType = .camera
-        vc.delegate = self
-        vc.allowsEditing = true
-        
-        present(vc, animated: true, completion: nil)
-    }
-    func presentPhotoPicker(){
-        let vc = UIImagePickerController()
-        vc.sourceType = .photoLibrary
-        vc.delegate = self
-        vc.allowsEditing = true
-        
-        present(vc, animated: true, completion: nil)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
-    {
-        picker.dismiss(animated: true, completion: nil)
-        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return}
-        self.imageView.image = selectedImage
-        let metaDataForImage = StorageMetadata()
-        metaDataForImage.contentType = "image/jpeg"
-        guard let uploadData = selectedImage.jpegData(compressionQuality: 0.8) else { return }
-        let filename = "profileImage" + (Auth.auth().currentUser?.uid)!
-        let storageRef = Storage.storage().reference().child("profileImage").child(filename)
-        
-        SVProgressHUD.setBackgroundColor(.black)
-        SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
-        SVProgressHUD.setDefaultStyle(.dark)
-        SVProgressHUD.setBorderColor(.white)
-        
-        SVProgressHUD.setForegroundColor(.white)
-        let uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage) {
-            (metadata , err ) in
-            if err != nil {
-                print("failed upload image")
-                return
-            }
-            
-            Storage.storage().reference().child("profileImage").child(filename).downloadURL {(downloadUrl, err) in
-                guard let profileImageUrl = downloadUrl?.absoluteString else {
-                    print("DEBUG : profile Image url is null")
-                    return
-                }
-                let db = Firestore.firestore()
-                db.collection("user").document(Auth.auth().currentUser!.uid)
-                    .setData(["profileImage" : profileImageUrl], merge: true){
-                        (err) in
-                        if err != nil {
-                            print("failed set prfile image url",err?.localizedDescription as Any)
-                        }
-                        else{
-                            print("succes")
-                            guard let thumb = selectedImage.jpegData(compressionQuality: 0.2) else { return }
-                            let filename = "thumb_image" + (Auth.auth().currentUser?.uid)!
-                            let storageRef = Storage.storage().reference().child("thumb_image").child(filename)
-                            storageRef.putData(thumb, metadata: metaDataForImage) {
-                                (metadata , err ) in
-                                if err != nil {
-                                    print("failed upload image")
-                                    return
-                                }
-                                Storage.storage().reference().child("thumb_image").child(filename).downloadURL { [weak self](downloadUrl, err) in
-                                    guard let thumb_image = downloadUrl?.absoluteString else {
-                                        print("DEBUG : profile Image url is null")
-                                        return
-                                    }
-                                    db.collection("user").document(Auth.auth().currentUser!.uid).setData(["thumb_image":thumb_image], merge: true) { (err) in
-                                        if err == nil {
-                                            Utilities.dismissProgress()
-                                            Utilities.waitProgress(msg: "Lütfen Bekleyin")
-                                            self?.imageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
-                                            self?.imageView.sd_setImage(with: URL(string: thumb_image), placeholderImage: UIImage(named: "holder_img")!)
-                                            let db = Firestore.firestore().collection("user").document(Auth.auth().currentUser!.uid)
-                                            db.getDocument { (docSnap, err) in
-                                                if err == nil {
-                                                    self?.currentUser.thumb_image = thumb_image
-                                                    self?.currentUser.profileImage = profileImageUrl
-                                                    let vc = MainTabbar()
-                                                    vc.currentUser = CurrentUser.init(dic: docSnap!.data()!)
-                                                    SVProgressHUD.showSuccess(withStatus: "Resim Yüklendi")
-                                                    SVProgressHUD.dismiss(withDelay: 1000)
-                                                }}}}}}}
-                }
-                func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-                    picker.dismiss(animated: true, completion: nil)
-                }
-            }
-            
-        }
-        _ = uploadTask.observe(.progress) { snapshot in
-            
-            
-            let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
-                / Float(snapshot.progress!.totalUnitCount)
-            
-            SVProgressHUD.showProgress(percentComplete, status: "Resim Yükleniyor \n \(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
-            
-            print(percentComplete) // NSProgress object
-        }
-    }
-}
+

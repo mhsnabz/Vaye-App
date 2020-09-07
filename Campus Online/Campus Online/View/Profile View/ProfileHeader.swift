@@ -20,6 +20,19 @@ class ProfileHeader : UICollectionReusableView {
             school.text = user.schoolName
             profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
             profileImage.sd_setImage(with: URL(string: user.thumb_image))
+            
+            if user.linkedin == "" {
+                linkedin.isHidden = true
+            }
+            if user.instagram == ""{
+                instagram.isHidden = true
+            }
+            if user.twitter == ""{
+                twitter.isHidden = true
+            }
+            if user.github == ""{
+                github.isHidden = true
+            }
         }
     }
     
@@ -99,6 +112,29 @@ class ProfileHeader : UICollectionReusableView {
         view.backgroundColor = .black
         return view
     }()
+    
+    let github : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "github")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        return btn
+    }()
+    let linkedin : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "linkedin")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        return btn
+    }()
+    
+    let twitter : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "twitter")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        return btn
+    }()
+    let instagram : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "ig")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        return btn
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
@@ -127,8 +163,14 @@ class ProfileHeader : UICollectionReusableView {
         stackFallow.anchor(top: profileImage.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: stackFallowSize.width, heigth: stackFallowSize.height)
         print(stackFallowSize.height + 20 )
         
+        let stackSocial = UIStackView(arrangedSubviews: [github,linkedin,twitter,instagram])
+        stackSocial.axis = .horizontal
+        stackSocial.distribution = .fillEqually
+        stackSocial.spacing = 20
+        addSubview(stackSocial)
+        stackSocial.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
         addSubview(filterView)
-        filterView.anchor(top: stackFallow.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: 40)
+        filterView.anchor(top: stackSocial.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: 40)
         addSubview(underLine)
         underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 3, heigth: 2)
         

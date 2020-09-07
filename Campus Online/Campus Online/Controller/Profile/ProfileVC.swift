@@ -16,8 +16,6 @@ class ProfileVC: UIViewController {
         didSet{
             guard let user = currentUser else { return }
             titleLbl.text = user.username
-            
-            
         }
     }
     
@@ -57,10 +55,6 @@ class ProfileVC: UIViewController {
         super.viewDidLoad()
         configureUI()
        configureCollectionView()
-        
-        
-        
-        
        
     }
     
@@ -104,7 +98,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         return CGSize(width: self.view.frame.width, height: 50)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 200)
+        return CGSize(width: view.frame.width, height: 246)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
