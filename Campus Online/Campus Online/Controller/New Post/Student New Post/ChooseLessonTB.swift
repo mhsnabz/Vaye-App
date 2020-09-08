@@ -15,6 +15,7 @@ class ChooseLessonTB: UITableViewController {
     var dataSourceFilter = [String]()
     var isSearching = false
     let searchBar = UISearchBar()
+    var fallower = [LessonFallowerUser]()
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
@@ -70,19 +71,29 @@ class ChooseLessonTB: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching {
-            let vc = StudentNewPost(currentUser: currentUser)
-            vc.selectedLesson = dataSourceFilter[indexPath.row]
-            navigationController?.pushViewController(vc, animated: true)
+            Utilities.waitProgress(msg: nil)
+                   UserService.shared.fetchFallower(currentUser.short_school, currentUser.bolum, dataSourceFilter[indexPath.row]) { [weak self] (item) in
+                       guard let self = self else { return }
+                       let vc = StudentNewPost(currentUser: self.currentUser, selectedLesson : self.dataSource[indexPath.row], users: item)
+                       vc.selectedLesson = self.dataSource[indexPath.row]
+                       self.navigationController?.pushViewController(vc, animated: true)
+                       Utilities.dismissProgress()
+                   }  
         }else {
-            let vc = StudentNewPost(currentUser: currentUser)
-            vc.selectedLesson = dataSource[indexPath.row]
-            navigationController?.pushViewController(vc, animated: true)
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.fetchFallower(currentUser.short_school, currentUser.bolum, dataSource[indexPath.row]) { [weak self] (item) in
+                guard let self = self else { return }
+                let vc = StudentNewPost(currentUser: self.currentUser, selectedLesson : self.dataSource[indexPath.row], users: item)
+                vc.selectedLesson = self.dataSource[indexPath.row]
+                self.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+            }
         }
     }
 
     //MARK:- functions
     
-    
+   
     func showSearchBar(shouldShow : Bool){
         if shouldShow {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchBarClick))

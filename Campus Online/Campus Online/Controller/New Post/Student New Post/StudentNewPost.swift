@@ -32,12 +32,8 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var heigth : CGFloat = 0.0
     var data = [SelectedData]()
     var success = true
-    
-    var selectedLesson : String? {
-        didSet {
-            navigationItem.title = "Yeni Gönderi"
-        }
-    }
+     var fallowers = [LessonFallowerUser]()
+    var selectedLesson : String
     let lbl = UILabel(frame: .zero)
     let cloudImage : UIImageView = {
         let img = UIImageView()
@@ -132,12 +128,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         return view
     }()
     
-    let addUser : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "add-user")!.withRenderingMode(.alwaysOriginal), for: .normal)
-        btn.addTarget(self, action: #selector(_addUser), for: .touchUpInside)
-        return btn
-    }()
     let addDoc : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "doc")!.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -164,11 +154,15 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }()
     
     //MARK:- lifeCycle
-    init(currentUser : CurrentUser) {
+    init(currentUser : CurrentUser ,selectedLesson : String , users : [LessonFallowerUser]) {
         self.currentUser = currentUser
         self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.drive.description)
         self.addUserSheet = AddUserLaunher(currentUser: currentUser)
+        self.selectedLesson = selectedLesson
+        self.fallowers = users
+        print(self.fallowers.count)
         super.init(nibName: nil, bundle: nil)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -191,9 +185,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         super.viewWillAppear(animated)
         text.becomeFirstResponder()
     }
-    
-    
-    
     
     //MARK: - func
     private func detectLink(_ link : String){
@@ -363,32 +354,27 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     @objc func setNewPost()
     {
         
-        guard let text = text.text else { return }
-        let val = text.findMentionText()
-        for i in val {
-              print(i)
+        let date = Date().timeIntervalSince1970.description
+        var val = [Data]()
+        var dataType = [String]()
+        for number in 0..<(data.count) {
+
+            val.append(data[number].data)
+
+            dataType.append(data[number].type)
         }
-     
-//        let date = Date().timeIntervalSince1970.description
-//        var val = [Data]()
-//        var dataType = [String]()
-//        for number in 0..<(data.count) {
-//
-//            val.append(data[number].data)
-//
-//            dataType.append(data[number].type)
-//        }
-//        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson!, type : dataType , data : val)
+        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson, type : dataType , data : val)
         
     }
-    @objc func _addUser()
-    {
-//        let vc = AddUserTB(currentUser: currentUser)
-//        delegate = self
-//        viewController = UINavigationController(rootViewController: vc)
-//        viewController.modalPresentationStyle = .fullScreen
-//        self.present(viewController, animated: false, completion: nil)
+    //MARK: - getMentions
+    private func getMention(completion : @escaping(String) ->Void){
+        guard let text = text.text else { return }
+            let val = text.findMentionText()
+            for i in val {
+                  completion(i)
+            }
     }
+  
     @objc func _addPdf(){
         let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
         importMenu.delegate = self

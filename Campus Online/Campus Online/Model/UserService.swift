@@ -25,7 +25,7 @@ struct UserService {
     }
     ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/fallowers
     func fetchFallowers(_ sorthSchoolName: String! , _ major : String!  , _ lessonName : String!,completion : @escaping(LessonFallowerUser) -> Void)
-    {
+        {
         let db = Firestore.firestore().collection(sorthSchoolName)
             .document("lesson").collection(major).document(lessonName).collection("fallowers")
         db.getDocuments { (querySnap, err) in
@@ -41,4 +41,26 @@ struct UserService {
             
         }
     }
+    func fetchFallower(_ sorthSchoolName: String! , _ major : String!  , _ lessonName : String!,completion : @escaping([LessonFallowerUser]) -> Void)
+           {
+            var list = [LessonFallowerUser]()
+           let db = Firestore.firestore().collection(sorthSchoolName)
+               .document("lesson").collection(major).document(lessonName).collection("fallowers")
+           db.getDocuments { (querySnap, err) in
+               if err == nil {
+               if let snapShot = querySnap {
+                       for doc in snapShot.documents {
+                        let item = LessonFallowerUser.init(username: doc.documentID, dic: doc.data())
+                        list.append(item)
+                       }
+                  completion(list)
+                   }
+                
+               }else {
+                   print("err : \(err?.localizedDescription as Any)")
+               }
+               
+           }
+       }
+    
 }
