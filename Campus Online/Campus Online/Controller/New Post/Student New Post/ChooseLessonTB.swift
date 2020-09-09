@@ -9,7 +9,6 @@
 import UIKit
 import FirebaseFirestore
 class ChooseLessonTB: UITableViewController {
-
     var currentUser : CurrentUser
     var dataSource = [String]()
     var dataSourceFilter = [String]()
