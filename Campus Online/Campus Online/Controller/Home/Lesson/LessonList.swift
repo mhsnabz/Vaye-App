@@ -37,7 +37,11 @@ class LessonList: UITableViewController {
         searchBar.delegate = self
         showSearchBar(shouldShow: true)
         tableView.register(LessonCell.self, forCellReuseIdentifier: cellId)
-        getLessons()
+        getLessons { (model) in
+            self.dataSource = model
+            self.tableView.reloadData()
+            Utilities.dismissProgress()
+        }
         
         
     }
@@ -54,26 +58,24 @@ class LessonList: UITableViewController {
     
     //MARK: -func
     
-    private func getLessons(){
+    private func getLessons(completion : @escaping([LessonsModel])->Void){
         
         Utilities.waitProgress(msg: nil)
+        var model = [LessonsModel]()
         guard let user = currentUser else {
             Utilities.dismissProgress()
             return }
         //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
         let db = Firestore.firestore().collection(user.short_school)
             .document("lesson").collection(user.bolum)
-        db.getDocuments { [weak self] (querySnap, err) in
+        db.getDocuments {(querySnap, err) in
             if err == nil {
                 for doc in querySnap!.documents {
-                    self?.dataSource.append(LessonsModel.init( dic: doc.data()))
-                    self?.tableView.reloadData()
+                    model.append(LessonsModel.init( dic: doc.data()))
                 }
+                completion(model)
             }
-        }
-        Utilities.dismissProgress()
-        
-        
+        }    
     }
     
     func showSearchBar(shouldShow : Bool){
