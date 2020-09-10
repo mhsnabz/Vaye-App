@@ -30,3 +30,12 @@ protocol PopUpDelegate : class {
 protocol AddUserDelegate : class {
     func addUser(username : String?)
 }
+protocol DeletePdf : class {
+    func deletePdf (for cell : NewPostPdfCell)
+}
+protocol DeleteDoc : class {
+    func deleteDoc(for cell : NewPostDocCell)
+}
+protocol DeleteImage : class  {
+    func deleteImage( for cell : NewPostImageCell)
+}

@@ -78,6 +78,7 @@ enum DataTypes {
     case pdf
     case doc
     case pptx
+    case thumb
     var description : String {
         switch self {
         case .image:
@@ -88,6 +89,8 @@ enum DataTypes {
             return "doc"
         case .pptx:
             return "pptx"
+        case .thumb:
+            return "jpeg"
         }
     }
     var contentType : String {
@@ -100,6 +103,8 @@ enum DataTypes {
              return "application/msword"
         case .pptx:
              return "application/vnd.ms-powerpoint"
+        case .thumb:
+            return "image/jpeg"
         }
     }
     var mimeType : String {
@@ -112,6 +117,8 @@ enum DataTypes {
             return ".doc"
         case .pptx:
             return ".ppt"
+        case .thumb:
+            return ".jpg"
         }
     }
 }

@@ -12,12 +12,16 @@ import FirebaseStorage
 import SVProgressHUD
 class UploadDataToDatabase : NSObject {
     
-    static func uploadDataBase(postDate : String ,currentUser : CurrentUser ,lessonName : String, type : [String] , data : [Data]){
+    static func uploadDataBase(postDate : String ,currentUser : CurrentUser ,lessonName : String, type : [String] , data : [Data] , completion : @escaping([String]) -> Void ){
         
   
         save_datas(date: postDate, currentUser: currentUser, lessonName: lessonName, type: type, datas: data) { (listOfUrl) in
             print("url \(listOfUrl)")
+            completion(listOfUrl)
+
         }
+        
+     
         
         
     }
@@ -48,6 +52,42 @@ class UploadDataToDatabase : NSObject {
     }
 
 
+func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
+        let metaDataForData = StorageMetadata()
+       let dataName = Date().millisecondsSince1970.description
+    
+         if type == DataTypes.image.description
+            {
+                metaDataForData.contentType = DataTypes.image.contentType
+             
+         
+                      let storageRef = Storage.storage().reference().child(currentUser.short_school)
+                          .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(lessonName + "thumb").child(dataName + DataTypes.image.mimeType)
+        //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
+                let image : UIImage = UIImage(data: data)!
+                guard let uploadData = image.jpeg(.low) else { return }
+                      let uploadTask = storageRef.putData(uploadData, metadata: metaDataForData) { (metaData, err) in
+                          if err != nil
+                          {  print("err \(err as Any)") }
+                          else {
+                             Storage.storage().reference().child(currentUser.short_school)
+                              .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(lessonName + "thumb").child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                                  guard let dataUrl = url?.absoluteString else {
+                                      print("DEBUG :  Image url is null")
+                                      return
+                                  }
+                                  completion(dataUrl)
+                                  
+                              }
+                          }
+                          
+                      }
+                      observeUploadTaskFailureCases(uploadTask : uploadTask)
+        //              uploadFiles(uploadTask: uploadTask , count : uploadCount)
+                
+                
+            }
+}
 
 func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
     let metaDataForData = StorageMetadata()
@@ -95,6 +135,7 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
                               print("DEBUG :  Image url is null")
                               return
                           }
+                            
                           completion(dataUrl)
                           
                       }
@@ -115,6 +156,7 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
  
               let storageRef = Storage.storage().reference().child(currentUser.short_school)
                   .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
+
               let uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
                   if err != nil
                   {  print("err \(err as Any)") }
@@ -126,15 +168,11 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
                               return
                           }
                           completion(dataUrl)
-                          
                       }
                   }
                   
               }
               observeUploadTaskFailureCases(uploadTask : uploadTask)
-//              uploadFiles(uploadTask: uploadTask , count : uploadCount)
-        
-        
     }
 }
 
@@ -196,3 +234,30 @@ func observeUploadTaskFailureCases(uploadTask : StorageUploadTask){
 ////    }
 //
 //}
+extension UIImage {
+    enum JPEGQuality: CGFloat {
+        case lowest  = 0
+        case low     = 0.25
+        case medium  = 0.5
+        case high    = 0.75
+        case highest = 1
+    }
+
+    /// Returns the data for the specified image in JPEG format.
+    /// If the image object’s underlying image data has been purged, calling this function forces that data to be reloaded into memory.
+    /// - returns: A data object containing the JPEG data, or nil if there was a problem generating the data. This function may return nil if the image has no data or if the underlying CGImageRef contains data in an unsupported bitmap format.
+    func jpeg(_ jpegQuality: JPEGQuality) -> Data? {
+        return jpegData(compressionQuality: jpegQuality.rawValue)
+    }
+}
+
+struct DatasUrl {
+    let url : String!
+    let type : String!
+    
+}
+extension Int {
+    var byteSize: String {
+        return ByteCountFormatter().string(fromByteCount: Int64(self))
+    }
+}

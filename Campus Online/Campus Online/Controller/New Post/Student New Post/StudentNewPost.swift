@@ -25,7 +25,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var viewController : UIViewController!
     private var actionSheet : ActionSheetLauncher
     private var addUserSheet : AddUserLaunher
-
+    var totolDataInMB : Float = 0.0
     var gallery: GalleryController!
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
@@ -168,10 +168,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setNavigationBar()
@@ -180,6 +176,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         configure()
         hideKeyboardWhenTappedAround()
         rigtBarButton()
+      //  navigationItem.title = "\(totolDataInMB) mb"
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -337,33 +334,63 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     
     private func getSizeOfData(data : [SelectedData]) -> String {
-        var val : Int64 = 0
+        var val : Float = 0
         for item in data {
             let bcf = ByteCountFormatter()
-            bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
+            bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
             bcf.countStyle = .file
             
-            val += Int64(item.data.count)
+            val += Float(item.data.count)
             
         }
-        
-        return "\(val) mb"
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
+
+        formatter.numberStyle = .decimal
+
+        return formatter.string(from: val / (1024 * 1024) as NSNumber) ?? "n/a"
         
     }
-    
+    private func SizeOfData(data : [SelectedData]) -> Float {
+       
+        for item in data {
+            let bcf = ByteCountFormatter()
+            bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
+            bcf.countStyle = .file
+            
+            totolDataInMB += Float(item.data.count)
+            
+        }
+       return totolDataInMB / (1024 * 1024 )
+        
+    }
     @objc func setNewPost()
     {
         
-        let date = Date().timeIntervalSince1970.description
-        var val = [Data]()
-        var dataType = [String]()
-        for number in 0..<(data.count) {
-
-            val.append(data[number].data)
-
-            dataType.append(data[number].type)
+       
+       
+        if SizeOfData(data: data) > 3.90 {
+            Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
         }
-        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson, type : dataType , data : val)
+        
+         
+       print("totol mb  in data \(getSizeOfData(data: data) as Any)")
+        
+//        let date = Date().timeIntervalSince1970.description
+//        var val = [Data]()
+//        var dataType = [String]()
+//        for number in 0..<(data.count) {
+//
+//            val.append(data[number].data)
+//
+//            dataType.append(data[number].type)
+//        }
+//        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
+//            for item in url {
+//                print("datas Url : \(item)")
+//            }
+//        }
         
     }
     //MARK: - getMentions
@@ -438,7 +465,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                     if let img_data = img!.jpegData(compressionQuality: 0.8){
                         self.data.append(SelectedData.init(data : img_data , type : DataTypes.image.description))
                         self.collectionview.reloadData()
-                        
+                        self.navigationItem.title = "\( self.getSizeOfData(data: self.data)) mb"
                     }
                 }
             }
@@ -480,16 +507,19 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! NewPostImageCell
             cell.backgroundColor = .white
+            cell.delegate = self
             cell.img.image = UIImage(data: data[indexPath.row].data)
+            
             return cell
         }else if data[indexPath.row].type == "pdf" {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdfCell, for: indexPath) as! NewPostPdfCell
+            cell.delegate = self
             cell.backgroundColor = .white
             cell.pdfView.document = PDFDocument(data: data[indexPath.row].data)
             return cell
         }else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: docCell, for: indexPath) as! NewPostDocCell
-            
+            cell.delegate = self
             return cell
         }
         
@@ -564,6 +594,7 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
             do {
                 self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
                 self.collectionview.reloadData()
+                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
             }
             catch{
                 print(error)
@@ -574,6 +605,7 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
             do {
                 self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.pdf.description))
                 self.collectionview.reloadData()
+                self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
             }
             catch{
                 print(error)
@@ -582,7 +614,9 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         {
             do {
                 self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
+                
                 self.collectionview.reloadData()
+                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
             }
             catch{
                 print(error)
@@ -713,4 +747,32 @@ extension String {
         }
         return arr_hasStrings
     }
+}
+extension StudentNewPost : DeleteDoc  {
+    func deleteDoc(for cell: NewPostDocCell) {
+        guard let indexPath = self.collectionview.indexPath(for: cell) else { return }
+        data.remove(at: indexPath.row)
+        self.collectionview.reloadData()
+        self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+    }
+}
+extension StudentNewPost : DeleteImage  {
+    func deleteImage(for cell: NewPostImageCell) {
+        guard let indexPath = self.collectionview.indexPath(for: cell) else { return }
+        data.remove(at: indexPath.row)
+        self.collectionview.reloadData()
+        self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+    }
+    
+   
+}
+extension StudentNewPost : DeletePdf {
+    func deletePdf(for cell: NewPostPdfCell) {
+        guard let indexPath = self.collectionview.indexPath(for: cell) else { return }
+        data.remove(at: indexPath.row)
+        self.collectionview.reloadData()
+        self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+    }
+    
+    
 }
