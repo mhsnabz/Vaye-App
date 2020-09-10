@@ -368,29 +368,31 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     @objc func setNewPost()
     {
         
-       
-       
-        if SizeOfData(data: data) > 3.90 {
+        
+        
+        if SizeOfData(data: data) > 14.95 {
             Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
         }
-        
-         
-       print("totol mb  in data \(getSizeOfData(data: data) as Any)")
-        
-//        let date = Date().timeIntervalSince1970.description
-//        var val = [Data]()
-//        var dataType = [String]()
-//        for number in 0..<(data.count) {
-//
-//            val.append(data[number].data)
-//
-//            dataType.append(data[number].type)
-//        }
-//        UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
-//            for item in url {
-//                print("datas Url : \(item)")
-//            }
-//        }
+        Utilities.waitProgress(msg: "Paylaşılıyor")
+        let date = Int64(Date().timeIntervalSince1970 * 1000).description
+        var val = [Data]()
+        var dataType = [String]()
+        let url = [String]()
+        for number in 0..<(data.count) {
+            val.append(data[number].data)
+            dataType.append(data[number].type)
+        }
+        if !data.isEmpty{
+             UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
+                PostService.shared.setNewLessonPost(currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
+                            Utilities.succesProgress(msg: "Paylaşıldı")
+                        }  }
+        }else {
+            PostService.shared.setNewLessonPost(currentUser: currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
+                                       Utilities.succesProgress(msg: "Paylaşıldı")
+                                   }
+        }
+       
         
     }
     //MARK: - getMentions
@@ -666,7 +668,6 @@ extension String {
 extension StudentNewPost : ActionSheetLauncherDelegate {
     func didSelect(option: ActionSheetOptions) {
         switch option {
-            
         case .addLesson(_):
             break
         case .lessonInfo(_):
@@ -695,8 +696,6 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
             handleShowPopUp(target: DriveLinks.mega.descrpiton)
         }
     }
-    
-    
 }
 
 extension StudentNewPost: PopUpDelegate {

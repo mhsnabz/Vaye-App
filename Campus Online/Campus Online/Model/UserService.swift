@@ -16,11 +16,9 @@ struct UserService {
         let db = Firestore.firestore().collection("user")
         .document(uid)
         db.getDocument { (docSnap, err) in
-           
             guard let dic = docSnap?.data() else { return }
             let currentUser = CurrentUser.init(dic: dic)
             completion(currentUser)
-            
         }
     }
     ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/fallowers

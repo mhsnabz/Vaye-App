@@ -13,10 +13,14 @@ class LessonFallowerUser {
     var number : String?
     var thumb_image : String?
     var email : String?
+    var uid : String?
     init(username : String , dic: Dictionary<String,Any>){
         self.username = username
         if let name = dic["name"] as? String {
             self.name = name
+        }
+        if let uid = dic["uid"] as? String {
+            self.uid = uid
         }
         if let number = dic["number"] as? String {
             self.number = number
