@@ -293,6 +293,9 @@ extension UIColor {
     static func cancelColor() -> UIColor {
       return  UIColor.init(red: 241/255, green: 238/255, blue: 246/255, alpha: 1)
        }
+    static func collectionColor () -> UIColor {
+        return UIColor.init(red: 218/255, green: 230/255, blue: 245/255, alpha: 1)
+    }
     
 }
 extension Date {

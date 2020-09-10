@@ -59,17 +59,7 @@ class HomeMenuController: UITableViewController {
         super.viewWillDisappear(animated)
         listener?.remove()
     }
-    //    private func getCurrentUser () {
-    //        guard currentUser == nil else { return }
-    //        let db = Firestore.firestore().collection("user")
-    //            .document(Auth.auth().currentUser!.uid)
-    //        db.getDocument { (docSnap, err) in
-    //            if err == nil {
-    //                self.currentUser = CurrentUser.init(dic: docSnap!.data()!)
-    //                self.tableView.reloadData()
-    //            }
-    //        }
-    //    }
+  
     
     //MARK:- function
     
@@ -108,17 +98,6 @@ class HomeMenuController: UITableViewController {
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: SlideMenuHeader.reuseIdentifier) as! SlideMenuHeader
         header.delegate = self
         header.currentUser = currentUser
-        //        if Auth.auth().currentUser != nil{
-        //            let db = Firestore.firestore().collection("user").document(Auth.auth().currentUser!.uid)
-        //            listener  = db.addSnapshotListener {[weak self] (docSnap, err) in
-        //                if docSnap!.exists  {
-        //                    self?.currentUser = CurrentUser.init(dic: docSnap!.data()!)
-        //                    header.userName.text = (docSnap!.get("username") as! String).description
-        //                    self?.tableView.reloadData()
-        //                }
-        //
-        //            }
-        //        }
         return header
         
         

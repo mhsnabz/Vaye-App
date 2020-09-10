@@ -10,9 +10,8 @@ import UIKit
 
 class NoticesVC: UIViewController {
     var delegate : HomeControllerDelegate?
-         
-         var isMenuOpen : Bool = false
-         var barTitle: String?
+    var isMenuOpen : Bool = false
+    var barTitle: String?
     var currentUser : CurrentUser?{
         didSet{
             navigationItem.title = (currentUser?.short_school)! + " Duyuru"

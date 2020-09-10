@@ -20,6 +20,11 @@ import SVProgressHUD
 import PDFKit
 import ActiveLabel
 
+struct MentionUser {
+    let userID : String!
+    let username : String!
+}
+
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
 
     var viewController : UIViewController!
@@ -34,7 +39,9 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var success = true
      var fallowers = [LessonFallowerUser]()
     var selectedLesson : String
+    var link : String?
     let lbl = UILabel(frame: .zero)
+    var userNames = [String]()
     let cloudImage : UIImageView = {
         let img = UIImageView()
         img.contentMode = .scaleAspectFit
@@ -380,26 +387,26 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             val.append(data[number].data)
             dataType.append(data[number].type)
         }
-        if !data.isEmpty{
-             UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
-                PostService.shared.setNewLessonPost(currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
-                            Utilities.succesProgress(msg: "Paylaşıldı")
-                        }  }
-        }else {
-            PostService.shared.setNewLessonPost(currentUser: currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
-                                       Utilities.succesProgress(msg: "Paylaşıldı")
-                                   }
-        }
-       
+           if self.data.isEmpty{
+               PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
+                   Utilities.succesProgress(msg: "Paylaşıldı") }
+       }else {
+           
+           UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
+               PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
+                   Utilities.succesProgress(msg: "Paylaşıldı")
+               }  }
+       }
         
     }
     //MARK: - getMentions
-    private func getMention(completion : @escaping(String) ->Void){
+    private func getMention(completion : @escaping([String]) ->Void){
         guard let text = text.text else { return }
             let val = text.findMentionText()
             for i in val {
-                  completion(i)
+                userNames.append(i)
             }
+           completion(userNames)
     }
   
     @objc func _addPdf(){
@@ -707,8 +714,12 @@ extension StudentNewPost: PopUpDelegate {
             self?.popUpWindow.removeFromSuperview()
             
             if let url = self?.popUpWindow.link.text {
+                
+               
                 self?.detectLink(url)
                 self?.popUpWindow.link.text = ""
+                self?.link = url
+                
             }
             
         }

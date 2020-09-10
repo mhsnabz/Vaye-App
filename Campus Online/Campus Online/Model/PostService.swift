@@ -10,7 +10,7 @@ import Foundation
 import FirebaseFirestore
 class PostService{
     static let shared = PostService()
-    func setNewLessonPost(currentUser : CurrentUser,postId : String ,users : [LessonFallowerUser] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void )
+    func setNewLessonPost( link : String?,currentUser : CurrentUser,postId : String ,users : [LessonFallowerUser] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void )
     {
         var dic = ["lessonName":lessonName,
         "postTime":FieldValue.serverTimestamp(),
@@ -19,6 +19,8 @@ class PostService{
         "text":msgText,
         "likes":0,
         "comment":0,
+        "link":link ?? "",
+      
         "lastComment":"empty", "last-comment-name": "empty","last-comment-image":"empty"] as [String:Any]
         if !datas.isEmpty {
             dic["data"] = datas

@@ -9,16 +9,19 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+private let cellID = "cell_image"
 class HomeVC: UIViewController {
     
-    //MARK: -properties
+    //MARK: -variables
     var centerController : UIViewController!
     var delegate : HomeControllerDelegate?
     var currentUser : CurrentUser
     var isMenuOpen : Bool = false
     var barTitle : String?
     var menu = UIButton()
+     var collectionview: UICollectionView!
     
+    //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
         btn.clipsToBounds = true
@@ -59,15 +62,29 @@ class HomeVC: UIViewController {
             self?.currentUser = currentUser
         }
         
-        view.addSubview(newPostButton)
-        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
-
-        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
-        newPostButton.layer.cornerRadius = 25
-       
+       configureUI()
+        view.backgroundColor = .collectionColor()
     
     }
     //MARK: - functions
+    
+    fileprivate func configureUI(){
+       
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.backgroundColor = .collectionColor()
+        view.addSubview(collectionview)
+        collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        view.addSubview(newPostButton)
+        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
+        
+        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
+        newPostButton.layer.cornerRadius = 25
+        
+        collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
+    }
     @objc func newPost(){
       
         let vc = ChooseLessonTB(currentUser: currentUser)
@@ -120,5 +137,25 @@ class HomeVC: UIViewController {
             }
         }
     }
+    
+}
+
+extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 1
+    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 7
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
+        cell.backgroundColor = .white
+        cell.msgText.anchor(top:  cell.headerView.bottomAnchor, left:  cell.leftAnchor, bottom: nil, rigth:  cell.rightAnchor, marginTop: 0, marginLeft: 60, marginBottom: 0, marginRigth: 8, width: 0, heigth: 90)
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 175)
+    }
+  
     
 }

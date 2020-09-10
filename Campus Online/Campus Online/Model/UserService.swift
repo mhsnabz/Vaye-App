@@ -60,5 +60,29 @@ struct UserService {
                
            }
        }
+    func getUserNamesByUserName(username : [String]? , completion : @escaping([MentionUser]) -> Void){
+        var mentionUser = [MentionUser]()
+        guard !username!.isEmpty else {
+            completion(mentionUser)
+            return }
+       
+        for item in username! {
+            let db = Firestore.firestore().collection("username").document(item)
+            db.getDocument { (docSnap, err) in
+                if err == nil {
+                    guard let docSnap = docSnap else {
+                        completion(mentionUser)
+                        return
+                    }
+                    let user = MentionUser.init(userID: docSnap.get("uid") as? String, username: item)
+                    mentionUser.append(user)
+                    completion(mentionUser)
+                }
+                
+            }
+        }
+          
+    }
+  
     
 }
