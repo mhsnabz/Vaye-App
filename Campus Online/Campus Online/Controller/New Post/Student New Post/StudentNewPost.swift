@@ -368,8 +368,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     @objc func setNewPost()
     {
         
-        
-        
         if SizeOfData(data: data) > 14.95 {
             Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
         }
