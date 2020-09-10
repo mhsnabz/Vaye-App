@@ -20,7 +20,7 @@ class HomeVC: UIViewController {
     var barTitle : String?
     var menu = UIButton()
      var collectionview: UICollectionView!
-    
+    var lessonPost = [LessonPostModel]()
     //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
@@ -64,9 +64,27 @@ class HomeVC: UIViewController {
         
        configureUI()
         view.backgroundColor = .collectionColor()
+        getPost()
     
     }
     //MARK: - functions
+    
+    fileprivate func getPost(){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post")
+        db.getDocuments {[weak self] (querySnap, err) in
+            if err == nil {
+                guard let strongSelf = self else { return }
+                guard let snap = querySnap else { return }
+                for doc in snap.documents {
+                    PostService.shared.fetchLessonPost(currentUser: strongSelf.currentUser, with: doc.documentID) { (post) in
+                        strongSelf.lessonPost.append(post)
+                        strongSelf.collectionview.reloadData()
+                    }
+                }
+            }
+        }
+    }
     
     fileprivate func configureUI(){
        
@@ -145,7 +163,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         return 1
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 7
+        return lessonPost.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC

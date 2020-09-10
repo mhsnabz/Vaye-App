@@ -19,9 +19,10 @@ class PostService{
         "text":msgText,
         "likes":0,
         "comment":0,
-        "link":link ?? "",
-      
-        "lastComment":"empty", "last-comment-name": "empty","last-comment-image":"empty"] as [String:Any]
+        "dislike":0,
+        "username" : currentUser.username as Any,
+        "thumb_image": currentUser.thumb_image as Any,
+        "link":link ?? ""] as [String:Any]
         if !datas.isEmpty {
             dic["data"] = datas
         }
@@ -75,6 +76,26 @@ class PostService{
             }
         }
         
+    }
+    
+    func fetchLessonPost(currentUser : CurrentUser,with postId : String, completion : @escaping(LessonPostModel)->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists
+                {
+                    completion(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                }else{
+              
+                    let deleteDb = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("lesson-post").document(postId)
+                    deleteDb.delete()
+                    print("postId = \(postId) deleted")
+                }
+            }
+        } 
     }
     
 }

@@ -13,6 +13,13 @@ class NewPostHomeVC: UICollectionViewCell
 {
     //MARK:- variables
     
+    var lessonPostModel : LessonPostModel?{
+        didSet {
+           
+            
+        }
+    }
+    
     //MARK:- properties
     let profileImage : UIImageView = {
         let imagee = UIImageView()
@@ -172,13 +179,15 @@ class NewPostHomeVC: UICollectionViewCell
     }
     //MARK:- functions
     private func configure(){
-        name = NSMutableAttributedString(string: "Mahsun Abuzeyitoğlu", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+         guard let post = lessonPostModel else { return }
+        
+        name = NSMutableAttributedString(string: "\(post.senderName.description)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " @mhsnabz", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
         name.append(NSAttributedString(string: " 8s", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name
         
-        //        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
-        //        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
+                profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
+                profileImage.sd_setImage(with: URL(string: post.thumb_image))
         
     }
 }
