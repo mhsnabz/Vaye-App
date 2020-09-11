@@ -9,7 +9,8 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
-private let cellID = "cell_image"
+private let cellID = "cell_text"
+private let cellData = "cell_data"
 class HomeVC: UIViewController {
     
     //MARK: -variables
@@ -96,6 +97,7 @@ class HomeVC: UIViewController {
         newPostButton.layer.cornerRadius = 25
 //        collectionview.refreshControl?.isEnabled = true
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
+        collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
 //        collectionview.alwaysBounceVertical = true
 //        collectionview.refreshControl = refresher
 //        refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -175,20 +177,43 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if lessonPost[indexPath.row].data.isEmpty {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
-        cell.delegate = self
-        cell.backgroundColor = .white
-        let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-        cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
-        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-        cell.lessonPostModel = lessonPost[indexPath.row]
+               cell.delegate = self
+               cell.backgroundColor = .white
+               let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+               cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+               cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+               cell.lessonPostModel = lessonPost[indexPath.row]
 
-        return cell
+               return cell
+        }else{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NewPostHomeVCData
+            
+            cell.backgroundColor = .white
+            let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+            
+            cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+            
+            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+            cell.lessonPostModel = lessonPost[indexPath.row]
+            
+            return cell
+        }
+       
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
        
-          let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-        return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
+        let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+        
+        if lessonPost[indexPath.row].data.isEmpty{
+              return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
+        }else{
+              return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+        }
+        
+      
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1
@@ -199,7 +224,6 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     
 }
-
 extension HomeVC : NewPostHomeVCDelegate {
     func options(for cell: NewPostHomeVC) {
         print("options click")

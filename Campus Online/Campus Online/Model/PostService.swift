@@ -19,6 +19,7 @@ class PostService{
         "likes":0,
         "comment":0,
         "dislike":0,
+        "data":datas,
         "username" : currentUser.username as Any,
         "thumb_image": currentUser.thumb_image as Any,
         "link":link ?? ""] as [String:Any]
