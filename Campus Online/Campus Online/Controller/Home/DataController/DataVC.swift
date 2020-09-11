@@ -22,13 +22,13 @@ class DataVC: UIViewController {
       }()
       let dissmisButton : UIButton = {
           let btn = UIButton()
-          btn.setImage(UIImage(named: "down-arrow"), for: .normal)
-          
+         btn.setImage(#imageLiteral(resourceName: "x").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.tintColor = .white
           return btn
       }()
       lazy var headerBar : UIView = {
          let v = UIView()
-        v.backgroundColor = .white
+        v.backgroundColor =  .black
           v.addSubview(dissmisButton)
           dissmisButton.anchor(top: nil, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 20, marginBottom: 0, marginRigth: 0, width: 20, heigth: 20)
           dissmisButton.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
@@ -52,7 +52,10 @@ class DataVC: UIViewController {
         dissmisButton.addTarget(self, action: #selector(dismisVC), for: .touchUpInside)
         
     }
-    
+      override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+      }
+        
     init(dataUrl : [String]){
         self.DataUrl = dataUrl
         super.init(nibName: nil, bundle: nil)
@@ -71,8 +74,7 @@ class DataVC: UIViewController {
     //MARK:- functions
     fileprivate func configureCollectionView() {
         
-        view.addSubview(headerBar)
-        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 56)
+ 
         
            let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
            layout.scrollDirection = .horizontal
@@ -82,9 +84,14 @@ class DataVC: UIViewController {
            collectionview.backgroundColor = .white
            collectionview.isPagingEnabled = true
            view.addSubview(collectionview)
-           collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         
             collectionview.register(DataViewImage.self, forCellWithReuseIdentifier: img_cell)
+            collectionview.register(DataViewPDF.self, forCellWithReuseIdentifier: pdf_cell)
+        
+        
+        view.addSubview(dissmisButton)
+         dissmisButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 15, marginLeft: 15, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
        }
     
 
@@ -98,9 +105,23 @@ extension DataVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImage
-        cell.url = DataUrl[indexPath.row]
-        return cell
+      //  \(URL(string: item)?.mimeType())
+        if URL(string: DataUrl[indexPath.row])!.mimeType() == "image/jpeg" {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImage
+            cell.url = DataUrl[indexPath.row]
+            return cell
+        }else if  URL(string: DataUrl[indexPath.row])!.mimeType() == "application/pdf" {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdf_cell, for: indexPath) as! DataViewPDF
+            cell.url = DataUrl[indexPath.row]
+            return cell
+        }else{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImage
+            cell.url = DataUrl[indexPath.row]
+            return cell
+        }
+        
+        
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

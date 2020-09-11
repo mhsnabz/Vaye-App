@@ -66,7 +66,8 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
             cell.delegate = self
             return cell
         }else{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img, for: indexPath) as! DataViewPdfCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdf, for: indexPath) as! DataViewPdfCell
+        
             return cell
         }
          
@@ -151,6 +152,10 @@ extension DataView: LightboxControllerPageDelegate {
   }
 }
 extension DataView : DataViewClick {
+    func pdfClick(for cell: DataViewPdfCell) {
+        print("click 2")
+    }
+    
     func imageClik(for cell: DataViewImageCell) {
         print("image click")
     }

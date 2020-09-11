@@ -56,6 +56,7 @@ protocol NewPostHomeVCDataDelegate : class {
 protocol DataViewClick : class {
     
     func imageClik ( for cell : DataViewImageCell)
+    func pdfClick( for cell : DataViewPdfCell)
 //    func like ( for cell : NewPostHomeVCData)
 //    func dislike ( for cell : NewPostHomeVCData)
 //    func fav ( for cell : NewPostHomeVCData)

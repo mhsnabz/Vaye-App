@@ -20,7 +20,7 @@ class DataViewImage: UICollectionViewCell {
     let img : UIImageView = {
        let img = UIImageView()
         img.contentMode = .scaleAspectFit
-        img.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+        img.backgroundColor = .black
         img.clipsToBounds = true
         return img
     }()
