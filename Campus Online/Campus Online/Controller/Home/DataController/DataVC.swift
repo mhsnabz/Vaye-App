@@ -12,38 +12,38 @@ private let img_cell = "imgCell"
 private let doc_cell = "docCell"
 class DataVC: UIViewController {
     //MARK:- properites
-
+    
     let titleLbl : UILabel = {
-         let lbl = UILabel()
-          lbl.text = "..."
-          lbl.font = UIFont(name: Utilities.font, size: 15)
-          lbl.textColor = .black
-          return lbl
-      }()
-      let dissmisButton : UIButton = {
-          let btn = UIButton()
-         btn.setImage(#imageLiteral(resourceName: "x").withRenderingMode(.alwaysOriginal), for: .normal)
+        let lbl = UILabel()
+        lbl.text = "..."
+        lbl.font = UIFont(name: Utilities.font, size: 15)
+        lbl.textColor = .black
+        return lbl
+    }()
+    let dissmisButton : UIButton = {
+        let btn = UIButton()
+        btn.setImage(#imageLiteral(resourceName: "x").withRenderingMode(.alwaysOriginal), for: .normal)
         btn.tintColor = .white
-          return btn
-      }()
-      lazy var headerBar : UIView = {
-         let v = UIView()
+        return btn
+    }()
+    lazy var headerBar : UIView = {
+        let v = UIView()
         v.backgroundColor =  .black
-          v.addSubview(dissmisButton)
-          dissmisButton.anchor(top: nil, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 20, marginBottom: 0, marginRigth: 0, width: 20, heigth: 20)
-          dissmisButton.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
-          v.addSubview(titleLbl)
-          titleLbl.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-          titleLbl.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
-            titleLbl.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
-          
-          return v
-      }()
+        v.addSubview(dissmisButton)
+        dissmisButton.anchor(top: nil, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 20, marginBottom: 0, marginRigth: 0, width: 20, heigth: 20)
+        dissmisButton.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
+        v.addSubview(titleLbl)
+        titleLbl.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        titleLbl.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
+        titleLbl.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
+        
+        return v
+    }()
     //MARK:- variables
-      var DataUrl = [String]()
-      var collectionview: UICollectionView!
+    var DataUrl = [String]()
+    var collectionview: UICollectionView!
     //MARK:- lifeCycle
-   
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,10 +52,10 @@ class DataVC: UIViewController {
         dissmisButton.addTarget(self, action: #selector(dismisVC), for: .touchUpInside)
         
     }
-      override var preferredStatusBarStyle: UIStatusBarStyle {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
-      }
-        
+    }
+    
     init(dataUrl : [String]){
         self.DataUrl = dataUrl
         super.init(nibName: nil, bundle: nil)
@@ -74,38 +74,39 @@ class DataVC: UIViewController {
     //MARK:- functions
     fileprivate func configureCollectionView() {
         
- 
         
-           let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-           layout.scrollDirection = .horizontal
-           collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-           collectionview.dataSource = self
-           collectionview.delegate = self
-           collectionview.backgroundColor = .white
-           collectionview.isPagingEnabled = true
-           view.addSubview(collectionview)
+        
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.backgroundColor = .black
+        collectionview.isPagingEnabled = true
+        view.addSubview(collectionview)
         collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         
-            collectionview.register(DataViewImage.self, forCellWithReuseIdentifier: img_cell)
-            collectionview.register(DataViewPDF.self, forCellWithReuseIdentifier: pdf_cell)
+        collectionview.register(DataViewImage.self, forCellWithReuseIdentifier: img_cell)
+        collectionview.register(DataViewPDF.self, forCellWithReuseIdentifier: pdf_cell)
+        collectionview.register(DataViewDoc.self, forCellWithReuseIdentifier: doc_cell)
         
         
         view.addSubview(dissmisButton)
-         dissmisButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 15, marginLeft: 15, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
-       }
+        dissmisButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 15, marginLeft: 15, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
+    }
     
-
+    
 }
 extension DataVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       return DataUrl.count
+        return DataUrl.count
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-      //  \(URL(string: item)?.mimeType())
+        //  \(URL(string: item)?.mimeType())
         if URL(string: DataUrl[indexPath.row])!.mimeType() == "image/jpeg" {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImage
             cell.url = DataUrl[indexPath.row]
@@ -115,7 +116,7 @@ extension DataVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLayou
             cell.url = DataUrl[indexPath.row]
             return cell
         }else{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImage
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: doc_cell, for: indexPath) as! DataViewDoc
             cell.url = DataUrl[indexPath.row]
             return cell
         }

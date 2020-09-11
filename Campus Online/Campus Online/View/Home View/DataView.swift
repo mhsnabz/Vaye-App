@@ -18,13 +18,7 @@ class DataView : UIView {
     
     var arrayOfUrl : [String]?{
         didSet{
-            guard let urls = arrayOfUrl else { return }
-            if !urls.isEmpty{
-                for item in urls {
-                    print("url \(item)")
-                   print("type = \(URL(string: item)?.mimeType())")
-                }
-            }
+                
         }
     }
     
@@ -47,6 +41,7 @@ class DataView : UIView {
             collectionView.register(DataViewDocCell.self, forCellWithReuseIdentifier: doc)
            addSubview(collectionView)
            collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: frame.height)
+
        }
        
        required init?(coder: NSCoder) {
@@ -65,9 +60,12 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
             cell.url = arrayOfUrl![indexPath.row]
             cell.delegate = self
             return cell
-        }else{
+        }else if URL(string: (arrayOfUrl?[indexPath.row])!)!.mimeType() == DataTypes.pdf.contentType{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdf, for: indexPath) as! DataViewPdfCell
         
+            return cell
+        }else{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: doc, for: indexPath) as! DataViewDocCell
             return cell
         }
          
@@ -130,13 +128,13 @@ extension URL {
         }
         return UTTypeConformsTo(uti, kUTTypePDF)
     }
-//    var containsVideo: Bool {
-//        let mimeType = self.mimeType()
-//        guard  let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeRetainedValue() else {
-//            return false
-//        }
-//        return UTTypeConformsTo(uti, kUTTypeMovie)
-//    }
+    var constainVideo: Bool {
+        let mimeType = self.mimeType()
+        guard  let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeRetainedValue() else {
+            return false
+        }
+        return UTTypeConformsTo(uti, "[com.microsoft.word.doc]" as CFString)
+    }
 
 }
 extension DataView: LightboxControllerDismissalDelegate {
