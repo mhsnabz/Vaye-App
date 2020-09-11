@@ -56,9 +56,9 @@ class NewPostHomeVC: UICollectionViewCell
         let lbl = ActiveLabel()
         lbl.font = UIFont(name: Utilities.font, size: 13)
         lbl.numberOfLines = 0
+        lbl.lineBreakMode = .byWordWrapping
         lbl.mentionColor = .systemBlue
         lbl.URLColor = .systemBlue
-        lbl.text = "@mhsnabz @deneme @slmabz müdüriyete gelsin... o set the screen name or override the default screen class name. To disable screen reporting, set the flag FirebaseScree"
         lbl.textColor = .black
         return lbl
     }()
@@ -77,14 +77,14 @@ class NewPostHomeVC: UICollectionViewCell
     }()
     let dislike : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "dislike-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setImage(UIImage(named: "dislike-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
         return btn
     }()
     let dislike_lbl : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 11)
         lbl.textColor = .darkGray
-        lbl.text = "4"
+       
 
         return lbl
     }()
@@ -98,7 +98,7 @@ class NewPostHomeVC: UICollectionViewCell
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 11)
         lbl.textColor = .darkGray
-           lbl.text = "100"
+         
         return lbl
     }()
     let addfav : UIButton = {
@@ -200,6 +200,9 @@ class NewPostHomeVC: UICollectionViewCell
         profileImage.sd_setImage(with: URL(string: post.thumb_image))
         lessonName.text = post.lessonName
         msgText.text = post.text
+        like_lbl.text = post.likes.description
+        dislike_lbl.text = post.dislike.description
+        comment_lbl.text = post.comment.description
         
     }
 }

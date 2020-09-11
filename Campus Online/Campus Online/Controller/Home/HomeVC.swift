@@ -177,26 +177,22 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
         cell.backgroundColor = .white
+   
+        let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width, font: UIFont(name: Utilities.font, size: 13)!)
         
-        let size = CGSize(width: view.frame.width , height: 1000)
-        let atr = [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)]
-        let estimadefFrame = NSString(string:lessonPost[indexPath.row].text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: atr as [NSAttributedString.Key : Any], context: nil)
-//        cell.msgText.frame = CGRect(x: 70, y: 60, width: view.frame.width, height: estimadefFrame.height)
-        cell.msgText.anchor(top:  cell.headerView.bottomAnchor, left:  cell.headerView.leftAnchor, bottom: nil, rigth: cell.headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: estimadefFrame.height)
+        cell.msgText.frame = CGRect(x: 5, y: 58, width: view.frame.width - 10, height: h + 4)
+//        cell.msgText.backgroundColor = .blue
+//        cell.msgText.anchor(top:  cell.headerView.bottomAnchor, left:  cell.headerView.leftAnchor, bottom: nil, rigth: cell.headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: h + 20 )
         cell.bottomBar.anchor(top: nil, left: cell.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-        cell.msgText.backgroundColor = .red
-        cell.headerView.backgroundColor = .blue
+
         cell.lessonPostModel = lessonPost[indexPath.row]
 
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let size = CGSize(width: view.frame.width, height: 1000)
-        let atr = [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)]
-        let estimadefFrame = NSString(string:lessonPost[indexPath.row].text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: atr as [NSAttributedString.Key : Any], context: nil)
-        
-        return CGSize(width: view.frame.width, height: 60 + 8 + estimadefFrame.height + 4 + 30)
+       
+          let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width, font: UIFont(name: Utilities.font, size: 13)!)
+        return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
@@ -207,3 +203,4 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     
 }
+
