@@ -109,8 +109,9 @@ class NewPostHomeVC: UICollectionViewCell
     lazy var headerView : UIView = {
         let view = UIView()
         view.addSubview(profileImage)
-        profileImage.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 12, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 45, heigth: 45)
+        profileImage.anchor(top: nil, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 45, heigth: 45)
         profileImage.layer.cornerRadius = 45 / 2
+        profileImage.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         view.addSubview(userName)
         userName.anchor(top: profileImage.topAnchor, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 5, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 18)
         view.addSubview(lessonName)
@@ -119,9 +120,40 @@ class NewPostHomeVC: UICollectionViewCell
         view.addSubview(optionsButton)
         optionsButton.anchor(top: profileImage.topAnchor, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 8, width: 15, heigth: 15)
         
+        
         return view
     }()
     
+    
+      lazy var bottomBar : UIView = {
+          let view = UIView()
+        
+             
+             let stackLike = UIStackView(arrangedSubviews: [like,like_lbl])
+                stackLike.axis = .horizontal
+                stackLike.spacing = 2
+                stackLike.distribution = .fillEqually
+                
+                let stackDisLike = UIStackView(arrangedSubviews: [dislike,dislike_lbl])
+                      stackDisLike.axis = .horizontal
+                      stackDisLike.spacing = 2
+                      stackDisLike.distribution = .fillEqually
+                let stackComment = UIStackView(arrangedSubviews: [comment,comment_lbl])
+                             stackComment.axis = .horizontal
+                             stackComment.spacing = 2
+                             stackComment.distribution = .fillEqually
+                
+                let toolbarStack = UIStackView(arrangedSubviews: [stackLike,stackDisLike,stackComment,addfav])
+                toolbarStack.axis = .horizontal
+                toolbarStack.distribution = .fillEqually
+        view.addSubview(toolbarStack)
+             
+        toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
+        toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        view.addSubview(line)
+        line.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0.4)
+          return view
+      }()
     
     
     
@@ -131,36 +163,18 @@ class NewPostHomeVC: UICollectionViewCell
         return v
     }()
     
+   
     //MARK: -lifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         addSubview(headerView)
-        headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 50)
+        headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
         configure()
         addSubview(msgText)
-        addSubview(line)
-        line.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0.4)
-        
-        let stackLike = UIStackView(arrangedSubviews: [like,like_lbl])
-           stackLike.axis = .horizontal
-           stackLike.spacing = 2
-           stackLike.distribution = .fillEqually
-           
-           let stackDisLike = UIStackView(arrangedSubviews: [dislike,dislike_lbl])
-                 stackDisLike.axis = .horizontal
-                 stackDisLike.spacing = 2
-                 stackDisLike.distribution = .fillEqually
-           let stackComment = UIStackView(arrangedSubviews: [comment,comment_lbl])
-                        stackComment.axis = .horizontal
-                        stackComment.spacing = 2
-                        stackComment.distribution = .fillEqually
-           
-           let toolbarStack = UIStackView(arrangedSubviews: [stackLike,stackDisLike,stackComment,addfav])
-           toolbarStack.axis = .horizontal
-           toolbarStack.distribution = .fillEqually
-        addSubview(toolbarStack)
-        toolbarStack.anchor(top: msgText.bottomAnchor, left: msgText.leftAnchor, bottom: nil , rigth: rightAnchor, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 0, heigth: 25)
+        addSubview(bottomBar)
+//        addSubview(line)
+//        line.anchor(top: toolbarStack.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 1, marginRigth: 0, width: 0, heigth: 0.4)
         
         
     }
@@ -182,10 +196,10 @@ class NewPostHomeVC: UICollectionViewCell
         name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
         name.append(NSAttributedString(string: " 8s", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name
-        
-                profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
-                profileImage.sd_setImage(with: URL(string: post.thumb_image))
+        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
+        profileImage.sd_setImage(with: URL(string: post.thumb_image))
         lessonName.text = post.lessonName
+        msgText.text = post.text
         
     }
 }
