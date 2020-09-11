@@ -46,3 +46,18 @@ protocol NewPostHomeVCDelegate : class {
     func fav ( for cell : NewPostHomeVC)
     func comment ( for cell : NewPostHomeVC)
 }
+protocol NewPostHomeVCDataDelegate : class {
+    func options ( for cell : NewPostHomeVCData)
+    func like ( for cell : NewPostHomeVCData)
+    func dislike ( for cell : NewPostHomeVCData)
+    func fav ( for cell : NewPostHomeVCData)
+    func comment ( for cell : NewPostHomeVCData)
+}
+protocol DataViewClick : class {
+    
+    func imageClik ( for cell : DataViewImageCell)
+//    func like ( for cell : NewPostHomeVCData)
+//    func dislike ( for cell : NewPostHomeVCData)
+//    func fav ( for cell : NewPostHomeVCData)
+//    func comment ( for cell : NewPostHomeVCData)
+}

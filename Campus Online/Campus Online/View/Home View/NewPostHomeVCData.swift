@@ -22,7 +22,6 @@ class NewPostHomeVCData : UICollectionViewCell{
             }
            }
        }
-       
        //MARK:- properties
        let profileImage : UIImageView = {
            let imagee = UIImageView()
@@ -181,6 +180,8 @@ class NewPostHomeVCData : UICollectionViewCell{
             dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
             addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
             optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
+            filterView.isUserInteractionEnabled = true
+            filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
         }
         
         
@@ -188,6 +189,10 @@ class NewPostHomeVCData : UICollectionViewCell{
             fatalError("init(coder:) has not been implemented")
         }
         //MARK:-selectors
+        @objc func showData(){
+            print("data click")
+        }
+    
         @objc func commentClick() {
 //            delegate?.comment(for: self)
         }

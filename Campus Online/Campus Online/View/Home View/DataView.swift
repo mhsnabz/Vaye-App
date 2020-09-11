@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SDWebImage
 import MobileCoreServices
-
+import Lightbox
 private let pdf = "pdf_cell"
 private let doc = "doc_cell"
 private let img = "img_cell"
@@ -63,6 +63,7 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
         if URL(string: (arrayOfUrl?[indexPath.row])!)!.mimeType() == "image/jpeg"{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img, for: indexPath) as! DataViewImageCell
             cell.url = arrayOfUrl![indexPath.row]
+            cell.delegate = self
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img, for: indexPath) as! DataViewPdfCell
@@ -80,8 +81,28 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
       func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0.4
       }
+        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+            guard let url = arrayOfUrl else { return }
+            let vc = DataVC(dataUrl: url)
+            
+            let currentController = self.getCurrentViewController()
+            vc.modalPresentationStyle = .fullScreen
+            
+            currentController?.present(vc, animated: true, completion: nil)
+        }
     
-    
+     func getCurrentViewController() -> UIViewController? {
+
+        if let rootController = UIApplication.shared.keyWindow?.rootViewController {
+            var currentController: UIViewController! = rootController
+            while( currentController.presentedViewController != nil ) {
+                currentController = currentController.presentedViewController
+            }
+            return currentController
+        }
+        return nil
+
+    }
 }
 
 extension URL {
@@ -116,4 +137,23 @@ extension URL {
 //        return UTTypeConformsTo(uti, kUTTypeMovie)
 //    }
 
+}
+extension DataView: LightboxControllerDismissalDelegate {
+
+  func lightboxControllerWillDismiss(_ controller: LightboxController) {
+    // ...
+  }
+}
+extension DataView: LightboxControllerPageDelegate {
+
+  func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
+    print(page)
+  }
+}
+extension DataView : DataViewClick {
+    func imageClik(for cell: DataViewImageCell) {
+        print("image click")
+    }
+    
+    
 }

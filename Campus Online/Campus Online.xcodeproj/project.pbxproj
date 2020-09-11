@@ -68,6 +68,7 @@
 		6687921124FABC2700A43A41 /* ActionSheetLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */; };
 		6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921324FB0AA500A43A41 /* ActionSheetCell.swift */; };
 		6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921624FBB96800A43A41 /* ActionSheetViewModel.swift */; };
+		66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EA250BFB7500259322 /* DataVC.swift */; };
 		66D911CF24EEA9E8002D760A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911CE24EEA9E8002D760A /* AppDelegate.swift */; };
 		66D911D824EEA9EA002D760A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D911D724EEA9EA002D760A /* Assets.xcassets */; };
 		66D911E624EEA9EA002D760A /* Campus_OnlineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911E524EEA9EA002D760A /* Campus_OnlineTests.swift */; };
@@ -179,6 +180,7 @@
 		6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetLauncher.swift; sourceTree = "<group>"; };
 		6687921324FB0AA500A43A41 /* ActionSheetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetCell.swift; sourceTree = "<group>"; };
 		6687921624FBB96800A43A41 /* ActionSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetViewModel.swift; sourceTree = "<group>"; };
+		66C4A6EA250BFB7500259322 /* DataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataVC.swift; sourceTree = "<group>"; };
 		66D911CB24EEA9E8002D760A /* Campus Online.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Campus Online.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D911CE24EEA9E8002D760A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66D911D724EEA9EA002D760A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -449,6 +451,14 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		66C4A6E9250BFB5A00259322 /* DataController */ = {
+			isa = PBXGroup;
+			children = (
+				66C4A6EA250BFB7500259322 /* DataVC.swift */,
+			);
+			path = DataController;
+			sourceTree = "<group>";
+		};
 		66D911C224EEA9E8002D760A = {
 			isa = PBXGroup;
 			children = (
@@ -633,6 +643,7 @@
 		66D9121224EEAB3D002D760A /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				66C4A6E9250BFB5A00259322 /* DataController */,
 				66E326A224F98C0D004CB61D /* Lesson */,
 				66D9121324EEAB49002D760A /* HomeVC.swift */,
 			);
@@ -988,6 +999,7 @@
 				661333E824F3B25B002677AB /* ProfileCell.swift in Sources */,
 				661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */,
 				66D9121E24EEAB97002D760A /* MessagesVC.swift in Sources */,
+				66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */,
 				66F25F1924F7A7CD005B0591 /* CompleteRegistration.swift in Sources */,
 				660F5ADA2503DB0800F72558 /* LicenceCell.swift in Sources */,
 				665E5CD424FFB5BE00B5B5E3 /* CaptionText.swift in Sources */,
