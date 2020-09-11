@@ -12,7 +12,6 @@ class LessonPostModel {
     var lessonName : String!
     var postTime : Timestamp!
     var senderName : String!
-    var senderImage : String!
     var text : String!
     var likes : Int!
     var comment : Int!
@@ -27,9 +26,7 @@ class LessonPostModel {
         if let lessonName = dic["lessonName"] as? String {
             self.lessonName = lessonName
         }
-        if let senderImage = dic["senderImage"] as? String {
-            self.senderImage = senderImage
-        }
+        
         if let senderName = dic["senderName"] as? String {
             self.senderName = senderName
         }

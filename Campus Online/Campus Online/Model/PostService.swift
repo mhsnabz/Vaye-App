@@ -15,7 +15,6 @@ class PostService{
         var dic = ["lessonName":lessonName,
         "postTime":FieldValue.serverTimestamp(),
         "senderName":currentUser.name as Any,
-        "senderImage":currentUser.thumb_image as Any,
         "text":msgText,
         "likes":0,
         "comment":0,
@@ -78,24 +77,39 @@ class PostService{
         
     }
     
-    func fetchLessonPost(currentUser : CurrentUser,with postId : String, completion : @escaping(LessonPostModel)->Void){
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(postId)
-        db.getDocument { (docSnap, err) in
-            if err == nil {
-                guard let snap = docSnap else { return }
-                if snap.exists
-                {
-                    completion(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
-                }else{
-              
-                    let deleteDb = Firestore.firestore().collection("user")
-                        .document(currentUser.uid).collection("lesson-post").document(postId)
-                    deleteDb.delete()
-                    print("postId = \(postId) deleted")
+    func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
+        var post = [LessonPostModel]()
+        let db = Firestore.firestore().collection("user")
+                   .document(currentUser.uid).collection("lesson-post")
+               db.getDocuments {(querySnap, err) in
+                   if err == nil {
+                    guard let snap = querySnap else { return }
+                    for postId in snap.documents {
+                        let db = Firestore.firestore().collection(currentUser.short_school)
+                            .document("lesson-post").collection("post").document(postId.documentID)
+                              db.getDocument { (docSnap, err) in
+                                  if err == nil {
+                                      guard let snap = docSnap else { return }
+                                      if snap.exists
+                                      {
+                                          post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                                          completion(post)
+                                     
+                                      }else{
+                                    
+                                          let deleteDb = Firestore.firestore().collection("user")
+                                            .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
+                                          deleteDb.delete()
+                                          print("postId = \(postId) deleted")
+                                      }
+                                  }
+                              }
+                          }
+                    }
                 }
-            }
-        } 
-    }
+                
+        }
+        
+      
     
 }

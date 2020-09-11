@@ -21,6 +21,7 @@ class HomeVC: UIViewController {
     var menu = UIButton()
      var collectionview: UICollectionView!
     var lessonPost = [LessonPostModel]()
+   var refresher = UIRefreshControl()
     //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
@@ -31,7 +32,7 @@ class HomeVC: UIViewController {
   
         return btn
     }()
-    
+   
     //MARK:- lifeCycle
     
     init(currentUser : CurrentUser){
@@ -70,22 +71,14 @@ class HomeVC: UIViewController {
     //MARK: - functions
     
     fileprivate func getPost(){
-        let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post")
-        db.getDocuments {[weak self] (querySnap, err) in
-            if err == nil {
-                guard let strongSelf = self else { return }
-                guard let snap = querySnap else { return }
-                for doc in snap.documents {
-                    PostService.shared.fetchLessonPost(currentUser: strongSelf.currentUser, with: doc.documentID) { (post) in
-                        strongSelf.lessonPost.append(post)
-                        strongSelf.collectionview.reloadData()
-                    }
-                }
-            }
-        }
+    
+        PostService.shared.fetchLessonPost(currentUser: self.currentUser) { (post) in
+                               self.lessonPost = post
+                               self.collectionview.reloadData()
+                           }
     }
     
+   
     fileprivate func configureUI(){
        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -93,6 +86,7 @@ class HomeVC: UIViewController {
         collectionview.dataSource = self
         collectionview.delegate = self
         collectionview.backgroundColor = .collectionColor()
+        
         view.addSubview(collectionview)
         collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         view.addSubview(newPostButton)
@@ -100,9 +94,24 @@ class HomeVC: UIViewController {
         
         newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
         newPostButton.layer.cornerRadius = 25
-        
+        collectionview.refreshControl?.isEnabled = true
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
+        collectionview.alwaysBounceVertical = true
+        collectionview.refreshControl = refresher
+        refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
+        refresher.tintColor = .white
+
     }
+    func stopRefresher() {
+        
+    }
+    //MARK:-selectors
+    @objc func loadData(){
+        collectionview.refreshControl?.beginRefreshing()
+         getPost()
+        collectionview.refreshControl?.endRefreshing() 
+       }
+    
     @objc func newPost(){
       
         let vc = ChooseLessonTB(currentUser: currentUser)
@@ -160,20 +169,28 @@ class HomeVC: UIViewController {
 
 extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return lessonPost.count
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return lessonPost.count
+        return 1
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
         cell.backgroundColor = .white
         cell.msgText.anchor(top:  cell.headerView.bottomAnchor, left:  cell.leftAnchor, bottom: nil, rigth:  cell.rightAnchor, marginTop: 0, marginLeft: 60, marginBottom: 0, marginRigth: 8, width: 0, heigth: 90)
+        cell.lessonPostModel = lessonPost[indexPath.row]
+
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 175)
+        return CGSize(width: view.frame.width, height: 178)
     }
-  
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
     
 }

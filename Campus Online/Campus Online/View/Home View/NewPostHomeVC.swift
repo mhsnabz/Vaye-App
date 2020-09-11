@@ -15,8 +15,7 @@ class NewPostHomeVC: UICollectionViewCell
     
     var lessonPostModel : LessonPostModel?{
         didSet {
-           
-            
+            configure()
         }
     }
     
@@ -45,7 +44,6 @@ class NewPostHomeVC: UICollectionViewCell
         lbl.textAlignment = .left
         lbl.font = UIFont(name: Utilities.font, size: 10)
         lbl.textColor = .darkGray
-        lbl.text = "Bilgisayar Programlama"
         return lbl
     }()
     let optionsButton : UIButton = {
@@ -160,10 +158,9 @@ class NewPostHomeVC: UICollectionViewCell
            
            let toolbarStack = UIStackView(arrangedSubviews: [stackLike,stackDisLike,stackComment,addfav])
            toolbarStack.axis = .horizontal
-           toolbarStack.spacing =  (frame.width - 40) / (100)
            toolbarStack.distribution = .fillEqually
         addSubview(toolbarStack)
-        toolbarStack.anchor(top: msgText.bottomAnchor, left: leftAnchor, bottom: nil , rigth: rightAnchor, marginTop: 4, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: 0, heigth: 25)
+        toolbarStack.anchor(top: msgText.bottomAnchor, left: msgText.leftAnchor, bottom: nil , rigth: rightAnchor, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 0, heigth: 25)
         
         
     }
@@ -181,13 +178,14 @@ class NewPostHomeVC: UICollectionViewCell
     private func configure(){
          guard let post = lessonPostModel else { return }
         
-        name = NSMutableAttributedString(string: "\(post.senderName.description)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-        name.append(NSAttributedString(string: " @mhsnabz", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+        name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
         name.append(NSAttributedString(string: " 8s", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name
         
                 profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
                 profileImage.sd_setImage(with: URL(string: post.thumb_image))
+        lessonName.text = post.lessonName
         
     }
 }
