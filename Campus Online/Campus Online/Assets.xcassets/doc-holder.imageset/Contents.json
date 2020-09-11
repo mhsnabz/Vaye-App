@@ -1,27 +1,18 @@
 {
   "images" : [
     {
+      "filename" : "doc-holder.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "doc-holder@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
       "filename" : "doc-holder@3x.png",
       "idiom" : "universal",
-      "resizing" : {
-        "cap-insets" : {
-          "left" : 23,
-          "right" : 23
-        },
-        "center" : {
-          "mode" : "tile",
-          "width" : 104
-        },
-        "mode" : "3-part-horizontal"
-      },
       "scale" : "3x"
     }
   ],
