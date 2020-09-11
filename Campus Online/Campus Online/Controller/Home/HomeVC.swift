@@ -85,7 +85,7 @@ class HomeVC: UIViewController {
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
         collectionview.delegate = self
-        collectionview.backgroundColor = .collectionColor()
+        collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
         
         view.addSubview(collectionview)
         collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
@@ -176,31 +176,51 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
+        cell.delegate = self
         cell.backgroundColor = .white
-   
-        let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width, font: UIFont(name: Utilities.font, size: 13)!)
-        
-        cell.msgText.frame = CGRect(x: 5, y: 58, width: view.frame.width - 10, height: h + 4)
-//        cell.msgText.backgroundColor = .blue
-//        cell.msgText.anchor(top:  cell.headerView.bottomAnchor, left:  cell.headerView.leftAnchor, bottom: nil, rigth: cell.headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: h + 20 )
-        cell.bottomBar.anchor(top: nil, left: cell.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-
+        let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+        cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
         cell.lessonPostModel = lessonPost[indexPath.row]
 
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
        
-          let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width, font: UIFont(name: Utilities.font, size: 13)!)
+          let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
         return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 1
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
+    
+}
+
+extension HomeVC : NewPostHomeVCDelegate {
+    func options(for cell: NewPostHomeVC) {
+        print("options click")
+    }
+    
+    func like(for cell: NewPostHomeVC) {
+        cell.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func dislike(for cell: NewPostHomeVC) {
+        cell.dislike.setImage(UIImage(named: "dislike-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func fav(for cell: NewPostHomeVC) {
+        cell.addfav.setImage(UIImage(named: "fav-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func comment(for cell: NewPostHomeVC) {
+        print("comment click")
+    }
+    
     
 }
 

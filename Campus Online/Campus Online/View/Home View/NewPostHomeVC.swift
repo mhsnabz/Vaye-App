@@ -11,6 +11,8 @@ import SDWebImage
 import ActiveLabel
 class NewPostHomeVC: UICollectionViewCell
 {
+    weak var delegate : NewPostHomeVCDelegate?
+    
     //MARK:- variables
     
     var lessonPostModel : LessonPostModel?{
@@ -65,7 +67,7 @@ class NewPostHomeVC: UICollectionViewCell
     
     let like : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
         return btn
     }()
     let like_lbl : UILabel = {
@@ -77,33 +79,33 @@ class NewPostHomeVC: UICollectionViewCell
     }()
     let dislike : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "dislike-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setImage(UIImage(named: "dislike-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
         return btn
     }()
     let dislike_lbl : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 11)
         lbl.textColor = .darkGray
-       
-
+        
+        
         return lbl
     }()
     let comment : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "comment")?.withRenderingMode(.alwaysOriginal), for: .normal)
-       
+        
         return btn
     }()
     let comment_lbl : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 11)
         lbl.textColor = .darkGray
-         
+        
         return lbl
     }()
     let addfav : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "fav-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setImage(UIImage(named: "fav-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
         return btn }()
     
     lazy var headerView : UIView = {
@@ -125,35 +127,34 @@ class NewPostHomeVC: UICollectionViewCell
     }()
     
     
-      lazy var bottomBar : UIView = {
-          let view = UIView()
+    lazy var bottomBar : UIView = {
+        let view = UIView()
         
-             
-             let stackLike = UIStackView(arrangedSubviews: [like,like_lbl])
-                stackLike.axis = .horizontal
-                stackLike.spacing = 2
-                stackLike.distribution = .fillEqually
-                
-                let stackDisLike = UIStackView(arrangedSubviews: [dislike,dislike_lbl])
-                      stackDisLike.axis = .horizontal
-                      stackDisLike.spacing = 2
-                      stackDisLike.distribution = .fillEqually
-                let stackComment = UIStackView(arrangedSubviews: [comment,comment_lbl])
-                             stackComment.axis = .horizontal
-                             stackComment.spacing = 2
-                             stackComment.distribution = .fillEqually
-                
-                let toolbarStack = UIStackView(arrangedSubviews: [stackLike,stackDisLike,stackComment,addfav])
-                toolbarStack.axis = .horizontal
-                toolbarStack.distribution = .fillEqually
+        
+        let stackLike = UIStackView(arrangedSubviews: [like,like_lbl])
+        stackLike.axis = .horizontal
+        stackLike.spacing = 2
+        stackLike.distribution = .fillEqually
+        
+        let stackDisLike = UIStackView(arrangedSubviews: [dislike,dislike_lbl])
+        stackDisLike.axis = .horizontal
+        stackDisLike.spacing = 2
+        stackDisLike.distribution = .fillEqually
+        let stackComment = UIStackView(arrangedSubviews: [comment,comment_lbl])
+        stackComment.axis = .horizontal
+        stackComment.spacing = 2
+        stackComment.distribution = .fillEqually
+        
+        let toolbarStack = UIStackView(arrangedSubviews: [stackLike,stackDisLike,stackComment,addfav])
+        toolbarStack.axis = .horizontal
+        toolbarStack.distribution = .fillEqually
         view.addSubview(toolbarStack)
-             
+        
         toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        view.addSubview(line)
-        line.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0.4)
-          return view
-      }()
+    
+        return view
+    }()
     
     
     
@@ -163,7 +164,7 @@ class NewPostHomeVC: UICollectionViewCell
         return v
     }()
     
-   
+    
     //MARK: -lifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -173,24 +174,38 @@ class NewPostHomeVC: UICollectionViewCell
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
-//        addSubview(line)
-//        line.anchor(top: toolbarStack.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 1, marginRigth: 0, width: 0, heigth: 0.4)
         
         
+        comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
+        like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
+        dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
+        addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
+        optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
     }
     
-    private func setBottomToolBar(){
-   
-        
-        
-    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    //MARK:-selectors
+    @objc func commentClick() {
+        delegate?.comment(for: self)
+    }
+    @objc func likeClick(){
+        delegate?.like(for: self)
+    }
+    @objc func dislikeClick(){
+        delegate?.dislike(for: self)
+    }
+    @objc func addFavClick(){
+        delegate?.fav(for: self)
+    }
+    @objc func optionsClick(){
+        delegate?.options(for: self)
+    }
     //MARK:- functions
     private func configure(){
-         guard let post = lessonPostModel else { return }
+        guard let post = lessonPostModel else { return }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))

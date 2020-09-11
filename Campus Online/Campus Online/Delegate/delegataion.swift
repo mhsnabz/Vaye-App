@@ -39,3 +39,10 @@ protocol DeleteDoc : class {
 protocol DeleteImage : class  {
     func deleteImage( for cell : NewPostImageCell)
 }
+protocol NewPostHomeVCDelegate : class {
+    func options ( for cell : NewPostHomeVC)
+    func like ( for cell : NewPostHomeVC)
+    func dislike ( for cell : NewPostHomeVC)
+    func fav ( for cell : NewPostHomeVC)
+    func comment ( for cell : NewPostHomeVC)
+}
