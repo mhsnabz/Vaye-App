@@ -43,8 +43,7 @@ target 'Campus Online' do
   
   pod 'Gallery'
   
-  
-  
+pod 'EFImageViewZoom'
   # Pods for Campus Online
   target 'Campus OnlineTests' do
     

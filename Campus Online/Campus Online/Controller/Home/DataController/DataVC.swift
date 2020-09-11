@@ -40,7 +40,7 @@ class DataVC: UIViewController {
           return v
       }()
     //MARK:- variables
-    var DataUrl = [String]()
+      var DataUrl = [String]()
       var collectionview: UICollectionView!
     //MARK:- lifeCycle
    
@@ -50,6 +50,7 @@ class DataVC: UIViewController {
         view.backgroundColor = .white
         configureCollectionView()
         dissmisButton.addTarget(self, action: #selector(dismisVC), for: .touchUpInside)
+        
     }
     
     init(dataUrl : [String]){
@@ -79,30 +80,34 @@ class DataVC: UIViewController {
            collectionview.dataSource = self
            collectionview.delegate = self
            collectionview.backgroundColor = .white
+           collectionview.isPagingEnabled = true
            view.addSubview(collectionview)
-        collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+           collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         
-            collectionview.register(DataViewImageCell.self, forCellWithReuseIdentifier: img_cell)
+            collectionview.register(DataViewImage.self, forCellWithReuseIdentifier: img_cell)
        }
     
 
 }
 extension DataVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        1
+       return DataUrl.count
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return DataUrl.count
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImageCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img_cell, for: indexPath) as! DataViewImage
+        cell.url = DataUrl[indexPath.row]
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
     }
-    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
     
 }
