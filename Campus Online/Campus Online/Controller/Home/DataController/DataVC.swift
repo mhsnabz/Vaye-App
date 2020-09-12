@@ -79,7 +79,7 @@ class DataVC: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     @objc func download_all(){
-         let urlString = self.DataUrl[1]
+         let urlString = self.DataUrl[0]
                 let url = URL(string: urlString)
                 let fileName = String((url!.lastPathComponent)) as NSString
                 // Create destination URL

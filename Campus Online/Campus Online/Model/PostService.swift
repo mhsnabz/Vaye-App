@@ -81,34 +81,39 @@ class PostService{
     func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
         var post = [LessonPostModel]()
         let db = Firestore.firestore().collection("user")
-                   .document(currentUser.uid).collection("lesson-post")
-               db.getDocuments {(querySnap, err) in
-                   if err == nil {
-                    guard let snap = querySnap else { return }
+            .document(currentUser.uid).collection("lesson-post")
+        db.getDocuments {(querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty {
+                    completion([])
+                }else{
                     for postId in snap.documents {
                         let db = Firestore.firestore().collection(currentUser.short_school)
                             .document("lesson-post").collection("post").document(postId.documentID)
-                              db.getDocument { (docSnap, err) in
-                                  if err == nil {
-                                      guard let snap = docSnap else { return }
-                                      if snap.exists
-                                      {
-                                          post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
-                                          completion(post)
-                                     
-                                      }else{
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let snap = docSnap else { return }
+                                if snap.exists
+                                {
+                                    post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                                    completion(post)
                                     
-                                          let deleteDb = Firestore.firestore().collection("user")
-                                            .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
-                                          deleteDb.delete()
-                                          print("postId = \(postId) deleted")
-                                      }
-                                  }
-                              }
-                          }
+                                }else{
+                                    
+                                    let deleteDb = Firestore.firestore().collection("user")
+                                        .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
+                                    deleteDb.delete()
+                                    print("postId = \(postId) deleted")
+                                }
+                            }
+                        }
                     }
                 }
                 
+            }
+        }
+        
         }
         
       

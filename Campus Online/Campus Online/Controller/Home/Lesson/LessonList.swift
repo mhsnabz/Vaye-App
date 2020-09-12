@@ -250,8 +250,18 @@ class LessonList: UITableViewController {
                     let dict = ["username":currentUser.username as Any,"name":currentUser.name as Any,"email":currentUser.email as Any,"number":currentUser.number as Any,"thumb_image":currentUser.thumb_image ?? "" , "uid" : currentUser.uid as Any] as [String:Any]
                     abc.setData(dict, merge: true) { (err) in
                         if err == nil {
-                            Utilities.succesProgress(msg : "Ders Eklendi")
-                            self.tableView.reloadData()
+                            self.getAllPost(currentUser: currentUser, lessonName: lessonName) { (val) in
+                                self.addAllPost(postId: val, currentUser: currentUser) { (_val) in
+                                    if _val {
+                                        Utilities.succesProgress(msg : "Ders Eklendi")
+                                        self.tableView.reloadData()
+                                    }else{
+                                        Utilities.succesProgress(msg : "Ders Eklenemedi")
+                                        self.tableView.reloadData()
+                                    }
+                                }
+                            }
+                           
                         }else{
                             Utilities.errorProgress(msg: "Eklenemedi")
                         }
@@ -272,6 +282,38 @@ class LessonList: UITableViewController {
                 completion(true)
             }else{
                 completion(false)
+            }
+        }
+        
+    }
+    private func getAllPost(currentUser : CurrentUser , lessonName : String , completion : @escaping([String]) ->Void){
+        //İSTE/lesson-post/post/1599800825321
+        var postId = [String]()
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").whereField("lessonName", isEqualTo: lessonName)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else {
+                    completion([])
+                    return }
+                for doc in snap.documents {
+                    postId.append(doc.documentID)
+                }
+                completion(postId)
+            }
+        }
+    }
+    private func addAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.setData(["postId":item], merge: true) { (err) in
+                if err == nil {
+                    completion(true)
+                }else{
+                    completion(false)
+                }
             }
         }
         
@@ -383,3 +425,4 @@ extension LessonList : ActionSheetLauncherDelegate {
     
     
 }
+

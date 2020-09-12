@@ -98,10 +98,10 @@ class HomeVC: UIViewController {
 //        collectionview.refreshControl?.isEnabled = true
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
-//        collectionview.alwaysBounceVertical = true
-//        collectionview.refreshControl = refresher
-//        refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
-//        refresher.tintColor = .white
+        collectionview.alwaysBounceVertical = true
+        collectionview.refreshControl = refresher
+        refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
+        refresher.tintColor = .white
 
     }
     func stopRefresher() {
