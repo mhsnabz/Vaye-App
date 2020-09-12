@@ -378,6 +378,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         if SizeOfData(data: data) > 14.95 {
             Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
         }
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
         Utilities.waitProgress(msg: "Paylaşılıyor")
         let date = Int64(Date().timeIntervalSince1970 * 1000).description
         var val = [Data]()
