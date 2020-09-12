@@ -131,6 +131,7 @@ class HomeVC: UIViewController {
         
         newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
         newPostButton.layer.cornerRadius = 25
+        
         //        collectionview.refreshControl?.isEnabled = true
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)

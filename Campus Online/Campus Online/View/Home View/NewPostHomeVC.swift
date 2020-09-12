@@ -165,6 +165,14 @@ class NewPostHomeVC: UICollectionViewCell
         return v
     }()
     
+    let linkBtn : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.clipsToBounds = true
+        btn.imageView?.contentMode = .scaleAspectFit
+        return btn
+    }()
+    
     
     //MARK: -lifeCycle
     override init(frame: CGRect) {
@@ -175,13 +183,26 @@ class NewPostHomeVC: UICollectionViewCell
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
+        addSubview(linkBtn)
+        linkBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         
+        linkBtn.layer.cornerRadius = 25
+        
+        
+        linkBtn.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.50).cgColor
+        linkBtn.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        linkBtn.layer.shadowOpacity = 1.0
+        linkBtn.layer.shadowRadius = 5.0
+        linkBtn.layer.masksToBounds = false
         
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
         addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
+        linkBtn.isHidden = true
+        
+        
     }
     
     
@@ -205,16 +226,7 @@ class NewPostHomeVC: UICollectionViewCell
         delegate?.options(for: self)
     }
     //MARK:- functions
-    private func getTimesamp(time : Timestamp) -> String {
-        time.dateValue().timeAgoDisplay()
-         let formatter = DateComponentsFormatter()
-        
-         formatter.allowedUnits = [.second , .minute , .hour , .day , .weekOfMonth]
-         formatter.maximumUnitCount = 1
-         formatter.unitsStyle = .abbreviated
-         let now = Date()
-         return formatter.string(from: time.dateValue(), to: now) ?? "0s"
-     }
+  
     private func configure(){
         guard let post = lessonPostModel else { return }
         
@@ -230,5 +242,10 @@ class NewPostHomeVC: UICollectionViewCell
         dislike_lbl.text = post.dislike.description
         comment_lbl.text = post.comment.description
         
+        if post.link.isEmpty {
+            linkBtn.isHidden = true
+        }else{
+            linkBtn.isHidden = false
+        }
     }
 }

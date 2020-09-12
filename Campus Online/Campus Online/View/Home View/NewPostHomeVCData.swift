@@ -162,6 +162,13 @@ class NewPostHomeVCData : UICollectionViewCell{
             return v
         }()
     
+    let linkBtn : UIButton = {
+           let btn = UIButton(type: .system)
+           btn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
+           btn.clipsToBounds = true
+           btn.imageView?.contentMode = .scaleAspectFit
+           return btn
+       }()
    
     
         //MARK: -lifeCycle
@@ -182,6 +189,17 @@ class NewPostHomeVCData : UICollectionViewCell{
             optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
             filterView.isUserInteractionEnabled = true
             filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
+            addSubview(linkBtn)
+            linkBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
+            
+            linkBtn.layer.cornerRadius = 25
+            linkBtn.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.50).cgColor
+            linkBtn.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+            linkBtn.layer.shadowOpacity = 1.0
+            linkBtn.layer.shadowRadius = 5.0
+            linkBtn.layer.masksToBounds = false
+            linkBtn.isHidden = true
+         
         }
         
         
@@ -231,7 +249,11 @@ class NewPostHomeVCData : UICollectionViewCell{
             like_lbl.text = post.likes.description
             dislike_lbl.text = post.dislike.description
             comment_lbl.text = post.comment.description
-            
+            if post.link.isEmpty{
+                linkBtn.isHidden = true
+            }else{
+                linkBtn.isHidden = false
+            }
             
         }
     }
