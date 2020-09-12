@@ -18,6 +18,7 @@ class LessonPostModel {
     var dislike : Int!
     var link : String!
     var postId  :String!
+    var postID : Int64!
     var data : [String]!
     var thumb_image : String!
     var username : String!
@@ -26,6 +27,9 @@ class LessonPostModel {
         if let lessonName = dic["lessonName"] as? String {
             self.lessonName = lessonName
         }
+        if let postID = dic["postID"] as? Int64 {
+                   self.postID = postID
+               }
         
         if let senderName = dic["senderName"] as? String {
             self.senderName = senderName

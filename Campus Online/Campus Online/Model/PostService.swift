@@ -20,6 +20,7 @@ class PostService{
         "comment":0,
         "dislike":0,
         "data":datas,
+        "postID":Int64(postId) as Any,
         "username" : currentUser.username as Any,
         "thumb_image": currentUser.thumb_image as Any,
         "link":link ?? ""] as [String:Any]
@@ -80,8 +81,9 @@ class PostService{
     
     func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
         var post = [LessonPostModel]()
-        let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post")
+        let db : Query!
+        db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").order(by: FieldPath.documentID())
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }

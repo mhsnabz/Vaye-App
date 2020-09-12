@@ -318,6 +318,21 @@ class LessonList: UITableViewController {
         }
         
     }
+    private func removeAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.delete { (err) in
+                if err == nil {
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+            }
+        }
+        
+    }
     
     private func removeLesson (lessonName : String! ,teacherName : String!, teacherID : String! , teacherEmail : String! ){
         Utilities.waitProgress(msg: "Ders Siliniyor")
@@ -334,8 +349,17 @@ class LessonList: UITableViewController {
                     .document(lessonName!).collection("fallowers").document(currentUser.username)
                 abc.delete { (err) in
                     if err == nil {
-                        Utilities.succesProgress(msg : "Ders Silindi")
-                        self.tableView.reloadData()
+                        self.getAllPost(currentUser: currentUser, lessonName: lessonName) { (val) in
+                            self.removeAllPost(postId: val, currentUser: currentUser) { (_val) in
+                                if _val{
+                                    Utilities.succesProgress(msg : "Ders Silindi")
+                                    self.tableView.reloadData()
+                                }else{
+                                  Utilities.errorProgress(msg: "Ders Silinemedi")
+                                }
+                            }
+                        }
+                        
                     }else{
                         Utilities.errorProgress(msg: "Ders Silinemedi")
                     }

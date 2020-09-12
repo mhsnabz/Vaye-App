@@ -319,14 +319,14 @@ extension Date {
         if secondsAgo < minute {
             return " şimdi "
         } else if secondsAgo < hour {
-            return "\(secondsAgo / minute) dk önce"
+            return "\(secondsAgo / minute) dk "
         } else if secondsAgo < day {
-            return "\(secondsAgo / hour) saat önce"
+            return "\(secondsAgo / hour) sa"
         } else if secondsAgo < week {
-            return "\(secondsAgo / day) gün önce"
+            return "\(secondsAgo / day) g"
         }
 
-        return "\(secondsAgo / week) hafta önce"
+        return "\(secondsAgo / week) h"
     }
 }
 extension UIButton {

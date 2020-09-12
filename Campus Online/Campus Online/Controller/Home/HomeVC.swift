@@ -72,11 +72,12 @@ class HomeVC: UIViewController {
     //MARK: - functions
     
     fileprivate func getPost(){
-            
+        
         PostService.shared.fetchLessonPost(currentUser: self.currentUser) { (post) in
-                               self.lessonPost = post
-                               self.collectionview.reloadData()
-                           }
+            self.lessonPost = post
+            self.collectionview.reloadData()
+        }
+        
     }
     
    

@@ -9,6 +9,7 @@
 import UIKit
 import SDWebImage
 import ActiveLabel
+import FirebaseFirestore
 class NewPostHomeVC: UICollectionViewCell
 {
     weak var delegate : NewPostHomeVCDelegate?
@@ -204,12 +205,22 @@ class NewPostHomeVC: UICollectionViewCell
         delegate?.options(for: self)
     }
     //MARK:- functions
+    private func getTimesamp(time : Timestamp) -> String {
+        time.dateValue().timeAgoDisplay()
+         let formatter = DateComponentsFormatter()
+        
+         formatter.allowedUnits = [.second , .minute , .hour , .day , .weekOfMonth]
+         formatter.maximumUnitCount = 1
+         formatter.unitsStyle = .abbreviated
+         let now = Date()
+         return formatter.string(from: time.dateValue(), to: now) ?? "0s"
+     }
     private func configure(){
         guard let post = lessonPostModel else { return }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
-        name.append(NSAttributedString(string: " 8s", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        name.append(NSAttributedString(string: " \(post.postTime.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string: post.thumb_image))
