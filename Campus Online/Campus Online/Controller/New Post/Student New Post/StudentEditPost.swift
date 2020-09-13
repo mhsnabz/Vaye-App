@@ -106,7 +106,7 @@ class StudentEditPost: UIViewController {
     let addImage : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "gallery")!.withRenderingMode(.alwaysOriginal), for: .normal)
-        //           btn.addTarget(self, action: #selector(_addImage), for: .touchUpInside)
+                   btn.addTarget(self, action: #selector(_addImage), for: .touchUpInside)
         return btn
     }()
     let addLink : UIButton = {
@@ -163,6 +163,14 @@ class StudentEditPost: UIViewController {
     //    MARK:- selector
     @objc func dismissVC(){
         dismiss(animated: true, completion: nil)
+    }
+    @objc func _addImage(){
+        let vc = UIImagePickerController()
+        vc.sourceType = .photoLibrary
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true, completion: nil)
+                 
     }
     
     //    MARK:- functions
@@ -487,5 +495,8 @@ extension StudentEditPost : EditStudentPostDelegate {
         print("pdf deleted")
     }
     
+    
+}
+extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     
 }
