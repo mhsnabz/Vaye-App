@@ -391,7 +391,20 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
     func didSelect(option: ActionSheetHomeOptions) {
         switch option {  
         case .editPost(_):
-            print("Edit Post Click ")
+            guard let index = selectedIndex else { return }
+            if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
+                let vc = StudentEditPost(currentUser: currentUser , post : lessonPost[index.row] , heigth : h.msgText.frame.height )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
+                let vc = StudentEditPost(currentUser: currentUser , post : lessonPost[index.row] , heigth : h.msgText.frame.height )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            
+       
         case .deletePost(_):
             Utilities.waitProgress(msg: "Siliniyor")
             guard let postId = selectedPostID else {

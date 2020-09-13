@@ -167,7 +167,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         self.addUserSheet = AddUserLaunher(currentUser: currentUser)
         self.selectedLesson = selectedLesson
         self.fallowers = users
-        print(self.fallowers.count)
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -183,7 +182,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         configure()
         hideKeyboardWhenTappedAround()
         rigtBarButton()
-      //  navigationItem.title = "\(totolDataInMB) mb"
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -274,10 +272,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         view.addSubview(cloudDriveLink)
         cloudDriveLink.anchor(top: stack.bottomAnchor, left: stack.leftAnchor, bottom: nil, rigth: nil, marginTop: 5, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         cloudDriveLink.isHidden = true
-        //
-        //        view.addSubview(sizeOfData)
-        //        sizeOfData.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil
-        //            , rigth: nil, marginTop: 2, marginLeft: 2, marginBottom: 0, marginRigth: 0, width: 0, heigth: 16)
+ 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
