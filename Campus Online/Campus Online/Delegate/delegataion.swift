@@ -22,6 +22,9 @@ protocol MenuHeaderDelegate : class {
 protocol ActionSheetLauncherDelegate : class {
     func didSelect(option : ActionSheetOptions)
 }
+protocol ActionSheetHomeLauncherDelegate : class {
+    func didSelect(option : ActionSheetHomeOptions)
+}
 protocol PopUpDelegate : class {
     func handleDismissal()
     func addTarget(_ target : String?)

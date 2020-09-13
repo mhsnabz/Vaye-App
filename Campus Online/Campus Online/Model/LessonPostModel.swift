@@ -15,6 +15,7 @@ class LessonPostModel {
     var text : String!
     var likes : Int!
     var comment : Int!
+    var senderUid : String!
     var dislike : Int!
     var link : String!
     var postId  :String!
@@ -34,6 +35,9 @@ class LessonPostModel {
         if let senderName = dic["senderName"] as? String {
             self.senderName = senderName
         }
+        if let senderUid = dic["senderUid"] as? String {
+                   self.senderUid = senderUid
+               }
         if let text = dic["text"] as? String {
             self.text = text
         }

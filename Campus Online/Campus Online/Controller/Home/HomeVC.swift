@@ -24,6 +24,8 @@ class HomeVC: UIViewController {
     var lessonPost = [LessonPostModel]()
     var refresher = UIRefreshControl()
     var listenerRegistiration : ListenerRegistration?
+      private var actionSheet : ActionSheetHomeLauncher
+    var selectedIndex : IndexPath?
     //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
@@ -67,6 +69,7 @@ class HomeVC: UIViewController {
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
+        self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -300,7 +303,15 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 
 extension HomeVC : NewPostHomeVCDataDelegate {
     func options(for cell: NewPostHomeVCData) {
-        print("optionsClick")
+        if cell.lessonPostModel?.senderUid == currentUser.uid
+        {
+            actionSheet.delegate = self
+            actionSheet.show()
+            selectedIndex = collectionview.indexPath(for: cell)
+        }else{
+            
+        }
+        
     }
     
     func like(for cell: NewPostHomeVCData) {
@@ -338,7 +349,15 @@ extension HomeVC : NewPostHomeVCDelegate {
     }
     
     func options(for cell: NewPostHomeVC) {
-        print("options click")
+        if cell.lessonPostModel?.senderUid == currentUser.uid
+        {
+            actionSheet.delegate = self
+            actionSheet.show()
+            selectedIndex = collectionview.indexPath(for: cell)
+        }else{
+            
+        }
+        
     }
     
     func like(for cell: NewPostHomeVC) {
@@ -359,4 +378,15 @@ extension HomeVC : NewPostHomeVCDelegate {
     
     
 }
-
+extension HomeVC : ActionSheetHomeLauncherDelegate{
+    func didSelect(option: ActionSheetHomeOptions) {
+        switch option {  
+        case .editPost(_):
+            print("Edit Post Click ")
+        case .deletePost(_):
+            print("Delete Post Click")
+        }
+    }
+    
+    
+}
