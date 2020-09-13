@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-class ActionSheetHomeViewModel
+class ActionSheetHomeCurrentUserViewModel
 {
     private let currentUser : CurrentUser
       private let target : String
@@ -19,6 +19,7 @@ class ActionSheetHomeViewModel
         {
             result.append(.editPost(currentUser))
             result.append(.deletePost(currentUser))
+            result.append(.slientPost(currentUser))
         }
         return result
     }
@@ -31,6 +32,7 @@ class ActionSheetHomeViewModel
 enum ActionSheetHomeOptions{
     case editPost(CurrentUser)
     case deletePost(CurrentUser)
+    case slientPost(CurrentUser)
     var description : String {
         switch self {
             
@@ -38,6 +40,8 @@ enum ActionSheetHomeOptions{
             return "Gönderiyi Düzenle"
         case .deletePost(_):
             return "Gönderiyi Sil"
+        case .slientPost(_):
+            return "Gönderi Bildirimlerini Sessize Al"
         }}
     var image : UIImage {
           switch self {   
@@ -45,6 +49,8 @@ enum ActionSheetHomeOptions{
              return UIImage(named: "edit")!
           case .deletePost(_):
              return UIImage(named: "delete")!
+          case .slientPost(_):
+             return UIImage(named: "silent")!
         }
       }
 }

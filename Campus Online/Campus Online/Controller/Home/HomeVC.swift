@@ -303,10 +303,11 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 
 extension HomeVC : NewPostHomeVCDataDelegate {
     func options(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
         if cell.lessonPostModel?.senderUid == currentUser.uid
         {
             actionSheet.delegate = self
-            actionSheet.show()
+            actionSheet.show(post: post)
             selectedIndex = collectionview.indexPath(for: cell)
         }else{
             
@@ -349,10 +350,13 @@ extension HomeVC : NewPostHomeVCDelegate {
     }
     
     func options(for cell: NewPostHomeVC) {
+        guard  let post = cell.lessonPostModel else {
+            return
+        }
         if cell.lessonPostModel?.senderUid == currentUser.uid
         {
             actionSheet.delegate = self
-            actionSheet.show()
+            actionSheet.show(post: post)
             selectedIndex = collectionview.indexPath(for: cell)
         }else{
             
@@ -385,6 +389,8 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
             print("Edit Post Click ")
         case .deletePost(_):
             print("Delete Post Click")
+        case .slientPost(_):
+            print("slient")
         }
     }
     

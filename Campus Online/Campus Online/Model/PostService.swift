@@ -12,12 +12,14 @@ class PostService{
     static let shared = PostService()
     func setNewLessonPost( link : String?,currentUser : CurrentUser,postId : String ,users : [LessonFallowerUser] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void )
     {
+        let silent : [String] = []
         var dic = ["lessonName":lessonName,
         "postTime":FieldValue.serverTimestamp(),
         "senderName":currentUser.name as Any,
         "text":msgText,
         "likes":0,
-        "senderUid":currentUser.uid,
+        "senderUid":currentUser.uid as Any,
+        "silent":silent as Any,
         "comment":0,
         "dislike":0,
         "data":datas,

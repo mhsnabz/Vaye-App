@@ -8,16 +8,17 @@
 
 import Foundation
 import UIKit
+import FirebaseFirestore
 class ActionSheetHomeLauncher : NSObject {
     //MARK: -properties
         private let currentUser : CurrentUser
         private let target : String
         private let tableView = UITableView()
         private var window : UIWindow?
-        private lazy var viewModel = ActionSheetHomeViewModel(currentUser: currentUser, target: target)
+        private lazy var viewModel = ActionSheetHomeCurrentUserViewModel(currentUser: currentUser, target: target)
         weak var delegate : ActionSheetHomeLauncherDelegate?
         private var tableViewHeight : CGFloat?
-        
+        var post : LessonPostModel?
         private lazy var cancelButton : UIButton = {
             let button = UIButton(type: .system)
             button.setTitle("Vazgeç", for: .normal)
@@ -70,7 +71,9 @@ class ActionSheetHomeLauncher : NSObject {
             
         }
         
-        func show(){
+         func show(post : LessonPostModel){
+            self.post = post
+            self.tableView.reloadData()
             guard let window = UIApplication.shared.windows.first(where: { ($0.isKeyWindow)}) else { return }
             self.window = window
             window.addSubview(blackView)
@@ -84,7 +87,6 @@ class ActionSheetHomeLauncher : NSObject {
             UIView.animate(withDuration: 0.5) {
                 self.blackView.alpha = 1
                 self.tableView.frame.origin.y -= heigth
-                
             }
             
         }
@@ -108,6 +110,48 @@ class ActionSheetHomeLauncher : NSObject {
               
             }
         }
+    private func addSlient(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+        .document("lesson-post")
+        .collection("post")
+            .document(post!.postId)
+        db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Bildirimler Kapatıldı")
+                self.post?.silent.append(currentUser.uid)
+                completion(true)
+                
+            }
+        }
+       
+    }
+    private func removeSlient(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+           Utilities.waitProgress(msg: nil)
+           let db = Firestore.firestore().collection(currentUser.short_school)
+           .document("lesson-post")
+           .collection("post")
+               .document(post!.postId)
+        
+        db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+            if err == nil {
+               
+                
+                if let index = self.post?.silent.firstIndex(of: currentUser.uid) {
+                       Utilities.succesProgress(msg: "Bildirimler Açıldı")
+                    self.post?.silent.remove(at: index)
+                    completion(true)
+                } else {
+                      Utilities.errorProgress(msg: "Hata Oluştu")
+                    completion(false)
+                }
+               
+            }
+        }
+        
+           
+          
+       }
     }
 
 extension ActionSheetHomeLauncher : UITableViewDataSource,UITableViewDelegate {
@@ -118,6 +162,16 @@ extension ActionSheetHomeLauncher : UITableViewDataSource,UITableViewDelegate {
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          let cell = tableView.dequeueReusableCell(withIdentifier: "id",for: indexPath) as! ActionSheetHomeCell
          cell.options = viewModel.imageOptions[indexPath.row]
+       if cell.titleLabel.text == ActionSheetHomeOptions.slientPost(currentUser).description{
+        if (post?.silent.contains(currentUser.uid))!{
+            cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
+                  cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
+        }else{
+            cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+            cell.titleLabel.text = ActionSheetHomeOptions.slientPost(currentUser).description
+        }
+      
+        }
          return cell
      }
      func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -127,15 +181,37 @@ extension ActionSheetHomeLauncher : UITableViewDataSource,UITableViewDelegate {
          return footerView
      }
      
-     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-         let option = viewModel.imageOptions[indexPath.row]
-         delegate?.didSelect(option: option)
-         UIView.animate(withDuration: 0.5, animations: {
-                 self.blackView.alpha = 0
-                 self.showTableView(false)
-         }) { (_) in
-              self.tableView.reloadData()
-             self.delegate?.didSelect(option: option)
-         }
-     }
+    fileprivate func dismissTableView(_ indexPath: IndexPath) {
+        let option = viewModel.imageOptions[indexPath.row]
+        delegate?.didSelect(option: option)
+        UIView.animate(withDuration: 0.5, animations: {
+            self.blackView.alpha = 0
+            self.showTableView(false)
+        }) { (_) in
+            self.tableView.reloadData()
+            self.delegate?.didSelect(option: option)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        let cell = tableView.cellForRow(at: indexPath) as! ActionSheetHomeCell
+        //  print(currentCell.titleLabel.text)
+        if cell.titleLabel.text == ActionSheetHomeOptions.slientPost(currentUser).description{
+            
+            addSlient(currentUser: currentUser) {[weak self] (_val) in
+                if _val{
+                    self?.dismissTableView(indexPath)
+                }
+            }
+        }else if cell.titleLabel.text == "Gönderi Bildirimlerini Aç"{
+            removeSlient(currentUser: currentUser) {[weak self] (_) in
+                self?.dismissTableView(indexPath)
+            }
+        }else{
+            dismissTableView(indexPath)
+        }
+         
+        
+    }
 }

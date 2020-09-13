@@ -10,19 +10,21 @@ import UIKit
 
 class ActionSheetHomeCell: UITableViewCell {
 
+
+    
     var options : ActionSheetHomeOptions?{
           didSet{
               configure()
           }
       }
       
-      private let logo : UIImageView = {
+       let logo : UIImageView = {
          let img = UIImageView()
           img.clipsToBounds = true
           img.contentMode = .scaleAspectFit
           return img
       }()
-      private let titleLabel : UILabel = {
+       let titleLabel : UILabel = {
          let lbl = UILabel()
           lbl.font = UIFont(name: Utilities.font, size: 14)
           return lbl

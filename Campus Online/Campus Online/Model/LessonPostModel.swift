@@ -23,6 +23,7 @@ class LessonPostModel {
     var data : [String]!
     var thumb_image : String!
     var username : String!
+    var silent : [String]!
     init(postId  : String! , dic : [String : Any]) {
         self.postId = postId
         if let lessonName = dic["lessonName"] as? String {
@@ -56,6 +57,9 @@ class LessonPostModel {
         if let data = dic["data"] as? [String] {
             self.data = data
         }
+        if let silent = dic["silent"] as? [String] {
+                   self.silent = silent
+               }
         if let thumb_image = dic["thumb_image"] as? String {
                   self.thumb_image = thumb_image
               }
