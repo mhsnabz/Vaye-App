@@ -153,7 +153,7 @@ class NewPostHomeVC: UICollectionViewCell
         
         toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    
+        
         return view
     }()
     
@@ -167,7 +167,6 @@ class NewPostHomeVC: UICollectionViewCell
     
     let linkBtn : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
         btn.clipsToBounds = true
         btn.imageView?.contentMode = .scaleAspectFit
         return btn
@@ -225,8 +224,11 @@ class NewPostHomeVC: UICollectionViewCell
     @objc func optionsClick(){
         delegate?.options(for: self)
     }
+    @objc func linkClick(){
+        delegate?.linkClick(for : self)
+    }
     //MARK:- functions
-  
+    
     private func configure(){
         guard let post = lessonPostModel else { return }
         
@@ -241,11 +243,41 @@ class NewPostHomeVC: UICollectionViewCell
         like_lbl.text = post.likes.description
         dislike_lbl.text = post.dislike.description
         comment_lbl.text = post.comment.description
-        
+        linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
         if post.link.isEmpty {
             linkBtn.isHidden = true
+            
         }else{
             linkBtn.isHidden = false
+            detectLink(post.link)
         }
+    }
+    private func detectLink(_ link : String){
+        let url = NSURL(string: link)
+        let domain = url?.host
+        guard let link = domain else { return }
+        print(link)
+        if link == "drive.google.com" || link == "www.drive.google.com" {
+            linkBtn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "dropbox.com" || link == "www.dropbox.com"{
+            linkBtn.setImage(UIImage(named: "dropbox")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "icloud.com" || link == "www.icloud.com"{
+            linkBtn.setImage(UIImage(named: "icloud")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com" || link == "yadi.sk"{
+            linkBtn.setImage(UIImage(named: "yandex-disk")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "onedrive.live.com" || link == "www.onedrive.live.com" || link == "1drv.ms"{
+            linkBtn.setImage(UIImage(named: "onedrive")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "mega.nz" || link == "www.mega.nz"{
+            
+            linkBtn.setImage( UIImage(named: "mega")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        }else{
+            self.line.isHidden = true
+        }
+        
     }
 }

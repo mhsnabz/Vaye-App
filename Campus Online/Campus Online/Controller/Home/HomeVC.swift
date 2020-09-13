@@ -97,7 +97,7 @@ class HomeVC: UIViewController {
         view.backgroundColor = .collectionColor()
         getPost()
         
-       
+        
         
     }
     //MARK: - functions
@@ -205,7 +205,7 @@ class HomeVC: UIViewController {
             if err == nil {
                 guard let snap = querySnap?.documentChanges else { return }
                 snap.forEach({ (diff) in
-                
+                    
                     if (diff.type == .added) {
                         completion(true)
                     }
@@ -263,6 +263,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NewPostHomeVCData
             
             cell.backgroundColor = .white
+            cell.delegate = self
             let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
             
@@ -296,7 +297,46 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     
 }
+
+extension HomeVC : NewPostHomeVCDataDelegate {
+    func options(for cell: NewPostHomeVCData) {
+        print("optionsClick")
+    }
+    
+    func like(for cell: NewPostHomeVCData) {
+        cell.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func dislike(for cell: NewPostHomeVCData) {
+        cell.dislike.setImage(UIImage(named: "dislike-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func fav(for cell: NewPostHomeVCData) {
+        cell.addfav.setImage(UIImage(named: "fav-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func comment(for cell: NewPostHomeVCData) {
+        print("comment")
+    }
+    
+    func linkClick(for cell: NewPostHomeVCData) {
+        guard let url = URL(string: (cell.lessonPostModel?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)          
+    }
+    
+    
+}
+
 extension HomeVC : NewPostHomeVCDelegate {
+    func linkClick(for cell: NewPostHomeVC) {
+        guard let url = URL(string: (cell.lessonPostModel?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+    
     func options(for cell: NewPostHomeVC) {
         print("options click")
     }
