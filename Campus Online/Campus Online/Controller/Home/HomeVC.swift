@@ -26,6 +26,7 @@ class HomeVC: UIViewController {
     var listenerRegistiration : ListenerRegistration?
       private var actionSheet : ActionSheetHomeLauncher
     var selectedIndex : IndexPath?
+    var selectedPostID : String?
     //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
@@ -308,7 +309,9 @@ extension HomeVC : NewPostHomeVCDataDelegate {
         {
             actionSheet.delegate = self
             actionSheet.show(post: post)
-            selectedIndex = collectionview.indexPath(for: cell)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPost[index.row].postId
         }else{
             
         }
@@ -357,7 +360,9 @@ extension HomeVC : NewPostHomeVCDelegate {
         {
             actionSheet.delegate = self
             actionSheet.show(post: post)
-            selectedIndex = collectionview.indexPath(for: cell)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPost[index.row].postId
         }else{
             
         }
@@ -388,11 +393,33 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
         case .editPost(_):
             print("Edit Post Click ")
         case .deletePost(_):
-            print("Delete Post Click")
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(postId)
+            db.delete {[weak self] (err) in
+                if err == nil {
+                    self?.getPost()
+                    Utilities.succesProgress(msg: "Silindi")
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
         case .slientPost(_):
             print("slient")
         }
     }
     
     
+}
+extension Array where Element: Equatable{
+    mutating func remove (element: Element) {
+        if let i = self.firstIndex(of: element) {
+            self.remove(at: i)
+        }
+    }
 }
