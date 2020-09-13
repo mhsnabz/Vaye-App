@@ -9,8 +9,12 @@
 import UIKit
 import PDFKit
 class StudentEditPostPdfCell: UICollectionViewCell {
-//    weak var delegate  :DeletePdf?
-    
+  weak var delegate: EditStudentPostDelegate?
+    var url : String?{
+        didSet{
+            guard let url = URL(string: url ?? "") else { return }
+        }
+    }
     let deleteBtn : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "cancel")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -37,6 +41,6 @@ class StudentEditPostPdfCell: UICollectionViewCell {
              fatalError("init(coder:) has not been implemented")
          }
     @objc func deletePdf(){
-//        delegate?.deletePdf(for: self)
+        delegate?.deletePdf(for: self)
     }
 }

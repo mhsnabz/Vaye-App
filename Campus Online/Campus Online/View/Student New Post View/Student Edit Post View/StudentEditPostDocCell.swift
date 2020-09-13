@@ -9,7 +9,12 @@
 import UIKit
 
 class StudentEditPostDocCell: UICollectionViewCell {
-//    weak var delegate : DeleteDoc?
+  weak var delegate: EditStudentPostDelegate?
+    var url : String?{
+        didSet{
+            guard let url = URL(string: url ?? "") else { return }
+        }
+    }
        let deleteBtn : UIButton = {
            let btn = UIButton(type: .system)
            btn.setImage(UIImage(named: "cancel")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -35,6 +40,6 @@ class StudentEditPostDocCell: UICollectionViewCell {
             fatalError("init(coder:) has not been implemented")
         }
        @objc func deleteDoc(){
-//           delegate?.deleteDoc(for : self)
+           delegate?.deleteDoc(for : self)
        }
 }

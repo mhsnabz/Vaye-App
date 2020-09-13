@@ -7,10 +7,15 @@
 //
 
 import UIKit
-
+import SDWebImage
 class StudentEditPostImageCell: UICollectionViewCell {
-//    weak var delegate: DeleteImage?
-       
+        weak var delegate: EditStudentPostDelegate?
+       var url : String?{
+           didSet{
+               guard let url = URL(string: url ?? "") else { return }
+                loadImage(url: url)
+           }
+       }
        let deleteBtn : UIButton = {
            let btn = UIButton(type: .system)
            btn.setImage(UIImage(named: "cancel")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -37,6 +42,12 @@ class StudentEditPostImageCell: UICollectionViewCell {
            fatalError("init(coder:) has not been implemented")
        }
        @objc func deleteImage(){
-//           delegate?.deleteImage(for: self)
+        delegate?.deleteImage(for: self)
        }
+    
+    private func loadImage(url : URL)
+    {
+        img.sd_imageIndicator = SDWebImageActivityIndicator.white
+        img.sd_setImage(with: url, completed: nil)
+    }
 }

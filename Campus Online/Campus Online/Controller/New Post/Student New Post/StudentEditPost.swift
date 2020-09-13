@@ -11,6 +11,8 @@ import SDWebImage
 private let image_cell = "img"
 private let pdf_cell = "pdf"
 private let doc_cell = "doc"
+import FirebaseStorage
+import FirebaseFirestore
 class StudentEditPost: UIViewController {
     // MARK:-properties
     var collectionview: UICollectionView!
@@ -298,6 +300,30 @@ class StudentEditPost: UIViewController {
        return totolDataInMB / (1024 * 1024 )
         
     }
+    
+    private func deleteData(url : String,postId : String, currentUser : CurrentUser) {
+        Utilities.waitProgress(msg: "Siliniyor")
+        let storage = Storage.storage()
+        let r = storage.reference(forURL: url)
+        r.delete { (err) in
+            if err == nil {
+                //db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson-post").collection("post")
+                    .document(postId)
+                db.updateData(["data":FieldValue.arrayRemove([url as Any])]) { (err) in
+                    if err == nil {
+                        if let index = self.post.data.firstIndex(of: url) {
+                            Utilities.succesProgress(msg: "Dosya Silindi")
+                            self.post.data.remove(at: index)
+                            self.collectionview.reloadData()
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 extension StudentEditPost : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 {
@@ -313,14 +339,19 @@ extension StudentEditPost : UICollectionViewDataSource, UICollectionViewDelegate
         print(URL(string: (post.data[indexPath.row]))!.mimeType() )
         if URL(string: (post.data[indexPath.row]))!.mimeType() == "image/jpeg"{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: image_cell, for: indexPath) as! StudentEditPostImageCell
+            cell.delegate = self
+            cell.url = post.data[indexPath.row]
             return cell
             
         }else if URL(string: (post.data[indexPath.row]))!.mimeType() == DataTypes.pdf.contentType{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdf_cell, for: indexPath) as! StudentEditPostPdfCell
-            
+            cell.delegate = self
+            cell.url = post.data[indexPath.row]
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: doc_cell, for: indexPath) as! StudentEditPostDocCell
+            cell.delegate = self
+            cell.url = post.data[indexPath.row]
             return cell
         }
     }
@@ -437,6 +468,23 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
     {
         documentPicker.delegate = self
         present(documentPicker, animated: true, completion: nil)
+    }
+    
+    
+}
+extension StudentEditPost : EditStudentPostDelegate {
+    func deleteImage(for cell: StudentEditPostImageCell) {
+       guard let url = cell.url else { return }
+        self.deleteData(url: url, postId: post.postId, currentUser: currentUser)
+    }
+    
+    func deleteDoc(for cell: StudentEditPostDocCell) {
+        guard let url = cell.url else { return }
+        self.deleteData(url: url, postId: post.postId, currentUser: currentUser)
+    }
+    
+    func deletePdf(for cell: StudentEditPostPdfCell) {
+        print("pdf deleted")
     }
     
     
