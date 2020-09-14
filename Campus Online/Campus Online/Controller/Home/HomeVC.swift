@@ -112,7 +112,7 @@ class HomeVC: UIViewController {
     
     private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
         let db = Firestore.firestore().collection("user")
-        .document(userId)
+            .document(userId)
         db.getDocument { (docSnap, err) in
             if err == nil {
                 guard let snap = docSnap else {
@@ -333,13 +333,14 @@ extension HomeVC : NewPostHomeVCDataDelegate {
             selectedPostID = lessonPost[index.row].postId
         }else{
             Utilities.waitProgress(msg: nil)
+            actionOtherUserSheet.delegate = self
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionOtherUserSheet.show(post: post, otherUser: user)
                 
             }
-        
+            
             
         }
         
@@ -391,7 +392,8 @@ extension HomeVC : NewPostHomeVCDelegate {
             selectedIndex = index
             selectedPostID = lessonPost[index.row].postId
         }else{
-           Utilities.waitProgress(msg: nil)
+            Utilities.waitProgress(msg: nil)
+            actionOtherUserSheet.delegate = self
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
@@ -420,6 +422,52 @@ extension HomeVC : NewPostHomeVCDelegate {
     
     
 }
+extension HomeVC : ActionSheetOtherUserLauncherDelegate{
+    func didSelect(option: ActionSheetOtherUserOptions) {
+        switch option {
+        case .fallowUser(_):
+            Utilities.waitProgress(msg: "")
+            guard let index = selectedIndex else {
+                Utilities.dismissProgress()
+                return }
+            let db = Firestore.firestore().collection("user")
+                .document(lessonPost[index.row].senderUid)
+            db.getDocument {[weak self] (docSnap, err) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return}
+                if err == nil {
+                    if let snap = docSnap {
+                        
+                        let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : OtherUser.init(dic: snap.data()!))
+                        let controller = UINavigationController(rootViewController: vc)
+                        controller.modalPresentationStyle = .fullScreen
+                        sself.present(vc, animated: true) {
+                            Utilities.dismissProgress()
+                        }
+                    }else{
+                        Utilities.dismissProgress()
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                }
+            }
+            break
+        case .slientUser(_):
+            break
+        case .deleteLesson(_):
+            break
+        case .slientLesson(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            break
+        case .reportUser(_):
+            break
+        }
+    }
+}
 extension HomeVC : ActionSheetHomeLauncherDelegate{
     func didSelect(option: ActionSheetHomeOptions) {
         switch option {  
@@ -437,7 +485,7 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
                 self.present(controller, animated: true, completion: nil)
             }
             
-       
+            
         case .deletePost(_):
             Utilities.waitProgress(msg: "Siliniyor")
             guard let index = selectedIndex else { return }
@@ -456,7 +504,7 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
                             Utilities.succesProgress(msg: "Silindi")
                         }
                     }
-                  
+                    
                 }else{
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }

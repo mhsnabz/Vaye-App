@@ -75,6 +75,7 @@
 		66A5F0D8250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */; };
 		66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D9250F02F1005C93B3 /* OtherUser.swift */; };
 		66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */; };
+		66A5F0E0250F4BB8005C93B3 /* OtherUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0DF250F4BB8005C93B3 /* OtherUserProfile.swift */; };
 		66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EA250BFB7500259322 /* DataVC.swift */; };
 		66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6ED250C1FA200259322 /* DataViewImage.swift */; };
 		66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EF250C355700259322 /* DataViewPDF.swift */; };
@@ -201,6 +202,7 @@
 		66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeOtherUserViewModel.swift; sourceTree = "<group>"; };
 		66A5F0D9250F02F1005C93B3 /* OtherUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUser.swift; sourceTree = "<group>"; };
 		66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionOtherUserCell.swift; sourceTree = "<group>"; };
+		66A5F0DF250F4BB8005C93B3 /* OtherUserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfile.swift; sourceTree = "<group>"; };
 		66C4A6EA250BFB7500259322 /* DataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataVC.swift; sourceTree = "<group>"; };
 		66C4A6ED250C1FA200259322 /* DataViewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewImage.swift; sourceTree = "<group>"; };
 		66C4A6EF250C355700259322 /* DataViewPDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewPDF.swift; sourceTree = "<group>"; };
@@ -496,6 +498,14 @@
 			path = "ActionSheet Other User Cell";
 			sourceTree = "<group>";
 		};
+		66A5F0DE250F4B96005C93B3 /* OtherUserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				66A5F0DF250F4BB8005C93B3 /* OtherUserProfile.swift */,
+			);
+			path = OtherUserProfile;
+			sourceTree = "<group>";
+		};
 		66C4A6E9250BFB5A00259322 /* DataController */ = {
 			isa = PBXGroup;
 			children = (
@@ -659,6 +669,7 @@
 		66D9120D24EEAAF0002D760A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				66A5F0DE250F4B96005C93B3 /* OtherUserProfile */,
 				66D9121F24EEABA3002D760A /* ProfileVC.swift */,
 			);
 			path = Profile;
@@ -1068,6 +1079,7 @@
 				66D9122824EEAC6E002D760A /* delegataion.swift in Sources */,
 				660F5ACD2502D06C00F72558 /* AddUserCell.swift in Sources */,
 				661333E824F3B25B002677AB /* ProfileCell.swift in Sources */,
+				66A5F0E0250F4BB8005C93B3 /* OtherUserProfile.swift in Sources */,
 				661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */,
 				66D9121E24EEAB97002D760A /* MessagesVC.swift in Sources */,
 				66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */,
