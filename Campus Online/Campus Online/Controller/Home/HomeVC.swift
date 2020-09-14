@@ -11,6 +11,7 @@ import FirebaseAuth
 import FirebaseFirestore
 private let cellID = "cell_text"
 private let cellData = "cell_data"
+import FirebaseStorage
 class HomeVC: UIViewController {
     
     //MARK: -variables
@@ -407,6 +408,7 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
        
         case .deletePost(_):
             Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
             guard let postId = selectedPostID else {
                 Utilities.errorProgress(msg: "Hata Oluştu")
                 return }
@@ -415,9 +417,14 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
                 .collection("post")
                 .document(postId)
             db.delete {[weak self] (err) in
+                guard let sself = self else { return }
                 if err == nil {
-                    self?.getPost()
-                    Utilities.succesProgress(msg: "Silindi")
+                    sself.deleteToStorage(data: sself.lessonPost[index.row].data, postId: postId, index: index) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                  
                 }else{
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
@@ -426,7 +433,19 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
             print("slient")
         }
     }
-    
+    private func deleteToStorage(data : [String], postId : String , index : IndexPath , completion : @escaping(Bool) -> Void){
+        if data.count == 0{
+            completion(true)
+            return
+        }
+      
+        for item in data{
+            let ref = Storage.storage().reference(forURL: item)
+            ref.delete { (err) in
+                completion(true)
+            }
+        }
+    }
     
 }
 extension Array where Element: Equatable{
