@@ -11,7 +11,7 @@ import UIKit
 class ActionSheetHomeOtherUserViewModel{
     private let currentUser : CurrentUser
     private let target : String
-    private let otherUserUid : String
+
     
     var imageOptions : [ActionSheetOtherUserOptions] {
             var result = [ActionSheetOtherUserOptions]()
@@ -19,24 +19,26 @@ class ActionSheetHomeOtherUserViewModel{
            {
             result.append(.fallowUser(currentUser))
             result.append(.slientPost(currentUser))
-            result.append(.slientLesson(currentUser))
-            result.append(.slientUser(currentUser))
             result.append(.reportPost(currentUser))
+            result.append(.slientLesson(currentUser))
+            result.append(.deleteLesson(currentUser))
+            result.append(.slientUser(currentUser))
             result.append(.reportUser(currentUser))
            }
            return result
        }
     
-    init(currentUser : CurrentUser , target : String , otherUser : String) {
+    init(currentUser : CurrentUser , target : String) {
         self.currentUser = currentUser
         self.target = target.description
-        self.otherUserUid = otherUser
+
     }
 }
 enum ActionSheetOtherUserOptions{
     
     case fallowUser(CurrentUser)
     case slientUser(CurrentUser)
+    case deleteLesson(CurrentUser)
     case slientLesson(CurrentUser)
     case slientPost(CurrentUser)
     case reportPost(CurrentUser)
@@ -59,6 +61,8 @@ enum ActionSheetOtherUserOptions{
             
         case .slientPost(_):
             return "Bu Gönderiyi Sessize Al"
+        case .deleteLesson(_):
+            return "Dersi Takip Etmeyi Bırak"
         }}
     var image : UIImage {
         switch self {
@@ -68,13 +72,15 @@ enum ActionSheetOtherUserOptions{
         case .fallowUser(_):
             return UIImage(named: "silent")!
         case .slientUser(_):
-            return UIImage(named: "silent")!
+            return UIImage(named: "mute-user")!
         case .slientLesson(_):
             return UIImage(named: "silent")!
         case .reportPost(_):
-            return UIImage(named: "silent")!
+            return UIImage(named: "alert")!
         case .reportUser(_):
-            return UIImage(named: "silent")!
+            return UIImage(named: "report-user")!
+        case .deleteLesson(_):
+            return UIImage(named: "cancel")!
         }
     }
 }

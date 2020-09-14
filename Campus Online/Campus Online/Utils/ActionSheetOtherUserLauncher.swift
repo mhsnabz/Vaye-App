@@ -12,11 +12,11 @@ import FirebaseFirestore
 class ActionSheetOtherUserLaunher : NSObject{
     //MARK: -properties
     private let currentUser : CurrentUser
-    private let otherUser : String
+    private var otherUser : OtherUser?
     private let target : String
     private let tableView = UITableView()
     private var window : UIWindow?
-    private lazy var viewModel = ActionSheetHomeOtherUserViewModel(currentUser: currentUser, target: target, otherUser: otherUser)
+    private lazy var viewModel = ActionSheetHomeOtherUserViewModel(currentUser: currentUser, target: target)
     weak var delegate : ActionSheetOtherUserLauncherDelegate?
     private var tableViewHeight : CGFloat?
     var post : LessonPostModel?
@@ -30,6 +30,26 @@ class ActionSheetOtherUserLaunher : NSObject{
         
         button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
         return button
+    }()
+    
+    let fallowBtn : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Takip Et", for: .normal)
+        btn.clipsToBounds = true
+        btn.layer.cornerRadius = 5
+        btn.layer.borderColor = UIColor.black.cgColor
+        btn.layer.borderWidth = 0.75
+        btn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
+        btn.setTitleColor(.black, for: .normal)
+        return btn
+    }()
+    let image : UIImageView = {
+       let img = UIImageView()
+        img.clipsToBounds = true
+        img.layer.borderWidth = 0.75
+        img.layer.borderColor = UIColor.lightGray.cgColor
+        img.backgroundColor = .lightGray
+        return img
     }()
     private lazy var footerView : UIView = {
         let view = UIView()
@@ -52,10 +72,10 @@ class ActionSheetOtherUserLaunher : NSObject{
     }()
     
     
-    init(currentUser : CurrentUser , target : String , otherUser : String) {
+    init(currentUser : CurrentUser , target : String ) {
         self.currentUser = currentUser
         self.target = target
-        self.otherUser = otherUser
+        
         super.init()
         configureTableView()
     }
@@ -73,8 +93,9 @@ class ActionSheetOtherUserLaunher : NSObject{
         
     }
     
-    func show(post : LessonPostModel){
+    func show(post : LessonPostModel , otherUser : OtherUser){
         self.post = post
+        self.otherUser = otherUser
         self.tableView.reloadData()
         guard let window = UIApplication.shared.windows.first(where: { ($0.isKeyWindow)}) else { return }
         self.window = window
@@ -161,16 +182,22 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id",for: indexPath) as! ActionOtherUserCell
         cell.options = viewModel.imageOptions[indexPath.row]
-        if cell.titleLabel.text == ActionSheetHomeOptions.slientPost(currentUser).description{
-            if (post?.silent.contains(currentUser.uid))!{
-                cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
-                cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
-            }else{
-                cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
-                cell.titleLabel.text = ActionSheetHomeOptions.slientPost(currentUser).description
-            }
+        if cell.titleLabel.text == ActionSheetOtherUserOptions.fallowUser(currentUser).description{
+           
+            cell.titleLabel.text = otherUser!.username
+            cell.logo.layer.cornerRadius = 25 / 2
+            cell.logo.sd_setImage(with: URL(string: otherUser!.thumb_image))
+            cell.addSubview(fallowBtn)
+            fallowBtn.anchor(top: nil, left: nil
+                , bottom: nil, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 125, heigth: 25)
+            fallowBtn.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
             
+        }  else  if cell.titleLabel.text == ActionSheetOtherUserOptions.reportUser(currentUser).description{
+            cell.titleLabel.textColor = .red
+            cell.titleLabel.font = UIFont(name: Utilities.fontBold, size: 13)
         }
+            
+
         return cell
     }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -180,38 +207,41 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
         return footerView
     }
     
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        _ = tableView.cellForRow(at: indexPath) as! ActionOtherUserCell
+        //  print(currentCell.titleLabel.text)
+        dismissTableView(indexPath)
+//        if cell.titleLabel.text == ActionSheetOtherUserOptions.{
+//
+//            addSlient(currentUser: currentUser) {[weak self] (_val) in
+//                if _val{
+//                    self?.dismissTableView(indexPath)
+//                }
+//            }
+//        }else if cell.titleLabel.text == "Gönderi Bildirimlerini Aç"{
+//            removeSlient(currentUser: currentUser) {[weak self] (_) in
+//                self?.dismissTableView(indexPath)
+//            }
+//        }else{
+//            dismissTableView(indexPath)
+//        }
+        
+        
+    }
+    
     fileprivate func dismissTableView(_ indexPath: IndexPath) {
         let option = viewModel.imageOptions[indexPath.row]
-        
+           delegate?.didSelect(option: option)
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
             self.showTableView(false)
         }) { (_) in
             self.tableView.reloadData()
-            
+            self.delegate?.didSelect(option: option)
         }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let cell = tableView.cellForRow(at: indexPath) as! ActionSheetHomeCell
-        //  print(currentCell.titleLabel.text)
-        if cell.titleLabel.text == ActionSheetHomeOptions.slientPost(currentUser).description{
-            
-            addSlient(currentUser: currentUser) {[weak self] (_val) in
-                if _val{
-                    self?.dismissTableView(indexPath)
-                }
-            }
-        }else if cell.titleLabel.text == "Gönderi Bildirimlerini Aç"{
-            removeSlient(currentUser: currentUser) {[weak self] (_) in
-                self?.dismissTableView(indexPath)
-            }
-        }else{
-            dismissTableView(indexPath)
-        }
-        
-        
     }
 }
 

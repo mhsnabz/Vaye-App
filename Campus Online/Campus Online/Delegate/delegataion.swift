@@ -26,7 +26,7 @@ protocol ActionSheetHomeLauncherDelegate : class {
     func didSelect(option : ActionSheetHomeOptions)
 }
 protocol ActionSheetOtherUserLauncherDelegate : class {
-    func didSelect(option : ActionOtherUserCell)
+    func didSelect(option : ActionSheetOtherUserOptions)
 }
 protocol PopUpDelegate : class {
     func handleDismissal()

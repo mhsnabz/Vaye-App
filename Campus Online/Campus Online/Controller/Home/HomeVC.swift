@@ -19,13 +19,15 @@ class HomeVC: UIViewController {
     var delegate : HomeControllerDelegate?
     var currentUser : CurrentUser
     var isMenuOpen : Bool = false
+    var otherUser : OtherUser?
     var barTitle : String?
     var menu = UIButton()
     var collectionview: UICollectionView!
     var lessonPost = [LessonPostModel]()
     var refresher = UIRefreshControl()
     var listenerRegistiration : ListenerRegistration?
-      private var actionSheet : ActionSheetHomeLauncher
+    private var actionSheet : ActionSheetHomeLauncher
+    private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     var selectedIndex : IndexPath?
     var selectedPostID : String?
     //MARK:-properties
@@ -72,6 +74,7 @@ class HomeVC: UIViewController {
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
+        self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -106,6 +109,21 @@ class HomeVC: UIViewController {
         
     }
     //MARK: - functions
+    
+    private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
+        let db = Firestore.firestore().collection("user")
+        .document(userId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return }
+                if snap.exists {
+                    completion(OtherUser.init(dic: docSnap!.data()!))
+                }
+            }
+        }
+    }
     
     fileprivate func getPost(){
         
@@ -314,6 +332,14 @@ extension HomeVC : NewPostHomeVCDataDelegate {
             selectedIndex = index
             selectedPostID = lessonPost[index.row].postId
         }else{
+            Utilities.waitProgress(msg: nil)
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                
+            }
+        
             
         }
         
@@ -365,7 +391,13 @@ extension HomeVC : NewPostHomeVCDelegate {
             selectedIndex = index
             selectedPostID = lessonPost[index.row].postId
         }else{
-            
+           Utilities.waitProgress(msg: nil)
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                
+            }
         }
         
     }
