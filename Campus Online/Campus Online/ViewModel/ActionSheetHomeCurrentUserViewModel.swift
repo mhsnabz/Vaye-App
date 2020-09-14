@@ -11,7 +11,8 @@ import UIKit
 class ActionSheetHomeCurrentUserViewModel
 {
     private let currentUser : CurrentUser
-      private let target : String
+    private let target : String
+    
     
     var imageOptions : [ActionSheetHomeOptions] {
          var result = [ActionSheetHomeOptions]()

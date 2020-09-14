@@ -71,6 +71,10 @@
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
+		66A5F0D6250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D5250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift */; };
+		66A5F0D8250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */; };
+		66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D9250F02F1005C93B3 /* OtherUser.swift */; };
+		66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */; };
 		66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EA250BFB7500259322 /* DataVC.swift */; };
 		66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6ED250C1FA200259322 /* DataViewImage.swift */; };
 		66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EF250C355700259322 /* DataViewPDF.swift */; };
@@ -193,6 +197,10 @@
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
+		66A5F0D5250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetOtherUserLauncher.swift; sourceTree = "<group>"; };
+		66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeOtherUserViewModel.swift; sourceTree = "<group>"; };
+		66A5F0D9250F02F1005C93B3 /* OtherUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUser.swift; sourceTree = "<group>"; };
+		66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionOtherUserCell.swift; sourceTree = "<group>"; };
 		66C4A6EA250BFB7500259322 /* DataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataVC.swift; sourceTree = "<group>"; };
 		66C4A6ED250C1FA200259322 /* DataViewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewImage.swift; sourceTree = "<group>"; };
 		66C4A6EF250C355700259322 /* DataViewPDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewPDF.swift; sourceTree = "<group>"; };
@@ -450,6 +458,7 @@
 			children = (
 				6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */,
 				669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */,
+				66A5F0D5250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift */,
 				660F5AC92502C98200F72558 /* AddUserLaunher.swift */,
 				665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */,
 				665E5CD324FFB5BE00B5B5E3 /* CaptionText.swift */,
@@ -462,6 +471,7 @@
 		6687921224FB0A8200A43A41 /* ActionSheetCell */ = {
 			isa = PBXGroup;
 			children = (
+				66A5F0DB250F04E8005C93B3 /* ActionSheet Other User Cell */,
 				6687921324FB0AA500A43A41 /* ActionSheetCell.swift */,
 				669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */,
 			);
@@ -473,8 +483,17 @@
 			children = (
 				6687921624FBB96800A43A41 /* ActionSheetViewModel.swift */,
 				669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */,
+				66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		66A5F0DB250F04E8005C93B3 /* ActionSheet Other User Cell */ = {
+			isa = PBXGroup;
+			children = (
+				66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */,
+			);
+			path = "ActionSheet Other User Cell";
 			sourceTree = "<group>";
 		};
 		66C4A6E9250BFB5A00259322 /* DataController */ = {
@@ -569,6 +588,7 @@
 				6615FC802509B9D600776664 /* PostService.swift */,
 				665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */,
 				6615FC88250AE46E00776664 /* LessonPostModel.swift */,
+				66A5F0D9250F02F1005C93B3 /* OtherUser.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1060,11 +1080,13 @@
 				6622C2402505D1DD00E3B3F0 /* LessonInfoCell.swift in Sources */,
 				66E326AB24F9C01C004CB61D /* UserService.swift in Sources */,
 				661333F624F3FDD6002677AB /* LoginVC.swift in Sources */,
+				66A5F0D6250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift in Sources */,
 				66D9122324EEABEC002D760A /* HomeMenuCell.swift in Sources */,
 				66F25F1124F6BD39005B0591 /* FakulteTB.swift in Sources */,
 				66F25F1724F78618005B0591 /* BolumTB.swift in Sources */,
 				6615FC812509B9D600776664 /* PostService.swift in Sources */,
 				6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */,
+				66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */,
 				66E326A424F98C28004CB61D /* LessonList.swift in Sources */,
 				661333EA24F3B44B002677AB /* ProfileHeader.swift in Sources */,
 				6615FC89250AE46E00776664 /* LessonPostModel.swift in Sources */,
@@ -1072,6 +1094,7 @@
 				6613340824F4E9C1002677AB /* SchoolModel.swift in Sources */,
 				66D9121B24EEAB85002D760A /* NotificationVC.swift in Sources */,
 				660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */,
+				66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */,
 				661333E524F395B2002677AB /* HomeMenuController.swift in Sources */,
 				6615FC87250A945700776664 /* NewPostHomeVC.swift in Sources */,
 				66D9121424EEAB49002D760A /* HomeVC.swift in Sources */,
@@ -1105,6 +1128,7 @@
 				6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */,
 				66E326A624F98FE7004CB61D /* LessonsModel.swift in Sources */,
 				66F4CD46250E80310076D12E /* StudentEditPostPdfCell.swift in Sources */,
+				66A5F0D8250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift in Sources */,
 				6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */,
 				6615FC95250B3B0E00776664 /* DataViewDocCell.swift in Sources */,
 				6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */,

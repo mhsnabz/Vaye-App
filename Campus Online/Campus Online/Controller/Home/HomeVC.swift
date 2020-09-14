@@ -438,7 +438,6 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
             completion(true)
             return
         }
-      
         for item in data{
             let ref = Storage.storage().reference(forURL: item)
             ref.delete { (err) in
@@ -446,7 +445,6 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
             }
         }
     }
-    
 }
 extension Array where Element: Equatable{
     mutating func remove (element: Element) {
