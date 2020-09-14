@@ -187,6 +187,8 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             cell.titleLabel.text = otherUser!.username
             cell.logo.layer.cornerRadius = 25 / 2
             cell.logo.sd_setImage(with: URL(string: otherUser!.thumb_image))
+            cell.logo.layer.borderColor = UIColor.lightGray.cgColor
+            cell.logo.layer.borderWidth = 0.75
             cell.addSubview(fallowBtn)
             fallowBtn.anchor(top: nil, left: nil
                 , bottom: nil, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 125, heigth: 25)
@@ -240,7 +242,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             self.showTableView(false)
         }) { (_) in
             self.tableView.reloadData()
-            self.delegate?.didSelect(option: option)
+//            self.delegate?.didSelect(option: option)
         }
     }
 }

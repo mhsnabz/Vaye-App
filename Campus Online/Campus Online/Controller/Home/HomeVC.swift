@@ -334,6 +334,9 @@ extension HomeVC : NewPostHomeVCDataDelegate {
         }else{
             Utilities.waitProgress(msg: nil)
             actionOtherUserSheet.delegate = self
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPost[index.row].postId
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
@@ -394,6 +397,9 @@ extension HomeVC : NewPostHomeVCDelegate {
         }else{
             Utilities.waitProgress(msg: nil)
             actionOtherUserSheet.delegate = self
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPost[index.row].postId
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
@@ -426,32 +432,23 @@ extension HomeVC : ActionSheetOtherUserLauncherDelegate{
     func didSelect(option: ActionSheetOtherUserOptions) {
         switch option {
         case .fallowUser(_):
+            print("called")
             Utilities.waitProgress(msg: "")
             guard let index = selectedIndex else {
                 Utilities.dismissProgress()
                 return }
-            let db = Firestore.firestore().collection("user")
-                .document(lessonPost[index.row].senderUid)
-            db.getDocument {[weak self] (docSnap, err) in
+            UserService.shared.fetchOtherUser(uid: lessonPost[index.row].senderUid) {[weak self] (user) in
                 guard let sself = self else {
                     Utilities.dismissProgress()
                     return}
-                if err == nil {
-                    if let snap = docSnap {
-                        
-                        let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : OtherUser.init(dic: snap.data()!))
-                        let controller = UINavigationController(rootViewController: vc)
-                        controller.modalPresentationStyle = .fullScreen
-                        sself.present(vc, animated: true) {
-                            Utilities.dismissProgress()
-                        }
-                    }else{
-                        Utilities.dismissProgress()
-                    }
-                }else{
+                let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                sself.present(controller, animated: true) {
                     Utilities.dismissProgress()
                 }
             }
+    
             break
         case .slientUser(_):
             break

@@ -21,6 +21,18 @@ struct UserService {
             completion(currentUser)
         }
     }
+    func fetchOtherUser ( uid : String , completion : @escaping(OtherUser) -> Void){
+
+        let db = Firestore.firestore().collection("user")
+        .document(uid)
+        db.getDocument { (docSnap, err) in
+            guard let dic = docSnap?.data() else {
+                Utilities.dismissProgress()
+                return }
+            let currentUser = OtherUser.init(dic: dic)
+            completion(currentUser)
+        }
+    }
     ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/fallowers
     func fetchFallowers(_ sorthSchoolName: String! , _ major : String!  , _ lessonName : String!,completion : @escaping(LessonFallowerUser) -> Void)
         {
