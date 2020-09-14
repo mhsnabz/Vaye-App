@@ -13,6 +13,7 @@ private let pdf_cell = "pdf"
 private let doc_cell = "doc"
 import FirebaseStorage
 import FirebaseFirestore
+import SVProgressHUD
 class StudentEditPost: UIViewController {
     // MARK:-properties
     var collectionview: UICollectionView!
@@ -22,6 +23,7 @@ class StudentEditPost: UIViewController {
     var h : CGFloat
     var heigth : CGFloat = 0.0
     var data = [SelectedData]()
+    var uploadTask : StorageUploadTask?
     var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
@@ -165,10 +167,12 @@ class StudentEditPost: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     @objc func _addImage(){
+        
         let vc = UIImagePickerController()
         vc.sourceType = .photoLibrary
         vc.delegate = self
         vc.allowsEditing = true
+        vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true, completion: nil)
                  
     }
@@ -497,6 +501,83 @@ extension StudentEditPost : EditStudentPostDelegate {
     
     
 }
-extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-    
-}
+extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControllerDelegate
+{
+    //İSTE/Bilgisayar Mühendisliği/Bilişim Hukuku/@mhsnabz/1600038956210
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let date = Int64(Date().timeIntervalSince1970 * 1000).description
+        guard let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return}
+        let metaDataForImage = StorageMetadata()
+        metaDataForImage.contentType = "image/jpeg"
+        guard let uploadData = selectedImage.jpegData(compressionQuality: 1) else { return }
+        let filename = date + ".jpg"
+        let storageRef = Storage.storage().reference().child(currentUser.short_school)
+            .child(currentUser.bolum).child(post.lessonName).child(currentUser.username)
+            .child(post.postId).child(filename)
+        SVProgressHUD.setBackgroundColor(.black)
+        SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
+        SVProgressHUD.setDefaultStyle(.dark)
+        SVProgressHUD.setBorderColor(.white)
+        SVProgressHUD.setForegroundColor(.white)
+        
+      uploadTask =  storageRef.putData(uploadData, metadata: metaDataForImage, completion: { (metadata, err) in
+            if err != nil {
+                SVProgressHUD.showError(withStatus: "Hata Oluştu")
+                print("failed upload image")
+                return
+            }
+            Utilities.waitProgress(msg: "Resim Yükleniyor")
+            storageRef.downloadURL {[weak self] (url, err) in
+                if err == nil {
+                    guard let url = url?.absoluteString else {
+                        print("DEBUG : profile Image url is null")
+                        return
+                    }
+                    guard let sself = self else { return }
+                    ///İSTE/lesson-post/post/1599978424725
+                    let db = Firestore.firestore().collection(sself.currentUser.short_school).document("lesson-post")
+                        .collection("post").document(sself.post.postId)
+                    //db.updateData(["data":FieldValue.arrayRemove([url as Any])])
+                    db.updateData(["data":FieldValue.arrayUnion([url as Any])]) { (err) in
+                        if err == nil
+                        {
+                            sself.post.data.append(url)
+                            sself.collectionview.reloadData()
+                            Utilities.dismissProgress()
+                            Utilities.succesProgress(msg: "Resim Yüklendi")
+                            sself.dismiss(animated: true, completion: nil)
+                        }else{
+                            SVProgressHUD.showError(withStatus: "Hata Oluştu")
+                        }
+                        
+                        
+                    }
+                   
+                   
+                }
+               
+            }
+            
+        })
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true, completion: nil)
+        }
+   
+        if uploadTask != nil {
+                    _ = uploadTask!.observe(.progress) { snapshot in
+                        
+                        Utilities.waitProgress(msg: "Resim Yükleniyor")
+//                        
+//                        let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
+//                            / Float(snapshot.progress!.totalUnitCount)
+//                        
+//                        SVProgressHUD.showProgress(percentComplete, status: "Resim Yükleniyor \n \(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
+//                        
+//                        print(percentComplete) // NSProgress object
+                    }
+                }
+               
+            }
+    }
+   
+

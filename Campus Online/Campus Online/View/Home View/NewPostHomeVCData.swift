@@ -20,6 +20,7 @@ class NewPostHomeVCData : UICollectionViewCell{
             guard let post = lessonPostModel else { return }
             if !post.data.isEmpty{
                 filterView.arrayOfUrl = post.data
+                filterView.collectionView.reloadData()
             }
         }
     }

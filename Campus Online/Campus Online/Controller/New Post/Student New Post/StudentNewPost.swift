@@ -533,6 +533,10 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
         
         
     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width  = (view.frame.width - 30 ) / 3
+        return CGSize(width: width, height: width)
+    }
    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,                                minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
