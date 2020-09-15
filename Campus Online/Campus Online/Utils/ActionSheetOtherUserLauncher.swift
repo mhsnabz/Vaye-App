@@ -215,24 +215,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         _ = tableView.cellForRow(at: indexPath) as! ActionOtherUserCell
-        //  print(currentCell.titleLabel.text)
         dismissTableView(indexPath)
-//        if cell.titleLabel.text == ActionSheetOtherUserOptions.{
-//
-//            addSlient(currentUser: currentUser) {[weak self] (_val) in
-//                if _val{
-//                    self?.dismissTableView(indexPath)
-//                }
-//            }
-//        }else if cell.titleLabel.text == "Gönderi Bildirimlerini Aç"{
-//            removeSlient(currentUser: currentUser) {[weak self] (_) in
-//                self?.dismissTableView(indexPath)
-//            }
-//        }else{
-//            dismissTableView(indexPath)
-//        }
-        
-        
     }
     
     fileprivate func dismissTableView(_ indexPath: IndexPath) {
