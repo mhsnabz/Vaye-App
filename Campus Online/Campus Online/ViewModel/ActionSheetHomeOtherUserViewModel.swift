@@ -21,8 +21,8 @@ class ActionSheetHomeOtherUserViewModel{
             result.append(.slientPost(currentUser))
             result.append(.reportPost(currentUser))
             result.append(.slientLesson(currentUser))
-            result.append(.deleteLesson(currentUser))
             result.append(.slientUser(currentUser))
+             result.append(.deleteLesson(currentUser))
             result.append(.reportUser(currentUser))
            }
            return result
@@ -72,7 +72,7 @@ enum ActionSheetOtherUserOptions{
         case .fallowUser(_):
             return UIImage(named: "silent")!
         case .slientUser(_):
-            return UIImage(named: "mute-user")!
+            return UIImage(named: "loud-user")!
         case .slientLesson(_):
             return UIImage(named: "silent")!
         case .reportPost(_):

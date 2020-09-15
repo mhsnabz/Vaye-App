@@ -134,7 +134,7 @@ extension ActionSheetLauncher : UITableViewDataSource,UITableViewDelegate {
                 self.showTableView(false)
         }) { (_) in
              self.tableView.reloadData()
-            self.delegate?.didSelect(option: option)
+         
         }
     }
     
