@@ -189,6 +189,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             cell.logo.sd_setImage(with: URL(string: otherUser!.thumb_image))
             cell.logo.layer.borderColor = UIColor.lightGray.cgColor
             cell.logo.layer.borderWidth = 0.75
+            
             cell.addSubview(fallowBtn)
             fallowBtn.anchor(top: nil, left: nil
                 , bottom: nil, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 125, heigth: 25)
