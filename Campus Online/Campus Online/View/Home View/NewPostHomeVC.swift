@@ -19,8 +19,28 @@ class NewPostHomeVC: UICollectionViewCell
     var lessonPostModel : LessonPostModel?{
         didSet {
             configure()
+            guard let currentUser = currentUser else { return }
+            checkIsDisliked(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
+                guard let s = self else { return }
+                if _val {
+                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }else{
+                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }
+            }
+            checkIsLiked(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
+                   guard let s = self else { return }
+                if _val{
+                    s.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }else{
+                    s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }
+            }
         }
     }
+    var currentUser : CurrentUser?
     
     //MARK:- properties
     let profileImage : UIImageView = {
@@ -229,6 +249,27 @@ class NewPostHomeVC: UICollectionViewCell
     }
     //MARK:- functions
     
+    private func checkIsLiked(user : CurrentUser, post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+      {
+      
+          guard let post = post else { return }
+          if post.likes.contains(user.uid){
+              completion(true)
+          }else{
+              completion(false)
+          }
+      }
+      
+    private func checkIsDisliked(user : CurrentUser ,post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+             guard let post = post else { return }
+             if post.dislike.contains(user.uid){
+                 completion(true)
+             }else{
+                 completion(false)
+             }
+         }
+    
     private func configure(){
         guard let post = lessonPostModel else { return }
         
@@ -240,8 +281,8 @@ class NewPostHomeVC: UICollectionViewCell
         profileImage.sd_setImage(with: URL(string: post.thumb_image))
         lessonName.text = post.lessonName
         msgText.text = post.text
-        like_lbl.text = post.likes.description
-        dislike_lbl.text = post.dislike.description
+        like_lbl.text = post.likes.count.description
+        dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
         linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
         if post.link.isEmpty {

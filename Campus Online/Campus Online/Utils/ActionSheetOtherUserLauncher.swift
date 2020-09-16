@@ -286,7 +286,6 @@ class ActionSheetOtherUserLaunher : NSObject{
                 Utilities.dismissProgress()
                 sself.postIsSlient = false
                  sself.post?.silent.remove(element : sself.currentUser.uid)
-                 
                 completion(false)
                 sself.tableView.reloadData()
             }else{

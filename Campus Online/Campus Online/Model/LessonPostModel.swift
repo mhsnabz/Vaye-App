@@ -13,10 +13,10 @@ class LessonPostModel {
     var postTime : Timestamp!
     var senderName : String!
     var text : String!
-    var likes : Int!
+    var likes : [String]!
     var comment : Int!
     var senderUid : String!
-    var dislike : Int!
+    var dislike : [String]!
     var link : String!
     var postId  :String!
     var postID : Int64!
@@ -45,13 +45,13 @@ class LessonPostModel {
         if let link = dic["link"] as? String {
             self.link = link
         }
-        if let likes = dic["likes"] as? Int {
+        if let likes = dic["likes"] as? [String] {
             self.likes = likes
         }
         if let comment = dic["comment"] as? Int {
             self.comment = comment
         }
-        if let dislike = dic["dislike"] as? Int {
+        if let dislike = dic["dislike"] as? [String] {
             self.dislike = dislike
         }
         if let data = dic["data"] as? [String] {

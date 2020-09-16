@@ -264,6 +264,18 @@ class HomeVC: UIViewController {
         }
     }
     
+    private func setLike(post : LessonPostModel , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId)
+        db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+            db.updateData(["dislike":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+                post.likes.append(self.currentUser.uid)
+                post.dislike.remove(element: self.currentUser.uid)
+                completion(true)
+            }
+        }
+    }
+    
 }
 
 extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
@@ -277,6 +289,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         if lessonPost[indexPath.row].data.isEmpty {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
             cell.delegate = self
+            cell.currentUser = currentUser
             cell.backgroundColor = .white
             let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
@@ -289,6 +302,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
             
             cell.backgroundColor = .white
             cell.delegate = self
+            
             let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
             
@@ -352,11 +366,13 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     }
     
     func like(for cell: NewPostHomeVCData) {
-        cell.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+      
+        
     }
     
     func dislike(for cell: NewPostHomeVCData) {
-        cell.dislike.setImage(UIImage(named: "dislike-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        
     }
     
     func fav(for cell: NewPostHomeVCData) {
@@ -413,11 +429,14 @@ extension HomeVC : NewPostHomeVCDelegate {
     }
     
     func like(for cell: NewPostHomeVC) {
-        cell.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        setLike(post: cell.lessonPostModel!) { (_) in
+            self.collectionview.reloadData()
+        }
+        
     }
     
     func dislike(for cell: NewPostHomeVC) {
-        cell.dislike.setImage(UIImage(named: "dislike-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+           collectionview.reloadData()
     }
     
     func fav(for cell: NewPostHomeVC) {
