@@ -430,7 +430,7 @@ class RegisterVC: UIViewController {
                     if result != nil {
                         Utilities.waitProgress(msg: "Kayıt Yapılıyor")
                         var dic = Dictionary<String,Any>()
-                        dic = ["number":number!,"name":_name!,"profileImage":"","thumb_image":"","email":result!.user.email!,"priority":"student","uid":result!.user.uid,"short_school":self.school.shortName! ,"schoolName":self.school.name!,"username":username! , "instagram": "", "twitter":"","linkedin":"","github":""]
+                        dic = ["number":number!,"name":_name!,"slient":[],"profileImage":"","thumb_image":"","email":result!.user.email!,"priority":"student","uid":result!.user.uid,"short_school":self.school.shortName! ,"schoolName":self.school.name!,"username":username! , "instagram": "", "twitter":"","linkedin":"","github":""]
                         let db = Firestore.firestore().collection("user")
                             .document(result!.user.uid)
                         db.setData(dic, merge: true) { (err) in

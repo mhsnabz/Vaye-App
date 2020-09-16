@@ -23,6 +23,7 @@ class ActionSheetOtherUserLaunher : NSObject{
     
     var lessonIsSlient : Bool = false
     var postIsSlient : Bool = false
+    var userIsSlient : Bool = false
     private lazy var cancelButton : UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Vazgeç", for: .normal)
@@ -260,7 +261,7 @@ class ActionSheetOtherUserLaunher : NSObject{
             if err == nil {
                 Utilities.dismissProgress()
                 sself.postIsSlient = true
-                  sself.post?.silent.append(sself.currentUser.uid)
+                sself.post?.silent.append(sself.currentUser.uid)
                 completion(true)
                 sself.tableView.reloadData()
             }else{
@@ -273,7 +274,7 @@ class ActionSheetOtherUserLaunher : NSObject{
         }
     
     }
-   private func setNotPostSlient(postId : String ,completion : @escaping(Bool) ->Void){
+    private func setNotPostSlient(postId : String ,completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("lesson-post").collection("post").document(postId)
@@ -299,6 +300,63 @@ class ActionSheetOtherUserLaunher : NSObject{
     
     }
     
+    private func checkIamSlient(slientUser : [String] , completion : @escaping(Bool) ->Void){
+        if slientUser.isEmpty{
+            userIsSlient = false
+            completion(false)
+            return
+        }
+        if slientUser.contains(currentUser.uid){
+                  userIsSlient = true
+            completion(true)
+        }else{
+                  userIsSlient = false
+            completion(false)
+        }
+    }
+    private func setUserSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user").document(otherUserUid)
+        db.updateData(["slient":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+            guard let sself = self else {
+                           Utilities.dismissProgress()
+                           return}
+                       if err == nil {
+                           Utilities.dismissProgress()
+                           sself.userIsSlient = true
+                        sself.otherUser?.slientUser.append(sself.currentUser.uid)
+                           completion(true)
+                           sself.tableView.reloadData()
+                       }else{
+                           Utilities.dismissProgress()
+                           sself.userIsSlient = false
+                           sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
+                           completion(false)
+                           sself.tableView.reloadData()
+                       }
+        }
+    }
+    
+    private func setUserNotSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user").document(otherUserUid)
+        db.updateData(["slient":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
+                   guard let sself = self else {
+                                  Utilities.dismissProgress()
+                                  return}
+                              if err == nil {
+                                  Utilities.dismissProgress()
+                                  sself.userIsSlient = false
+                                    sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
+                                  completion(false)
+                                  sself.tableView.reloadData()
+                              }else{
+                                  Utilities.dismissProgress()
+                                  sself.userIsSlient = true
+                                    sself.otherUser?.slientUser.append(sself.currentUser.uid)
+                                  completion(true)
+                                  sself.tableView.reloadData()
+                              }
+               }
+    }
 }
 
 extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegate {
@@ -326,7 +384,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             cell.titleLabel.textColor = .red
             cell.titleLabel.font = UIFont(name: Utilities.fontBold, size: 13)
         }else if cell.titleLabel.text == ActionSheetOtherUserOptions.reportPost(currentUser).description {
-            print("gönderiyi sikayet et  \(indexPath.row)")
+                
         }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientLesson(currentUser).description
         {
@@ -348,7 +406,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             
         }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientPost(currentUser).description{
-             print("silent post indexPath \(indexPath.row)")
+             
             isPostSlient(slientUser: post!.silent) { (val) in
                 if val {
                     cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
@@ -358,6 +416,21 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
                     cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
                 }
             }
+        }
+        else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientUser(currentUser).description{
+
+            if otherUser?.slientUser != nil {
+                checkIamSlient(slientUser: otherUser!.slientUser) { (val) in
+                    if val {
+                        cell.titleLabel.text = "Kullanıcıyı Sessizden Al"
+                        cell.logo.image = #imageLiteral(resourceName: "mute-user").withRenderingMode(.alwaysOriginal)
+                    }else{
+                        cell.titleLabel.text = ActionSheetOtherUserOptions.slientUser(self.currentUser).description
+                        cell.logo.image = #imageLiteral(resourceName: "loud-user").withRenderingMode(.alwaysOriginal)
+                    }
+                }
+            }
+            
         }
             
 
@@ -395,6 +468,17 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
                 }
             }else{
                 setPostSlient(postId: post!.postId) { (_) in
+                    tableView.reloadData()
+                }
+            }
+        }
+        else if indexPath.row == 4 {
+            if userIsSlient {
+                setUserNotSlient(slientUser: otherUser?.slientUser ?? [], otherUserUid: otherUser!.uid) { (_) in
+                    tableView.reloadData()
+                }
+            }else{
+                setUserSlient(slientUser: otherUser?.slientUser ?? [], otherUserUid: otherUser!.uid) { (_) in
                     tableView.reloadData()
                 }
             }
