@@ -265,12 +265,52 @@ class HomeVC: UIViewController {
     }
     
     private func setLike(post : LessonPostModel , completion : @escaping(Bool) ->Void){
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(post.postId)
-        db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
-            db.updateData(["dislike":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
-                post.likes.append(self.currentUser.uid)
-                post.dislike.remove(element: self.currentUser.uid)
+        
+        if !post.likes.contains(currentUser.uid){
+            post.likes.append(self.currentUser.uid)
+            post.dislike.remove(element: self.currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                db.updateData(["dislike":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+                }
+            }
+        }else{
+            post.likes.remove(element: self.currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                completion(true)
+            }
+        }
+        
+      
+    }
+    
+    private func setDislike(post : LessonPostModel , completion : @escaping(Bool)->Void){
+        if !post.dislike.contains(currentUser.uid){
+            post.likes.remove(element: currentUser.uid)
+            post.dislike.append(currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                if err == nil {
+                    db.updateData(["likes":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+                    }
+                }
+            }
+        }else{
+            post.dislike.remove(element: self.currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
                 completion(true)
             }
         }
@@ -366,13 +406,12 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     }
     
     func like(for cell: NewPostHomeVCData) {
-        
-      
-        
+        setLike(post: cell.lessonPostModel!) { (_) in }
+               
     }
     
     func dislike(for cell: NewPostHomeVCData) {
-        
+        setDislike(post: cell.lessonPostModel!) { (_) in }
     }
     
     func fav(for cell: NewPostHomeVCData) {
@@ -430,13 +469,13 @@ extension HomeVC : NewPostHomeVCDelegate {
     
     func like(for cell: NewPostHomeVC) {
         setLike(post: cell.lessonPostModel!) { (_) in
-            self.collectionview.reloadData()
+            
         }
         
     }
     
     func dislike(for cell: NewPostHomeVC) {
-           collectionview.reloadData()
+        setDislike(post: cell.lessonPostModel!) { (_) in }
     }
     
     func fav(for cell: NewPostHomeVC) {
