@@ -20,6 +20,9 @@ class ActionSheetOtherUserLaunher : NSObject{
     weak var delegate : ActionSheetOtherUserLauncherDelegate?
     private var tableViewHeight : CGFloat?
     var post : LessonPostModel?
+    
+    var lessonIsSlient : Bool = false
+    var postIsSlient : Bool = false
     private lazy var cancelButton : UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Vazgeç", for: .normal)
@@ -172,6 +175,130 @@ class ActionSheetOtherUserLaunher : NSObject{
             }
         }
     }
+    private func checkLessonIsSlient(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("slient-user").document(currentUser.uid)
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                
+                completion(false)
+                return }
+            guard let snap = docSnap else {
+                Utilities.dismissProgress()
+                sself.lessonIsSlient = false
+                completion(false)
+                return}
+            if snap.exists{
+                Utilities.dismissProgress()
+                sself.lessonIsSlient = true
+                completion(true)
+            }else{
+                Utilities.dismissProgress()
+                sself.lessonIsSlient = false
+                completion(false)
+            }
+        }
+    }
+    
+    private func setSlientLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+                  .document("lesson").collection(currentUser.bolum).document(lessonName).collection("slient-user").document(currentUser.uid)
+        let dic = ["uid":currentUser.uid as Any] as [String:Any]
+        db.setData(dic, merge: true) {[weak self] (err) in
+            guard let sself = self else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                    completion(false)
+                return }
+            if err == nil {
+                Utilities.succesProgress(msg: "Bildirimler Kapatıldı")
+                sself.lessonIsSlient = true
+                completion(true)
+                
+            }else{
+                 Utilities.succesProgress(msg: "Bildirimler Açıldı")
+                sself.lessonIsSlient = false
+                completion(false)
+            }
+        }
+    }
+    private func setNotSlientLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
+          Utilities.waitProgress(msg: nil)
+          let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson").collection(currentUser.bolum).document(lessonName).collection("slient-user").document(currentUser.uid)
+        db.delete {[weak self] (err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                completion(false)
+                return }
+            if err == nil {
+                Utilities.dismissProgress()
+                sself.lessonIsSlient = false
+                completion(false)
+            }
+        }
+        
+      }
+    private func isPostSlient(slientUser : [String], completion: @escaping(Bool) ->Void){
+        if slientUser.contains(currentUser.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    private func setPostSlient(postId : String,completion : @escaping(Bool) ->Void){
+        
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId)
+        db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                return}
+            if err == nil {
+                Utilities.dismissProgress()
+                sself.postIsSlient = true
+                  sself.post?.silent.append(sself.currentUser.uid)
+                completion(true)
+                sself.tableView.reloadData()
+            }else{
+                Utilities.dismissProgress()
+                sself.postIsSlient = false
+                sself.post?.silent.remove(element : sself.currentUser.uid)
+                completion(false)
+                sself.tableView.reloadData()
+            }
+        }
+    
+    }
+   private func setNotPostSlient(postId : String ,completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId)
+        db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])  {[weak self] (err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                return}
+            if err == nil {
+                Utilities.dismissProgress()
+                sself.postIsSlient = false
+                 sself.post?.silent.remove(element : sself.currentUser.uid)
+                 
+                completion(false)
+                sself.tableView.reloadData()
+            }else{
+                Utilities.dismissProgress()
+                sself.postIsSlient = true
+                sself.post?.silent.append(sself.currentUser.uid)
+                completion(true)
+                sself.tableView.reloadData()
+            }
+        }
+    
+    }
+    
 }
 
 extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegate {
@@ -198,6 +325,39 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
         }  else  if cell.titleLabel.text == ActionSheetOtherUserOptions.reportUser(currentUser).description{
             cell.titleLabel.textColor = .red
             cell.titleLabel.font = UIFont(name: Utilities.fontBold, size: 13)
+        }else if cell.titleLabel.text == ActionSheetOtherUserOptions.reportPost(currentUser).description {
+            print("gönderiyi sikayet et  \(indexPath.row)")
+        }
+        else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientLesson(currentUser).description
+        {
+            
+            
+            if let post = post {
+                checkLessonIsSlient(currentUser: currentUser, lessonName: post.lessonName) { (_val) in
+                    if _val {
+                        cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
+                        cell.titleLabel.text = "Dersin Bildirimlerini Aç"
+                    }
+                    else
+                    {
+                        cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+                        cell.titleLabel.text = "Bu Dersi Sessize Al"
+                    }
+                }
+            }
+            
+        }
+        else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientPost(currentUser).description{
+             print("silent post indexPath \(indexPath.row)")
+            isPostSlient(slientUser: post!.silent) { (val) in
+                if val {
+                    cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
+                    cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
+                }else{
+                    cell.titleLabel.text = ActionSheetOtherUserOptions.slientPost(self.currentUser).description
+                    cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+                }
+            }
         }
             
 
@@ -215,6 +375,30 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         _ = tableView.cellForRow(at: indexPath) as! ActionOtherUserCell
+        if indexPath.row == 3 {
+            if lessonIsSlient
+            {
+                setNotSlientLesson(currentUser: currentUser, lessonName: post!.lessonName) { (_) in
+                    tableView.reloadData()
+                }
+            }
+            else
+            {
+                setSlientLesson(currentUser: currentUser, lessonName: post!.lessonName) { (_) in
+                    tableView.reloadData()
+                }
+            }
+        }else if indexPath.row == 1 {
+            if postIsSlient {
+                setNotPostSlient(postId: post!.postId) { (_) in
+                    tableView.reloadData()
+                }
+            }else{
+                setPostSlient(postId: post!.postId) { (_) in
+                    tableView.reloadData()
+                }
+            }
+        }
         dismissTableView(indexPath)
     }
     

@@ -221,6 +221,8 @@ class HomeVC: UIViewController {
         }    
     }
     
+    
+    
     private func listenNewPost(currentUser : CurrentUser , completion : @escaping(Bool)->Void){
         let db = Firestore.firestore().collection("user").document(currentUser.uid)
             .collection("lesson-post")
@@ -451,6 +453,7 @@ extension HomeVC : ActionSheetOtherUserLauncherDelegate{
     
             break
         case .slientUser(_):
+            
             break
         case .deleteLesson(_):
             break
