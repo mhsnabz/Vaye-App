@@ -24,6 +24,7 @@ class LessonPostModel {
     var thumb_image : String!
     var username : String!
     var silent : [String]!
+    var favori : [String]!
     init(postId  : String! , dic : [String : Any]) {
         self.postId = postId
         if let lessonName = dic["lessonName"] as? String {
@@ -53,6 +54,9 @@ class LessonPostModel {
         }
         if let dislike = dic["dislike"] as? [String] {
             self.dislike = dislike
+        }
+        if let favori = dic["favori"] as? [String] {
+            self.favori = favori
         }
         if let data = dic["data"] as? [String] {
             self.data = data

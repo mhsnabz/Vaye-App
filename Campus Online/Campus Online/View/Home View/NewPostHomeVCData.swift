@@ -14,7 +14,7 @@ import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
     var filterView = DataView()
     weak var delegate : NewPostHomeVCDataDelegate?
-        var currentUser : CurrentUser?
+    var currentUser : CurrentUser?
     var lessonPostModel : LessonPostModel?{
         didSet {
             configure()
@@ -23,6 +23,7 @@ class NewPostHomeVCData : UICollectionViewCell{
                 filterView.arrayOfUrl = post.data
                 filterView.collectionView.reloadData()
             }
+            
             guard let currentUser = currentUser else { return }
             checkIsDisliked(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
                 guard let s = self else { return }
@@ -42,6 +43,17 @@ class NewPostHomeVCData : UICollectionViewCell{
                     s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
                 }
             }
+            checkIsFav(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
+                guard let s = self else {  return }
+                if _val {
+                    s.addfav.setImage(#imageLiteral(resourceName: "fav-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }else{
+                    s.addfav.setImage(#imageLiteral(resourceName: "fav-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }
+            }
+            
         }
     }
     //MARK:- properties
@@ -253,26 +265,35 @@ class NewPostHomeVCData : UICollectionViewCell{
     }
     //MARK:- functions
     
-       private func checkIsLiked(user : CurrentUser, post : LessonPostModel? , completion : @escaping(Bool) ->Void)
-         {
-         
-             guard let post = post else { return }
-             if post.likes.contains(user.uid){
-                 completion(true)
-             }else{
-                 completion(false)
-             }
-         }
-         
-       private func checkIsDisliked(user : CurrentUser ,post : LessonPostModel? , completion : @escaping(Bool) ->Void)
-       {
-                guard let post = post else { return }
-                if post.dislike.contains(user.uid){
-                    completion(true)
-                }else{
-                    completion(false)
-                }
-            }
+    private func checkIsFav(user : CurrentUser , post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.favori.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    private func checkIsLiked(user : CurrentUser, post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        
+        guard let post = post else { return }
+        if post.likes.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    
+    private func checkIsDisliked(user : CurrentUser ,post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.dislike.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
     
     private func getTimesamp(time : Timestamp) -> String {
         let formatter = DateComponentsFormatter()
@@ -282,7 +303,7 @@ class NewPostHomeVCData : UICollectionViewCell{
         let now = Date()
         return formatter.string(from: time.dateValue(), to: now) ?? "0s"
     }
-   
+    
     private func configure(){
         guard let post = lessonPostModel else { return }
         
@@ -311,31 +332,31 @@ class NewPostHomeVCData : UICollectionViewCell{
         
     }
     private func detectLink(_ link : String){
-           let url = NSURL(string: link)
-           let domain = url?.host
-           guard let link = domain else { return }
-           print(link)
-           if link == "drive.google.com" || link == "www.drive.google.com" {
-               linkBtn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
-               
-           }else if link == "dropbox.com" || link == "www.dropbox.com"{
-               linkBtn.setImage(UIImage(named: "dropbox")?.withRenderingMode(.alwaysOriginal), for: .normal)
-               
-           }else if link == "icloud.com" || link == "www.icloud.com"{
-               linkBtn.setImage(UIImage(named: "icloud")?.withRenderingMode(.alwaysOriginal), for: .normal)
-               
-           }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com" || link == "yadi.sk"{
-               linkBtn.setImage(UIImage(named: "yandex-disk")?.withRenderingMode(.alwaysOriginal), for: .normal)
-               
-           }else if link == "onedrive.live.com" || link == "www.onedrive.live.com" || link == "1drv.ms"{
-               linkBtn.setImage(UIImage(named: "onedrive")?.withRenderingMode(.alwaysOriginal), for: .normal)
-               
-           }else if link == "mega.nz" || link == "www.mega.nz"{
-               
-               linkBtn.setImage( UIImage(named: "mega")?.withRenderingMode(.alwaysOriginal), for: .normal)
-           }else{
-               self.line.isHidden = true
-           }
-           
-       }
+        let url = NSURL(string: link)
+        let domain = url?.host
+        guard let link = domain else { return }
+        print(link)
+        if link == "drive.google.com" || link == "www.drive.google.com" {
+            linkBtn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "dropbox.com" || link == "www.dropbox.com"{
+            linkBtn.setImage(UIImage(named: "dropbox")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "icloud.com" || link == "www.icloud.com"{
+            linkBtn.setImage(UIImage(named: "icloud")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com" || link == "yadi.sk"{
+            linkBtn.setImage(UIImage(named: "yandex-disk")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "onedrive.live.com" || link == "www.onedrive.live.com" || link == "1drv.ms"{
+            linkBtn.setImage(UIImage(named: "onedrive")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+        }else if link == "mega.nz" || link == "www.mega.nz"{
+            
+            linkBtn.setImage( UIImage(named: "mega")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        }else{
+            self.line.isHidden = true
+        }
+        
+    }
 }

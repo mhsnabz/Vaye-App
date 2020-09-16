@@ -18,6 +18,7 @@ class PostService{
         "senderName":currentUser.name as Any,
         "text":msgText,
         "likes":[],
+        "favori":[],
         "senderUid":currentUser.uid as Any,
         "silent":silent as Any,
         "comment":0,

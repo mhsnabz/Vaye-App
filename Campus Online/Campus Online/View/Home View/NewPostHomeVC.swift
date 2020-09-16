@@ -38,6 +38,16 @@ class NewPostHomeVC: UICollectionViewCell
                     s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
                 }
             }
+            checkIsFav(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
+                guard let s = self else {  return }
+                if _val {
+                    s.addfav.setImage(#imageLiteral(resourceName: "fav-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }else{
+                    s.addfav.setImage(#imageLiteral(resourceName: "fav-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }
+            }
         }
     }
     var currentUser : CurrentUser?
@@ -248,6 +258,16 @@ class NewPostHomeVC: UICollectionViewCell
         delegate?.linkClick(for : self)
     }
     //MARK:- functions
+    
+    private func checkIsFav(user : CurrentUser , post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.favori.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
     
     private func checkIsLiked(user : CurrentUser, post : LessonPostModel? , completion : @escaping(Bool) ->Void)
       {

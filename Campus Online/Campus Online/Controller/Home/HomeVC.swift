@@ -290,6 +290,46 @@ class HomeVC: UIViewController {
         
       
     }
+    private func setFav(post : LessonPostModel , completion : @escaping(Bool) ->Void){
+        if !post.favori.contains(currentUser.uid){
+            post.favori.append(currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayUnion([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid).collection("fav-post").document(post.postId)
+                let dic = ["postId":post.postId as Any] as [String:Any]
+                dbc.setData(dic, merge: true) { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+            }
+            
+        }
+        else{
+            post.favori.remove(element: currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayRemove([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid).collection("fav-post").document(post.postId)
+                dbc.delete { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+                
+            }
+            
+        }
+    }
     
     private func setDislike(post : LessonPostModel , completion : @escaping(Bool)->Void){
         if !post.dislike.contains(currentUser.uid){
@@ -310,7 +350,7 @@ class HomeVC: UIViewController {
             collectionview.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(post.postId)
-            db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+            db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                 completion(true)
             }
         }
@@ -342,7 +382,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
             
             cell.backgroundColor = .white
             cell.delegate = self
-            
+            cell.currentUser = currentUser
             let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
             
@@ -406,16 +446,20 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     }
     
     func like(for cell: NewPostHomeVCData) {
-        setLike(post: cell.lessonPostModel!) { (_) in }
+        guard let post = cell.lessonPostModel else { return }
+        setLike(post: post) { (_) in }
                
     }
     
     func dislike(for cell: NewPostHomeVCData) {
-        setDislike(post: cell.lessonPostModel!) { (_) in }
+           guard let post = cell.lessonPostModel else { return }
+        setDislike(post: post) { (_) in }
     }
     
     func fav(for cell: NewPostHomeVCData) {
-        cell.addfav.setImage(UIImage(named: "fav-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        guard let post = cell.lessonPostModel else { return }
+
+        setFav(post: post) { (_) in }
     }
     
     func comment(for cell: NewPostHomeVCData) {
@@ -468,18 +512,18 @@ extension HomeVC : NewPostHomeVCDelegate {
     }
     
     func like(for cell: NewPostHomeVC) {
-        setLike(post: cell.lessonPostModel!) { (_) in
-            
-        }
-        
+        guard let post = cell.lessonPostModel else { return }
+        setLike(post: post) { (_) in }
     }
     
     func dislike(for cell: NewPostHomeVC) {
-        setDislike(post: cell.lessonPostModel!) { (_) in }
+        guard let post = cell.lessonPostModel else { return }
+        setDislike(post: post) { (_) in }
     }
     
     func fav(for cell: NewPostHomeVC) {
-        cell.addfav.setImage(UIImage(named: "fav-selected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        guard let post = cell.lessonPostModel else { return }
+        setFav(post: post) { (_) in }
     }
     
     func comment(for cell: NewPostHomeVC) {
