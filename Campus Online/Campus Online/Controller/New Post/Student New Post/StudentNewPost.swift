@@ -379,7 +379,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             return
         }
         Utilities.waitProgress(msg: "Paylaşılıyor")
-        let date = Int64(Date().timeIntervalSince1970 * 1000).description
+        let date =  Int64(Date().timeIntervalSince1970 * 1000).description
         var val = [Data]()
         var dataType = [String]()
         let url = [String]()
