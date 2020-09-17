@@ -88,13 +88,16 @@ class FieldListLiteAdCell: UICollectionViewCell,GADUnifiedNativeAdLoaderDelegate
         mainView.nativeAd = nativeAd
     }
     private func fetchAds() {
-
-        adLoader = GADAdLoader(adUnitID: "ca-app-pub-3940256099942544/2247696110", rootViewController: controller, adTypes: [GADAdLoaderAdType.unifiedNative], options: nil)
+        let multipleAdsOptions = GADMultipleAdsAdLoaderOptions()
+           multipleAdsOptions.numberOfAds = 5
+        adLoader = GADAdLoader(adUnitID: "ca-app-pub-3940256099942544/2247696110", rootViewController: controller, adTypes: [GADAdLoaderAdType.unifiedNative], options: [multipleAdsOptions])
            adLoader.delegate = self
 
            let adRequest = GADRequest()
 //           adRequest.testDevices = [kGADSimulatorID]
            adLoader.load(adRequest)
+        print(adRequest.contentURL?.description)
+        
    //        adLoader.load(GADRequest())
        }
 }

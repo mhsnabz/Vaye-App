@@ -10,7 +10,7 @@ import Foundation
 import FirebaseFirestore
 class LessonPostModel {
     var lessonName : String!
-    var postTime : Timestamp!
+    var postTime : Timestamp?
     var senderName : String!
     var text : String!
     var likes : [String]!
@@ -25,52 +25,57 @@ class LessonPostModel {
     var username : String!
     var silent : [String]!
     var favori : [String]!
-    init(postId  : String! , dic : [String : Any]) {
+    var id : String!
+    
+    init(id : String) {
+        self.id = id
+    }
+    init(postId  : String? , dic : [String : Any]?) {
         self.postId = postId
-        if let lessonName = dic["lessonName"] as? String {
+        if let lessonName = dic?["lessonName"] as? String {
             self.lessonName = lessonName
         }
-        if let postID = dic["postID"] as? Int64 {
+        if let postID = dic?["postID"] as? Int64 {
                    self.postID = postID
                }
         
-        if let senderName = dic["senderName"] as? String {
+        if let senderName = dic?["senderName"] as? String {
             self.senderName = senderName
         }
-        if let senderUid = dic["senderUid"] as? String {
+        if let senderUid = dic?["senderUid"] as? String {
                    self.senderUid = senderUid
                }
-        if let text = dic["text"] as? String {
+        if let text = dic?["text"] as? String {
             self.text = text
         }
-        if let link = dic["link"] as? String {
+        if let link = dic?["link"] as? String {
             self.link = link
         }
-        if let likes = dic["likes"] as? [String] {
+        if let likes = dic?["likes"] as? [String] {
             self.likes = likes
         }
-        if let comment = dic["comment"] as? Int {
+        if let comment = dic?["comment"] as? Int {
             self.comment = comment
         }
-        if let dislike = dic["dislike"] as? [String] {
+        if let dislike = dic?["dislike"] as? [String] {
             self.dislike = dislike
         }
-        if let favori = dic["favori"] as? [String] {
+        if let favori = dic?["favori"] as? [String] {
             self.favori = favori
         }
-        if let data = dic["data"] as? [String] {
+        if let data = dic?["data"] as? [String] {
             self.data = data
         }
-        if let silent = dic["silent"] as? [String] {
+        if let silent = dic?["silent"] as? [String] {
                    self.silent = silent
                }
-        if let thumb_image = dic["thumb_image"] as? String {
+        if let thumb_image = dic?["thumb_image"] as? String {
                   self.thumb_image = thumb_image
               }
-        if let username = dic["username"] as? String {
+        if let username = dic?["username"] as? String {
                   self.username = username
               }
-        if let postTime = dic["postTime"] as? Timestamp {
+        if let postTime = dic?["postTime"] as? Timestamp {
             self.postTime = postTime
         }
     }

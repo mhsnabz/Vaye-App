@@ -145,11 +145,14 @@ class HomeVC: UIViewController {
     }
     
     fileprivate func getPost(){
-        
+        let timestamp = Date().timeIntervalSince1970
+        let myTimeInterval = TimeInterval(timestamp)
+        let time = Date(timeIntervalSince1970: TimeInterval(myTimeInterval))
         PostService.shared.fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
+            self?.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
             self?.lessonPost.sort(by: { (post, post1) -> Bool in
-                return post.postTime.dateValue() > post1.postTime.dateValue()
+                return post.postTime?.dateValue() ?? time  > post1.postTime?.dateValue() ??  time
             })
             self?.collectionview.reloadData()
             self?.newAdded.isHidden = true
@@ -460,58 +463,61 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         
-        if lessonPost[indexPath.row].data.isEmpty {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
-            cell.delegate = self
-            cell.currentUser = currentUser
-            cell.backgroundColor = .white
-            let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-            cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
-            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-            cell.lessonPostModel = lessonPost[indexPath.row]
-            
-            return cell
-        }
-        else if indexPath.row % 5 == 0 {
+        if lessonPost[indexPath.row].postId == nil {
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
 
           
             cell.controller = self
             return cell
+        }else{
+            if lessonPost[indexPath.row].data.isEmpty {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
+                cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.lessonPostModel = lessonPost[indexPath.row]
+                
+                return cell
+            }
+            else{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NewPostHomeVCData
+                
+                cell.backgroundColor = .white
+                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                
+                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.lessonPostModel = lessonPost[indexPath.row]
+                
+                return cell
+            }
         }
-        else{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NewPostHomeVCData
-            
-            cell.backgroundColor = .white
-            cell.delegate = self
-            cell.currentUser = currentUser
-            let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-            cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
-            
-            cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
-            
-            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-            cell.lessonPostModel = lessonPost[indexPath.row]
-            
-            return cell
-        }
+    
+       
         
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-        
-        if lessonPost[indexPath.row].data.isEmpty{
-            return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
-        }
-        else if indexPath.row % 5 == 0 {
+        if lessonPost[indexPath.row].postId == nil {
             return CGSize(width: view.frame.width, height: 400)
+            
+        }else{
+            let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            
+            if lessonPost[indexPath.row].data.isEmpty{
+                return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
+            }
+            else{
+                return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+            }
         }
-        else{
-            return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
-        }
-        
-        
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1
@@ -754,6 +760,8 @@ extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate {
     }
     
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
-        print("Ad loader came with results")
+        print("Ad loader came with results \(nativeAd.accessibilityElementCount())")
+        lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
+        collectionview.reloadData()
     }
 }

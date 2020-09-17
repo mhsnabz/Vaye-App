@@ -87,13 +87,14 @@ class PostService{
         var post = [LessonPostModel]()
         let db : Query!
         db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post").order(by: FieldPath.documentID())
+            .document(currentUser.uid).collection("lesson-post").order(by: FieldPath.documentID()).limit(toLast: 5)
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
                 if snap.isEmpty {
                     completion([])
                 }else{
+                    
                     for postId in snap.documents {
                         let db = Firestore.firestore().collection(currentUser.short_school)
                             .document("lesson-post").collection("post").document(postId.documentID)
@@ -102,6 +103,8 @@ class PostService{
                                 guard let snap = docSnap else { return }
                                 if snap.exists
                                 {
+                                    
+                                    
                                     post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
                                     completion(post)
                                     
