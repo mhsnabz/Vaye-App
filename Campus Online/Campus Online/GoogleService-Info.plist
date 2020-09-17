@@ -32,5 +32,7 @@
 	<string>1:344549431047:ios:9efb148fc34382b8d457a2</string>
 	<key>DATABASE_URL</key>
 	<string>https://onlinecampus1992.firebaseio.com</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-1362663023819993~9296535434</string>
 </dict>
 </plist>

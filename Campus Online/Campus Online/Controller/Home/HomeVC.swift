@@ -11,10 +11,23 @@ import FirebaseAuth
 import FirebaseFirestore
 private let cellID = "cell_text"
 private let cellData = "cell_data"
+private let cellAds = "cell_ads"
+import GoogleMobileAds
+
 import FirebaseStorage
 class HomeVC: UIViewController {
     
     //MARK: -variables
+    
+    var adLoader: GADAdLoader!
+    
+    /// The native ad view that is being presented.
+    var nativeAdView: GADUnifiedNativeAdView!
+    
+    /// The ad unit ID.
+    let adUnitID = "ca-app-pub-3940256099942544/2247696110"
+    
+    
     var centerController : UIViewController!
     var delegate : HomeControllerDelegate?
     var currentUser : CurrentUser
@@ -60,6 +73,7 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        fetchAds()
         listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
             if isNew {
                 self?.newAdded.isHidden = false
@@ -109,7 +123,12 @@ class HomeVC: UIViewController {
         
     }
     //MARK: - functions
-    
+    func fetchAds() {
+           adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
+                                  adTypes: [ .unifiedNative ], options: nil)
+           adLoader.delegate = self
+           adLoader.load(GADRequest())
+       }
     private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
         let db = Firestore.firestore().collection("user")
             .document(userId)
@@ -158,6 +177,7 @@ class HomeVC: UIViewController {
         //        collectionview.refreshControl?.isEnabled = true
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
+        collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -438,6 +458,8 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        
         if lessonPost[indexPath.row].data.isEmpty {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
             cell.delegate = self
@@ -449,7 +471,15 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
             cell.lessonPostModel = lessonPost[indexPath.row]
             
             return cell
-        }else{
+        }
+        else if indexPath.row % 5 == 0 {
+            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+
+          
+            cell.controller = self
+            return cell
+        }
+        else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NewPostHomeVCData
             
             cell.backgroundColor = .white
@@ -473,7 +503,11 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         
         if lessonPost[indexPath.row].data.isEmpty{
             return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
-        }else{
+        }
+        else if indexPath.row % 5 == 0 {
+            return CGSize(width: view.frame.width, height: 400)
+        }
+        else{
             return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
         }
         
@@ -711,5 +745,15 @@ extension Array where Element: Equatable{
         if let i = self.firstIndex(of: element) {
             self.remove(at: i)
         }
+    }
+}
+extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate {
+    
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+        print("\(adLoader) failed with error: \(error.localizedDescription)")
+    }
+    
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        print("Ad loader came with results")
     }
 }
