@@ -25,17 +25,29 @@ class FieldListLiteAdCell: UICollectionViewCell,GADUnifiedNativeAdLoaderDelegate
            return view
        }()
     
+    lazy var refresh : UIButton = {
+        let btn = UIButton()
+        btn.setTitle("yenile", for: .normal)
+        btn.setBackgroundColor(color: .black, forState: .normal)
+        return btn
+        
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(mainView)
         mainView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width  , heigth: 400)
+        
     }
     
+ 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
+    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader)
+    {
+        
+        
     }
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
@@ -66,8 +78,8 @@ class FieldListLiteAdCell: UICollectionViewCell,GADUnifiedNativeAdLoaderDelegate
          (mainView.iconView as? UIImageView)?.image = nativeAd.icon?.image
         mainView.iconView?.isHidden = nativeAd.icon == nil
 
-//         (mainView.starsView as? UIImageView)?.image = imageOfStars(fromStarRating:nativeAd.starRating)
-//        mainView.starRatingView?.isHidden = nativeAd.starRating == nil
+        (mainView.starsView as? UIImageView)?.image = imageOfStars(from:nativeAd.starRating)
+        mainView.starRatingView?.isHidden = nativeAd.starRating == nil
 
          (mainView.storeView as? UILabel)?.text = nativeAd.store
         mainView.storeView?.isHidden = nativeAd.store == nil
@@ -90,16 +102,31 @@ class FieldListLiteAdCell: UICollectionViewCell,GADUnifiedNativeAdLoaderDelegate
     private func fetchAds() {
         let multipleAdsOptions = GADMultipleAdsAdLoaderOptions()
            multipleAdsOptions.numberOfAds = 5
-        adLoader = GADAdLoader(adUnitID: "ca-app-pub-3940256099942544/2247696110", rootViewController: controller, adTypes: [GADAdLoaderAdType.unifiedNative], options: [multipleAdsOptions])
+        adLoader = GADAdLoader(adUnitID: "ca-app-pub-3940256099942544/2521693316", rootViewController: controller, adTypes: [GADAdLoaderAdType.unifiedNative], options: [multipleAdsOptions])
            adLoader.delegate = self
 
-           let adRequest = GADRequest()
-//           adRequest.testDevices = [kGADSimulatorID]
-           adLoader.load(adRequest)
-        print(adRequest.contentURL?.description)
+        let adRequest = GADRequest()
+        adLoader.load(adRequest)
+        
         
    //        adLoader.load(GADRequest())
        }
+    func imageOfStars(from starRating: NSDecimalNumber?) -> UIImage? {
+      guard let rating = starRating?.doubleValue else {
+        return nil
+      }
+      if rating >= 5 {
+        return UIImage(named: "stars_5")
+      } else if rating >= 4.5 {
+        return UIImage(named: "stars_4_5")
+      } else if rating >= 4 {
+        return UIImage(named: "stars_4")
+      } else if rating >= 3.5 {
+        return UIImage(named: "stars_3_5")
+      } else {
+        return nil
+      }
+    }
 }
 extension FieldListLiteAdCell: GADUnifiedNativeAdDelegate {
 

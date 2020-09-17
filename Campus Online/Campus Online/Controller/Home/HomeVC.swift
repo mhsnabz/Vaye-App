@@ -25,7 +25,7 @@ class HomeVC: UIViewController {
     var nativeAdView: GADUnifiedNativeAdView!
     
     /// The ad unit ID.
-    let adUnitID = "ca-app-pub-3940256099942544/2247696110"
+    let adUnitID = "ca-app-pub-3940256099942544/3986624511"
     
     
     var centerController : UIViewController!
@@ -73,7 +73,7 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchAds()
+//        fetchAds()
         listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
             if isNew {
                 self?.newAdded.isHidden = false
