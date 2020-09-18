@@ -9,7 +9,11 @@
 import Foundation
 import FirebaseFirestore
 class PostService{
+    
+   
     static let shared = PostService()
+    
+ 
     func setNewLessonPost( link : String?,currentUser : CurrentUser,postId : String ,users : [LessonFallowerUser] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void )
     {
         let silent : [String] = []
@@ -124,5 +128,9 @@ class PostService{
         }
         
       
+    func loadMore(compoletion : @escaping(DocumentSnapshot) ->Void)  {
+        
+    }
+
     
 }

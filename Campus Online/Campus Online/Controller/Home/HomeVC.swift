@@ -12,21 +12,26 @@ import FirebaseFirestore
 private let cellID = "cell_text"
 private let cellData = "cell_data"
 private let cellAds = "cell_ads"
+private let loadMoreCell = "cell_load_more"
 import GoogleMobileAds
 
 import FirebaseStorage
 class HomeVC: UIViewController {
     
-    //MARK: -variables
     
+    
+    //MARK: -variables
+    var page : DocumentSnapshot? = nil
+    
+    var lastDocumentSnapshot: DocumentSnapshot!
     var adLoader: GADAdLoader!
     
     /// The native ad view that is being presented.
     var nativeAdView: GADUnifiedNativeAdView!
     
     /// The ad unit ID.
-    let adUnitID = "ca-app-pub-3940256099942544/3986624511"
-    
+    let adUnitID = "ca-app-pub-3940256099942544/2521693316"
+    var nativeAd: GADUnifiedNativeAd?
     
     var centerController : UIViewController!
     var delegate : HomeControllerDelegate?
@@ -73,7 +78,7 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        fetchAds()
+        fetchAds()
         listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
             if isNew {
                 self?.newAdded.isHidden = false
@@ -150,15 +155,19 @@ class HomeVC: UIViewController {
         let time = Date(timeIntervalSince1970: TimeInterval(myTimeInterval))
         PostService.shared.fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
-            self?.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
+            let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
+//            self?.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
             self?.lessonPost.sort(by: { (post, post1) -> Bool in
-                return post.postTime?.dateValue() ?? time  > post1.postTime?.dateValue() ??  time
+                return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
             })
             self?.collectionview.reloadData()
             self?.newAdded.isHidden = true
         }
         
     }
+//    private func loadMore(){
+//        
+//    }
     
     
     fileprivate func configureUI(){
@@ -181,6 +190,7 @@ class HomeVC: UIViewController {
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
+        collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -465,9 +475,10 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         
         if lessonPost[indexPath.row].postId == nil {
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
-
-          
-            cell.controller = self
+//            cell.adLoader = adLoader
+//
+//            cell.controller = self
+            cell.nativeAd = nativeAd
             return cell
         }else{
             if lessonPost[indexPath.row].data.isEmpty {
@@ -503,6 +514,20 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
        
         
     }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: loadMoreCell, for: indexPath)
+            as! LoadMoreCell
+        cell.activityView.startAnimating()
+        return cell
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 50)
+    }
+    
+    
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if lessonPost[indexPath.row].postId == nil {
@@ -753,15 +778,23 @@ extension Array where Element: Equatable{
         }
     }
 }
-extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate {
+extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+      
         print("\(adLoader) failed with error: \(error.localizedDescription)")
     }
     
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
         print("Ad loader came with results \(nativeAd.accessibilityElementCount())")
-        lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
-        collectionview.reloadData()
+        self.nativeAd = nativeAd
+        let time_e = self.lessonPost[self.lessonPost.count - 1].postTime
+            self.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
+        self.lessonPost.sort(by: { (post, post1) -> Bool in
+            return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
+        })
+        
+        self.collectionview.reloadData()
+
     }
 }

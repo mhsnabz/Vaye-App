@@ -80,6 +80,7 @@
 		66AF72C825133096007E96BC /* FieldListLiteAdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72C725133096007E96BC /* FieldListLiteAdCell.swift */; };
 		66AF72D02513353A007E96BC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66AF72CF2513353A007E96BC /* GoogleService-Info.plist */; };
 		66AF72D825134996007E96BC /* GoogleNativeAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72D725134996007E96BC /* GoogleNativeAdsView.swift */; };
+		66B2100E251474D4002BD8A3 /* LoadMoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B2100D251474D4002BD8A3 /* LoadMoreCell.swift */; };
 		66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EA250BFB7500259322 /* DataVC.swift */; };
 		66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6ED250C1FA200259322 /* DataViewImage.swift */; };
 		66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EF250C355700259322 /* DataViewPDF.swift */; };
@@ -211,6 +212,7 @@
 		66AF72C725133096007E96BC /* FieldListLiteAdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldListLiteAdCell.swift; sourceTree = "<group>"; };
 		66AF72CF2513353A007E96BC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		66AF72D725134996007E96BC /* GoogleNativeAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleNativeAdsView.swift; sourceTree = "<group>"; };
+		66B2100D251474D4002BD8A3 /* LoadMoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadMoreCell.swift; sourceTree = "<group>"; };
 		66C4A6EA250BFB7500259322 /* DataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataVC.swift; sourceTree = "<group>"; };
 		66C4A6ED250C1FA200259322 /* DataViewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewImage.swift; sourceTree = "<group>"; };
 		66C4A6EF250C355700259322 /* DataViewPDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewPDF.swift; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 				6615FC90250B39F500776664 /* DataViewImageCell.swift */,
 				6615FC92250B3AAE00776664 /* DataViewPdfCell.swift */,
 				6615FC94250B3B0E00776664 /* DataViewDocCell.swift */,
+				66B2100D251474D4002BD8A3 /* LoadMoreCell.swift */,
 			);
 			path = "Home View";
 			sourceTree = "<group>";
@@ -1124,6 +1127,7 @@
 				66AF72D825134996007E96BC /* GoogleNativeAdsView.swift in Sources */,
 				66E326A424F98C28004CB61D /* LessonList.swift in Sources */,
 				661333EA24F3B44B002677AB /* ProfileHeader.swift in Sources */,
+				66B2100E251474D4002BD8A3 /* LoadMoreCell.swift in Sources */,
 				6615FC89250AE46E00776664 /* LessonPostModel.swift in Sources */,
 				660F5AD72503DA9A00F72558 /* LicenseTB.swift in Sources */,
 				6613340824F4E9C1002677AB /* SchoolModel.swift in Sources */,
