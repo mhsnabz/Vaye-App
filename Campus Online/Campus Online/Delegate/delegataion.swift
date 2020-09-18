@@ -57,6 +57,7 @@ protocol NewPostHomeVCDelegate : class {
     func fav ( for cell : NewPostHomeVC)
     func comment ( for cell : NewPostHomeVC)
     func linkClick(for cell : NewPostHomeVC)
+    func showProfile(for cell : NewPostHomeVC)
 }
 protocol NewPostHomeVCDataDelegate : class {
     func options ( for cell : NewPostHomeVCData)
@@ -65,6 +66,7 @@ protocol NewPostHomeVCDataDelegate : class {
     func fav ( for cell : NewPostHomeVCData)
     func comment ( for cell : NewPostHomeVCData)
         func linkClick(for cell : NewPostHomeVCData)
+    func showProfile(for cell : NewPostHomeVCData)
 }
 protocol DataViewClick : class {
     

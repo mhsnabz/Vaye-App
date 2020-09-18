@@ -59,6 +59,7 @@ class NewPostHomeVC: UICollectionViewCell
         imagee.contentMode = .scaleAspectFit
         imagee.layer.borderColor = UIColor.lightGray.cgColor
         imagee.layer.borderWidth = 0.5
+        
         return imagee
         
     }()
@@ -153,7 +154,7 @@ class NewPostHomeVC: UICollectionViewCell
         view.addSubview(optionsButton)
         optionsButton.anchor(top: profileImage.topAnchor, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 8, width: 20, heigth: 20)
         
-        
+      
         return view
     }()
     
@@ -183,6 +184,8 @@ class NewPostHomeVC: UICollectionViewCell
         
         toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+      
         
         return view
     }()
@@ -230,11 +233,12 @@ class NewPostHomeVC: UICollectionViewCell
         addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
         linkBtn.isHidden = true
-        
+        profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
+        profileImage.isUserInteractionEnabled = true
         
     }
     
-    
+  
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -256,6 +260,10 @@ class NewPostHomeVC: UICollectionViewCell
     }
     @objc func linkClick(){
         delegate?.linkClick(for : self)
+    }
+    @objc func showProfile(){
+        print("click")
+        delegate?.showProfile(for : self)
     }
     //MARK:- functions
     
@@ -299,6 +307,7 @@ class NewPostHomeVC: UICollectionViewCell
         userName.attributedText = name
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string: post.thumb_image))
+        
         lessonName.text = post.lessonName
         msgText.text = post.text
         like_lbl.text = post.likes.count.description

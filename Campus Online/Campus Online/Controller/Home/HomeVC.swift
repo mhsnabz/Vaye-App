@@ -120,7 +120,7 @@ class HomeVC: UIViewController {
         configureUI()
         view.backgroundColor = .collectionColor()
         getPost()
-        
+   
         
         
     }
@@ -314,6 +314,7 @@ class HomeVC: UIViewController {
         newAdded.layer.cornerRadius = 20
         newAdded.addTarget(self, action: #selector(loadData), for: .touchUpInside)
         newAdded.isHidden = true
+        collectionview.refreshControl?.beginRefreshing()
         
     }
     func stopRefresher() {
@@ -323,7 +324,6 @@ class HomeVC: UIViewController {
     @objc func loadData(){
         collectionview.refreshControl?.beginRefreshing()
         getPost()
-        collectionview.refreshControl?.endRefreshing()
         
     }
     
@@ -719,6 +719,9 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 }
 
 extension HomeVC : NewPostHomeVCDataDelegate {
+    func showProfile(for cell: NewPostHomeVCData) {
+        print("username \(cell.userName.text)")
+    }
     func options(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
         if cell.lessonPostModel?.senderUid == currentUser.uid
@@ -778,6 +781,9 @@ extension HomeVC : NewPostHomeVCDataDelegate {
 }
 
 extension HomeVC : NewPostHomeVCDelegate {
+    func showProfile(for cell: NewPostHomeVC) {
+        print("user profile \(cell.userName.text)")
+    }
     func linkClick(for cell: NewPostHomeVC) {
         guard let url = URL(string: (cell.lessonPostModel?.link)!) else {
             return

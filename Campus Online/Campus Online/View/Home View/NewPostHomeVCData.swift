@@ -63,6 +63,7 @@ class NewPostHomeVCData : UICollectionViewCell{
         imagee.contentMode = .scaleAspectFit
         imagee.layer.borderColor = UIColor.lightGray.cgColor
         imagee.layer.borderWidth = 0.5
+        imagee.isUserInteractionEnabled = true
         return imagee
         
     }()
@@ -234,6 +235,9 @@ class NewPostHomeVCData : UICollectionViewCell{
         linkBtn.layer.masksToBounds = false
         linkBtn.isHidden = true
         
+        profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
+        profileImage.isUserInteractionEnabled = true
+        
     }
     
     
@@ -262,6 +266,9 @@ class NewPostHomeVCData : UICollectionViewCell{
     }
     @objc func linkClick(){
         delegate?.linkClick(for : self)
+    }
+    @objc func showProfile(){
+        delegate?.showProfile(for : self)
     }
     //MARK:- functions
     
@@ -320,6 +327,7 @@ class NewPostHomeVCData : UICollectionViewCell{
         comment_lbl.text = post.comment.description
         
         
+        profileImage.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showProfile)))
         
         linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
         if post.link.isEmpty{
