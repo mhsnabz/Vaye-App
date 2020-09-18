@@ -334,6 +334,7 @@ PODS:
   - SDWebImage (5.5.2):
     - SDWebImage/Core (= 5.5.2)
   - SDWebImage/Core (5.5.2)
+  - SnapKit (5.0.1)
   - SVProgressHUD (2.2.5)
   - SwiftyAttributes (5.1.1)
   - TweeTextField (1.6.0)
@@ -359,6 +360,7 @@ DEPENDENCIES:
   - PopupDialog (~> 1.1)
   - RevealingSplashView
   - SDWebImage (~> 5.0)
+  - SnapKit (~> 5.0.0)
   - SVProgressHUD
   - SwiftyAttributes
   - TweeTextField
@@ -409,6 +411,7 @@ SPEC REPOS:
     - Protobuf
     - RevealingSplashView
     - SDWebImage
+    - SnapKit
     - SVProgressHUD
     - SwiftyAttributes
     - TweeTextField
@@ -458,10 +461,11 @@ SPEC CHECKSUMS:
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
   RevealingSplashView: 40c5a770894459736acdc95655eeba0dd30ce91c
   SDWebImage: 4d5c027c935438f341ed33dbac53ff9f479922ca
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftyAttributes: e3e13891ddac3c62b3d7798d5c3969cea88e62bb
   TweeTextField: 2bfb6c48fdbf6eb8038260430244c9f6ebb47bce
 
-PODFILE CHECKSUM: 9e4a88862a8e5ed5a13e7588f104c97e080630d6
+PODFILE CHECKSUM: 160b2033c4d4cd6bf1fb103f8351b58997d54427
 
 COCOAPODS: 1.8.4

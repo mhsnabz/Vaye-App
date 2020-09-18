@@ -42,7 +42,7 @@ target 'Campus Online' do
   pod 'Lightbox'
   
   pod 'Gallery'
-  
+  pod 'SnapKit', '~> 5.0.0'
 pod 'EFImageViewZoom'
   # Pods for Campus Online
   target 'Campus OnlineTests' do
