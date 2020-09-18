@@ -17,12 +17,9 @@ import GoogleMobileAds
 
 import FirebaseStorage
 class HomeVC: UIViewController {
-    
-    
-    
     //MARK: -variables
     var page : DocumentSnapshot? = nil
-    
+    var loadMore : Bool = false
     var lastDocumentSnapshot: DocumentSnapshot!
     var adLoader: GADAdLoader!
     
@@ -31,6 +28,7 @@ class HomeVC: UIViewController {
     
     /// The ad unit ID.
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"
+//    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     
     var centerController : UIViewController!
@@ -78,7 +76,6 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchAds()
         listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
             if isNew {
                 self?.newAdded.isHidden = false
@@ -134,6 +131,50 @@ class HomeVC: UIViewController {
            adLoader.delegate = self
            adLoader.load(GADRequest())
        }
+    
+    func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
+        var post = [LessonPostModel]()
+        //  let db : Query!
+        let  db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").limit(to: 5).order(by: "postId", descending: true)//.order(by: FieldPath.documentID()).limit(toLast: 5)
+        db.getDocuments {(querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty {
+                    completion([])
+                }else{
+                    
+                    for postId in snap.documents {
+                        let db = Firestore.firestore().collection(currentUser.short_school)
+                            .document("lesson-post").collection("post").document(postId.documentID)
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let snap = docSnap else { return }
+                                if snap.exists
+                                {
+                                    post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                                    completion(post)
+                                    
+                                }else{
+                                    
+                                    let deleteDb = Firestore.firestore().collection("user")
+                                        .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
+                                    deleteDb.delete()
+                                    print("postId = \(postId) deleted")
+                                }
+                            }
+                        }
+                        
+                    }
+                    self.page = snap.documents.last
+                    print("last page : \(self.page?.documentID)")
+                }
+                
+            }
+        }
+        
+    }
+    
     private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
         let db = Firestore.firestore().collection("user")
             .document(userId)
@@ -149,27 +190,75 @@ class HomeVC: UIViewController {
         }
     }
     
+    private func loadMorePost(completion: @escaping(Bool) ->Void){
+     
+        
+        guard let pagee = page else {
+            loadMore = false
+            completion(false)
+            return }
+        let  db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
+        db.getDocuments { [self] (snapshot, err ) in
+            guard let snap = snapshot else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty {
+                completion(false)
+                self.loadMore = false
+                return
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection(currentUser.short_school)
+                        .document("lesson-post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists
+                            {
+                                
+                                self.lessonPost.append(LessonPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                completion(true)
+                                
+                            }else{
+                                
+                                let deleteDb = Firestore.firestore().collection("user")
+                                    .document(currentUser.uid).collection("lesson-post").document(snapp.documentID)
+                                deleteDb.delete()
+                                
+                            }
+                        }
+                    }
+                   
+                    
+                  
+                    
+                }
+//                self.collectionview.reloadData()
+                page = snap.documents.last
+//                loadMore = false
+                
+            }
+        }
+        
+    }
+    
     fileprivate func getPost(){
-        let timestamp = Date().timeIntervalSince1970
-        let myTimeInterval = TimeInterval(timestamp)
-        let time = Date(timeIntervalSince1970: TimeInterval(myTimeInterval))
-        PostService.shared.fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
+
+            fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
             let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
-//            self?.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
+
             self?.lessonPost.sort(by: { (post, post1) -> Bool in
                 return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
             })
             self?.collectionview.reloadData()
             self?.newAdded.isHidden = true
+            self?.fetchAds()
         }
         
     }
-//    private func loadMore(){
-//        
-//    }
-    
-    
+ 
     fileprivate func configureUI(){
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -191,6 +280,7 @@ class HomeVC: UIViewController {
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
+    
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -523,7 +613,12 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 50)
+        if loadMore{
+            return CGSize(width: view.frame.width, height: 50)
+        }else{
+            return .zero
+        }
+       
     }
     
     
@@ -531,9 +626,13 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if lessonPost[indexPath.row].postId == nil {
-            return CGSize(width: view.frame.width, height: 400)
+            return CGSize(width: view.frame.width, height: 409)
             
         }else{
+            print(lessonPost[indexPath.row].text ?? "nil")
+            if lessonPost[indexPath.row].text == nil {
+                return .zero
+            }
             let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             
             if lessonPost[indexPath.row].data.isEmpty{
@@ -551,6 +650,52 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
+    
+   
+   
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+     
+        if  page != nil {
+            let offsetY = scrollView.contentOffset.y
+            let contentHeight = scrollView.contentSize.height
+            if offsetY > contentHeight - scrollView.frame.height - 50 {
+                // Bottom of the screen is reached
+                if !loadMore {
+               loadMore = true
+                    loadMorePost {[weak self] (_val) in
+                        if _val {
+                            self?.collectionview.reloadData()
+                            self?.loadMore = false
+                            self?.fetchAds()
+                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+//                            self?.collectionview.reloadData()
+//                            self?.loadMore = false
+//                                   }
+//                        )
+                      
+    //                    if _val{
+    //
+    ////                        let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
+    ////
+    ////                        self?.lessonPost.sort(by: { (post, post1) -> Bool in
+    ////                            return (post.postTime?.nanoseconds ?? time_e?.nanoseconds) ?? 0  > (post1.postTime?.nanoseconds ??  time_e?.nanoseconds) ?? 0
+    ////                        })
+    ////
+    ////                        self?.fetchAds()
+    //
+    //                    }else{
+    //
+    //                    }
+                    }
+                    
+                }
+            }
+        }
+       
+    }
+    
+    
     
 }
 
@@ -788,11 +933,12 @@ extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUn
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
         print("Ad loader came with results \(nativeAd.accessibilityElementCount())")
         self.nativeAd = nativeAd
-        let time_e = self.lessonPost[self.lessonPost.count - 1].postTime
-            self.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
-        self.lessonPost.sort(by: { (post, post1) -> Bool in
-            return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
-        })
+        self.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
+//        let time_e = self.lessonPost[self.lessonPost.count - 1].postTime
+//
+//        self.lessonPost.sort(by: { (post, post1) -> Bool in
+//            return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
+//        })
         
         self.collectionview.reloadData()
 

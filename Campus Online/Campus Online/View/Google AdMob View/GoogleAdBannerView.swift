@@ -30,7 +30,8 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
     }()
     let starsView : UIImageView = {
         let img = UIImageView()
-         return img
+        img.contentMode = .scaleAspectFit
+        return img
     }()
     let bodyLbl : UILabel = {
         let lbl = UILabel()
@@ -50,14 +51,19 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
     
     let priceLbl : UILabel = {
         let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 13)
          return lbl
     }()
     let storeLbl : UILabel = {
         let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 13)
+
          return lbl
     }()
     let installBtn : UIButton = {
        let btn = UIButton()
+        btn.setTitleColor(.mainColor(), for: .normal)
+        btn.titleLabel?.font = UIFont(name: Utilities.font, size: 13)
         return btn
         
     }()
@@ -89,36 +95,50 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
             addSubview(logoView)
             logoView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 12, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 45, heigth: 45)
             
-            let stackView = UIStackView(arrangedSubviews: [advertiserLbl,starsView])
-            stackView.axis = .horizontal
-            stackView.distribution = .fillEqually
+            
+            addSubview(headLineLbl)
+            headLineLbl.anchor(top: logoView.topAnchor, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 15)
+            
+            addSubview(advertiserLbl)
+            advertiserLbl.anchor(top: headLineLbl.bottomAnchor, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 9, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 12)
             
             
-            let stackHeadLine = UIStackView(arrangedSubviews: [headLineLbl,stackView])
-            stackHeadLine.axis = .vertical
-            stackView.distribution = .fillEqually
-            stackView.alignment = .leading
+            addSubview(starsView)
+            starsView.anchor(top: nil, left: advertiserLbl.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 4, marginBottom: 0, marginRigth: 0, width: 75, heigth: 30)
+            starsView.centerYAnchor.constraint(equalTo: advertiserLbl.centerYAnchor).isActive = true
             
-            addSubview(stackHeadLine)
-            stackHeadLine.anchor(top: nil, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 45)
-            stackHeadLine.centerYAnchor.constraint(equalTo: logoView.centerYAnchor ).isActive = true
+//            let stackView = UIStackView(arrangedSubviews: [advertiserLbl,starsView])
+//            stackView.axis = .horizontal
+//            stackView.distribution = .fillEqually
+//
+//
+//            let stackHeadLine = UIStackView(arrangedSubviews: [headLineLbl,stackView])
+//            stackHeadLine.axis = .vertical
+//            stackView.distribution = .fillEqually
+//            stackView.alignment = .leading
+            
+//            addSubview(stackHeadLine)
+//            stackHeadLine.anchor(top: nil, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 45)
+//            stackHeadLine.centerYAnchor.constraint(equalTo: logoView.centerYAnchor ).isActive = true
             
             addSubview(bodyLbl)
             bodyLbl.anchor(top: logoView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 8, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 50)
             
             addSubview(mediaImage)
-            mediaImage.anchor(top: bodyLbl.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 12, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 250)
+            mediaImage.anchor(top: bodyLbl.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 4, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 250)
             
             addSubview(installBtn)
-            installBtn.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 40)
+            installBtn.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
             addSubview(storeLbl)
-            storeLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 40)
+            storeLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
+            addSubview(priceLbl)
+            priceLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: storeLbl.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
             
 //            let stackStore = UIStackView(arrangedSubviews: [priceLbl,storeLbl,installBtn])
 //            stackStore.axis = .horizontal
 //            stackStore.distribution = .fillEqually
 //            addSubview(stackStore)
-//            stackStore
+//            stackStore.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
             
             
         }

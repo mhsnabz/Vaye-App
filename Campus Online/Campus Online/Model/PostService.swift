@@ -89,8 +89,8 @@ class PostService{
     
     func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
         var post = [LessonPostModel]()
-      //  let db : Query!
-     let  db = Firestore.firestore().collection("user")
+        //  let db : Query!
+        let  db = Firestore.firestore().collection("user")
             .document(currentUser.uid).collection("lesson-post").limit(to: 5).order(by: "postId", descending: true)//.order(by: FieldPath.documentID()).limit(toLast: 5)
         db.getDocuments {(querySnap, err) in
             if err == nil {
@@ -125,7 +125,7 @@ class PostService{
             }
         }
         
-        }
+    }
         
       
     func loadMore(compoletion : @escaping(DocumentSnapshot) ->Void)  {
