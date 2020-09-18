@@ -22,12 +22,12 @@ class HomeVC: UIViewController {
     var loadMore : Bool = false
     var lastDocumentSnapshot: DocumentSnapshot!
     var adLoader: GADAdLoader!
-    
+    var time : Timestamp!
     /// The native ad view that is being presented.
     var nativeAdView: GADUnifiedNativeAdView!
-    
+
     /// The ad unit ID.
-    let adUnitID = "ca-app-pub-3940256099942544/2521693316"
+    let adUnitID = "ca-app-pub-3940256099942544/2521693316" //"ca-app-pub-3940256099942544/3986624511"
 //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     
@@ -133,6 +133,7 @@ class HomeVC: UIViewController {
        }
     
     func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
+        collectionview.refreshControl?.beginRefreshing()
         var post = [LessonPostModel]()
         //  let db : Query!
         let  db = Firestore.firestore().collection("user")
@@ -154,7 +155,7 @@ class HomeVC: UIViewController {
                                 {
                                     post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
                                     completion(post)
-                                    
+                  
                                 }else{
                                     
                                     let deleteDb = Firestore.firestore().collection("user")
@@ -167,7 +168,7 @@ class HomeVC: UIViewController {
                         
                     }
                     self.page = snap.documents.last
-                    print("last page : \(self.page?.documentID)")
+                   
                 }
                 
             }
@@ -204,9 +205,9 @@ class HomeVC: UIViewController {
             if let err = err {
                 print("\(err.localizedDescription)")
             }else if snap.isEmpty {
-                completion(false)
                 self.loadMore = false
-                return
+                completion(false)
+            
             }else{
                 for item in snap.documents{
                     let db = Firestore.firestore().collection(currentUser.short_school)
@@ -219,6 +220,7 @@ class HomeVC: UIViewController {
                                 
                                 self.lessonPost.append(LessonPostModel.init(postId: snapp.documentID, dic: snapp.data()))
                                 completion(true)
+                                page = snap.documents.last
                                 
                             }else{
                                 
@@ -228,6 +230,7 @@ class HomeVC: UIViewController {
                                 
                             }
                         }
+                        
                     }
                    
                     
@@ -235,7 +238,7 @@ class HomeVC: UIViewController {
                     
                 }
 //                self.collectionview.reloadData()
-                page = snap.documents.last
+                
 //                loadMore = false
                 
             }
@@ -244,17 +247,30 @@ class HomeVC: UIViewController {
     }
     
     fileprivate func getPost(){
-
+            lessonPost = [LessonPostModel]()
+            collectionview.reloadData()
+        
             fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
-            let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
+                if self?.lessonPost.count ?? -1 > 0{
+                    
+                    if  let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime{
+                        self?.time = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
+                        self?.lessonPost.sort(by: { (post, post1) -> Bool in
+                            return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                        })
+                        self?.collectionview.refreshControl?.endRefreshing()
+                        self?.fetchAds()
+                       
+                    }
+                }
+               
+                
+               
 
-            self?.lessonPost.sort(by: { (post, post1) -> Bool in
-                return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
-            })
-            self?.collectionview.reloadData()
+//            self?.collectionview.reloadData()
             self?.newAdded.isHidden = true
-            self?.fetchAds()
+            
         }
         
     }
@@ -568,7 +584,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 //            cell.adLoader = adLoader
 //
 //            cell.controller = self
-            cell.nativeAd = nativeAd
+            cell.nativeAd = lessonPost[indexPath.row].nativeAd
             return cell
         }else{
             if lessonPost[indexPath.row].data.isEmpty {
@@ -664,9 +680,24 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
                loadMore = true
                     loadMorePost {[weak self] (_val) in
                         if _val {
-                            self?.collectionview.reloadData()
-                            self?.loadMore = false
+//                            self?.collectionview.reloadData()
                             self?.fetchAds()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+                           //                            self?.collectionview.reloadData()
+                                                       self?.loadMore = false
+                                                              })
+                      
+//                            self?.fetchAds()
+                            let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
+    
+                            self?.lessonPost.sort(by: { (post, post1) -> Bool in
+                                return (post.postTime?.nanoseconds ?? time_e?.nanoseconds) ?? 0  > (post1.postTime?.nanoseconds ??  time_e?.nanoseconds) ?? 0
+                            })
+                        }else{
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                           //                            self?.collectionview.reloadData()
+                                                       self?.loadMore = false
+                                                              })
                         }
 //                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
 //                            self?.collectionview.reloadData()
@@ -674,19 +705,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 //                                   }
 //                        )
                       
-    //                    if _val{
-    //
-    ////                        let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
-    ////
-    ////                        self?.lessonPost.sort(by: { (post, post1) -> Bool in
-    ////                            return (post.postTime?.nanoseconds ?? time_e?.nanoseconds) ?? 0  > (post1.postTime?.nanoseconds ??  time_e?.nanoseconds) ?? 0
-    ////                        })
-    ////
-    ////                        self?.fetchAds()
-    //
-    //                    }else{
-    //
-    //                    }
+ 
                     }
                     
                 }
@@ -928,19 +947,31 @@ extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUn
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
       
         print("\(adLoader) failed with error: \(error.localizedDescription)")
+        self.collectionview.reloadData()
     }
     
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
-        print("Ad loader came with results \(nativeAd.accessibilityElementCount())")
         self.nativeAd = nativeAd
-        self.lessonPost.append(LessonPostModel.init(postId: nil, dic: nil))
+        print(nativeAd.dictionaryWithValues(forKeys: ["mediaContent"]))
+        
+        if lessonPost.count > 0{
+            if  let time_e = self.lessonPost[(self.lessonPost.count) - 1].postTime{
+                self.lessonPost.sort(by: { (post, post1) -> Bool in
+                    
+                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                })
+                
+                self.lessonPost.append(LessonPostModel.init(nativeAd: nativeAd , postTime : self.lessonPost[(self.lessonPost.count) - 1].postTime!))
+            }
+        }
+        self.collectionview.reloadData()
 //        let time_e = self.lessonPost[self.lessonPost.count - 1].postTime
 //
 //        self.lessonPost.sort(by: { (post, post1) -> Bool in
 //            return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
 //        })
         
-        self.collectionview.reloadData()
+       
 
     }
 }

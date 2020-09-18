@@ -15,8 +15,6 @@ class FieldListLiteAdCell: UICollectionViewCell {
             guard let nativeAd = nativeAd else { return }
             mainView.nativeAd = nativeAd
     
-
-            print("Ad has been received.")
             // Set the mediaContent on the GADMediaView to populate it with available
              // video/image asset.
             mainView.mediaView?.mediaContent = nativeAd.mediaContent
@@ -36,7 +34,7 @@ class FieldListLiteAdCell: UICollectionViewCell {
              (mainView.iconView as? UIImageView)?.image = nativeAd.icon?.image
             mainView.iconView?.isHidden = nativeAd.icon == nil
 
-            (mainView.starsView as? UIImageView)?.image = imageOfStars(from:nativeAd.starRating)
+            (mainView.starsView as UIImageView).image = imageOfStars(from:nativeAd.starRating)
             mainView.starRatingView?.isHidden = nativeAd.starRating == nil
 
              (mainView.storeView as? UILabel)?.text = nativeAd.store
@@ -55,7 +53,7 @@ class FieldListLiteAdCell: UICollectionViewCell {
              // Associate the native ad view with the native ad object. This is
              // required to make the ad clickable.
              // Note: this should always be done after populating the ad views.
-            mainView.nativeAd = nativeAd
+         
         }
     }
     

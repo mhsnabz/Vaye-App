@@ -8,6 +8,7 @@
 
 import Foundation
 import FirebaseFirestore
+import GoogleMobileAds
 class LessonPostModel {
     var lessonName : String!
     var postTime : Timestamp?
@@ -26,9 +27,10 @@ class LessonPostModel {
     var silent : [String]!
     var favori : [String]!
     var id : String!
-    
-    init(id : String) {
-        self.id = id
+    var nativeAd :  GADUnifiedNativeAd!
+    init(nativeAd : GADUnifiedNativeAd , postTime : Timestamp) {
+        self.nativeAd = nativeAd
+        self.postTime = postTime
     }
     init(postId  : String? , dic : [String : Any]?) {
         self.postId = postId
