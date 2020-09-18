@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import GoogleMobileAds
+
 private let cellId = "id"
 private let profileId = "profileId"
 class OtherUserProfile: UIViewController {
 
+    var interstitial : GADInterstitial!
     var currentUser : CurrentUser
     var otherUser : OtherUser
     var collectionview: UICollectionView!
@@ -40,13 +43,30 @@ class OtherUserProfile: UIViewController {
         
         return v
     }()
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+       
+       
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setNavigationBar()
         configureUI()
         configureCollectionView()
+        
+        interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/5135589807")
+        let request = GADRequest()
+        interstitial.load(request)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute:
+                                        {
+                                            if self.interstitial.isReady {
+                                                self.interstitial.present(fromRootViewController: self)
+                                                self.interstitial = self.createAds()
+                                            }else{
+                                                print("failed to load")
+                                            }
+                                        })
     }
     
     init(currentUser : CurrentUser, otherUser : OtherUser) {
@@ -61,6 +81,12 @@ class OtherUserProfile: UIViewController {
     
     
     //MARK: -functions
+    
+    func createAds() ->GADInterstitial{
+        let inter = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/5135589807")
+        inter.load(GADRequest())
+        return inter
+    }
     
     func configureUI(){
          view.backgroundColor = .white
@@ -83,12 +109,16 @@ class OtherUserProfile: UIViewController {
         collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
          }
     
-     @objc func dissmis(){
-         self.dismiss(animated: true, completion: nil)
-     }
+   
     
     //MARK:- selector
     @objc func dismissVC(){
+        self.dismiss(animated: true) {
+            
+        }
+        self.dismiss(animated: true, completion: nil)
+    }
+    @objc func dissmis(){
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -119,3 +149,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     }
     
 }
+enum GameState: NSInteger {
+   case notStarted
+   case playing
+   case paused
+   case ended
+ }
