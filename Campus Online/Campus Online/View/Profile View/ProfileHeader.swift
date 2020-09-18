@@ -77,8 +77,6 @@ class ProfileHeader : UICollectionReusableView {
       }()
     let segmentedControl : UISegmentedControl = {
        let segment = UISegmentedControl()
-        segment.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
-        segment.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
         segment.selectedSegmentIndex = 0
         segment.tintColor = .clear
         
@@ -226,6 +224,22 @@ class ProfileHeader : UICollectionReusableView {
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
 //        addSubview(underLine)
 //        underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 3, heigth: 2)
+        if currentUser?.short_school == otherUser?.short_school {
+            if currentUser?.bolum == otherUser?.bolum {
+                
+                segmentedControl.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
+                segmentedControl.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
+                segmentedControl.insertSegment(withTitle: "Akış", at: 2, animated: true)
+                segmentedControl.selectedSegmentIndex = 0
+            }else{
+                segmentedControl.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
+                segmentedControl.insertSegment(withTitle: "Akış", at: 2, animated: true)
+                segmentedControl.selectedSegmentIndex = 0
+            }
+        }else{
+            segmentedControl.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
+            segmentedControl.selectedSegmentIndex = 0
+        }
         addSubview(segmentindicator)
         setupLayout()
         
@@ -271,7 +285,7 @@ class ProfileHeader : UICollectionReusableView {
             })
         }
     }
-       }
+}
  
 
 extension ProfileHeader : ProfileFilterDelegate {
