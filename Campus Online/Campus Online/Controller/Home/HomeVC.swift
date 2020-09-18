@@ -720,7 +720,23 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 
 extension HomeVC : NewPostHomeVCDataDelegate {
     func showProfile(for cell: NewPostHomeVCData) {
-        print("username \(cell.userName.text)")
+        guard  let post = cell.lessonPostModel else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC()
+            vc.currentUser = currentUser
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true, completion: nil)
+        }else{
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.present(vc, animated: true, completion: nil)
+            }
+        }
     }
     func options(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
@@ -782,7 +798,25 @@ extension HomeVC : NewPostHomeVCDataDelegate {
 
 extension HomeVC : NewPostHomeVCDelegate {
     func showProfile(for cell: NewPostHomeVC) {
-        print("user profile \(cell.userName.text)")
+        guard  let post = cell.lessonPostModel else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC()
+            vc.currentUser = currentUser
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true, completion: nil)
+        }else{
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.present(vc, animated: true, completion: nil)
+            }
+        }
+        
+     
     }
     func linkClick(for cell: NewPostHomeVC) {
         guard let url = URL(string: (cell.lessonPostModel?.link)!) else {

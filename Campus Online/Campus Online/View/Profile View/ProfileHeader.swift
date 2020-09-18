@@ -36,6 +36,31 @@ class ProfileHeader : UICollectionReusableView {
         }
     }
     
+    var otherUser : OtherUser?{
+        didSet{
+            guard let user = otherUser else { return }
+            name.text = user.name
+            number.text = user.number
+            major.text = user.bolum
+            school.text = user.schoolName
+            profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+            profileImage.sd_setImage(with: URL(string: user.thumb_image))
+            
+            if user.linkedin == "" {
+                linkedin.isHidden = true
+            }
+            if user.instagram == ""{
+                instagram.isHidden = true
+            }
+            if user.twitter == ""{
+                twitter.isHidden = true
+            }
+            if user.github == ""{
+                github.isHidden = true
+            }
+        }
+    }
+    
     private let filterView = ProfileFilterView()
     
     let profileImage : UIImageView = {
