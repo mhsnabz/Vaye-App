@@ -1,8 +1,8 @@
 //
-//  ProfileHeader.swift
+//  OtherUserProfileHeader.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 24.08.2020.
+//  Created by mahsun abuzeyitoğlu on 19.09.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
@@ -10,12 +10,22 @@ import Foundation
 import UIKit
 import SDWebImage
 import SnapKit
-
-class ProfileHeader : UICollectionReusableView {
+import GoogleMobileAds
+class OtherUserProfileHeader: UICollectionViewCell {
+    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
+    
+    var interstitalGithub : GADInterstitial!
+    var interstitalInsta : GADInterstitial!
+    var interstitalLinked : GADInterstitial!
+    var interstitalTwitter : GADInterstitial!
+  
+    var target : String = ""
     var controller : OtherUserProfile?
-    var currentUser : CurrentUser?{
+    var currentUser : CurrentUser?
+    
+    var otherUser : OtherUser?{
         didSet{
-            guard let user = currentUser else { return }
+            guard let user = otherUser else { return }
             name.text = user.name
             number.text = user.number
             major.text = user.bolum
@@ -37,7 +47,10 @@ class ProfileHeader : UICollectionReusableView {
             }
         }
     }
+    
     private let filterView = ProfileFilterView()
+    
+    
     let segmentindicator: UIView = {
           
           let v = UIView()
@@ -49,15 +62,15 @@ class ProfileHeader : UICollectionReusableView {
       }()
     let segmentedControl : UISegmentedControl = {
            let segment = UISegmentedControl()
-            segment.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
-            segment.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
-            segment.insertSegment(withTitle: "Favoriler", at: 2, animated: true)
+//            segment.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
+//            segment.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
             segment.selectedSegmentIndex = 0
             segment.tintColor = .clear
             
             segment.addTarget(self, action: #selector(segmnetSelector(sender:)), for: .valueChanged)
             return segment
         }()
+    
     
     let profileImage : UIImageView = {
         let image = UIImageView()
@@ -134,32 +147,32 @@ class ProfileHeader : UICollectionReusableView {
         return view
     }()
     
-    let github : UIButton = {
+    lazy var github : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "github")?.withRenderingMode(.alwaysOriginal), for: .normal)
         btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
         return btn
     }()
-    let linkedin : UIButton = {
+    lazy var linkedin : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "linkedin")?.withRenderingMode(.alwaysOriginal), for: .normal)
         btn.addTarget(self, action: #selector(goLinkedIn), for: .touchUpInside)
         return btn
     }()
     
-    let twitter : UIButton = {
+    lazy var twitter : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "twitter")?.withRenderingMode(.alwaysOriginal), for: .normal)
         btn.addTarget(self, action: #selector(goTwitter), for: .touchUpInside)
         return btn
     }()
-    let instagram : UIButton = {
+    lazy var instagram : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "ig")?.withRenderingMode(.alwaysOriginal), for: .normal)
         btn.addTarget(self, action: #selector(goInstagram), for: .touchUpInside)
         return btn
     }()
-    
+    //MARK:-lifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
@@ -201,13 +214,33 @@ class ProfileHeader : UICollectionReusableView {
         
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
     
-    
+            
+        if currentUser?.short_school == otherUser?.short_school {
+                   if currentUser?.bolum == otherUser?.bolum {
+                       
+                       segmentedControl.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
+                       segmentedControl.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
+                       segmentedControl.insertSegment(withTitle: "Akış", at: 2, animated: true)
+                       segmentedControl.selectedSegmentIndex = 0
+                   }else{
+                       segmentedControl.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
+                       segmentedControl.insertSegment(withTitle: "Akış", at: 2, animated: true)
+                       segmentedControl.selectedSegmentIndex = 0
+                   }
+               }else{
+                   segmentedControl.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
+                   segmentedControl.selectedSegmentIndex = 0
+               }
 //        addSubview(underLine)
 //        underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 3, heigth: 2)
         addSubview(segmentindicator)
         setupLayout()
 
-        
+        interstitalTwitter = createAd()
+        interstitalGithub = createAd()
+        interstitalLinked = createAd()
+        interstitalInsta = createAd()
+      
     }
     
     required init?(coder: NSCoder) {
@@ -230,34 +263,60 @@ class ProfileHeader : UICollectionReusableView {
     
     //MARK:-selectors
     @objc func goGithub(){
-        
-        guard let currentUser = currentUser else {
-            return
+        if interstitalGithub.isReady {
+            guard let vc = controller else {
+                target = "github"
+                print("go github")
+                return
+            }
+            target = "github"
+            interstitalGithub.present(fromRootViewController: vc)
+        }else{
+             guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser!.github) ) else { return }
+             UIApplication.shared.open(url)
         }
-        
-        guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: currentUser.github) ) else { return }
-        UIApplication.shared.open(url)
     }
     @objc func goInstagram(){
-        guard let currentUser = currentUser else {
-            return
+        if interstitalInsta.isReady {
+            guard let vc = controller else {
+                target = "instagram"
+                print("go github")
+                return
+            }
+            target = "instagram"
+            interstitalInsta.present(fromRootViewController: vc)
+        }else{
+             guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser!.instagram) ) else { return }
+             UIApplication.shared.open(url)
         }
-        guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: currentUser.instagram) ) else { return }
-        UIApplication.shared.open(url)
     }
     @objc func goTwitter(){
-        guard let currentUser = currentUser else {
-            return
+        if interstitalTwitter.isReady {
+            guard let vc = controller else {
+                target = "twitter"
+                print("go github")
+                return
+            }
+            target = "twitter"
+            interstitalTwitter.present(fromRootViewController: vc)
+        }else{
+             guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser!.twitter) ) else { return }
+             UIApplication.shared.open(url)
         }
-        guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: currentUser.twitter) ) else { return }
-        UIApplication.shared.open(url)
     }
     @objc func goLinkedIn(){
-        guard let currentUser = currentUser else {
-            return
+        if interstitalLinked.isReady {
+            guard let vc = controller else {
+                target = "linkedin"
+                print("go github")
+                return
+            }
+            target = "linkedin"
+            interstitalLinked.present(fromRootViewController: vc)
+        }else{
+            guard let url = URL(string: otherUser!.linkedin ) else { return }
+             UIApplication.shared.open(url)
         }
-        guard let url = URL(string: currentUser.linkedin ) else { return }
-         UIApplication.shared.open(url)
     }
     
     @objc func segmnetSelector(sender : UISegmentedControl)
@@ -283,16 +342,18 @@ class ProfileHeader : UICollectionReusableView {
             })
         }
     }
-
+    private func createAd() ->GADInterstitial {
+        let ad = GADInterstitial(adUnitID: adUnitID)
+        ad.delegate = self
+        ad.load(GADRequest())
+        return ad
+    }
     private func getUsername(username : String) ->String{
         
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
     }
-
 }
- 
-
-extension ProfileHeader : ProfileFilterDelegate {
+extension OtherUserProfileHeader : ProfileFilterDelegate {
     func ShowFilterUnderLine(_ view: ProfileFilterView, didSelect indexPath: IndexPath) {
         guard let cell = view.collectionView.cellForItem(at: indexPath) as?
             ProfileFilterCell else{
@@ -306,4 +367,64 @@ extension ProfileHeader : ProfileFilterDelegate {
     
     
 }
+extension OtherUserProfileHeader : GADInterstitialDelegate {
+    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
+        
+        if target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser!.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser!.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser!.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "linkedin"{
+            guard let url = URL(string:  otherUser!.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+    }
+    func interstitialDidFail(toPresentScreen ad: GADInterstitial) {
+        print("fail")
+    }
 
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        if target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser!.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser!.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser!.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "linkedin"{
+            guard let url = URL(string:  otherUser!.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+        
+    }
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        print("reveived")
+    }
+    func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
+        print("fail")
+        if target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser!.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser!.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser!.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "linkedin"{
+            guard let url = URL(string:  otherUser!.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+        
+    }
+}

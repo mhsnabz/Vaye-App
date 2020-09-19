@@ -21,6 +21,10 @@ class OtherUserProfile: UIViewController {
 //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
     
+
+
+
+    
     let titleLbl : UILabel = {
        let lbl = UILabel()
         lbl.text = "..."
@@ -57,6 +61,7 @@ class OtherUserProfile: UIViewController {
         configureUI()
         configureCollectionView()
         interstitalAd = createAd()
+        
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
             if self.interstitalAd.isReady {
@@ -101,7 +106,7 @@ class OtherUserProfile: UIViewController {
              collectionview.delegate = self
              collectionview.backgroundColor = .white
              collectionview.register(ProfileCell.self, forCellWithReuseIdentifier: cellId)
-        collectionview.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
+        collectionview.register(OtherUserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
              view.addSubview(collectionview)
         collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
          }
@@ -135,8 +140,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! ProfileHeader
-            header.otherUser = otherUser
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! OtherUserProfileHeader
+        header.otherUser = otherUser
+        header.currentUser = currentUser
         header.controller = self
         return header
     }

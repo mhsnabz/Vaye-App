@@ -27,7 +27,7 @@ class HomeVC: UIViewController {
     var nativeAdView: GADUnifiedNativeAdView!
 
     /// The ad unit ID.
-    let adUnitID = "ca-app-pub-3940256099942544/2521693316" //"ca-app-pub-3940256099942544/3986624511"
+    let adUnitID = "ca-app-pub-3940256099942544/3986624511" // "ca-app-pub-3940256099942544/2521693316" 
 //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     
@@ -161,7 +161,6 @@ class HomeVC: UIViewController {
                                     let deleteDb = Firestore.firestore().collection("user")
                                         .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
                                     deleteDb.delete()
-                                    print("postId = \(postId) deleted")
                                 }
                             }
                         }
@@ -646,7 +645,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
             return CGSize(width: view.frame.width, height: 409)
             
         }else{
-            print(lessonPost[indexPath.row].text ?? "nil")
+            
             if lessonPost[indexPath.row].text == nil {
                 return .zero
             }
