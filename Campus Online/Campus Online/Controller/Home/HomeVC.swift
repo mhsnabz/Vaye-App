@@ -170,6 +170,7 @@ class HomeVC: UIViewController {
                     }
                     
                     self.page = snap.documents.last
+                    self.fetchAds()
                     self.loadMore = true
                    
                 }
@@ -271,7 +272,7 @@ class HomeVC: UIViewController {
             newAdded.isHidden = true
             fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
-            self?.fetchAds()
+//            self?.fetchAds()
                 if self?.lessonPost.count ?? -1 > 0{
                     
                     if  let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime{
@@ -702,8 +703,10 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
            
             if indexPath.item == lessonPost.count - 1 {
                 loadMorePost { (val) in
-                    self.loadMore = true
+                    
                 }
+            }else{
+                self.loadMore = false
             }
         }
     }

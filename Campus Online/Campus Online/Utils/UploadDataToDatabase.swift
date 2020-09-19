@@ -25,7 +25,7 @@ class UploadDataToDatabase : NSObject {
         let imagesCount = datas.count
         
         for data  in 0..<(datas.count) {
-            Utilities.waitProgress(msg: " \(imagesCount) Dosya Yükleniyor ")
+            Utilities.waitProgress(msg: " \(imagesCount) Dosya Yükleniyor...\n Biraz Uzun Sürebilir ")
             saveDataToDataBase(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data], uploadCount, imagesCount) { (url) in
                 uploadedImageUrlsArray.append(url)
                 uploadCount += 1
