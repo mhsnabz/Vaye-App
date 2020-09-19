@@ -122,3 +122,19 @@ enum DataTypes {
         }
     }
 }
+enum socialMeadialink{
+    case github,instagram,twitter,linkedIn
+    var descprition : String{
+        switch self{
+        
+        case .github:
+            return "https://github.com/"
+        case .instagram:
+            return "https://www.instagram.com/"
+        case .twitter:
+            return "https://twitter.com/"
+        case .linkedIn:
+            return ""
+        }
+    }
+}

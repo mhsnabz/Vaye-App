@@ -9,7 +9,7 @@
 import UIKit
 
 class HomeMenuCell: UITableViewCell {
-
+    static let reuseIdentifier: String = String(describing: self)
     var delegate : SlideMenuDelegate?
     
    let homeBtn : UIButton = {

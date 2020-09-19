@@ -338,6 +338,7 @@ PODS:
   - SVProgressHUD (2.2.5)
   - SwiftyAttributes (5.1.1)
   - TweeTextField (1.6.0)
+  - WMSegmentControl (1.0)
 
 DEPENDENCIES:
   - ActiveLabel
@@ -364,6 +365,7 @@ DEPENDENCIES:
   - SVProgressHUD
   - SwiftyAttributes
   - TweeTextField
+  - WMSegmentControl
 
 SPEC REPOS:
   trunk:
@@ -415,6 +417,7 @@ SPEC REPOS:
     - SVProgressHUD
     - SwiftyAttributes
     - TweeTextField
+    - WMSegmentControl
 
 SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
@@ -465,7 +468,8 @@ SPEC CHECKSUMS:
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftyAttributes: e3e13891ddac3c62b3d7798d5c3969cea88e62bb
   TweeTextField: 2bfb6c48fdbf6eb8038260430244c9f6ebb47bce
+  WMSegmentControl: 00415dce32ed41ad7623ac6ac076eedbb8140a5e
 
-PODFILE CHECKSUM: 160b2033c4d4cd6bf1fb103f8351b58997d54427
+PODFILE CHECKSUM: ca126df2241ab6421efce186f07e3169ddddf101
 
 COCOAPODS: 1.8.4

@@ -100,27 +100,12 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
             headLineLbl.anchor(top: logoView.topAnchor, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 15)
             
             addSubview(advertiserLbl)
-            advertiserLbl.anchor(top: headLineLbl.bottomAnchor, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 9, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 12)
+            advertiserLbl.anchor(top: headLineLbl.bottomAnchor, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 9, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 14)
             
             
             addSubview(starsView)
             starsView.anchor(top: nil, left: advertiserLbl.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 4, marginBottom: 0, marginRigth: 0, width: 75, heigth: 30)
             starsView.centerYAnchor.constraint(equalTo: advertiserLbl.centerYAnchor).isActive = true
-            
-//            let stackView = UIStackView(arrangedSubviews: [advertiserLbl,starsView])
-//            stackView.axis = .horizontal
-//            stackView.distribution = .fillEqually
-//
-//
-//            let stackHeadLine = UIStackView(arrangedSubviews: [headLineLbl,stackView])
-//            stackHeadLine.axis = .vertical
-//            stackView.distribution = .fillEqually
-//            stackView.alignment = .leading
-            
-//            addSubview(stackHeadLine)
-//            stackHeadLine.anchor(top: nil, left: logoView.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 45)
-//            stackHeadLine.centerYAnchor.constraint(equalTo: logoView.centerYAnchor ).isActive = true
-            
             addSubview(bodyLbl)
             bodyLbl.anchor(top: logoView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 8, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 50)
             
@@ -133,14 +118,6 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
             storeLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
             addSubview(priceLbl)
             priceLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: storeLbl.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
-            
-//            let stackStore = UIStackView(arrangedSubviews: [priceLbl,storeLbl,installBtn])
-//            stackStore.axis = .horizontal
-//            stackStore.distribution = .fillEqually
-//            addSubview(stackStore)
-//            stackStore.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
-            
-            
         }
 
 }

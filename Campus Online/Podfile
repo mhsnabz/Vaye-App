@@ -43,7 +43,8 @@ target 'Campus Online' do
   
   pod 'Gallery'
   pod 'SnapKit', '~> 5.0.0'
-pod 'EFImageViewZoom'
+  pod 'EFImageViewZoom'
+  pod 'WMSegmentControl'
   # Pods for Campus Online
   target 'Campus OnlineTests' do
     

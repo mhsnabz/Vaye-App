@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import FirebaseAuth
 class ContainerController: UIViewController {
-    var menuController : HomeMenuController!
+    var menuController : MenuController!
     var centrelController : UIViewController!
     var currentUser : CurrentUser
     public var isExanded = false
@@ -50,9 +50,8 @@ class ContainerController: UIViewController {
     }
     func configureMenuController()  {
         if menuController == nil {
-            self.menuController = HomeMenuController(currentUser: currentUser)
+            self.menuController = MenuController(currentUser : currentUser)
             menuController.delegate = self
-            menuController.currentUser = currentUser
             view.insertSubview(menuController.view, at: 0)
             addChild(menuController)
             menuController.didMove(toParent: self)

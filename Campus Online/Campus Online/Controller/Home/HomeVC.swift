@@ -259,6 +259,7 @@ class HomeVC: UIViewController {
                         self?.lessonPost.sort(by: { (post, post1) -> Bool in
                             return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
                         })
+                        self?.collectionview.reloadData()
                         self?.collectionview.refreshControl?.endRefreshing()
                         self?.fetchAds()
                        

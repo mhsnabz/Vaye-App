@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import GoogleMobileAds
 private let cellId = "id"
 private let profileId = "profileId"
 class OtherUserProfile: UIViewController {
@@ -14,6 +15,12 @@ class OtherUserProfile: UIViewController {
     var currentUser : CurrentUser
     var otherUser : OtherUser
     var collectionview: UICollectionView!
+    
+    var adUnitID = "ca-app-pub-3940256099942544/5135589807"
+    
+//    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
+    var interstitalAd : GADInterstitial!
+    
     let titleLbl : UILabel = {
        let lbl = UILabel()
         lbl.text = "..."
@@ -41,12 +48,21 @@ class OtherUserProfile: UIViewController {
         return v
     }()
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setNavigationBar()
         configureUI()
         configureCollectionView()
+        interstitalAd = createAd()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+            if self.interstitalAd.isReady {
+                self.interstitalAd.present(fromRootViewController: self)
+            }
+        })
     }
     
     init(currentUser : CurrentUser, otherUser : OtherUser) {
@@ -61,6 +77,13 @@ class OtherUserProfile: UIViewController {
     
     
     //MARK: -functions
+    
+    private func createAd() ->GADInterstitial {
+        let ad = GADInterstitial(adUnitID: adUnitID)
+        ad.delegate = self
+        ad.load(GADRequest())
+        return ad
+    }
     
     func configureUI(){
          view.backgroundColor = .white
@@ -114,8 +137,30 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! ProfileHeader
             header.otherUser = otherUser
-        
+        header.controller = self
         return header
+    }
+    
+}
+
+extension OtherUserProfile : GADInterstitialDelegate {
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        
+    }
+    func interstitialWillPresentScreen(_ ad: GADInterstitial) {
+        
+    }
+    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
+        print("dismiss")
+    }
+    func interstitialWillLeaveApplication(_ ad: GADInterstitial) {
+        
+    }
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        
+    }
+    func interstitialDidFail(toPresentScreen ad: GADInterstitial) {
+        
     }
     
 }
