@@ -76,11 +76,11 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
-            if isNew {
-                self?.newAdded.isHidden = false
-            }
-        }
+//        listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
+//            if isNew {
+//                self?.newAdded.isHidden = false
+//            }
+//        }
         
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -248,7 +248,7 @@ class HomeVC: UIViewController {
     fileprivate func getPost(){
             lessonPost = [LessonPostModel]()
             collectionview.reloadData()
-        
+            newAdded.isHidden = true
             fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
                 if self?.lessonPost.count ?? -1 > 0{
@@ -269,7 +269,7 @@ class HomeVC: UIViewController {
                
 
 //            self?.collectionview.reloadData()
-            self?.newAdded.isHidden = true
+      
             
         }
         
@@ -362,27 +362,34 @@ class HomeVC: UIViewController {
     
     
     
-    private func listenNewPost(currentUser : CurrentUser , completion : @escaping(Bool)->Void){
-        let db = Firestore.firestore().collection("user").document(currentUser.uid)
-            .collection("lesson-post")
-        listenerRegistiration = db.addSnapshotListener { (querySnap, err) in
-            if err == nil {
-                guard let snap = querySnap?.documentChanges else { return }
-                snap.forEach({ (diff) in
-                    
-                    if (diff.type == .added) {
-                        completion(true)
-                    }
-                    else if (diff.type == .modified) {
-                        
-                    }
-                    else if (diff.type == .removed) {
-                        
-                    }
-                })
-            }
-        }
-    }
+//    private func listenNewPost(currentUser : CurrentUser , completion : @escaping(Bool)->Void){
+//        let db = Firestore.firestore().collection("user").document(currentUser.uid)
+//            .collection("lesson-post")
+//        listenerRegistiration = db.addSnapshotListener(includeMetadataChanges: true) { (querySnap, err) in
+//            if err == nil {
+//
+//                guard let snap = querySnap?.documentChanges else { return }
+//                for item in snap {
+//                    if item.type == .added{
+//                        completion(true)
+//                    }
+//                }
+//
+////                snap.forEach({ (diff) in
+////
+////                    if (diff.type == .added) {
+////
+////                    }
+////                    else if (diff.type == .modified) {
+////
+////                    }
+////                    else if (diff.type == .removed) {
+////
+////                    }
+////                })
+//            }
+//        }
+//    }
     
     private func getBolumName(fakulteName : String){
         
@@ -730,11 +737,18 @@ extension HomeVC : NewPostHomeVCDataDelegate {
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }else{
+            Utilities.waitProgress(msg: nil)
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else { return }
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
                 vc.modalPresentationStyle = .fullScreen
-                sself.present(vc, animated: true, completion: nil)
+                sself.present(vc, animated: true) {
+                    Utilities.dismissProgress()
+                }
+        
             }
         }
     }
@@ -808,11 +822,16 @@ extension HomeVC : NewPostHomeVCDelegate {
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
         }else{
+            Utilities.waitProgress(msg: nil)
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else { return }
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
                 vc.modalPresentationStyle = .fullScreen
-                sself.present(vc, animated: true, completion: nil)
+                sself.present(vc, animated: true) {
+                    Utilities.dismissProgress()
+                }
             }
         }
         
