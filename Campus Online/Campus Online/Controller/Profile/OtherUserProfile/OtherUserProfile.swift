@@ -16,7 +16,7 @@ class OtherUserProfile: UIViewController {
     var otherUser : OtherUser
     var collectionview: UICollectionView!
     
-    var adUnitID = "ca-app-pub-3940256099942544/5135589807"
+    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
     
 //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
@@ -160,7 +160,7 @@ extension OtherUserProfile : GADInterstitialDelegate {
         
     }
     func interstitialDidFail(toPresentScreen ad: GADInterstitial) {
-        
+        print("failed")
     }
     
 }
