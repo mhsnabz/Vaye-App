@@ -26,7 +26,8 @@ struct MentionUser {
 }
 
 class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
-
+    var postDate : String!
+    var dataModel = [DatasModel]()
     var viewController : UIViewController!
     private var actionSheet : ActionSheetLauncher
     private var addUserSheet : AddUserLaunher
@@ -168,6 +169,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         self.selectedLesson = selectedLesson
         self.fallowers = users
         super.init(nibName: nil, bundle: nil)
+        self.postDate = Int64(Date().timeIntervalSince1970 * 1000).description
         
     }
     
@@ -222,6 +224,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             self.cloudDriveLink.isHidden = true
         }
         
+    }
+    private func checkDataModelHasValue(data : Data) ->Bool{
+        dataModel.contains { (model) -> Bool in
+           return  model.data == data
+        }
     }
     private func goToLink(_ target : String)
     {  if let url = URL(string: target){
@@ -391,7 +398,8 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
                    Utilities.succesProgress(msg: "Paylaşıldı") }
        }else {
-           
+            
+            
            UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
                    Utilities.succesProgress(msg: "Paylaşıldı")
@@ -469,10 +477,17 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         controller.dismiss(animated: true) {
             for image  in images {
                 image.resolve { (img) in
+                    
                     if let img_data = img!.jpegData(compressionQuality: 0.8){
-                        self.data.append(SelectedData.init(data : img_data , type : DataTypes.image.description))
-                        self.collectionview.reloadData()
-                        self.navigationItem.title = "\( self.getSizeOfData(data: self.data)) mb"
+                        if self.checkDataModelHasValue(data:  img_data){
+                            print("data is exist")
+                        }else{
+                            self.data.append(SelectedData.init(data : img_data , type : DataTypes.image.description))
+                            self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.image.description, data: img_data))
+                            self.collectionview.reloadData()
+                            self.navigationItem.title = "\( self.getSizeOfData(data: self.data)) mb"
+                        }
+                      
                     }
                 }
             }
@@ -510,15 +525,16 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        if data[indexPath.row].type == "jpeg"
+        if dataModel[indexPath.row].type == DataTypes.image.description
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! NewPostImageCell
             cell.backgroundColor = .white
             cell.delegate = self
+            cell.data = dataModel[indexPath.row]
             cell.img.image = UIImage(data: data[indexPath.row].data)
             
             return cell
-        }else if data[indexPath.row].type == "pdf" {
+        }else if dataModel[indexPath.row].type == DataTypes.pdf.description {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdfCell, for: indexPath) as! NewPostPdfCell
             cell.delegate = self
             cell.backgroundColor = .white
@@ -601,9 +617,14 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         if myURL.uti == "com.microsoft.word.doc"
         {
             do {
-                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
-                self.collectionview.reloadData()
-                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                if self.checkDataModelHasValue(data: try Data(contentsOf: myURL)) {
+                    Utilities.errorProgress(msg: "Bu Dosyayı Zaten Seçtiniz")
+                }else{
+                    self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
+                    self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.doc.description, data:  try Data(contentsOf: myURL)))
+                    self.collectionview.reloadData()
+                     self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                }
             }
             catch{
                 print(error)
@@ -612,9 +633,19 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         }else if myURL.uti == "com.adobe.pdf"
         {
             do {
-                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.pdf.description))
-                self.collectionview.reloadData()
-                self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                
+                if self.checkDataModelHasValue(data: try Data(contentsOf: myURL)) {
+                    Utilities.errorProgress(msg: "Bu Dosyayı Zaten Seçtiniz")
+                }else{
+                    self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.pdf.description))
+                    
+                   
+                    self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.pdf.description, data:  try Data(contentsOf: myURL)))
+                    self.collectionview.reloadData()
+                    self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                }
+                
+                
             }
             catch{
                 print(error)
@@ -622,10 +653,16 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         }else if myURL.uti == "org.openxmlformats.wordprocessingml.document"
         {
             do {
-                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
                 
-                self.collectionview.reloadData()
-                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                if self.checkDataModelHasValue(data: try Data(contentsOf: myURL)) {
+                    Utilities.errorProgress(msg: "Bu Dosyayı Zaten Seçtiniz")
+                }else{
+                    self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
+                    self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.doc.description, data:  try Data(contentsOf: myURL)))
+                    self.collectionview.reloadData()
+                     self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                }
+               
             }
             catch{
                 print(error)

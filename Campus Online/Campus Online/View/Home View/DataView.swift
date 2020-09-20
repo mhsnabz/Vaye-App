@@ -23,9 +23,8 @@ class DataView : UIView {
     }
     
     lazy var collectionView : UICollectionView = {
-    let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+   
+        let cv = UICollectionView()
         cv.delegate = self
         cv.dataSource = self
         cv.backgroundColor = .white
@@ -36,6 +35,9 @@ class DataView : UIView {
     override init(frame: CGRect) {
            super.init(frame: frame)
            backgroundColor = .red
+            let layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .horizontal
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
            collectionView.register(DataViewImageCell.self, forCellWithReuseIdentifier: img)
             collectionView.register(DataViewPdfCell.self, forCellWithReuseIdentifier: pdf)
             collectionView.register(DataViewDocCell.self, forCellWithReuseIdentifier: doc)

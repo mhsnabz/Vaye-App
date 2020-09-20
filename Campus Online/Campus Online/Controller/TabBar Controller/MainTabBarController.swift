@@ -25,10 +25,8 @@ class MainTabbar: UITabBarController,UITabBarControllerDelegate  {
         self.delegate = delegate
         
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
+ 
+    
     
     
     func configureViewControler(user : CurrentUser){

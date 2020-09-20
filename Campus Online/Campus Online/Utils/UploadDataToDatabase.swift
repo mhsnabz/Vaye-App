@@ -23,27 +23,47 @@ class UploadDataToDatabase : NSObject {
         var uploadedImageUrlsArray = [String]()
         var uploadCount = 0
         let imagesCount = datas.count
+        let semaphore = DispatchSemaphore(value: 1)
         
         for data  in 0..<(datas.count) {
-            Utilities.waitProgress(msg: " \(imagesCount) Dosya Yükleniyor...\n Biraz Uzun Sürebilir ")
-            saveDataToDataBase(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data], uploadCount, imagesCount) { (url) in
-                uploadedImageUrlsArray.append(url)
-                uploadCount += 1
-                print("Number of images successfully uploaded: \(uploadCount)")
-                Utilities.waitProgress(msg: "\(uploadCount). Dosya Yüklendi")
-                if uploadCount == imagesCount{
-                    SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
-                    completionHandler(uploadedImageUrlsArray)
+            
+            Utilities.waitProgress(msg: "\(imagesCount) Dosya Yükleniyor\n Lütfen Bekleyiniz")
+            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+5) {
+                semaphore.wait()
+                saveDataToDataBase(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data], uploadCount, imagesCount) { (url) in
+                    uploadedImageUrlsArray.append(url)
+                    uploadCount += 1
+                    print("Number of images successfully uploaded: \(uploadCount)")
+                   
+                    Utilities.waitProgress(msg: "\(uploadCount). Dosya Yüklendi")
+                    if uploadCount == imagesCount{
+                        SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
+                        semaphore.signal()
+                        completionHandler(uploadedImageUrlsArray)
+                        
+                        
+                    }else{
+                        semaphore.signal()
+                    }
                 }
             }
             
+            
         }
+       
         
     }
+    
+  static func asynchronousOperation(index: Int,date: Date, currentUser: CurrentUser, lessonName: String, type : String, data : Data, uploadCount : Int, imagesCount : Int, completion: @escaping (String) -> ()) {
+     
+    }
+   
     
 }
 var totalCompletedData : Float = 0
 var uploadTask : StorageUploadTask?
+
+
 private func SizeOfData(data : Data) -> Float {
     
     let bcf = ByteCountFormatter()
@@ -177,7 +197,7 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
         
     }
     //    observeUploadTaskFailureCases(uploadTask : uploadTask!)
-    //             uploadFiles(uploadTask: uploadTask! , count : uploadCount , percentTotal: 5 , data: data)
+                 uploadFiles(uploadTask: uploadTask! , count : uploadCount , percentTotal: 5 , data: data)
 }
 
 func observeUploadTaskFailureCases(uploadTask : StorageUploadTask){
@@ -218,8 +238,8 @@ func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : F
         
         let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
             / Float(snapshot.progress!.totalUnitCount)
-        print("upload : \(percentComplete)")
-        SVProgressHUD.showProgress(percentComplete, status: "\(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
+        print("upload : \(percentComplete )")
+        SVProgressHUD.showProgress(percentComplete / 100, status: "\(Float(snapshot.progress!.totalUnitCount / 1_24) / (1000 * 1000)) MB % \(Int(percentComplete))")
     }
     uploadTask.observe(.success) { (snap) in
         
@@ -273,4 +293,26 @@ extension Int {
     var byteSize: String {
         return ByteCountFormatter().string(fromByteCount: Int64(self))
     }
+}
+struct Queue<T> {
+  private var elements: [T] = []
+
+  mutating func enqueue(_ value: T) {
+    elements.append(value)
+  }
+
+  mutating func dequeue() -> T? {
+    guard !elements.isEmpty else {
+      return nil
+    }
+    return elements.removeFirst()
+  }
+
+  var head: T? {
+    return elements.first
+  }
+
+  var tail: T? {
+    return elements.last
+  }
 }

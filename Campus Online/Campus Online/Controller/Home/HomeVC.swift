@@ -696,7 +696,9 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         return 0
     }
     
-   
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cell.removeFromSuperview()
+    }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
       
         if lessonPost.count > 5 {
@@ -709,50 +711,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
                 self.loadMore = false
             }
         }
-    }
-    
-   
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//     
-//        if  page != nil {
-//            let offsetY = scrollView.contentOffset.y
-//            let contentHeight = scrollView.contentSize.height
-//            if offsetY > contentHeight - scrollView.frame.height - 50 {
-//                // Bottom of the screen is reached
-//                if !loadMore {
-//                    loadMore = true
-//                    loadMorePost {[weak self] (_val) in
-//                        if _val {
-//
-//                            self?.fetchAds()
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
-//       
-//                                self?.loadMore = false
-//                            })
-//                            
-//                            let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
-//                            
-//                            self?.lessonPost.sort(by: { (post, post1) -> Bool in
-//                                return (post.postTime?.nanoseconds ?? time_e?.nanoseconds) ?? 0  > (post1.postTime?.nanoseconds ??  time_e?.nanoseconds) ?? 0
-//                            })
-//                        }else{
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-//                                self?.loadMore = false
-//                            })
-//                        }
-//                    
-//                        
-//                        
-//                    }
-//                    
-//                }
-//            }
-//        }
-//       
-//    }
-    
-    
-    
+    }   
 }
 
 extension HomeVC : NewPostHomeVCDataDelegate {

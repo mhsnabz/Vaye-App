@@ -59,9 +59,11 @@
 		6622C2402505D1DD00E3B3F0 /* LessonInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C23F2505D1DD00E3B3F0 /* LessonInfoCell.swift */; };
 		6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */; };
 		6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */; };
+		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
 		6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */; };
+		6652F02925176971003462BC /* FirFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6652F02825176971003462BC /* FirFile.swift */; };
 		665E5CCA24FE5B0C00B5B5E3 /* UploadDataToDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */; };
 		665E5CCE24FE7FD300B5B5E3 /* SelectedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */; };
 		665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */; };
@@ -194,9 +196,11 @@
 		6622C23F2505D1DD00E3B3F0 /* LessonInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoCell.swift; sourceTree = "<group>"; };
 		6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeaderOne.swift; sourceTree = "<group>"; };
 		6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
+		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
 		6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuFooter.swift; sourceTree = "<group>"; };
+		6652F02825176971003462BC /* FirFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirFile.swift; sourceTree = "<group>"; };
 		665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadDataToDatabase.swift; sourceTree = "<group>"; };
 		665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedData.swift; sourceTree = "<group>"; };
 		665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostPdfCell.swift; sourceTree = "<group>"; };
@@ -628,6 +632,8 @@
 				665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */,
 				6615FC88250AE46E00776664 /* LessonPostModel.swift */,
 				66A5F0D9250F02F1005C93B3 /* OtherUser.swift */,
+				6628125225171F9D00923F19 /* DatasModel.swift */,
+				6652F02825176971003462BC /* FirFile.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1135,6 +1141,7 @@
 				6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */,
 				66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */,
 				66AF72D825134996007E96BC /* GoogleNativeAdsView.swift in Sources */,
+				6628125325171F9D00923F19 /* DatasModel.swift in Sources */,
 				66E326A424F98C28004CB61D /* LessonList.swift in Sources */,
 				661333EA24F3B44B002677AB /* ProfileHeader.swift in Sources */,
 				66B2100E251474D4002BD8A3 /* LoadMoreCell.swift in Sources */,
@@ -1154,6 +1161,7 @@
 				6613341124F6886E002677AB /* StudentNumberVC.swift in Sources */,
 				661333EE24F3D356002677AB /* ProfileFilterCell.swift in Sources */,
 				665E5CCE24FE7FD300B5B5E3 /* SelectedData.swift in Sources */,
+				6652F02925176971003462BC /* FirFile.swift in Sources */,
 				66F25F1524F6E8E9005B0591 /* FakulteCell.swift in Sources */,
 				6613340624F43CD5002677AB /* ChooseSchoolCell.swift in Sources */,
 				6618F6A825003840005E5873 /* PopUpWindow.swift in Sources */,

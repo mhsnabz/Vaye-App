@@ -237,6 +237,7 @@ class NewPostHomeVCData : UICollectionViewCell{
         
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
+       
         
     }
     
