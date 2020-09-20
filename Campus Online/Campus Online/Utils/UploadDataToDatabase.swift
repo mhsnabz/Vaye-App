@@ -37,26 +37,28 @@ class UploadDataToDatabase : NSObject {
                    
                     Utilities.waitProgress(msg: "\(uploadCount). Dosya Yüklendi")
                     if uploadCount == imagesCount{
-                        SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
-                        semaphore.signal()
-                        completionHandler(uploadedImageUrlsArray)
-                        
-                        
+                            getThumbİmage(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data]) { (_) in
+                                completionHandler(uploadedImageUrlsArray)
+                                SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
+                                semaphore.signal()
+                                
+                            }
                     }else{
-                        semaphore.signal()
+                            getThumbİmage(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data]) { (_) in
+                                semaphore.signal()
+                            }
                     }
                 }
             }
             
             
         }
+        
+       
        
         
     }
     
-  static func asynchronousOperation(index: Int,date: Date, currentUser: CurrentUser, lessonName: String, type : String, data : Data, uploadCount : Int, imagesCount : Int, completion: @escaping (String) -> ()) {
-     
-    }
    
     
 }
@@ -74,7 +76,7 @@ private func SizeOfData(data : Data) -> Float {
     
 }
 
-func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
+func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data , completion : @escaping(Bool) ->Void){
     let metaDataForData = StorageMetadata()
     let dataName = Date().millisecondsSince1970.description
     
@@ -83,22 +85,24 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
         metaDataForData.contentType = DataTypes.image.contentType
         
         
-        let storageRef = Storage.storage().reference().child(currentUser.short_school)
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(lessonName + "thumb").child(dataName + DataTypes.image.mimeType)
+        let storageRef = Storage.storage().reference().child(currentUser.short_school + " thumb")
+            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
         //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
         let image : UIImage = UIImage(data: data)!
-        guard let uploadData = image.jpeg(.low) else { return }
+        guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
         uploadTask = storageRef.putData(uploadData, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
-                Storage.storage().reference().child(currentUser.short_school)
-                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(lessonName + "thumb").child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                Storage.storage().reference().child(currentUser.short_school  + " thumb")
+                    .child(currentUser.bolum).child(lessonName ).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return
                         }
-                        completion(dataUrl)
+                        setDataToSavedTask(currentUser: currentUser, url: dataUrl) { (_) in
+                            completion(true)
+                        }
                         
                 }
             }
@@ -108,8 +112,106 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
         //              uploadFiles(uploadTask: uploadTask , count : uploadCount)
         
         
+    }else if type == DataTypes.doc.description {
+        metaDataForData.contentType = DataTypes.doc.contentType
+        
+        
+        let storageRef = Storage.storage().reference().child(currentUser.short_school  + " thumb")
+            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType)
+        //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
+       
+        
+
+        uploadTask = storageRef.putData(UIImage(named: "doc-holder")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
+            if err != nil
+            {  print("err \(err as Any)") }
+            else {
+                Storage.storage().reference().child(currentUser.short_school  + " thumb")
+                   .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
+                        guard let dataUrl = url?.absoluteString else {
+                            print("DEBUG :  Image url is null")
+                            return
+                        }
+                        setDataToSavedTask(currentUser: currentUser, url: dataUrl) { (_) in
+                            completion(true)
+                        }
+                        
+                }
+            }
+            
+        }
+        //pdf-holder
+        observeUploadTaskFailureCases(uploadTask : uploadTask!)
+        
+    }else if type == DataTypes.pdf.description{
+        metaDataForData.contentType = DataTypes.pdf.contentType
+        
+        
+        let storageRef = Storage.storage().reference().child(currentUser.short_school  + " thumb")
+            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
+        //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
+        
+        uploadTask = storageRef.putData(UIImage(named: "pdf-holder")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
+            if err != nil
+            {  print("err \(err as Any)") }
+            else {
+             Storage.storage().reference().child(currentUser.short_school  + " thumb")
+                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
+                        guard let dataUrl = url?.absoluteString else {
+                            print("DEBUG :  Image url is null")
+                            return
+                        }
+                        setDataToSavedTask(currentUser: currentUser, url: dataUrl) { (_) in
+                            completion(true)
+                        }
+                        
+                }
+            }
+            
+        }
+        //pdf-holder
+        observeUploadTaskFailureCases(uploadTask : uploadTask!)
     }
 }
+
+func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+       let size = image.size
+
+       let widthRatio  = targetSize.width  / image.size.width
+       let heightRatio = targetSize.height / image.size.height
+
+       var newSize: CGSize
+       if(widthRatio > heightRatio) {
+           newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+       } else {
+           newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+       }
+
+       let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+       UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+       image.draw(in: rect)
+       let newImage = UIGraphicsGetImageFromCurrentImageContext()
+       UIGraphicsEndImageContext()
+
+       return newImage!
+   }
+
+func setDataToSavedTask(currentUser : CurrentUser , url : String,comptletion : @escaping(Bool) ->Void){
+    
+    let db = Firestore.firestore().collection("user").document(currentUser.uid).collection("saved-task").document("task")
+    db.updateData(["data":FieldValue.arrayUnion([url as String])]) { (err) in
+        if err == nil {
+            comptletion(true)
+        }
+        else{
+            comptletion(false)
+        }
+    }
+  
+}
+
+
 
 func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
     let metaDataForData = StorageMetadata()
@@ -143,8 +245,7 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
     }else if type == DataTypes.pdf.description
     {
         metaDataForData.contentType = DataTypes.pdf.contentType
-        
-        metaDataForData.contentType = DataTypes.pdf.contentType
+       
         let storageRef = Storage.storage().reference().child(currentUser.short_school)
             .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
         uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
@@ -239,7 +340,7 @@ func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : F
         let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
             / Float(snapshot.progress!.totalUnitCount)
         print("upload : \(percentComplete )")
-        SVProgressHUD.showProgress(percentComplete / 100, status: "\(Float(snapshot.progress!.totalUnitCount / 1_24) / (1000 * 1000)) MB % \(Int(percentComplete))")
+        SVProgressHUD.showProgress(percentComplete / 100, status: "\(count + 1). Dosya %\(Int(percentComplete))")
     }
     uploadTask.observe(.success) { (snap) in
         
