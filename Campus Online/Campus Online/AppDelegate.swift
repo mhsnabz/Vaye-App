@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-
+import SDWebImage
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -27,7 +27,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
-   
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+      
+    }
   
     
     

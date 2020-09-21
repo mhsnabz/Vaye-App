@@ -14,7 +14,7 @@ private let cellData = "cell_data"
 private let cellAds = "cell_ads"
 private let loadMoreCell = "cell_load_more"
 import GoogleMobileAds
-
+import SDWebImage
 import FirebaseStorage
 class HomeVC: UIViewController {
     //MARK: -variables
@@ -74,6 +74,13 @@ class HomeVC: UIViewController {
     
     //MARK:- lifeCycle
     
+    override func didReceiveMemoryWarning() {
+        print("DEBUG :: applicationDidReceiveMemoryWarning")
+        SDWebImageManager.shared.imageCache.clear(with: .all) {
+            print(" DEBUG :: cleaned")
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
@@ -116,15 +123,13 @@ class HomeVC: UIViewController {
         UserService.shared.fetchUser {[weak self] (currentUser) in
             self?.currentUser = currentUser
         }
-        
         configureUI()
         view.backgroundColor = .collectionColor()
         getPost()
-   
-        
         
     }
     //MARK: - functions
+   
     func fetchAds() {
            adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
                                   adTypes: [ .unifiedNative ], options: nil)
@@ -274,7 +279,7 @@ class HomeVC: UIViewController {
             self?.lessonPost = post
 //            self?.fetchAds()
                 if self?.lessonPost.count ?? -1 > 0{
-                    
+                    self?.collectionview.refreshControl?.endRefreshing()
                     if  let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime{
                         self?.time = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime
                         self?.lessonPost.sort(by: { (post, post1) -> Bool in
@@ -672,6 +677,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
       
+    
         if lessonPost.count > 5 {
            
             if indexPath.item == lessonPost.count - 1 {
