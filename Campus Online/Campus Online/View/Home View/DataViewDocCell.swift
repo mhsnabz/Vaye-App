@@ -17,6 +17,7 @@ class DataViewDocCell: UICollectionViewCell {
           img.image = UIImage(named: "doc-holder")
           return img
       }()
+    
       override init(frame: CGRect) {
           super.init(frame: frame)
           addSubview(img)

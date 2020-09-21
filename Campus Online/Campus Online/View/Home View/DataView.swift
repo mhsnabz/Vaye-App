@@ -16,28 +16,38 @@ private let doc = "doc_cell"
 private let img = "img_cell"
 class DataView : UIView {
     
-    var arrayOfUrl : [String]?
+    var datasUrl : [String]?
+    var arrayOfUrl : [String]?{
+        didSet{
+                
+        }
+    }
     deinit {
         print("deninit horizantal collectionview")
     }
-    var collectionView : UICollectionView!
+    lazy var collectionView : UICollectionView = {
+    let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.delegate = self
+        cv.dataSource = self
+        cv.backgroundColor = .white
+        return cv
+    }()
     
     override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .white
-        
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height), collectionViewLayout: layout)
-        collectionView.register(DataViewImageCell.self, forCellWithReuseIdentifier: img)
-        collectionView.register(DataViewPdfCell.self, forCellWithReuseIdentifier: pdf)
-        collectionView.register(DataViewDocCell.self, forCellWithReuseIdentifier: doc)
-        addSubview(collectionView)
-        collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: frame.height)
-        
-    }
-    
-    required init?(coder: NSCoder) {
+           super.init(frame: frame)
+           backgroundColor = .white
+
+           collectionView.register(DataViewImageCell.self, forCellWithReuseIdentifier: img)
+            collectionView.register(DataViewPdfCell.self, forCellWithReuseIdentifier: pdf)
+            collectionView.register(DataViewDocCell.self, forCellWithReuseIdentifier: doc)
+           addSubview(collectionView)
+           collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: frame.height)
+
+       }
+       
+       required init?(coder: NSCoder) {
            fatalError("init(coder:) has not been implemented")
        }
 }
@@ -49,10 +59,13 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
       
       func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if URL(string: (arrayOfUrl?[indexPath.row])!)!.mimeType() == "image/jpeg"{
+            
+            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: img, for: indexPath) as! DataViewImageCell
             cell.url = arrayOfUrl![indexPath.row]
             cell.delegate = self
             return cell
+        
         }else if URL(string: (arrayOfUrl?[indexPath.row])!)!.mimeType() == DataTypes.pdf.contentType{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdf, for: indexPath) as! DataViewPdfCell
             
@@ -77,7 +90,7 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
         cell.removeFromSuperview()
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let url = arrayOfUrl else { return }
+        guard let url = datasUrl else { return }
         let vc = DataVC(dataUrl: url)
         
         let currentController = self.getCurrentViewController()

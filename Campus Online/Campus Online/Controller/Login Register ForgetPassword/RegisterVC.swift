@@ -453,7 +453,8 @@ class RegisterVC: UIViewController {
                                                             let dbTask = Firestore.firestore().collection("user")
                                                                 .document(result!.user.uid).collection("saved-task")
                                                                 .document("task")
-                                                            dbTask.setData(["data":[]] as [String:Any], mergeFields: true) { (err) in
+                                                            
+                                                            dbTask.setData(["data":[]], merge: true) { (err) in
                                                                 if err == nil {
                                                                     let vc = SplashScreen()
                                                                     self.navigationController?.pushViewController(vc, animated: true)

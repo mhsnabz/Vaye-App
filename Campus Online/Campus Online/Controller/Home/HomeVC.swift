@@ -281,10 +281,14 @@ class HomeVC: UIViewController {
                             return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
                         })
                         self?.collectionview.reloadData()
-                        self?.collectionview.refreshControl?.endRefreshing()
+                       
                        
                        
                     }
+                }else{
+                    self?.fetchAds()
+                    self?.collectionview.refreshControl?.endRefreshing()
+                    self?.collectionview.reloadData()
                 }
                
                 
@@ -381,37 +385,7 @@ class HomeVC: UIViewController {
             
         }    
     }
-    
-    
-    
-//    private func listenNewPost(currentUser : CurrentUser , completion : @escaping(Bool)->Void){
-//        let db = Firestore.firestore().collection("user").document(currentUser.uid)
-//            .collection("lesson-post")
-//        listenerRegistiration = db.addSnapshotListener(includeMetadataChanges: true) { (querySnap, err) in
-//            if err == nil {
-//
-//                guard let snap = querySnap?.documentChanges else { return }
-//                for item in snap {
-//                    if item.type == .added{
-//                        completion(true)
-//                    }
-//                }
-//
-////                snap.forEach({ (diff) in
-////
-////                    if (diff.type == .added) {
-////
-////                    }
-////                    else if (diff.type == .modified) {
-////
-////                    }
-////                    else if (diff.type == .removed) {
-////
-////                    }
-////                })
-//            }
-//        }
-//    }
+
     
     private func getBolumName(fakulteName : String){
         
@@ -610,9 +584,6 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         
         if lessonPost[indexPath.row].postId == nil {
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
-//            cell.adLoader = adLoader
-//
-//            cell.controller = self
             cell.nativeAd = lessonPost[indexPath.row].nativeAd
             return cell
         }else{

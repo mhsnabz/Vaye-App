@@ -22,6 +22,7 @@ class LessonPostModel {
     var postId  :String!
     var postID : Int64!
     var data : [String]!
+    var thumbData : [String]!
     var thumb_image : String!
     var username : String!
     var silent : [String]!
@@ -67,6 +68,9 @@ class LessonPostModel {
         }
         if let data = dic?["data"] as? [String] {
             self.data = data
+        }
+        if let thumbData = dic?["thumbData"] as? [String] {
+            self.thumbData = thumbData
         }
         if let silent = dic?["silent"] as? [String] {
                    self.silent = silent

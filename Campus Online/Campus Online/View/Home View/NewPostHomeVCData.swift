@@ -12,7 +12,7 @@ import ActiveLabel
 import FirebaseFirestore
 import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
-    var filterView = DataView()
+  lazy var filterView = DataView()
     weak var delegate : NewPostHomeVCDataDelegate?
     var currentUser : CurrentUser?
     var lessonPostModel : LessonPostModel?{
@@ -20,7 +20,8 @@ class NewPostHomeVCData : UICollectionViewCell{
             configure()
             guard let post = lessonPostModel else { return }
             if !post.data.isEmpty{
-                filterView.arrayOfUrl = post.data
+                filterView.arrayOfUrl = post.thumbData
+                filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
             }
             
