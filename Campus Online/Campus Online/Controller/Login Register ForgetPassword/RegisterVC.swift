@@ -29,12 +29,12 @@ class RegisterVC: UIViewController {
     lazy var scroolView : UIScrollView = {
         let view = UIScrollView(frame: .zero)
         view.contentSize = CGSize(width: self.view.frame.width, height: 428)
-         view.contentSize = .init(width: view.contentSize.width, height: contenViewSize.height)
-         view.addSubview(contentView)
+        view.contentSize = .init(width: view.contentSize.width, height: contenViewSize.height)
+        view.addSubview(contentView)
         contentView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: self.view.frame.width, heigth: 428)
         return view
     }()
-     lazy var contenViewSize  = CGSize(width: self.view.frame.width, height: 428)
+    lazy var contenViewSize  = CGSize(width: self.view.frame.width, height: 428)
     lazy var contentView : UIView = {
         let view = UIView()
         
@@ -43,27 +43,27 @@ class RegisterVC: UIViewController {
         view.frame.size = contenViewSize
         
         let stackViewLogin = UIStackView(arrangedSubviews: [userName,userNumber,name,email,password,reg])
-               stackViewLogin.distribution = .fillEqually
-               stackViewLogin.spacing = 12
-               stackViewLogin.axis = .vertical
-               Utilities.styleTextField(userName)
-               Utilities.styleTextField(userNumber)
-               Utilities.styleTextField(name)
-               Utilities.styleTextField(email)
-               Utilities.styleTextField(password)
-                Utilities.enabledButton(reg)
-               view.addSubview(stackViewLogin)
-                let size = stackViewLogin.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        stackViewLogin.distribution = .fillEqually
+        stackViewLogin.spacing = 12
+        stackViewLogin.axis = .vertical
+        Utilities.styleTextField(userName)
+        Utilities.styleTextField(userNumber)
+        Utilities.styleTextField(name)
+        Utilities.styleTextField(email)
+        Utilities.styleTextField(password)
+        Utilities.enabledButton(reg)
+        view.addSubview(stackViewLogin)
+        let size = stackViewLogin.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         print(size.width)
         print(size.height)
-               stackViewLogin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 286 + 12 + 50)
-               
-               
-               
-//               view.addSubview(reg)
-
-//               reg.anchor(top: stackViewLogin.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 50)
-               
+        stackViewLogin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 286 + 12 + 50)
+        
+        
+        
+        //               view.addSubview(reg)
+        
+        //               reg.anchor(top: stackViewLogin.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 50)
+        
         
         return view
     }()
@@ -111,7 +111,7 @@ class RegisterVC: UIViewController {
     let forgetPassWrodBtn : UIButton = {
         let btn = UIButton(type: .system)
         let text1 = NSMutableAttributedString(string: "Zaten Bir Hesabım var ! ",attributes :[NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!
-            , NSAttributedString.Key.foregroundColor: UIColor.lightGray ])
+                                                                                               , NSAttributedString.Key.foregroundColor: UIColor.lightGray ])
         
         text1.append(NSAttributedString(string: "Giriş Yap ", attributes :[NSAttributedString.Key.font : UIFont(name:Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor:UIColor.mainColor() ]))
         btn.setAttributedTitle(text1, for: .normal)
@@ -168,7 +168,7 @@ class RegisterVC: UIViewController {
         txt.autocapitalizationType = .none
         txt.textContentType = .name
         txt.returnKeyType = .continue
-         txt.addTarget(self, action: #selector(formValidations), for: .editingChanged)
+        txt.addTarget(self, action: #selector(formValidations), for: .editingChanged)
         
         return txt
     }()
@@ -322,9 +322,9 @@ class RegisterVC: UIViewController {
     @objc func formValidations() {
         guard
             userNumber.hasText, name.hasText ,email.hasText , password.hasText  else {
-                reg.isEnabled = false
-                reg.backgroundColor = UIColor.mainColorTransparent()
-                return
+            reg.isEnabled = false
+            reg.backgroundColor = UIColor.mainColorTransparent()
+            return
         }
         
         self.reg.isEnabled = true
@@ -449,17 +449,27 @@ class RegisterVC: UIViewController {
                                                 dbc.collection("status").document(Auth.auth().currentUser!.uid)
                                                     .setData(["status":false], merge: true) { (err) in
                                                         if err == nil {
-                                                            let vc = SplashScreen()
-                                                            self.navigationController?.pushViewController(vc, animated: true)
-                                                            Utilities.dismissProgress()
-                                                          
+                                                            //user/2YZzIIAdcUfMFHnreosXZOTLZat1/saved-task/task
+                                                            let dbTask = Firestore.firestore().collection("user")
+                                                                .document(result!.user.uid).collection("saved-task")
+                                                                .document("task")
+                                                            dbTask.setData(["data":[]] as [String:Any], mergeFields: true) { (err) in
+                                                                if err == nil {
+                                                                    let vc = SplashScreen()
+                                                                    self.navigationController?.pushViewController(vc, animated: true)
+                                                                    Utilities.dismissProgress()
+                                                                }
+                                                            }
+                                                            
+                                                            
+                                                            
                                                         }
-                                                }
+                                                    }
                                                 
                                                 
                                                 
-                                        }
-                                       
+                                            }
+                                        
                                     }
                                     else{
                                         
@@ -498,7 +508,7 @@ class RegisterVC: UIViewController {
         }
     }
     
- 
+    
     @objc func setUserName(){
         let textInput = userName.text
         let str2 = textInput!.replacingOccurrences(of: "\\,*,',?,%,$,^,#", with: "", options: .literal, range: nil)

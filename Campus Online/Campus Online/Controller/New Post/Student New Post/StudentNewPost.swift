@@ -396,15 +396,24 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         }
            if self.data.isEmpty{
                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
-                   Utilities.succesProgress(msg: "Paylaşıldı") }
-       }else {
+                
+            
+                Utilities.succesProgress(msg: "Paylaşıldı")
+               }
+           }else {
             
             
-           UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
-               PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
-                   Utilities.succesProgress(msg: "Paylaşıldı")
-               }  }
-       }
+            UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
+                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
+                    
+                    guard let sself = self else { return }
+                    
+                    PostService.shared.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
+                        Utilities.succesProgress(msg: "Paylaşıldı")
+                    }
+                    
+                }  }
+           }
         
     }
     //MARK: - getMentions

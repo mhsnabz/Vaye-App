@@ -16,37 +16,28 @@ private let doc = "doc_cell"
 private let img = "img_cell"
 class DataView : UIView {
     
-    var arrayOfUrl : [String]?{
-        didSet{
-                
-        }
+    var arrayOfUrl : [String]?
+    deinit {
+        print("deninit horizantal collectionview")
     }
-    
-    lazy var collectionView : UICollectionView = {
-   
-        let cv = UICollectionView()
-        cv.delegate = self
-        cv.dataSource = self
-        cv.backgroundColor = .white
-        
-        return cv
-    }()
+    var collectionView : UICollectionView!
     
     override init(frame: CGRect) {
-           super.init(frame: frame)
-           backgroundColor = .red
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .horizontal
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-           collectionView.register(DataViewImageCell.self, forCellWithReuseIdentifier: img)
-            collectionView.register(DataViewPdfCell.self, forCellWithReuseIdentifier: pdf)
-            collectionView.register(DataViewDocCell.self, forCellWithReuseIdentifier: doc)
-           addSubview(collectionView)
-           collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: frame.height)
-
-       }
-       
-       required init?(coder: NSCoder) {
+        super.init(frame: frame)
+        backgroundColor = .white
+        
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height), collectionViewLayout: layout)
+        collectionView.register(DataViewImageCell.self, forCellWithReuseIdentifier: img)
+        collectionView.register(DataViewPdfCell.self, forCellWithReuseIdentifier: pdf)
+        collectionView.register(DataViewDocCell.self, forCellWithReuseIdentifier: doc)
+        addSubview(collectionView)
+        collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: frame.height)
+        
+    }
+    
+    required init?(coder: NSCoder) {
            fatalError("init(coder:) has not been implemented")
        }
 }
@@ -64,36 +55,39 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
             return cell
         }else if URL(string: (arrayOfUrl?[indexPath.row])!)!.mimeType() == DataTypes.pdf.contentType{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: pdf, for: indexPath) as! DataViewPdfCell
-        
+            
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: doc, for: indexPath) as! DataViewDocCell
             return cell
         }
-         
+        
       }
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-          return CGSize(width: frame.width / 3, height: frame.width / 3)
-      }
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: frame.width / 3, height: frame.width / 3)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0.4
-      }
-
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0.4
-      }
-        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            guard let url = arrayOfUrl else { return }
-            let vc = DataVC(dataUrl: url)
-            
-            let currentController = self.getCurrentViewController()
-            vc.modalPresentationStyle = .fullScreen
-            
-            currentController?.present(vc, animated: true, completion: nil)
-        }
+    }
     
-     func getCurrentViewController() -> UIViewController? {
-
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0.4
+    }
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cell.removeFromSuperview()
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let url = arrayOfUrl else { return }
+        let vc = DataVC(dataUrl: url)
+        
+        let currentController = self.getCurrentViewController()
+        vc.modalPresentationStyle = .fullScreen
+        
+        currentController?.present(vc, animated: true, completion: nil)
+    }
+    
+    func getCurrentViewController() -> UIViewController? {
+        
         if let rootController = UIApplication.shared.keyWindow?.rootViewController {
             var currentController: UIViewController! = rootController
             while( currentController.presentedViewController != nil ) {

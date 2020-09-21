@@ -127,7 +127,42 @@ class PostService{
         
     }
         
-      
+     func setThumbDatas(currentUser : CurrentUser , postId : String ,completion : @escaping(Bool)->Void){
+       ///user/2YZzIIAdcUfMFHnreosXZOTLZat1/saved-task/task
+        let db = Firestore.firestore().collection("user").document(currentUser.uid).collection("saved-task")
+            .document("task")
+        db.getDocument { [weak self] (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion(true)
+                    return }
+                if snap.exists {
+                    let data = snap.get("data") as! [String]
+                    self?.moveThumbDatas(currentUser: currentUser, array: data, postId: postId) { (_) in
+                        db.setData(["data":[]], merge: true) { (err) in
+                            if err == nil {
+                                completion(true)
+                            }
+                        }
+                    }
+                }else{
+                    completion(true)
+                }
+               
+            }
+    }
+    
+    }
+     func moveThumbDatas(currentUser : CurrentUser ,array : [String], postId : String , completion : @escaping(Bool) ->Void){
+        
+        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")
+            .collection("post").document(postId)
+        db.setData(["thumbData":array] as [String : Any], merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
     func loadMore(compoletion : @escaping(DocumentSnapshot) ->Void)  {
         
     }

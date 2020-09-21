@@ -200,6 +200,8 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 func setDataToSavedTask(currentUser : CurrentUser , url : String,comptletion : @escaping(Bool) ->Void){
     
     let db = Firestore.firestore().collection("user").document(currentUser.uid).collection("saved-task").document("task")
+    
+    
     db.updateData(["data":FieldValue.arrayUnion([url as String])]) { (err) in
         if err == nil {
             comptletion(true)
@@ -210,9 +212,6 @@ func setDataToSavedTask(currentUser : CurrentUser , url : String,comptletion : @
     }
   
 }
-
-
-
 func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
     let metaDataForData = StorageMetadata()
     let dataName = Date().millisecondsSince1970.description
