@@ -76,7 +76,7 @@ class HomeVC: UIViewController {
     
     override func didReceiveMemoryWarning() {
         print("DEBUG :: applicationDidReceiveMemoryWarning")
-        SDWebImageManager.shared.imageCache.clear(with: .all) {
+        SDWebImageManager.shared.imageCache.clear(with: .memory) {
             print(" DEBUG :: cleaned")
         }
     }
@@ -673,7 +673,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cell.removeFromSuperview()
+//        cell.removeFromSuperview()
     }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
       

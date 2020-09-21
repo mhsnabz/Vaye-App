@@ -87,7 +87,7 @@ extension DataView : UICollectionViewDelegate,UICollectionViewDataSource,UIColle
         return 0.4
     }
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cell.removeFromSuperview()
+//        cell.removeFromSuperview()
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let url = datasUrl else { return }

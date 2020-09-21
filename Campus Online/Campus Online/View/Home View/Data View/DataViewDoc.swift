@@ -17,7 +17,7 @@ class DataViewDoc: UICollectionViewCell {
             pdfView.load(request)
            }
        }
-       let pdfView : WKWebView = {
+       lazy var pdfView : WKWebView = {
            let pdf = WKWebView()
            return pdf
        }()
