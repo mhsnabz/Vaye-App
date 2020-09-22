@@ -106,8 +106,8 @@ class ProfileVC: UIViewController {
     func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
 
         var post = [LessonPostModel]()
-        let  db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post").limit(to: 5).order(by: "postId", descending: true)
+      let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("my-post").limit(to: 5).order(by: "postId", descending: true)
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -129,7 +129,7 @@ class ProfileVC: UIViewController {
                                 }else{
                                     
                                     let deleteDb = Firestore.firestore().collection("user")
-                                        .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
+                                        .document(currentUser.uid).collection("my-post").document(postId.documentID)
                                     deleteDb.delete()
                                 }
                                 completion(post)
@@ -185,6 +185,7 @@ class ProfileVC: UIViewController {
     func configureCollectionView(){
              let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
              collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+            collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
 //        collectionview.contentInsetAdjustmentBehavior = .never
              collectionview.dataSource = self
              collectionview.delegate = self

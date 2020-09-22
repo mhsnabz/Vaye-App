@@ -19,7 +19,7 @@ import Gallery
 import SVProgressHUD
 import PDFKit
 import ActiveLabel
-
+import FirebaseFirestore
 struct MentionUser {
     let userID : String!
     let username : String!
@@ -397,10 +397,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             dataType.append(data[number].type)
         }
            if self.data.isEmpty{
-               PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) { (_) in
+               PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
                 
-            
-                Utilities.succesProgress(msg: "Paylaşıldı")
+                self?.setMyPostOnDatabase(postId: date) { (_) in
+                    Utilities.succesProgress(msg: "Paylaşıldı")
+                }
+                
                }
            }else {
             
@@ -410,14 +412,18 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                     
                     guard let sself = self else { return }
                     
-                    PostService.shared.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
-                        Utilities.succesProgress(msg: "Paylaşıldı")
+                    PostService.shared.setThumbDatas(currentUser: sself.currentUser, postId: date) {[weak self] (_) in
+                        
+                        self?.setMyPostOnDatabase(postId: date) { (_) in
+                            Utilities.succesProgress(msg: "Paylaşıldı")
+                        }
                     }
                     
                 }  }
            }
         
     }
+    
     //MARK: - getMentions
     private func getMention(completion : @escaping([String]) ->Void){
         guard let text = text.text else { return }
@@ -426,6 +432,17 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                 userNames.append(i)
             }
            completion(userNames)
+    }
+    
+    func setMyPostOnDatabase(postId : String , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("my-post")
+            .document(postId)
+        db.setData(["postId":postId] as [String:Any], merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
     }
   
     @objc func _addPdf(){
