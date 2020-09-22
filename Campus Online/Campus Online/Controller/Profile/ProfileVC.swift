@@ -105,9 +105,29 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! ProfileHeader
         header.currentUser = currentUser
-        
+        header.delegate = self
         return header
     }
     
 }
-
+extension ProfileVC : ProfileHeaderDelegate {
+    
+    
+    func getMajorPost() {
+        print("major post")
+    }
+    
+    func getSchoolPost() {
+        print("school post")
+    }
+    
+    func getCoPost() {
+        print("campus online post")
+    }
+    
+    func getFav() {
+        print("fav post")
+    }
+    
+    
+}

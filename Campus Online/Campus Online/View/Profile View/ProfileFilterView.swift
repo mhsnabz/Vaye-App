@@ -13,6 +13,7 @@ protocol ProfileFilterDelegate : class {
 class ProfileFilterView : UIView {
     
     weak var delegate : ProfileFilterDelegate?
+    weak var filterDelagate : UserProfileFilterDelegate?
     weak var currentUser : CurrentUser!
     lazy var option = UserProfileFilterVM( target: TargetFilterView.currentUser.description)
     lazy var collectionView : UICollectionView = {
@@ -31,6 +32,7 @@ class ProfileFilterView : UIView {
         addSubview(collectionView)
         collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .left)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -74,6 +76,7 @@ extension ProfileFilterView : UICollectionViewDelegate,UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.ShowFilterUnderLine(self, didSelect: indexPath)
+        filterDelagate?.didSelectOption(option: option.options[indexPath.row])
     }
     
     

@@ -75,7 +75,13 @@ protocol DataViewClick : class {
 
 }
 protocol ProfileHeaderDelegate : class {
-    func homePost (for cell : ProfileCell)
-    func coPost (for cell : ProfileCell)
-    func favPost (for cell : ProfileCell)
+  
+    func getMajorPost()
+    func getSchoolPost()
+    func getCoPost()
+    func getFav()
 }
+protocol UserProfileFilterDelegate : class {
+    func didSelectOption(option : ProfileFilterViewOptions)
+}
+

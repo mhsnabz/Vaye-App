@@ -13,10 +13,12 @@ import SnapKit
 
 class ProfileHeader : UICollectionReusableView {
     var controller : OtherUserProfile?
+    weak var delegate : ProfileHeaderDelegate?
     var currentUser : CurrentUser?{
         didSet{
             guard let user = currentUser else { return }
             filterView.currentUser = user
+            filterView.filterDelagate = self
             name.text = user.name
             number.text = user.number
             major.text = user.bolum
@@ -304,7 +306,23 @@ class ProfileHeader : UICollectionReusableView {
     }
 
 }
- 
+extension ProfileHeader : UserProfileFilterDelegate {
+    func didSelectOption(option: ProfileFilterViewOptions) {
+        switch option {
+       
+        case .bolum():
+            delegate?.getMajorPost()
+        case .shortSchool():
+            delegate?.getSchoolPost()
+        case .onlineCampus():
+            delegate?.getCoPost()
+        case .fav():
+            delegate?.getFav()
+        }
+    }
+    
+    
+}
 
 extension ProfileHeader : ProfileFilterDelegate {
     func ShowFilterUnderLine(_ view: ProfileFilterView, didSelect indexPath: IndexPath) {
