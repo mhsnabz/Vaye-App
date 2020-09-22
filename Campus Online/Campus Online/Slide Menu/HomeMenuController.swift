@@ -134,7 +134,7 @@ extension HomeMenuController : MenuHeaderDelegate {
     }
     
     func showProfile() {
-        let vc = ProfileVC()
+        let vc = ProfileVC(currentUser : currentUser)
         
         vc.modalPresentationStyle = .fullScreen
         vc.currentUser = currentUser

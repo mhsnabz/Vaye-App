@@ -698,7 +698,7 @@ extension HomeVC : NewPostHomeVCDataDelegate {
         }
       
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC()
+            let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
@@ -783,7 +783,7 @@ extension HomeVC : NewPostHomeVCDelegate {
         }
       
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC()
+            let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true, completion: nil)
