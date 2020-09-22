@@ -10,11 +10,17 @@ import UIKit
 
 class ProfileFilterCell: UICollectionViewCell {
     
+    var option : String!{
+        didSet {
+            titleLlb.text = option
+        }
+    }
+    
     let titleLlb : UILabel = {
     let lbl = UILabel()
         lbl.textColor = .lightGray
         lbl.font = UIFont(name: Utilities.font, size: 14)
-        lbl.text = "Filter Test"
+        
         return lbl
     }()
     

@@ -80,17 +80,18 @@ class DataViewPDF: UICollectionViewCell, WKNavigationDelegate {
         guard let urlString = url else { return }
         guard let url = URL(string: urlString) else {
             return }
-        activityIndicator.startAnimating()
-        pdfView.isHidden = false
-        btn.isHidden = true
-       
-        pdfView.translatesAutoresizingMaskIntoConstraints = false
-        pdfView.isUserInteractionEnabled = true
-        pdfView.navigationDelegate = self
-         addSubview(self.pdfView)
-        self.pdfView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        let request = URLRequest(url: url)
-        pdfView.load(request)
+        UIApplication.shared.open(url)
+//        activityIndicator.startAnimating()
+//        pdfView.isHidden = false
+//        btn.isHidden = true
+//
+//        pdfView.translatesAutoresizingMaskIntoConstraints = false
+//        pdfView.isUserInteractionEnabled = true
+//        pdfView.navigationDelegate = self
+//         addSubview(self.pdfView)
+//        self.pdfView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+//        let request = URLRequest(url: url)
+//        pdfView.load(request)
         
     }
     

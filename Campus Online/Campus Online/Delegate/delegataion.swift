@@ -72,8 +72,10 @@ protocol DataViewClick : class {
     
     func imageClik ( for cell : DataViewImageCell)
     func pdfClick( for cell : DataViewPdfCell)
-//    func like ( for cell : NewPostHomeVCData)
-//    func dislike ( for cell : NewPostHomeVCData)
-//    func fav ( for cell : NewPostHomeVCData)
-//    func comment ( for cell : NewPostHomeVCData)
+
+}
+protocol ProfileHeaderDelegate : class {
+    func homePost (for cell : ProfileCell)
+    func coPost (for cell : ProfileCell)
+    func favPost (for cell : ProfileCell)
 }

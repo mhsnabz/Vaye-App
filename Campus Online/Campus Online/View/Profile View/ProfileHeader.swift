@@ -16,6 +16,7 @@ class ProfileHeader : UICollectionReusableView {
     var currentUser : CurrentUser?{
         didSet{
             guard let user = currentUser else { return }
+            filterView.currentUser = user
             name.text = user.name
             number.text = user.number
             major.text = user.bolum
@@ -35,13 +36,14 @@ class ProfileHeader : UICollectionReusableView {
             if user.github == ""{
                 github.isHidden = true
             }
+          
+            
+            print("bölüm = \(getShortMajor(major: user.bolum))")
         }
     }
     private let filterView = ProfileFilterView()
     let segmentindicator: UIView = {
-          
           let v = UIView()
-          
           v.translatesAutoresizingMaskIntoConstraints = false
           v.backgroundColor = UIColor.black
           
@@ -160,6 +162,14 @@ class ProfileHeader : UICollectionReusableView {
         return btn
     }()
     
+    lazy var stackView : UIStackView = {
+        let stackSocial = UIStackView(arrangedSubviews: [github,linkedin,twitter,instagram])
+        stackSocial.axis = .horizontal
+        stackSocial.distribution = .fillEqually
+        stackSocial.spacing = 20
+        return stackSocial
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
@@ -186,26 +196,22 @@ class ProfileHeader : UICollectionReusableView {
 
         addSubview(stackFallow)
         stackFallow.anchor(top: profileImage.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: stackFallowSize.width, heigth: stackFallowSize.height)
-        print(stackFallowSize.height + 20 )
         
-        let stackSocial = UIStackView(arrangedSubviews: [github,linkedin,twitter,instagram])
-        stackSocial.axis = .horizontal
-        stackSocial.distribution = .fillEqually
-        stackSocial.spacing = 20
-        addSubview(stackSocial)
-        stackSocial.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
+     
+        addSubview(stackView)
+        stackView.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
         
-        addSubview(segmentedControl)
-        segmentedControl.anchor(top: stackSocial.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: 30)
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .normal)
-        
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
+        addSubview(filterView)
+        filterView.anchor(top: stackView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
+//        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .normal)
+//
+//        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
     
     
-//        addSubview(underLine)
-//        underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 3, heigth: 2)
-        addSubview(segmentindicator)
-        setupLayout()
+        addSubview(underLine)
+        underLine.anchor(top: filterView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 4, heigth: 2)
+//        addSubview(segmentindicator)
+//        setupLayout()
 
         
     }
@@ -288,6 +294,14 @@ class ProfileHeader : UICollectionReusableView {
         
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
     }
+    private func getShortMajor(major : String) ->String {
+        var shortName  : String = ""
+        let bolumName = major.components(separatedBy: " ")
+        for item in bolumName {
+            shortName += item[0].string
+        }
+        return shortName
+    }
 
 }
  
@@ -307,3 +321,29 @@ extension ProfileHeader : ProfileFilterDelegate {
     
 }
 
+extension StringProtocol {
+    subscript(_ offset: Int) -> Element
+    { self[index(startIndex, offsetBy: offset)] }
+    
+    subscript(_ range: Range<Int>)   -> SubSequence { prefix(range.lowerBound+range.count).suffix(range.count) }
+    
+    subscript(_ range: ClosedRange<Int>)-> SubSequence { prefix(range.lowerBound+range.count).suffix(range.count) }
+    
+    subscript(_ range: PartialRangeThrough<Int>) -> SubSequence
+    { prefix(range.upperBound.advanced(by: 1)) }
+    
+    subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence
+    { prefix(range.upperBound) }
+    
+    subscript(_ range: PartialRangeFrom<Int>) -> SubSequence
+    { suffix(Swift.max(0, count-range.lowerBound)) }
+}
+extension LosslessStringConvertible {
+    var string: String { .init(self) }
+}
+extension BidirectionalCollection {
+    subscript(safe offset: Int) -> Element? {
+        guard !isEmpty, let i = index(startIndex, offsetBy: offset, limitedBy: index(before: endIndex)) else { return nil }
+        return self[i]
+    }
+}

@@ -15,14 +15,7 @@ class NewPostImageCell: UICollectionViewCell {
 
     weak var delegate: DeleteImage?
     
-    var data : DatasModel?{
-        didSet{
-            guard let data = data else { return }
-//            saveDataToDataBase(date: data.postDate, currentUser: data.currentUser, lessonName: data.lessonName, data.type, data.data) {[weak self] (url) in
-//                self?.setToCurrentUserTask(url: url, data: data)
-//            }
-        }
-    }
+    var data : DatasModel?
     
     let deleteBtn : UIButton = {
         let btn = UIButton(type: .system)
