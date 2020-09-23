@@ -8,10 +8,11 @@
 
 import UIKit
 import FirebaseFirestore
+import SwipeCellKit
 private let reuseIdentifier = "Cell"
 private let msgCellID = "msg_cell_id"
-class CommentVC: UIViewController {
-
+class CommentVC: UITableViewController {
+    
     
     //MARK:- variables
     var currentUser : CurrentUser
@@ -21,7 +22,6 @@ class CommentVC: UIViewController {
     var addMediaButtom: UIButton!
     let textField = FlexibleTextView()
     weak var messagesListener : ListenerRegistration?
-     var collectionView: UICollectionView!
     //MARK: -lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,18 +65,9 @@ class CommentVC: UIViewController {
     
     //MARK:- functions
     fileprivate func configureUI(){
+        tableView.register(CommentMsgCell.self, forCellReuseIdentifier: msgCellID)
+        tableView.separatorStyle = .none
         
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
-        
-        view.addSubview(collectionView)
-        collectionView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        collectionView.register(CommentMsgCell.self, forCellWithReuseIdentifier: msgCellID)
         
     }
     //MARK:- leyboard
@@ -181,46 +172,36 @@ class CommentVC: UIViewController {
         print("menu show")
     }
     
-    
-
-
-}
-
-
-extension CommentVC : UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
-    // MARK: UICollectionViewDataSource
-
-     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
+    //MARK: - functions
+    func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .destructive, title: "Sil") { (action, view, completion) in
+            completion(true)
+        }
+        action.backgroundColor = .red
+        action.image = #imageLiteral(resourceName: "menu")
+        return action
     }
-
-
-     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 8
+   
+  override  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        20
     }
-
-     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
     
-        // Configure the cell
-    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
         return cell
     }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 60)
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 120
     }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+            let delete = deleteAction(at: indexPath)
+        return UISwipeActionsConfiguration(actions: [delete])
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-        
-      
+
 }
+
+
+
 
 class CustomView: UIView {
     override var intrinsicContentSize: CGSize {

@@ -8,10 +8,11 @@
 
 import UIKit
 import ActiveLabel
-class CommentMsgCell: UICollectionViewCell
+import SwipeCellKit
+
+class CommentMsgCell: UITableViewCell
 {
 
-    
     let profile_image : UIImageView = {
        let img = UIImageView()
         img.clipsToBounds = true
@@ -44,13 +45,14 @@ class CommentMsgCell: UICollectionViewCell
     
     
     //MARK: -lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .default, reuseIdentifier: "id")
         backgroundColor = .white
-    
+       
        addSubview(profile_image)
         profile_image.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 4, marginBottom: 0, marginRigth: 0, width: 30, heigth: 30)
         profile_image.layer.cornerRadius = 15
+
         addSubview(userName)
         userName.anchor(top: nil, left: profile_image.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 4, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
         userName.centerYAnchor.constraint(equalTo: profile_image.centerYAnchor).isActive = true
@@ -59,7 +61,7 @@ class CommentMsgCell: UICollectionViewCell
         msgText.anchor(top: profile_image.bottomAnchor, left: profile_image.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 4, marginBottom: 0, marginRigth: 10, width: 0, heigth: 25)
         
         configure()
-        
+      
     }
     
     required init?(coder: NSCoder) {
@@ -67,7 +69,7 @@ class CommentMsgCell: UICollectionViewCell
     }
     
     private func configure(){
-        name = NSMutableAttributedString(string: "Mahsun Abuzeyitoğle", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+        name = NSMutableAttributedString(string: "Mahsun Abuzeyitoğlu", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " @mhsnabz", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
         name.append(NSAttributedString(string: " 12 dk", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name

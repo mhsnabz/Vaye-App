@@ -337,6 +337,7 @@ PODS:
   - SnapKit (5.0.1)
   - SVProgressHUD (2.2.5)
   - SwiftyAttributes (5.1.1)
+  - SwipeCellKit (2.7.1)
   - TweeTextField (1.6.0)
   - WMSegmentControl (1.0)
 
@@ -364,6 +365,7 @@ DEPENDENCIES:
   - SnapKit (~> 5.0.0)
   - SVProgressHUD
   - SwiftyAttributes
+  - SwipeCellKit
   - TweeTextField
   - WMSegmentControl
 
@@ -416,6 +418,7 @@ SPEC REPOS:
     - SnapKit
     - SVProgressHUD
     - SwiftyAttributes
+    - SwipeCellKit
     - TweeTextField
     - WMSegmentControl
 
@@ -467,9 +470,10 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftyAttributes: e3e13891ddac3c62b3d7798d5c3969cea88e62bb
+  SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
   TweeTextField: 2bfb6c48fdbf6eb8038260430244c9f6ebb47bce
   WMSegmentControl: 00415dce32ed41ad7623ac6ac076eedbb8140a5e
 
-PODFILE CHECKSUM: ca126df2241ab6421efce186f07e3169ddddf101
+PODFILE CHECKSUM: 9f20cd583d3932c7d06b4dc54ac6a30e2fc07ee5
 
 COCOAPODS: 1.8.4
