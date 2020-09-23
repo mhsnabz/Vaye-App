@@ -430,7 +430,8 @@ class HomeVC: UIViewController {
             collectionview.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(post.postId)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+               
                 completion(true)
             }
         }

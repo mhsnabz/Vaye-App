@@ -29,12 +29,14 @@ class ProfileVC: UIViewController {
     lazy var loadMore_HomePost : Bool = false
     
     lazy var schoolPost : Bool = false
+    lazy var schoolPotsDelegate : Bool = false
     lazy var loadMore_schoolPost : Bool = false
     
     lazy var coPost : Bool = false
     lazy var loadMore_coPost : Bool = false
 
     lazy var favPost : Bool = false
+    lazy var favPostDelegate : Bool = false
     lazy var loadMore_favPost : Bool = false
     
     
@@ -271,7 +273,7 @@ class ProfileVC: UIViewController {
             collectionview.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(post.postId)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                 completion(true)
             }
         }
@@ -398,6 +400,9 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         
         if homePost
         {
+            schoolPotsDelegate = true
+            favPostDelegate = false
+            
             if lessonPostModel[indexPath.row].data.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
                 cell.delegate = self
@@ -434,6 +439,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
             
         }else if favPost
         {
+            schoolPotsDelegate = false
+            favPostDelegate = true
             
             if favPostModel[indexPath.row].data.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
@@ -572,14 +579,28 @@ extension ProfileVC : NewPostHomeVCDelegate {
         guard  let post = cell.lessonPostModel else {
             return
         }
-        if cell.lessonPostModel?.senderUid == currentUser.uid
-        {
-            actionSheet.delegate = self
-            actionSheet.show(post: post)
-            guard let  index = collectionview.indexPath(for: cell) else { return }
-            selectedIndex = index
-            selectedPostID = lessonPostModel[index.row].postId
+        if schoolPotsDelegate{
+            if cell.lessonPostModel?.senderUid == currentUser.uid
+            {
+                actionSheet.delegate = self
+                actionSheet.show(post: post)
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = lessonPostModel[index.row].postId
+            }
+        }else if favPostDelegate {
+            if cell.lessonPostModel?.senderUid == currentUser.uid
+            {
+                
+                actionSheet.delegate = self
+                actionSheet.show(post: post)
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = favPostModel[index.row].postId
+            }
         }
+        
+       
 //        else{
 //            Utilities.waitProgress(msg: nil)
 //            actionOtherUserSheet.delegate = self
@@ -597,6 +618,8 @@ extension ProfileVC : NewPostHomeVCDelegate {
     }
     
     func like(for cell: NewPostHomeVC) {
+        
+        
         guard let post = cell.lessonPostModel else { return }
         setLike(post: post) { (_) in }
     }
@@ -622,13 +645,25 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
         guard  let post = cell.lessonPostModel else {
             return
         }
-        if cell.lessonPostModel?.senderUid == currentUser.uid
-        {
-            actionSheet.delegate = self
-            actionSheet.show(post: post)
-            guard let  index = collectionview.indexPath(for: cell) else { return }
-            selectedIndex = index
-            selectedPostID = lessonPostModel[index.row].postId
+        if schoolPotsDelegate{
+            if cell.lessonPostModel?.senderUid == currentUser.uid
+            {
+                actionSheet.delegate = self
+                actionSheet.show(post: post)
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = lessonPostModel[index.row].postId
+            }
+        }else if favPostDelegate {
+            if cell.lessonPostModel?.senderUid == currentUser.uid
+            {
+                
+                actionSheet.delegate = self
+                actionSheet.show(post: post)
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = favPostModel[index.row].postId
+            }
         }
     }
     
@@ -666,17 +701,34 @@ extension ProfileVC : ActionSheetHomeLauncherDelegate{
         switch option {
         case .editPost(_):
             guard let index = selectedIndex else { return }
-            if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
-                let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
-                let controller = UINavigationController(rootViewController: vc)
-                controller.modalPresentationStyle = .fullScreen
-                self.present(controller, animated: true, completion: nil)
-            }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
-                let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
-                let controller = UINavigationController(rootViewController: vc)
-                controller.modalPresentationStyle = .fullScreen
-                self.present(controller, animated: true, completion: nil)
+            
+            if favPostDelegate{
+                if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
+                    
+                    let vc = StudentEditPost(currentUser: currentUser , post : favPostModel[index.row] , heigth : h.msgText.frame.height )
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
+                    let vc = StudentEditPost(currentUser: currentUser , post : favPostModel[index.row] , heigth : h.msgText.frame.height )
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }else if schoolPotsDelegate{
+                if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
+                    let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
+                    let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
             }
+           
             
             
         case .deletePost(_):
@@ -692,11 +744,20 @@ extension ProfileVC : ActionSheetHomeLauncherDelegate{
             db.delete {[weak self] (err) in
                 guard let sself = self else { return }
                 if err == nil {
-                    sself.deleteToStorage(data: sself.lessonPostModel[index.row].data, postId: postId, index: index) { (_val) in
-                        if (_val){
-                            Utilities.succesProgress(msg: "Silindi")
+                    if sself.favPostDelegate{
+                        sself.deleteToStorage(data: sself.favPostModel[index.row].data, postId: postId, index: index) { (_val) in
+                            if (_val){
+                                Utilities.succesProgress(msg: "Silindi")
+                            }
+                        }
+                    }else if sself.schoolPotsDelegate {
+                        sself.deleteToStorage(data: sself.lessonPostModel[index.row].data, postId: postId, index: index) { (_val) in
+                            if (_val){
+                                Utilities.succesProgress(msg: "Silindi")
+                            }
                         }
                     }
+                   
                     
                 }else{
                     Utilities.errorProgress(msg: "Hata Oluştu")
