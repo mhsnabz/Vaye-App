@@ -27,8 +27,8 @@ class HomeVC: UIViewController {
     var nativeAdView: GADUnifiedNativeAdView!
 
     /// The ad unit ID.
-    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
-//    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
+//    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
+    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     
     var centerController : UIViewController!
@@ -42,7 +42,7 @@ class HomeVC: UIViewController {
     var lessonPost = [LessonPostModel]()
     var refresher = UIRefreshControl()
     var listenerRegistiration : ListenerRegistration?
-    private var actionSheet : ActionSheetHomeLauncher
+    private  var actionSheet : ActionSheetHomeLauncher
     private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     var selectedIndex : IndexPath?
     var selectedPostID : String?
@@ -130,6 +130,8 @@ class HomeVC: UIViewController {
     }
     //MARK: - functions
    
+    
+    
     func fetchAds() {
            adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
                                   adTypes: [ .unifiedNative ], options: nil)
@@ -512,6 +514,20 @@ class HomeVC: UIViewController {
             db.delete { (err) in
                 if err == nil {
                     completion(true)
+                    let dbFav = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("fav-post").document(item)
+                    dbFav.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snap = docSnap else {
+                                completion(true)
+                                return }
+                            if snap.exists{
+                                dbFav.delete()
+                            }
+                        }
+                        completion(true)
+                    }
+                    
                 }else{
                     completion(false)
                 }
@@ -519,6 +535,7 @@ class HomeVC: UIViewController {
         }
         
     }
+
     private func getAllPost(currentUser : CurrentUser , lessonName : String , completion : @escaping([String]) ->Void){
          //İSTE/lesson-post/post/1599800825321
          var postId = [String]()

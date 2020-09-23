@@ -16,9 +16,9 @@ class OtherUserProfile: UIViewController {
     var otherUser : OtherUser
     var collectionview: UICollectionView!
     
-    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
+//    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
     
-//    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
+    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
     
 
@@ -61,7 +61,7 @@ class OtherUserProfile: UIViewController {
         configureUI()
         configureCollectionView()
         interstitalAd = createAd()
-        
+        navigationController?.navigationBar.isHidden = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
             if self.interstitalAd.isReady {

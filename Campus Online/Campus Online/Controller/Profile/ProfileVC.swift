@@ -51,6 +51,7 @@ class ProfileVC: UIViewController {
     
     
     private var actionSheet : ActionSheetHomeLauncher
+    private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     var selectedIndex : IndexPath?
     var selectedPostID : String?
     
@@ -91,6 +92,8 @@ class ProfileVC: UIViewController {
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
+        self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -109,7 +112,105 @@ class ProfileVC: UIViewController {
     
     
     //MARK:-functions
+    private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: "Ders Siliniyor")
+       
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                let abc = Firestore.firestore().collection(sself.currentUser.short_school)
+                    .document("lesson").collection(sself.currentUser.bolum)
+                    .document(lessonName!).collection("fallowers").document(sself.currentUser.username)
+                abc.delete { (err) in
+                    if err == nil {
+                        sself.getAllPost(currentUser: sself.currentUser, lessonName: lessonName) { (val) in
+                            sself.removeAllPost(postId: val, currentUser: sself.currentUser) { (_val) in
+                                if _val{
+                                    completion(true)
+                                    Utilities.succesProgress(msg : "Ders Silindi")
+                                    sself.collectionview.reloadData()
+                                }else{
+                                    completion(false)
+                                  Utilities.errorProgress(msg: "Ders Silinemedi")
+                                }
+                            }
+                        }
+                        
+                    }else{
+                        completion(false)
+                        Utilities.errorProgress(msg: "Ders Silinemedi")
+                    }
+                }
+            }else{
+                completion(false)
+                Utilities.errorProgress(msg: "Ders Silinemedi")
+            }
+        }
+    }
     
+    private func removeAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.delete { (err) in
+                if err == nil {
+                    completion(true)
+                    let dbFav = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("fav-post").document(item)
+                    dbFav.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snap = docSnap else {
+                                completion(true)
+                                return }
+                            if snap.exists{
+                                dbFav.delete()
+                            }
+                        }
+                        completion(true)
+                    }
+                    
+                }else{
+                    completion(false)
+                }
+            }
+        }
+        
+    }
+    private func getAllPost(currentUser : CurrentUser , lessonName : String , completion : @escaping([String]) ->Void){
+         //İSTE/lesson-post/post/1599800825321
+         var postId = [String]()
+         let db = Firestore.firestore().collection(currentUser.short_school)
+             .document("lesson-post").collection("post").whereField("lessonName", isEqualTo: lessonName)
+         db.getDocuments { (querySnap, err) in
+             if err == nil {
+                 guard let snap = querySnap else {
+                     completion([])
+                     return }
+                 for doc in snap.documents {
+                     postId.append(doc.documentID)
+                 }
+                 completion(postId)
+             }
+         }
+     }
+    private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(userId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return }
+                if snap.exists {
+                    completion(OtherUser.init(dic: docSnap!.data()!))
+                }
+            }
+        }
+    }
     //MARK: - lesson post
     func fetchLessonPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
 
@@ -579,41 +680,54 @@ extension ProfileVC : NewPostHomeVCDelegate {
         guard  let post = cell.lessonPostModel else {
             return
         }
-        if schoolPotsDelegate{
-            if cell.lessonPostModel?.senderUid == currentUser.uid
-            {
-                actionSheet.delegate = self
-                actionSheet.show(post: post)
-                guard let  index = collectionview.indexPath(for: cell) else { return }
-                selectedIndex = index
-                selectedPostID = lessonPostModel[index.row].postId
-            }
-        }else if favPostDelegate {
-            if cell.lessonPostModel?.senderUid == currentUser.uid
-            {
-                
-                actionSheet.delegate = self
-                actionSheet.show(post: post)
-                guard let  index = collectionview.indexPath(for: cell) else { return }
-                selectedIndex = index
-                selectedPostID = favPostModel[index.row].postId
-            }
-        }
-        
-       
-//        else{
-//            Utilities.waitProgress(msg: nil)
-//            actionOtherUserSheet.delegate = self
-//            guard let  index = collectionview.indexPath(for: cell) else { return }
-//            selectedIndex = index
-//            selectedPostID = lessonPost[index.row].postId
-//            getOtherUser(userId: post.senderUid) {[weak self] (user) in
-//                guard let sself = self else { return }
-//                Utilities.dismissProgress()
-//                sself.actionOtherUserSheet.show(post: post, otherUser: user)
-//
-//            }
-//        }
+        print("click option")
+         if schoolPotsDelegate{
+             
+             if cell.lessonPostModel?.senderUid == currentUser.uid
+             {
+                 actionSheet.delegate = self
+                 actionSheet.show(post: post)
+                 guard let  index = collectionview.indexPath(for: cell) else { return }
+                 selectedIndex = index
+                 selectedPostID = lessonPostModel[index.row].postId
+             }else {
+                 Utilities.waitProgress(msg: nil)
+                 actionOtherUserSheet.delegate = self
+                 guard let  index = collectionview.indexPath(for: cell) else { return }
+                 selectedIndex = index
+                 selectedPostID = lessonPostModel[index.row].postId
+                 getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                     guard let sself = self else { return }
+                     Utilities.dismissProgress()
+                     sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                     
+                 }
+             }
+         }else if favPostDelegate {
+            
+             if cell.lessonPostModel?.senderUid == currentUser.uid
+             {
+                 
+                 actionSheet.delegate = self
+                 actionSheet.show(post: post)
+                 guard let  index = collectionview.indexPath(for: cell) else { return }
+                 selectedIndex = index
+                 selectedPostID = favPostModel[index.row].postId
+             }
+             else {
+                 Utilities.waitProgress(msg: nil)
+                 actionOtherUserSheet.delegate = self
+                 guard let  index = collectionview.indexPath(for: cell) else { return }
+                 selectedIndex = index
+                 selectedPostID = favPostModel[index.row].postId
+                 getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                     guard let sself = self else { return }
+                     Utilities.dismissProgress()
+                     sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                     
+                 }
+             }
+         }
         
     }
     
@@ -642,10 +756,11 @@ extension ProfileVC : NewPostHomeVCDelegate {
 }
 extension ProfileVC : NewPostHomeVCDataDelegate {
     func options(for cell: NewPostHomeVCData) {
-        guard  let post = cell.lessonPostModel else {
-            return
-        }
+       print("click option")
         if schoolPotsDelegate{
+            guard  let post = cell.lessonPostModel else {
+                return
+            }
             if cell.lessonPostModel?.senderUid == currentUser.uid
             {
                 actionSheet.delegate = self
@@ -653,8 +768,23 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
                 guard let  index = collectionview.indexPath(for: cell) else { return }
                 selectedIndex = index
                 selectedPostID = lessonPostModel[index.row].postId
+            }else {
+                Utilities.waitProgress(msg: nil)
+                actionOtherUserSheet.delegate = self
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = lessonPostModel[index.row].postId
+                getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                    guard let sself = self else { return }
+                    Utilities.dismissProgress()
+                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    
+                }
             }
         }else if favPostDelegate {
+            guard  let post = cell.lessonPostModel else {
+                return
+            }
             if cell.lessonPostModel?.senderUid == currentUser.uid
             {
                 
@@ -663,6 +793,19 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
                 guard let  index = collectionview.indexPath(for: cell) else { return }
                 selectedIndex = index
                 selectedPostID = favPostModel[index.row].postId
+            }
+            else {
+                Utilities.waitProgress(msg: nil)
+                actionOtherUserSheet.delegate = self
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = favPostModel[index.row].postId
+                getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                    guard let sself = self else { return }
+                    Utilities.dismissProgress()
+                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    
+                }
             }
         }
     }
@@ -692,6 +835,103 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
     
     func showProfile(for cell: NewPostHomeVCData) {
         
+    }
+    
+    
+}
+extension ProfileVC : ActionSheetOtherUserLauncherDelegate {
+    func didSelect(option: ActionSheetOtherUserOptions)
+    {
+        switch option {
+        
+        case .fallowUser(_):
+            if schoolPotsDelegate {
+                print("called")
+                Utilities.waitProgress(msg: "")
+                guard let index = selectedIndex else {
+                    Utilities.dismissProgress()
+                    return }
+                UserService.shared.fetchOtherUser(uid: lessonPostModel[index.row].senderUid) {[weak self] (user) in
+                    guard let sself = self else {
+                        Utilities.dismissProgress()
+                        return}
+                    let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    sself.present(controller, animated: true) {
+                        Utilities.dismissProgress()
+                    }
+                }
+            }else if favPostDelegate {
+                print("called")
+                Utilities.waitProgress(msg: "")
+                guard let index = selectedIndex else {
+                    Utilities.dismissProgress()
+                    return }
+                UserService.shared.fetchOtherUser(uid: favPostModel[index.row].senderUid) {[weak self] (user) in
+                    guard let sself = self else {
+                        Utilities.dismissProgress()
+                        return}
+                    let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    sself.present(controller, animated: true) {
+                        Utilities.dismissProgress()
+                       
+                    }
+                }
+            }
+            break
+        case .slientUser(_):
+            if schoolPotsDelegate
+            {
+                
+            }else if favPostDelegate
+            {
+                
+            }
+            break
+        case .deleteLesson(_):
+            if schoolPotsDelegate {
+                
+            }else if favPostDelegate {
+                guard let index = selectedIndex else {
+                Utilities.dismissProgress()
+                return }
+                removeLesson(lessonName: favPostModel[index.row].lessonName) { (_) in
+                    self.getPost()
+                }
+            }
+        break
+        case .slientLesson(_):
+            if schoolPotsDelegate {
+                
+            }else if favPostDelegate {
+                
+            }
+            break
+        case .slientPost(_):
+            if schoolPotsDelegate {
+                
+            }else if favPostDelegate {
+                
+            }
+            break
+        case .reportPost(_):
+            if schoolPotsDelegate {
+                
+            }else if favPostDelegate {
+                
+            }
+            break
+        case .reportUser(_):
+            if schoolPotsDelegate {
+                
+            }else if favPostDelegate {
+                
+            }
+            break
+        }
     }
     
     
