@@ -27,7 +27,7 @@ class ProfileVC: UIViewController {
     var collectionview: UICollectionView!
     lazy var homePost : Bool = true
     lazy var loadMore_HomePost : Bool = false
-    
+    lazy var isHomePost : Bool = false
     lazy var schoolPost : Bool = false
     lazy var schoolPotsDelegate : Bool = false
     lazy var loadMore_schoolPost : Bool = false
@@ -44,7 +44,7 @@ class ProfileVC: UIViewController {
     lazy var page_schoolPost : DocumentSnapshot? = nil
     lazy var page_coPost : DocumentSnapshot? = nil
     lazy var page_favPost : DocumentSnapshot? = nil
-
+    lazy var isFavPost : Bool = false
     
     lazy var lessonPostModel = [LessonPostModel]()
     lazy var favPostModel = [LessonPostModel]()
@@ -216,7 +216,7 @@ class ProfileVC: UIViewController {
 
         var post = [LessonPostModel]()
       let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("my-post").limit(to: 5).order(by: "postId", descending: true)
+            .document(currentUser.uid).collection("my-post").limit(to: 6).order(by: "postId", descending: true)
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -257,9 +257,76 @@ class ProfileVC: UIViewController {
         }
         
     }
-    
+    private func loadMorePost(completion: @escaping(Bool) ->Void){
+     
+        
+        guard let pagee = page_homePost else {
+            loadMore_HomePost = false
+            collectionview.reloadData()
+            completion(false)
+            return }
+        let  db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("my-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
+        db.getDocuments { [self] (snapshot, err ) in
+            guard let snap = snapshot else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty {
+                self.loadMore_HomePost = false
+                collectionview.reloadData()
+                completion(false)
+            
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection(currentUser.short_school)
+                        .document("lesson-post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists
+                            {
+                                
+                                self.lessonPostModel.append(LessonPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = self.lessonPostModel[(self.lessonPostModel.count) - 1].postTime{
+                                
+                                    self.lessonPostModel.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    self.loadMore_schoolPost = true
+                                    self.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                               
+                          
+                                
+                            }else{
+                                
+                                let deleteDb = Firestore.firestore().collection("user")
+                                    .document(currentUser.uid).collection("lesson-post").document(snapp.documentID)
+                                deleteDb.delete()
+                                
+                            }
+                        }
+                        
+                    }
+                   
+                    page_homePost = snap.documents.last
+                    
+                  
+                    
+                }
+//                self.fetchAds()
+//                self.collectionview.reloadData()
+                
+//                loadMore = false
+                
+            }
+        }
+        
+    }
     fileprivate func getPost(){
-          
+            isHomePost = true
             lessonPostModel = [LessonPostModel]()
             loadMore_HomePost = true
             collectionview.reloadData()
@@ -313,7 +380,7 @@ class ProfileVC: UIViewController {
     fileprivate func fetchFavPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
     var post = [LessonPostModel]()
         let db = Firestore.firestore().collection("user")
-        .document(currentUser.uid).collection("fav-post").limit(to: 5).order(by: "postId", descending: true)
+        .document(currentUser.uid).collection("fav-post").limit(to: 6).order(by: "postId", descending: true)
         db.getDocuments {(querySnap, err) in
         if err == nil {
             guard let snap = querySnap else { return }
@@ -353,7 +420,74 @@ class ProfileVC: UIViewController {
         }
     }
     }
-    
+    private func loadMoreFavPost(completion: @escaping(Bool) ->Void){
+     
+        
+        guard let pagee = page_favPost else {
+            loadMore_favPost = false
+            collectionview.reloadData()
+            completion(false)
+            return }
+        let  db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("fav-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
+        db.getDocuments { [self] (snapshot, err ) in
+            guard let snap = snapshot else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty {
+                self.loadMore_favPost = false
+                collectionview.reloadData()
+                completion(false)
+            
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection(currentUser.short_school)
+                        .document("lesson-post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists
+                            {
+                                
+                                self.favPostModel.append(LessonPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = self.favPostModel[(self.favPostModel.count) - 1].postTime{
+                       
+                                    self.favPostModel.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    self.loadMore_favPost = true
+                                    self.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                               
+                          
+                                
+                            }else{
+                                
+                                let deleteDb = Firestore.firestore().collection("user")
+                                    .document(currentUser.uid).collection("lesson-post").document(snapp.documentID)
+                                deleteDb.delete()
+                                
+                            }
+                        }
+                        
+                    }
+                   
+                    page_favPost = snap.documents.last
+                    
+                  
+                    
+                }
+//                self.fetchAds()
+//                self.collectionview.reloadData()
+                
+//                loadMore = false
+                
+            }
+        }
+        
+    }
     
     private func setLike(post : LessonPostModel , completion : @escaping(Bool) ->Void){
         
@@ -577,6 +711,37 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         cell.backgroundColor = .red
         return cell
     }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
+    {
+        
+        if isHomePost {
+            if lessonPostModel.count > 5 {
+                if indexPath.item == lessonPostModel.count - 1 {
+                    loadMorePost { (val) in
+                        
+                    }
+                }else{
+                    self.loadMore_HomePost = false
+                }
+            }
+        }else if isFavPost {
+            if favPostModel.count > 5 {
+                if indexPath.item == favPostModel.count - 1 {
+                    loadMoreFavPost { (val) in
+                        
+                    }
+                }else{
+                    self.loadMore_favPost = false
+                }
+            }
+        }
+        
+      
+    }
+    
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if homePost
@@ -636,8 +801,11 @@ extension ProfileVC : ProfileHeaderDelegate {
         schoolPost = false
         coPost = false
         favPost = false
-        
+        isFavPost = false
+        isHomePost = true
         getPost()
+        
+       
     }
     
     func getSchoolPost() {
@@ -659,7 +827,11 @@ extension ProfileVC : ProfileHeaderDelegate {
         schoolPost = false
         coPost = false
         favPost = true
+        isFavPost = true
+        isHomePost = false
         getFavPost()
+
+       
     }
     
     
