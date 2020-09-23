@@ -781,7 +781,10 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     }
     
     func comment(for cell: NewPostHomeVCData) {
-        print("comment")
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
+            
     }
     
     func linkClick(for cell: NewPostHomeVCData) {
@@ -871,7 +874,9 @@ extension HomeVC : NewPostHomeVCDelegate {
     }
     
     func comment(for cell: NewPostHomeVC) {
-        print("comment click")
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     
