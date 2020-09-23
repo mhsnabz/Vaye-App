@@ -14,11 +14,11 @@ import SnapKit
 class ProfileHeader : UICollectionReusableView {
     var controller : OtherUserProfile?
     weak var delegate : ProfileHeaderDelegate?
-    var currentUser : CurrentUser?{
+    var currentUser : CurrentUser!{
         didSet{
             guard let user = currentUser else { return }
             filterView.currentUser = user
-            filterView.filterDelagate = self
+          
             name.text = user.name
             number.text = user.number
             major.text = user.bolum
@@ -39,8 +39,6 @@ class ProfileHeader : UICollectionReusableView {
                 github.isHidden = true
             }
           
-            
-            print("bölüm = \(getShortMajor(major: user.bolum))")
         }
     }
     private let filterView = ProfileFilterView()
@@ -175,6 +173,8 @@ class ProfileHeader : UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
+//        filterView.currentUser = currentUser
+        filterView.filterDelagate = self
         backgroundColor = .white
         addSubview(profileImage)
         profileImage.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 100, heigth: 100)
@@ -205,13 +205,9 @@ class ProfileHeader : UICollectionReusableView {
         
         addSubview(filterView)
         filterView.anchor(top: stackView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
-//        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .normal)
-//
-//        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
-    
-    
-        addSubview(underLine)
-        underLine.anchor(top: filterView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 4, heigth: 2)
+        
+//        addSubview(underLine)
+//        underLine.anchor(top: filterView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 4, heigth: 2)
 //        addSubview(segmentindicator)
 //        setupLayout()
 
@@ -330,7 +326,8 @@ extension ProfileHeader : ProfileFilterDelegate {
             ProfileFilterCell else{
                 return
         }
-        let xPosition = cell.frame.origin.x
+        let xPosition = cell.frame.origin.x 
+     
         UIView.animate(withDuration: 0.3) {
             self.underLine.frame.origin.x = xPosition
         }
@@ -339,29 +336,3 @@ extension ProfileHeader : ProfileFilterDelegate {
     
 }
 
-extension StringProtocol {
-    subscript(_ offset: Int) -> Element
-    { self[index(startIndex, offsetBy: offset)] }
-    
-    subscript(_ range: Range<Int>)   -> SubSequence { prefix(range.lowerBound+range.count).suffix(range.count) }
-    
-    subscript(_ range: ClosedRange<Int>)-> SubSequence { prefix(range.lowerBound+range.count).suffix(range.count) }
-    
-    subscript(_ range: PartialRangeThrough<Int>) -> SubSequence
-    { prefix(range.upperBound.advanced(by: 1)) }
-    
-    subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence
-    { prefix(range.upperBound) }
-    
-    subscript(_ range: PartialRangeFrom<Int>) -> SubSequence
-    { suffix(Swift.max(0, count-range.lowerBound)) }
-}
-extension LosslessStringConvertible {
-    var string: String { .init(self) }
-}
-extension BidirectionalCollection {
-    subscript(safe offset: Int) -> Element? {
-        guard !isEmpty, let i = index(startIndex, offsetBy: offset, limitedBy: index(before: endIndex)) else { return nil }
-        return self[i]
-    }
-}
