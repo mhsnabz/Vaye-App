@@ -11,10 +11,11 @@ import FirebaseFirestore
 import SwipeCellKit
 private let reuseIdentifier = "Cell"
 private let msgCellID = "msg_cell_id"
-class CommentVC: UITableViewController {
+class CommentVC: UIViewController {
     
     
     //MARK:- variables
+    var comment = [CommentModel]()
     var currentUser : CurrentUser
     var post : LessonPostModel
     var customInputView: UIView!
@@ -22,23 +23,25 @@ class CommentVC: UITableViewController {
     var addMediaButtom: UIButton!
     let textField = FlexibleTextView()
     weak var messagesListener : ListenerRegistration?
+    
+     var tableView : UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .white
+        return tableView
+    }()
+    
     //MARK: -lifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-  
+        
         setNavigationBar()
         navigationItem.title = post.lessonName
         hideKeyboardWhenTappedAround()
-        
-
-        
         configureUI()
-
+        
+        getComments(currentUser: currentUser, postID: post.postId)
 
     }
     init(currentUser : CurrentUser , post : LessonPostModel) {
@@ -63,14 +66,49 @@ class CommentVC: UITableViewController {
         messagesListener?.remove()
     }
     
+    
     //MARK:- functions
     fileprivate func configureUI(){
+        
+        view.addSubview(tableView)
+        tableView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(CommentMsgCell.self, forCellReuseIdentifier: msgCellID)
-        tableView.separatorStyle = .none
+
         
         
     }
-    //MARK:- leyboard
+    
+   
+    func getComments(currentUser : CurrentUser , postID : String ){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId).collection("comment")
+        messagesListener = db.addSnapshotListener({ (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documentChanges else {
+                    
+                    return
+                }
+                if !snap.isEmpty {
+                    for item in snap{
+                        if item.type == .added{
+                            self.comment.append(CommentModel.init(dic: item.document.data()))
+                            self.tableView.reloadData()
+                        }
+                        
+                    }
+                }
+            }
+        })
+       
+    }
+    
+  
+
+    
+    
+    //MARK:- keyboard
     override var inputAccessoryView: UIView?{
         if customInputView == nil {
             customInputView = CustomView()
@@ -214,37 +252,39 @@ class CommentVC: UITableViewController {
         return action
     }
    
-  override  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        20
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
-        return cell
-    }
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120
-    }
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-            let edit = editAction(at: indexPath)
-            let delete = deleteAction(at: indexPath)
-            
-        return UISwipeActionsConfiguration(actions: [delete,edit])
-    }
-    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let reply = replyAction(at: indexPath)
-       
-        
-    return UISwipeActionsConfiguration(actions: [reply])
-    }
+ 
 
 }
-
-
-
 
 class CustomView: UIView {
     override var intrinsicContentSize: CGSize {
         return CGSize.zero
+    }
+}
+
+extension CommentVC : UITableViewDataSource , UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return comment.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
+        cell.comment = comment[indexPath.row]
+        return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let edit = editAction(at: indexPath)
+        let delete = deleteAction(at: indexPath)
+        
+        return UISwipeActionsConfiguration(actions: [delete,edit])
+    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let reply = replyAction(at: indexPath)
+        
+        
+        return UISwipeActionsConfiguration(actions: [reply])
     }
 }

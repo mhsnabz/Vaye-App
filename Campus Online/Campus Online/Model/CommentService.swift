@@ -52,4 +52,27 @@ class CommentService {
             }
         }
     }
+    
+    func getComment(currentUser : CurrentUser , postId: String , completion: @escaping([CommentModel]) ->Void) {
+        var comment = [CommentModel]()
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId).collection("comment")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else {
+                    completion([])
+                    return
+                }
+                if !snap.isEmpty {
+                    for item in snap.documents {
+                        comment.append(CommentModel.init(dic: item.data()))
+                    }
+                    completion(comment)
+                   
+                }else{
+                    completion([])
+                }
+            }
+        }
+    }
 }
