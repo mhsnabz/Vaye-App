@@ -15,7 +15,7 @@ class CommentService {
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("lesson-post").collection("post").document(postId).collection("comment").document(commentId)
         
-        let dic = ["senderName" : currentUser.name as Any,
+        let dic = ["senderName" : currentUser.name as Any, "senderUid" : currentUser.uid as Any,
                    "username" : currentUser.username as Any,
                    "time":FieldValue.serverTimestamp() ,
                    "comment":commentText ,

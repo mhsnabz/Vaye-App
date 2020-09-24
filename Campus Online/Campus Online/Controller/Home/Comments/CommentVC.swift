@@ -166,12 +166,19 @@ class CommentVC: UITableViewController {
     //MARK:-selectors
     @objc func sendMsg()
     {
-       let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
-        CommentService.shared.setNewComment(currentUser: currentUser, commentText: textField.text!, postId: post.postId, commentId: commentId) { (_val) in
-            if _val {
-                print("succes")
-            }
+        guard let text = textField.text else { return }
+        
+        if textField.hasText {
+            textField.text = ""
+            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+             CommentService.shared.setNewComment(currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) { (_val) in
+                 if _val {
+                     print("succes")
+                 }
+             }
         }
+        
+       
     }
       
     @objc func showMenu(){
