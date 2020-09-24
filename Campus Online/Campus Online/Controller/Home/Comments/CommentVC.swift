@@ -164,9 +164,15 @@ class CommentVC: UITableViewController {
 
     
     //MARK:-selectors
-    @objc func sendMsg(){
-          print("send comment")
-      }
+    @objc func sendMsg()
+    {
+       let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+        CommentService.shared.setNewComment(currentUser: currentUser, commentText: textField.text!, postId: post.postId, commentId: commentId) { (_val) in
+            if _val {
+                print("succes")
+            }
+        }
+    }
       
     @objc func showMenu(){
         print("menu show")
@@ -178,7 +184,26 @@ class CommentVC: UITableViewController {
             completion(true)
         }
         action.backgroundColor = .red
-        action.image = #imageLiteral(resourceName: "menu")
+    
+        action.image = UIImage(named: "remove")
+        return action
+    }
+    func editAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Düzenle") { (action, view, completion) in
+            completion(true)
+        }
+        action.backgroundColor = .systemGreen
+        
+        action.image = UIImage(named: "duzenle")
+        return action
+    }
+    func replyAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Cevapla") { (action, view, completion) in
+            completion(true)
+        }
+        action.backgroundColor = .mainColor()
+        
+        action.image = UIImage(named: "reply")
         return action
     }
    
@@ -194,8 +219,16 @@ class CommentVC: UITableViewController {
         return 120
     }
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+            let edit = editAction(at: indexPath)
             let delete = deleteAction(at: indexPath)
-        return UISwipeActionsConfiguration(actions: [delete])
+            
+        return UISwipeActionsConfiguration(actions: [delete,edit])
+    }
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let reply = replyAction(at: indexPath)
+       
+        
+    return UISwipeActionsConfiguration(actions: [reply])
     }
 
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5D0FE7ED85B9850171B990DD /* Pods_Campus_OnlineTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E94D3F655BFAA559064463 /* Pods_Campus_OnlineTests.framework */; };
+		66024C22251CEFF3009E8A7E /* CommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66024C21251CEFF3009E8A7E /* CommentService.swift */; };
 		660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660898FE24FC50810023E53B /* FullScreenImage.swift */; };
 		6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990524FD0BD60023E53B /* ChooseLessonTB.swift */; };
 		6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990724FD15DB0023E53B /* StudentNewPost.swift */; };
@@ -150,6 +151,7 @@
 		49604E7D227B97E12EC3BB52 /* Pods-Campus OnlineTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus OnlineTests.release.xcconfig"; path = "Target Support Files/Pods-Campus OnlineTests/Pods-Campus OnlineTests.release.xcconfig"; sourceTree = "<group>"; };
 		5C9FCD30C7E3F42E37CC7EAA /* Pods_Campus_Online.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Campus_Online.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		623A35EDE107A4A79EC2E453 /* Pods-Campus Online.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus Online.release.xcconfig"; path = "Target Support Files/Pods-Campus Online/Pods-Campus Online.release.xcconfig"; sourceTree = "<group>"; };
+		66024C21251CEFF3009E8A7E /* CommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentService.swift; sourceTree = "<group>"; };
 		660898FE24FC50810023E53B /* FullScreenImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImage.swift; sourceTree = "<group>"; };
 		6608990524FD0BD60023E53B /* ChooseLessonTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLessonTB.swift; sourceTree = "<group>"; };
 		6608990724FD15DB0023E53B /* StudentNewPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentNewPost.swift; sourceTree = "<group>"; };
@@ -671,6 +673,7 @@
 				6628125225171F9D00923F19 /* DatasModel.swift */,
 				6652F02825176971003462BC /* FirFile.swift */,
 				668B6A7A251BD5D900A8902F /* SwipeCellHelper.swift */,
+				66024C21251CEFF3009E8A7E /* CommentService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1172,6 +1175,7 @@
 				66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */,
 				660F5ACF2502E3ED00F72558 /* AddUserTB.swift in Sources */,
 				6613340D24F51294002677AB /* GizlilikPolitikasi.swift in Sources */,
+				66024C22251CEFF3009E8A7E /* CommentService.swift in Sources */,
 				6622C2402505D1DD00E3B3F0 /* LessonInfoCell.swift in Sources */,
 				66E326AB24F9C01C004CB61D /* UserService.swift in Sources */,
 				661333F624F3FDD6002677AB /* LoginVC.swift in Sources */,
