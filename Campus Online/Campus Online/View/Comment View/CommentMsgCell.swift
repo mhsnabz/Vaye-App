@@ -9,18 +9,29 @@
 import UIKit
 import ActiveLabel
 import SwipeCellKit
-
+import SDWebImage
 class CommentMsgCell: UITableViewCell
 {
 
     weak var delegate : CommentDelegate?
-    
+    weak var currentUser : CurrentUser?
     weak var comment : CommentModel? {
         didSet {
             configure()
+            
+            guard let currentUser = currentUser else { return }
+            checkIsLiked(user: currentUser, post: comment) {[weak self] (val) in
+                guard let sself = self else { return }
+                if val {
+                    sself.likeButton.setImage(#imageLiteral(resourceName: "like").withRenderingMode(.alwaysOriginal), for: .normal)
+                }else{
+                    sself.likeButton.setImage(#imageLiteral(resourceName: "like-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+
+                }
+            }
         }
     }
-    
+
     let profile_image : UIImageView = {
        let img = UIImageView()
         img.clipsToBounds = true
@@ -153,6 +164,19 @@ class CommentMsgCell: UITableViewCell
 
     }
     
+    //MARK: - func
+    
+    private func checkIsLiked(user : CurrentUser, post : CommentModel? , completion : @escaping(Bool) ->Void)
+    {
+        
+        guard let post = comment else { return }
+        if post.likes!.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    
     private func configure(){
         guard let comment = comment else { return }
         
@@ -163,7 +187,8 @@ class CommentMsgCell: UITableViewCell
         msgText.text = comment.comment
         likeCount.setTitle("\(comment.likes!.count.description) Beğeni", for: .normal)
         totalRepliedCount.text = (comment.replies?.count.description ?? "0") + " yanıt gör"
-            
+        profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
+        profile_image.sd_setImage(with: URL(string: comment.senderImage!))
     }
     
 }

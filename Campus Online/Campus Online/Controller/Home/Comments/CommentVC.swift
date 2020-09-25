@@ -74,9 +74,12 @@ class CommentVC: UIViewController {
         super.viewDidAppear(animated)
         messagesListener?.remove()
     }
-    
+   
     
     //MARK:- functions
+    
+   
+    
     fileprivate func configureUI(){
         
         view.addSubview(tableView)
@@ -84,7 +87,7 @@ class CommentVC: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(CommentMsgCell.self, forCellReuseIdentifier: msgCellID)
-
+        tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.interactive
         
         
     }
@@ -229,6 +232,9 @@ class CommentVC: UIViewController {
     
     //MARK: - functions
     
+    
+    
+    
     func removeComment(commentID : String , postID : String){
         let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")
             .collection("post").document(postID).collection("comment").document(commentID)
@@ -277,7 +283,31 @@ class CommentVC: UIViewController {
         action.image = UIImage(named: "report-msg")
         return action
     }
-   
+    
+    private func setLike(comment : CommentModel , completion : @escaping(Bool) ->Void){
+        
+        if !(comment.likes?.contains(currentUser.uid))!{
+            comment.likes?.append(currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(comment.postId!).collection("comment").document(comment.commentId!)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+                if err != nil{
+                    print("like err \(err?.localizedDescription as Any)")
+                }
+            }
+        }else{
+            comment.likes?.remove(element: currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(comment.postId!).collection("comment").document(comment.commentId!)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+                if err != nil{
+                    print("like err \(err?.localizedDescription as Any)")
+                }
+        }
+    }
+    }
  
 
 }
@@ -304,6 +334,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
             cell.totalRepliedCount.isHidden = false
             cell.delegate = self
             cell.contentView.isUserInteractionEnabled = false
+            cell.currentUser  = currentUser
             return cell
         }else{
             cell.comment = comment[indexPath.row]
@@ -312,6 +343,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
             cell.line.isHidden = true
             cell.totalRepliedCount.isHidden = true
             cell.contentView.isUserInteractionEnabled = false
+            cell.currentUser  = currentUser
 
             cell.delegate = self
             return cell
@@ -354,15 +386,22 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
 
 extension CommentVC : CommentDelegate {
     func likeClik(cell: CommentMsgCell) {
-        print("like clik")
+        guard let comment = cell.comment else { return }
+        setLike(comment: comment) { (_) in
+            print("succes")
+        }
     }
     
     func replyClick(cell: CommentMsgCell) {
-        print("reply clik")
+        guard let comment = cell.comment else { return }
+        let vc = RepliesComment(comment: comment, currentUser: currentUser)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func seeAllReplies(cell: CommentMsgCell) {
-        print("see all clik")
+        guard let comment = cell.comment else { return }
+        let vc = RepliesComment(comment: comment, currentUser: currentUser)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     
