@@ -8,6 +8,7 @@
 
 import UIKit
 import ActiveLabel
+import SDWebImage
 class RepliedHeader: UITableViewHeaderFooterView
 {
     static let reuseIdentifier: String = String(describing: self)
@@ -86,7 +87,8 @@ class RepliedHeader: UITableViewHeaderFooterView
         name.append(NSAttributedString(string: " \(comment.time!.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name
         msgText.text = comment.comment
-//        likeCount.setTitle("\(comment.likes!.count.description) Beğeni", for: .normal)
+        profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
+        profile_image.sd_setImage(with: URL(string: comment.senderImage!))
             
     }
 }

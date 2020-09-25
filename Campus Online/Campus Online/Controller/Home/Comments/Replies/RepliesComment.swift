@@ -216,6 +216,51 @@ class RepliesComment: UIViewController {
 
         
     }
+    func removeComment(commentID : String){
+        
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(comment.postId!).collection("comment-replied")
+            .document("comment").collection(comment.commentId!).document(commentID)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                let db = Firestore.firestore().collection(sself.currentUser.short_school)
+                    .document("lesson-post").collection("post").document(sself.comment.postId!).collection("comment").document(sself.comment.commentId!)
+                db.updateData(["replies":FieldValue.arrayRemove([commentID as Any])]) { (err) in
+                    if err ==  nil {
+                        print("succes")
+                    }
+                }
+            }
+        }
+    
+       
+    }
+    func replyAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
+            guard let sself = self  else { return }
+            sself.tableView.reloadData()
+            self?.textField.becomeFirstResponder()
+            sself.textField.text.append(" \(sself.repliedComment[indexPath.row].username!) ")
+          
+        }
+        action.backgroundColor = .mainColor()
+        
+        action.image = UIImage(named: "reply")
+        return action
+    }
+    func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
+            guard let sself = self else { return }
+            sself.removeComment(commentID: sself.repliedComment[indexPath.row].commentId!)
+            sself.repliedComment.remove(at: indexPath.row)
+            sself.tableView.reloadData()
+        }
+        action.backgroundColor = .red
+    
+        action.image = UIImage(named: "remove")
+        return action
+    }
     
 }
 extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
@@ -250,7 +295,24 @@ extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
         return 35 + h! + 45
 
     }
-    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+        if repliedComment[indexPath.row].senderUid == currentUser.uid {
+           
+            let delete = deleteAction(at: indexPath)
+
+            return UISwipeActionsConfiguration(actions: [delete])
+        }else{
+            return nil
+        }
+        
+
+    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let reply = replyAction(at: indexPath)
+        return UISwipeActionsConfiguration(actions: [reply])
+    }
     
     
 }
