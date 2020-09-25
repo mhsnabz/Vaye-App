@@ -232,15 +232,17 @@ extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
         cell.totalRepliedCount.isHidden = true
         cell.line.isHidden = true
         cell.lblReply.isHidden = true
+        cell.contentView.isUserInteractionEnabled = false
         return cell
     }
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerID) as? RepliedHeader else { return nil}
         
         let h = comment.comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
         header.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
         header.comment = comment
-
+        header.contentView.backgroundColor = .white
         return header
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

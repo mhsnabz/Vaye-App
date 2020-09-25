@@ -180,13 +180,21 @@ class CommentMsgCell: UITableViewCell
     private func configure(){
         guard let comment = comment else { return }
         
+   
+        
         name = NSMutableAttributedString(string: "\(comment.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(comment.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
-        name.append(NSAttributedString(string: " 12 dk", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        if let time = comment.time {
+            name.append(NSAttributedString(string: " \(time.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+
+        }else{
+            name.append(NSAttributedString(string: " şimdi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+
+        }
         userName.attributedText = name
         msgText.text = comment.comment
         likeCount.setTitle("\(comment.likes!.count.description) Beğeni", for: .normal)
-        totalRepliedCount.text = (comment.replies?.count.description ?? "0") + " yanıt gör"
+        totalRepliedCount.text = (comment.replies?.count.description ?? "0") + " yanıtı gör"
         profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
         profile_image.sd_setImage(with: URL(string: comment.senderImage!))
     }
