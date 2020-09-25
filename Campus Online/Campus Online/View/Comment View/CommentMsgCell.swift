@@ -39,6 +39,7 @@ class CommentMsgCell: UITableViewCell
         img.layer.borderColor = UIColor.lightGray.cgColor
         img.layer.borderWidth = 0.75
         img.contentMode = .scaleAspectFit
+        img.isUserInteractionEnabled = true
         return img
     }()
     lazy var name : NSMutableAttributedString = {
@@ -141,6 +142,7 @@ class CommentMsgCell: UITableViewCell
        
         lblReply.addTarget(self, action: #selector(replyMsg), for: .touchUpInside)
         totalRepliedCount.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(seeAllReplies)))
+        profile_image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(goProfile)))
         likeButton.addTarget(self, action: #selector(likeMsg), for: .touchUpInside)
     }
     
@@ -157,7 +159,9 @@ class CommentMsgCell: UITableViewCell
         print("see all replies")
         delegate?.seeAllReplies(cell: self)
     }
-    
+    @objc func goProfile(){
+        delegate?.goProfile(cell : self)
+    }
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("init(coder:) has not been implemented")

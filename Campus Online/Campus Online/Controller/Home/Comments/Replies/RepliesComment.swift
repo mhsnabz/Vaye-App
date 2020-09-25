@@ -201,6 +201,41 @@ class RepliesComment: UIViewController {
         })
     }
     
+    private func setLike(repliedComment : CommentModel , commentID : String , completion : @escaping(Bool) ->Void){
+        
+        //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601045739666/1601063909445
+        print("comment Id \(comment.commentId)")
+        if !(repliedComment.likes?.contains(currentUser.uid))!{
+            
+            repliedComment.likes?.append(currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(repliedComment.postId!).collection("comment-replied")
+                .document("comment").collection(commentID).document(repliedComment.commentId!)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+                if err != nil{
+                    print("like err \(err?.localizedDescription as Any)")
+                }
+                else{
+                    completion(true)
+                }
+            }
+        }else{
+            repliedComment.likes?.remove(element: currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(repliedComment.postId!).collection("comment-replied")
+                .document("comment").collection(commentID).document(repliedComment.commentId!)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+                if err != nil{
+                    print("like err \(err?.localizedDescription as Any)")
+                }else{
+                    completion(true)
+                }
+        }
+    }
+    }
+    
     fileprivate func configureUI(){
         
         view.addSubview(tableView)
@@ -278,6 +313,8 @@ extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
         cell.line.isHidden = true
         cell.lblReply.isHidden = true
         cell.contentView.isUserInteractionEnabled = false
+        cell.delegate = self
+        cell.currentUser = currentUser
         return cell
     }
     
@@ -314,5 +351,46 @@ extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [reply])
     }
     
+    
+}
+extension RepliesComment : CommentDelegate {
+    func likeClik(cell: CommentMsgCell) {
+       guard let repliedComment = cell.comment else { return }
+       
+        setLike( repliedComment : repliedComment, commentID: comment.commentId!) { (_) in
+
+        }
+    }
+    
+    func replyClick(cell: CommentMsgCell) {
+        
+    }
+    
+    func seeAllReplies(cell: CommentMsgCell) {
+        
+    }
+     func goProfile(cell: CommentMsgCell) {
+        Utilities.waitProgress(msg: nil)
+        guard let comment = cell.comment else { return }
+        if comment.senderUid == currentUser.uid {
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.modalPresentationStyle = .fullScreen
+            self.present(vc, animated: true, completion: {
+                Utilities.dismissProgress()
+            })
+            
+        }else{
+            UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in
+                let vc = OtherUserProfile(currentUser: self.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+
+                self.present(vc, animated: true, completion: {
+                                Utilities.dismissProgress()
+                    
+                })
+            }
+        }
+
+    }
     
 }

@@ -403,6 +403,28 @@ extension CommentVC : CommentDelegate {
         let vc = RepliesComment(comment: comment, currentUser: currentUser)
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    func goProfile(cell: CommentMsgCell) {
+        Utilities.waitProgress(msg: nil)
+        guard let comment = cell.comment else { return }
+        if comment.senderUid == currentUser.uid {
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.modalPresentationStyle = .fullScreen
+            self.present(vc, animated: true, completion: {
+                Utilities.dismissProgress()
+            })
+            
+        }else{
+            UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in
+                let vc = OtherUserProfile(currentUser: self.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+
+                self.present(vc, animated: true, completion: {
+                                Utilities.dismissProgress()
+                    
+                })
+            }
+        }
+    }
     
     
 }

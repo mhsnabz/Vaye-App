@@ -88,4 +88,5 @@ protocol CommentDelegate : class {
     func likeClik(cell : CommentMsgCell)
     func replyClick(cell : CommentMsgCell)
     func seeAllReplies(cell :  CommentMsgCell)
+    func goProfile(cell : CommentMsgCell)
 }
