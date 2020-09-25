@@ -93,7 +93,7 @@ class CommentVC: UIViewController {
                 if !snap.isEmpty {
                     for item in snap{
                         if item.type == .added{
-                            self.comment.append(CommentModel.init(dic: item.document.data()))
+                            self.comment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
                             self.tableView.reloadData()
                         }
                         
@@ -224,9 +224,21 @@ class CommentVC: UIViewController {
     }
     
     //MARK: - functions
+    
+    func removeComment(commentID : String , postID : String){
+        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")
+            .collection("post").document(postID).collection("comment").document(commentID)
+        db.delete()
+    }
+    
     func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
-        let action = UIContextualAction(style: .destructive, title: "Sil") { (action, view, completion) in
-            completion(true)
+        let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
+            guard let sself = self else { return }
+            sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!)
+            sself.comment.remove(at: indexPath.row)
+            sself.tableView.reloadData()
+          
+           
         }
         action.backgroundColor = .red
     
@@ -243,12 +255,23 @@ class CommentVC: UIViewController {
         return action
     }
     func replyAction(at indexPath :IndexPath) ->UIContextualAction {
-        let action = UIContextualAction(style: .normal, title: "Cevapla") { (action, view, completion) in
-            completion(true)
+        let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
+            guard let sself = self  else { return }
+           let vc = RepliesComment()
+            sself.navigationController?.pushViewController(vc, animated: true)
         }
         action.backgroundColor = .mainColor()
         
         action.image = UIImage(named: "reply")
+        return action
+    }
+    func reportAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Şikayet Et") { (action, view, completion) in
+            completion(true)
+        }
+        action.backgroundColor = .systemRed
+        
+        action.image = UIImage(named: "report-msg")
         return action
     }
    
@@ -270,21 +293,57 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
         cell.comment = comment[indexPath.row]
+        
+        let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+        cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+        cell.msgText.backgroundColor = .red
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+      
+        let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
+
+        return 35 + h! + 20
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let edit = editAction(at: indexPath)
-        let delete = deleteAction(at: indexPath)
         
-        return UISwipeActionsConfiguration(actions: [delete,edit])
+        if comment[indexPath.row].senderUid == currentUser.uid {
+            let edit = editAction(at: indexPath)
+            let delete = deleteAction(at: indexPath)
+            
+            return UISwipeActionsConfiguration(actions: [delete,edit])
+        }
+        else
+        {
+            let report = reportAction(at: indexPath)
+            return UISwipeActionsConfiguration(actions: [report])
+        }
+        
+     
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let reply = replyAction(at: indexPath)
-        
-        
         return UISwipeActionsConfiguration(actions: [reply])
     }
+}
+extension Array where Element: Equatable {
+
+    @discardableResult mutating func remove(object: Element) -> Bool {
+        if let index = firstIndex(of: object) {
+            self.remove(at: index)
+            return true
+        }
+        return false
+    }
+
+    @discardableResult mutating func remove(where predicate: (Array.Iterator.Element) -> Bool) -> Bool {
+        if let index = self.firstIndex(where: { (element) -> Bool in
+            return predicate(element)
+        }) {
+            self.remove(at: index)
+            return true
+        }
+        return false
+    }
+
 }

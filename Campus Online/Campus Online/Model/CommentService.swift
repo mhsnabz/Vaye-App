@@ -19,6 +19,8 @@ class CommentService {
                    "username" : currentUser.username as Any,
                    "time":FieldValue.serverTimestamp() ,
                    "comment":commentText ,
+                   "commentId":commentId,
+                   "postId":postId,
                    "likes":[],"replies" : [] , "senderImage" : currentUser.thumb_image as Any] as [String : Any]
         
         db.setData(dic, merge: true) {[weak self] (err) in
@@ -65,7 +67,7 @@ class CommentService {
                 }
                 if !snap.isEmpty {
                     for item in snap.documents {
-                        comment.append(CommentModel.init(dic: item.data()))
+                        comment.append(CommentModel.init(ID : item.documentID , dic: item.data()))
                     }
                     completion(comment)
                    

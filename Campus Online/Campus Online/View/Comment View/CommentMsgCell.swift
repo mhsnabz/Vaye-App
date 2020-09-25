@@ -87,7 +87,7 @@ class CommentMsgCell: UITableViewCell
         userName.centerYAnchor.constraint(equalTo: profile_image.centerYAnchor).isActive = true
         
         addSubview(msgText)
-        msgText.anchor(top: profile_image.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
+//        msgText.anchor(top: profile_image.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
         
    
         addSubview(likeCount)
@@ -95,11 +95,11 @@ class CommentMsgCell: UITableViewCell
         addSubview(lblReply)
         lblReply.anchor(top: msgText.bottomAnchor, left: likeCount.rightAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 10)
         
-//        addSubview(likeButton)
-//        likeButton.anchor(top: profile_image.bottomAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 15, heigth: 15)
+        addSubview(likeButton)
+        likeButton.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 15, heigth: 15)
 //       
 //        likeButton.centerXAnchor.constraint(equalTo: profile_image.centerXAnchor).isActive = true
-//        likeButton.centerYAnchor.constraint(equalTo: msgText.centerYAnchor).isActive = true
+        likeButton.centerYAnchor.constraint(equalTo: msgText.centerYAnchor).isActive = true
         configure()
       
     }

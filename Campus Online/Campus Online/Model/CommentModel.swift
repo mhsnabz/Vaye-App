@@ -9,26 +9,30 @@
 import Foundation
 import FirebaseFirestore
 class CommentModel {
-//           let dic = ["senderName" : currentUser.name as Any, "senderUid" : currentUser.uid as Any,
-//    "username" : currentUser.username as Any,
-//    "time":FieldValue.serverTimestamp() ,
-//    "comment":commentText ,
-//    "likes":[],"replies" : [] , "senderImage" : currentUser.thumb_image as Any] as [String : Any]
+
     
     var senderName : String?
-    var uid : String?
+    var senderUid : String?
     var username : String?
     var time : Timestamp?
     var comment : String?
     var likes : [String]?
     var replies : [String]?
     var senderImage : String?
-    init(dic : [String : Any]) {
+    var commentId : String?
+    var postId : String?
+    init(ID : String ,dic : [String : Any]) {
+        
+        self.commentId = ID
         if let senderName = dic["senderName"] as? String {
             self.senderName = senderName
         }
-        if let uid = dic["uid"] as? String {
-            self.uid = uid
+        if let postId = dic["postId"] as? String {
+            self.postId = postId
+        }
+        
+        if let senderUid = dic["senderUid"] as? String {
+            self.senderUid = senderUid
         }
         if let username = dic["username"] as? String {
             self.username = username
