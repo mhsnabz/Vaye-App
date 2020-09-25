@@ -84,4 +84,8 @@ protocol ProfileHeaderDelegate : class {
 protocol UserProfileFilterDelegate : class {
     func didSelectOption(option : ProfileFilterViewOptions)
 }
-
+protocol CommentDelegate : class {
+    func likeClik(cell : CommentMsgCell)
+    func replyClick(cell : CommentMsgCell)
+    func seeAllReplies(cell :  CommentMsgCell)
+}

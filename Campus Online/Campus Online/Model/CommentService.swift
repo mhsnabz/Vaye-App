@@ -77,4 +77,45 @@ class CommentService {
             }
         }
     }
+    
+    
+    func setRepliedComment(currentUser : CurrentUser , targetCommentId : String , commentId : String,commentText : String, postId : String , completion : @escaping(()) ->())
+    {
+    
+        ///İSTE/lesson-post/post/1600870068749/commet-replies/comment/commentId/Cy6C2SQs5RDcxa7lKBav
+        
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId).collection("comment-replied")
+            .document("comment").collection(targetCommentId).document(commentId)
+        
+        let dic = ["senderName" : currentUser.name as Any, "senderUid" : currentUser.uid as Any,
+                   "username" : currentUser.username as Any,
+                   "time":FieldValue.serverTimestamp() ,
+                   "comment":commentText ,
+                   "commentId":commentId,
+                   "postId":postId,
+                   "likes":[],"replies" : [] , "senderImage" : currentUser.thumb_image as Any] as [String : Any]
+        db.setData(dic, merge: true) {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                sself.setRepliedCommentId(targetCommentID: targetCommentId, commentId: commentId, currentUser: currentUser, postId: postId) { (_) in
+                 
+                }
+            }
+        }
+    }
+    
+    private func setRepliedCommentId(targetCommentID : String , commentId : String, currentUser : CurrentUser , postId : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId).collection("comment").document(targetCommentID)
+        db.updateData(["replies":FieldValue.arrayUnion([commentId as Any])]) { (err) in
+            if err == nil {
+                completion(true)
+                
+            }
+        }
+    }
+    
+
+    
 }

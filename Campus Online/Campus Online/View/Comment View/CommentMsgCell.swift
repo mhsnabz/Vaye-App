@@ -13,6 +13,7 @@ import SwipeCellKit
 class CommentMsgCell: UITableViewCell
 {
 
+    weak var delegate : CommentDelegate?
     
     weak var comment : CommentModel? {
         didSet {
@@ -49,29 +50,47 @@ class CommentMsgCell: UITableViewCell
         return lbl
     }()
   
-    let likeCount  : UIButton = {
+    lazy var likeCount  : UIButton = {
         let lbl = UIButton()
         lbl.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 12)
         lbl.backgroundColor = .clear
         lbl.setTitleColor(.lightGray, for: .normal)
         lbl.setTitle("100 Beğeni", for: .normal)
-        
         return lbl
     }()
-    let lblReply : UIButton = {
+    lazy var lblReply : UIButton = {
         let lbl = UIButton()
         lbl.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 12)
         lbl.backgroundColor = .clear
         lbl.setTitleColor(.lightGray, for: .normal)
+        lbl.isUserInteractionEnabled = true
         lbl.setTitle("Yanıtla", for: .normal)
         return lbl
     }()
-    let likeButton : UIButton = {
+   lazy var likeButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "like-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.isUserInteractionEnabled = true
+       
         return btn
         
     }()
+    
+    lazy var line : UIView = {
+       let v = UIView()
+        v.backgroundColor = .darkGray
+        return v
+    }()
+    lazy var totalRepliedCount : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.fontBold, size: 10)
+        lbl.text = "14 yanıtı gör"
+        lbl.textColor = .darkGray
+        lbl.isUserInteractionEnabled = true
+        
+        return lbl
+    }()
+    
     
     //MARK: -lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -91,21 +110,47 @@ class CommentMsgCell: UITableViewCell
         
    
         addSubview(likeCount)
-        likeCount.anchor(top: msgText.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 10)
+        likeCount.anchor(top: msgText.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
         addSubview(lblReply)
-        lblReply.anchor(top: msgText.bottomAnchor, left: likeCount.rightAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 10)
+        lblReply.anchor(top: msgText.bottomAnchor, left: likeCount.rightAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
         
         addSubview(likeButton)
         likeButton.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 15, heigth: 15)
-//       
-//        likeButton.centerXAnchor.constraint(equalTo: profile_image.centerXAnchor).isActive = true
         likeButton.centerYAnchor.constraint(equalTo: msgText.centerYAnchor).isActive = true
         configure()
-      
+        
+        addSubview(line)
+        line.anchor(top: likeCount.bottomAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 16, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 30, heigth: 2)
+        line.centerXAnchor.constraint(equalTo: likeCount.centerXAnchor).isActive = true
+        
+        addSubview(totalRepliedCount)
+        totalRepliedCount.anchor(top: nil, left: line.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 4, marginBottom: 0, marginRigth: 0, width: 150, heigth: 30)
+        totalRepliedCount.centerYAnchor.constraint(equalTo: line.centerYAnchor).isActive = true
+        
+       
+        lblReply.addTarget(self, action: #selector(replyMsg), for: .touchUpInside)
+        totalRepliedCount.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(seeAllReplies)))
+        likeButton.addTarget(self, action: #selector(likeMsg), for: .touchUpInside)
+    }
+    
+    //MARK: -selector
+    @objc func likeMsg(){
+        print("like msg")
+        delegate?.likeClik(cell: self)
+    }
+    @objc func replyMsg(){
+        print("reply msg")
+        delegate?.replyClick(cell: self)
+    }
+    @objc func seeAllReplies(){
+        print("see all replies")
+        delegate?.seeAllReplies(cell: self)
     }
     
     required init?(coder: NSCoder) {
+        super.init(coder: coder)
         fatalError("init(coder:) has not been implemented")
+
     }
     
     private func configure(){
@@ -117,6 +162,7 @@ class CommentMsgCell: UITableViewCell
         userName.attributedText = name
         msgText.text = comment.comment
         likeCount.setTitle("\(comment.likes!.count.description) Beğeni", for: .normal)
+        totalRepliedCount.text = (comment.replies?.count.description ?? "0") + " yanıt gör"
             
     }
     

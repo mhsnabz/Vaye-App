@@ -28,6 +28,7 @@ class CommentVC: UIViewController {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
+        
         return tableView
     }()
     
@@ -63,6 +64,14 @@ class CommentVC: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
+        messagesListener?.remove()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        messagesListener?.remove()
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         messagesListener?.remove()
     }
     
@@ -101,12 +110,7 @@ class CommentVC: UIViewController {
                 }
             }
         })
-       
     }
-    
-  
-
-    
     
     //MARK:- keyboard
     override var inputAccessoryView: UIView?{
@@ -237,8 +241,6 @@ class CommentVC: UIViewController {
             sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!)
             sself.comment.remove(at: indexPath.row)
             sself.tableView.reloadData()
-          
-           
         }
         action.backgroundColor = .red
     
@@ -257,7 +259,8 @@ class CommentVC: UIViewController {
     func replyAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
             guard let sself = self  else { return }
-           let vc = RepliesComment()
+            sself.tableView.reloadData()
+            let vc = RepliesComment(comment : sself.comment[indexPath.row] , currentUser : sself.currentUser)
             sself.navigationController?.pushViewController(vc, animated: true)
         }
         action.backgroundColor = .mainColor()
@@ -292,18 +295,39 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
-        cell.comment = comment[indexPath.row]
+        cell.selectionStyle = .none
+        if comment[indexPath.row].replies!.count > 0 {
+            cell.comment = comment[indexPath.row]
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+            cell.line.isHidden = false
+            cell.totalRepliedCount.isHidden = false
+            cell.delegate = self
+            cell.contentView.isUserInteractionEnabled = false
+            return cell
+        }else{
+            cell.comment = comment[indexPath.row]
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+            cell.line.isHidden = true
+            cell.totalRepliedCount.isHidden = true
+            cell.contentView.isUserInteractionEnabled = false
+
+            cell.delegate = self
+            return cell
+        }
         
-        let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
-        cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
-        cell.msgText.backgroundColor = .red
-        return cell
+      
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-      
-        let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
-
-        return 35 + h! + 20
+        if comment[indexPath.row].replies!.count > 0 {
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
+            return 35 + h! + 45 + 30
+        }else{
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
+            return 35 + h! + 45
+        }
+       
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -322,10 +346,28 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
      
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
         let reply = replyAction(at: indexPath)
         return UISwipeActionsConfiguration(actions: [reply])
     }
 }
+
+extension CommentVC : CommentDelegate {
+    func likeClik(cell: CommentMsgCell) {
+        print("like clik")
+    }
+    
+    func replyClick(cell: CommentMsgCell) {
+        print("reply clik")
+    }
+    
+    func seeAllReplies(cell: CommentMsgCell) {
+        print("see all clik")
+    }
+    
+    
+}
+
 extension Array where Element: Equatable {
 
     @discardableResult mutating func remove(object: Element) -> Bool {
