@@ -710,6 +710,8 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
 }
 
 extension HomeVC : NewPostHomeVCDataDelegate {
+
+    
     func showProfile(for cell: NewPostHomeVCData) {
         guard  let post = cell.lessonPostModel else {
             return
@@ -793,11 +795,30 @@ extension HomeVC : NewPostHomeVCDataDelegate {
         }
         UIApplication.shared.open(url)          
     }
+    func goProfileByMention(userName: String) {
+       
+        if "@\(userName)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true, completion: nil)
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+
+                sself.present(vc, animated: true, completion: nil)
+            }
+        }
+        
+       
+    }
     
     
 }
 
 extension HomeVC : NewPostHomeVCDelegate {
+
     func showProfile(for cell: NewPostHomeVC) {
         guard  let post = cell.lessonPostModel else {
             return
@@ -879,7 +900,7 @@ extension HomeVC : NewPostHomeVCDelegate {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    
+   
 }
 extension HomeVC : ActionSheetOtherUserLauncherDelegate{
     func didSelect(option: ActionSheetOtherUserOptions) {

@@ -327,7 +327,7 @@ class NewPostHomeVCData : UICollectionViewCell{
         like_lbl.text = post.likes.count.description
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
-        
+        mentionClick()
         
         profileImage.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showProfile)))
         
@@ -340,6 +340,12 @@ class NewPostHomeVCData : UICollectionViewCell{
             detectLink(post.link)
         }
         
+    }
+    private func mentionClick(){
+        msgText.handleMentionTap {[weak self] (username) in
+            guard let sself = self else { return }
+            sself.delegate?.goProfileByMention(userName : username)
+        }
     }
     private func detectLink(_ link : String){
         let url = NSURL(string: link)

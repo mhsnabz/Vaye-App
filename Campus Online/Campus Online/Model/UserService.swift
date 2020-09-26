@@ -95,6 +95,41 @@ struct UserService {
         }
           
     }
+    
+    private func getUidByMention(username : String , completion : @escaping(String) ->Void){
+        Utilities.waitProgress(msg: nil)
+        //username/@deneme
+        let db = Firestore.firestore().collection("username").document("@\(username)")
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion("")
+                    return
+                }
+                if snap.exists {
+                    Utilities.dismissProgress()
+                    completion(docSnap?.get("uid") as! String)
+                }else{
+                    completion("")
+                    Utilities.errorProgress(msg: "Böyle Bir Kullanıcı Bulunmuyor")
+                }
+            }
+        }
+        
+    }
+    
+    func getUserByMention(username : String , completion : @escaping(OtherUser)->Void){
+        getUidByMention(username: username) { (uid) in
+            if uid != ""{
+                fetchOtherUser(uid: uid) { (user) in
+                    completion(user)
+                }
+            }else{
+                Utilities.errorProgress(msg: "Böyle Bir Kullanıcı Bulunmuyor")
+            }
+            
+        }
+    }
   
     
 }

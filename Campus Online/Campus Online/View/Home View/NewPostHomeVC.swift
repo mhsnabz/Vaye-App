@@ -86,7 +86,7 @@ class NewPostHomeVC: UICollectionViewCell
         return btn
     }()
     
-    let msgText : ActiveLabel = {
+     lazy var msgText : ActiveLabel = {
         let lbl = ActiveLabel()
         lbl.font = UIFont(name: Utilities.font, size: 13)
         lbl.numberOfLines = 0
@@ -307,7 +307,7 @@ class NewPostHomeVC: UICollectionViewCell
         userName.attributedText = name
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string: post.thumb_image))
-        
+        mentionClick()
         lessonName.text = post.lessonName
         msgText.text = post.text
         like_lbl.text = post.likes.count.description
@@ -349,5 +349,11 @@ class NewPostHomeVC: UICollectionViewCell
             self.line.isHidden = true
         }
         
+    }
+    private func mentionClick(){
+        msgText.handleMentionTap {[weak self] (username) in
+            guard let sself = self else { return }
+            sself.delegate?.goProfileByMention(userName : username)
+        }
     }
 }
