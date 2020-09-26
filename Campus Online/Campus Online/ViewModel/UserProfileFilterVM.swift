@@ -55,6 +55,7 @@ enum ProfileFilterViewOptions {
     }
     
 }
+
 enum TargetFilterView {
     case currentUser
     case otherUser

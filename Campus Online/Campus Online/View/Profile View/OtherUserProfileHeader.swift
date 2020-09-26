@@ -11,19 +11,8 @@ import UIKit
 import SDWebImage
 import SnapKit
 import GoogleMobileAds
-class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUser {
-    func ShowFilterUnderLine(_ view: OtherUserProfileFilterView, didSelect indexPath: IndexPath) {
-        func ShowFilterUnderLine(_ view: ProfileFilterView, didSelect indexPath: IndexPath) {
-            guard let cell = view.collectionView.cellForItem(at: indexPath) as?
-                ProfileFilterCell else{
-                    return
-            }
-            let xPosition = cell.frame.origin.x
-            UIView.animate(withDuration: 0.3) {
-                self.underLine.frame.origin.x = xPosition
-            }
-        }
-    }
+class OtherUserProfileHeader: UICollectionViewCell {
+  
     
     var adUnitID = "ca-app-pub-3940256099942544/4411468910"
     weak var delegate : OtherUserProfileHeaderDelegate?
@@ -34,12 +23,12 @@ class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUs
   
     var target : String = ""
     var controller : OtherUserProfile?
-
+    var otherUser : OtherUser?
     var helps : helps?{
         didSet{
           
             guard let user = helps?.otherUser else { return }
-            
+            otherUser = user
             name.text = user.name
             number.text = user.number
             major.text = user.bolum
@@ -60,14 +49,10 @@ class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUs
                 github.isHidden = true
             }
             filterView.helps = helps
+     
         }
     }
-    var otherUser : OtherUser?{
-        didSet{
-           
-       
-        }
-    }
+
     
     private let filterView = OtherUserProfileFilterView()
     let profileImage : UIImageView = {
@@ -139,7 +124,7 @@ class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUs
         lbl.textColor = .black
         return lbl
     }()
-    private let underLine : UIView = {
+     let underLine : UIView = {
        let view = UIView()
         view.backgroundColor = .black
         return view
@@ -174,7 +159,7 @@ class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUs
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
-
+        filterView.filterDelagate = self
         backgroundColor = .white
         addSubview(profileImage)
         profileImage.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 100, heigth: 100)
@@ -209,6 +194,7 @@ class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUs
         
         addSubview(filterView)
         filterView.anchor(top: stackSocial.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
+        addSubview(underLine)
         interstitalTwitter = createAd()
         interstitalGithub = createAd()
         interstitalLinked = createAd()
@@ -291,11 +277,7 @@ class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUs
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
     }
 }
-//extension OtherUserProfileHeader : OtherUserProfileFilterViewDelegate {
-//
-//
-//
-//}
+
 extension OtherUserProfileHeader : GADInterstitialDelegate {
     func interstitialWillDismissScreen(_ ad: GADInterstitial) {
         
@@ -368,6 +350,39 @@ extension OtherUserProfileHeader : OtherUserProfileHeaderDelegate {
     
     func getCoPost() {
         delegate?.getCoPost()
+    }
+    
+    
+}
+extension OtherUserProfileHeader : ProfileFilterDelegateOtherUser {
+    
+    func ShowFilterUnderLine(_ view: OtherUserProfileFilterView, didSelect indexPath: IndexPath) {
+        guard let cell = view.collectionView.cellForItem(at: indexPath) as?
+            ProfileFilterCell else{
+                return
+        }
+        let xPosition = cell.frame.origin.x
+        UIView.animate(withDuration: 0.3) {
+            self.underLine.frame.origin.x = xPosition
+        }
+    }
+    
+   
+}
+extension OtherUserProfileHeader : OtherUserProfileFilterDelegate {
+    func didSelectOption(option: OtherProfileFilterViewOptions) {
+        switch option {
+        
+        case .bolum():
+            print("bolum")
+            break
+        case .shortSchool():
+            print("school")
+            break
+        case .onlineCampus():
+            print("campus")
+            break
+        }
     }
     
     

@@ -13,18 +13,20 @@ protocol ProfileFilterDelegateOtherUser : class {
 }
 class OtherUserProfileFilterView : UIView{
     weak var delegate : ProfileFilterDelegateOtherUser?
-    weak var filterDelagate : UserProfileFilterDelegate?
+    weak var filterDelagate : OtherUserProfileFilterDelegate?
    weak var option : OtherUserFilterVM!
     weak var otherUser : OtherUser!
     weak var currentUser : CurrentUser!
      var helps : helps? {
         didSet{
       
-                guard let option = helps else {return}
+            guard let option = helps else {return}
             self.option = option.option
             self.currentUser = option.currentUser
             self.otherUser = option.otherUser
-                self.collectionView.reloadData()
+           
+            collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .left)
+            self.collectionView.reloadData()
             
         }
     }
@@ -33,7 +35,6 @@ class OtherUserProfileFilterView : UIView{
     
     lazy var collectionView : UICollectionView = {
     let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .horizontal
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.delegate = self
         cv.dataSource = self
@@ -47,8 +48,6 @@ class OtherUserProfileFilterView : UIView{
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: "id")
         addSubview(collectionView)
         collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .left)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -91,7 +90,8 @@ extension OtherUserProfileFilterView : UICollectionViewDelegate,UICollectionView
        
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 4, height: frame.height)
+        guard let count = option?.options.count else { return  CGSize(width: frame.width / 4 , height: frame.height)}
+        return CGSize(width: frame.width / CGFloat(count) , height: frame.height)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
@@ -100,6 +100,7 @@ extension OtherUserProfileFilterView : UICollectionViewDelegate,UICollectionView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.ShowFilterUnderLine(self, didSelect: indexPath)
         filterDelagate?.didSelectOption(option: option!.options[indexPath.row])
+       
     }
     
     

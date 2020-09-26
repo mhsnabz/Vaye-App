@@ -93,6 +93,9 @@ protocol OtherUserProfileHeaderDelegate : class {
 protocol UserProfileFilterDelegate : class {
     func didSelectOption(option : ProfileFilterViewOptions)
 }
+protocol OtherUserProfileFilterDelegate : class {
+    func didSelectOption(option : OtherProfileFilterViewOptions)
+}
 protocol CommentDelegate : class {
     func likeClik(cell : CommentMsgCell)
     func replyClick(cell : CommentMsgCell)

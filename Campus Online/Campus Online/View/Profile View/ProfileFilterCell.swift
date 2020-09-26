@@ -32,25 +32,14 @@ class ProfileFilterCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            titleLlb.font = isSelected ? UIFont(name: Utilities.fontBold, size: 14) :
-                UIFont(name: Utilities.fontBold, size: 12)
-            titleLlb.textColor = isSelected ? .black : .lightGray
-            
-
             
             if isSelected {
-                addSubview(underLine)
-                underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: 2)
-                let xPosition = frame.origin.x
-                UIView.animate(withDuration: 0.3) {
-                    self.underLine.frame.origin.x = xPosition
-                }
-          
+                titleLlb.font = UIFont(name: Utilities.fontBold, size: 14)
+                titleLlb.textColor = .black
             }else{
-                underLine.removeFromSuperview()
-            }
-            
-//        
+                titleLlb.font = UIFont(name: Utilities.font, size: 12)
+                titleLlb.textColor = .lightGray
+            }       
         }
     }
     

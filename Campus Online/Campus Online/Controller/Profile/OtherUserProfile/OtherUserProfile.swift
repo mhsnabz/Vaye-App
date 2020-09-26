@@ -43,8 +43,8 @@ class OtherUserProfile: UIViewController  {
     
     
     
-//    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
-    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
+    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
+//    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
     
     let titleLbl : UILabel = {
@@ -379,7 +379,10 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! OtherUserProfileHeader
         header.delegate = self
         header.controller = self
+
         header.helps = helps(otherUser: otherUser, currentUser: currentUser, option: OtherUserFilterVM(target: TargetFilterView.otherUser.description, otherUser: otherUser, currentUser: currentUser))
+        let count = helps(otherUser: otherUser, currentUser: currentUser, option: OtherUserFilterVM(target: TargetFilterView.otherUser.description, otherUser: otherUser, currentUser: currentUser)).option.options.count
+        header.underLine.frame = CGRect(x: 0, y: 235, width: Int(header.frame.width) / count, height: 2)
         return header
     }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

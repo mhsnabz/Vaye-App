@@ -11,8 +11,8 @@ class OtherUserFilterVM {
     private let target : String
     private let currentUser : CurrentUser
     private let otherUser : OtherUser
-    var options : [ProfileFilterViewOptions] {
-        var result = [ProfileFilterViewOptions]()
+    var options : [OtherProfileFilterViewOptions] {
+        var result = [OtherProfileFilterViewOptions]()
         if target == TargetFilterView.otherUser.description {
         if currentUser.short_school == otherUser.short_school {
             if currentUser.bolum == otherUser.bolum {
@@ -38,4 +38,21 @@ class OtherUserFilterVM {
         self.currentUser = currentUser
         
     }
+}
+enum OtherProfileFilterViewOptions {
+    case bolum(Void)
+    case shortSchool(Void)
+    case onlineCampus(Void)
+    var descprition : String {
+        switch self {
+        case .bolum():
+            return "bolum"
+        case .shortSchool():
+            return "school"
+        case .onlineCampus():
+            return "online_campus"
+     
+        }
+    }
+    
 }
