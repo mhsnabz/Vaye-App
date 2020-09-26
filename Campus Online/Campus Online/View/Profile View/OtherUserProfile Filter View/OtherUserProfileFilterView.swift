@@ -8,8 +8,11 @@
 
 import Foundation
 import UIKit
+protocol ProfileFilterDelegateOtherUser : class {
+    func ShowFilterUnderLine(_ view : OtherUserProfileFilterView , didSelect indexPath : IndexPath)
+}
 class OtherUserProfileFilterView : UIView{
-    weak var delegate : ProfileFilterDelegate?
+    weak var delegate : ProfileFilterDelegateOtherUser?
     weak var filterDelagate : UserProfileFilterDelegate?
    weak var option : OtherUserFilterVM!
     weak var otherUser : OtherUser!
@@ -95,7 +98,7 @@ extension OtherUserProfileFilterView : UICollectionViewDelegate,UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        delegate?.ShowFilterUnderLine(self, didSelect: indexPath)
+        delegate?.ShowFilterUnderLine(self, didSelect: indexPath)
         filterDelagate?.didSelectOption(option: option!.options[indexPath.row])
     }
     

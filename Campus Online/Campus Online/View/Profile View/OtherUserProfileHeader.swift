@@ -11,9 +11,22 @@ import UIKit
 import SDWebImage
 import SnapKit
 import GoogleMobileAds
-class OtherUserProfileHeader: UICollectionViewCell {
-    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
+class OtherUserProfileHeader: UICollectionViewCell, ProfileFilterDelegateOtherUser {
+    func ShowFilterUnderLine(_ view: OtherUserProfileFilterView, didSelect indexPath: IndexPath) {
+        func ShowFilterUnderLine(_ view: ProfileFilterView, didSelect indexPath: IndexPath) {
+            guard let cell = view.collectionView.cellForItem(at: indexPath) as?
+                ProfileFilterCell else{
+                    return
+            }
+            let xPosition = cell.frame.origin.x
+            UIView.animate(withDuration: 0.3) {
+                self.underLine.frame.origin.x = xPosition
+            }
+        }
+    }
     
+    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
+    weak var delegate : OtherUserProfileHeaderDelegate?
     var interstitalGithub : GADInterstitial!
     var interstitalInsta : GADInterstitial!
     var interstitalLinked : GADInterstitial!
@@ -161,7 +174,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
-   
+
         backgroundColor = .white
         addSubview(profileImage)
         profileImage.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 100, heigth: 100)
@@ -278,20 +291,11 @@ class OtherUserProfileHeader: UICollectionViewCell {
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
     }
 }
-extension OtherUserProfileHeader : ProfileFilterDelegate {
-    func ShowFilterUnderLine(_ view: ProfileFilterView, didSelect indexPath: IndexPath) {
-        guard let cell = view.collectionView.cellForItem(at: indexPath) as?
-            ProfileFilterCell else{
-                return
-        }
-        let xPosition = cell.frame.origin.x
-        UIView.animate(withDuration: 0.3) {
-            self.underLine.frame.origin.x = xPosition
-        }
-    }
-    
-    
-}
+//extension OtherUserProfileHeader : OtherUserProfileFilterViewDelegate {
+//
+//
+//
+//}
 extension OtherUserProfileHeader : GADInterstitialDelegate {
     func interstitialWillDismissScreen(_ ad: GADInterstitial) {
         
@@ -352,4 +356,19 @@ extension OtherUserProfileHeader : GADInterstitialDelegate {
         }
         
     }
+}
+extension OtherUserProfileHeader : OtherUserProfileHeaderDelegate {
+    func getMajorPost() {
+        delegate?.getMajorPost()
+    }
+    
+    func getSchoolPost() {
+        delegate?.getSchoolPost()
+    }
+    
+    func getCoPost() {
+        delegate?.getCoPost()
+    }
+    
+    
 }

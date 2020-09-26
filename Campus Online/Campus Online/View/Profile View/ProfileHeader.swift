@@ -156,7 +156,6 @@ class ProfileHeader : UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
-//        filterView.currentUser = currentUser
         filterView.filterDelagate = self
         backgroundColor = .white
         addSubview(profileImage)
