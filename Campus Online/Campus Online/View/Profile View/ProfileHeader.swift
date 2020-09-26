@@ -42,24 +42,7 @@ class ProfileHeader : UICollectionReusableView {
         }
     }
     private let filterView = ProfileFilterView()
-    let segmentindicator: UIView = {
-          let v = UIView()
-          v.translatesAutoresizingMaskIntoConstraints = false
-          v.backgroundColor = UIColor.black
-          
-          return v
-      }()
-    let segmentedControl : UISegmentedControl = {
-           let segment = UISegmentedControl()
-            segment.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
-            segment.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
-            segment.insertSegment(withTitle: "Favoriler", at: 2, animated: true)
-            segment.selectedSegmentIndex = 0
-            segment.tintColor = .clear
-            
-            segment.addTarget(self, action: #selector(segmnetSelector(sender:)), for: .valueChanged)
-            return segment
-        }()
+  
     
     let profileImage : UIImageView = {
         let image = UIImageView()
@@ -205,11 +188,7 @@ class ProfileHeader : UICollectionReusableView {
         
         addSubview(filterView)
         filterView.anchor(top: stackView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
-        
-//        addSubview(underLine)
-//        underLine.anchor(top: filterView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 4, heigth: 2)
-//        addSubview(segmentindicator)
-//        setupLayout()
+
 
         
     }
@@ -218,19 +197,7 @@ class ProfileHeader : UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupLayout() {
-        
-        segmentindicator.snp.makeConstraints { (make) in
-            
-            make.top.equalTo(segmentedControl.snp.bottom).offset(3)
-            make.height.equalTo(0.75)
-            
-            make.width.equalTo(15 + segmentedControl.titleForSegment(at: 0)!.count * 8)
-            make.centerX.equalTo(segmentedControl.snp.centerX).dividedBy(segmentedControl.numberOfSegments)
-            
-        }
-        
-    }
+
     
     //MARK:-selectors
     @objc func goGithub(){
@@ -264,29 +231,7 @@ class ProfileHeader : UICollectionReusableView {
          UIApplication.shared.open(url)
     }
     
-    @objc func segmnetSelector(sender : UISegmentedControl)
-    {
-        let numberOfSegments = CGFloat(segmentedControl.numberOfSegments)
-        let selectedIndex = CGFloat(sender.selectedSegmentIndex)
-        let titlecount = CGFloat((segmentedControl.titleForSegment(at: sender.selectedSegmentIndex)!.count))
-        segmentindicator.snp.remakeConstraints { (make) in
-            
-            make.top.equalTo(segmentedControl.snp.bottom).offset(3)
-            make.height.equalTo(0.75)
-            make.width.equalTo(15 + titlecount * 8)
-            make.centerX.equalTo(segmentedControl.snp.centerX).dividedBy(numberOfSegments / CGFloat(3.0 + CGFloat(selectedIndex-1.0)*2.0))
-            
-        }
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            
-            self.segmentindicator.transform = CGAffineTransform(scaleX: 1.4, y: 1)
-        }) { (finish) in
-            UIView.animate(withDuration: 0.4, animations: {
-                self.segmentindicator.transform = CGAffineTransform.identity
-            })
-        }
-    }
+   
 
     private func getUsername(username : String) ->String{
         

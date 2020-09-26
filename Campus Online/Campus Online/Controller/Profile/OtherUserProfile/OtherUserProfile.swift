@@ -17,13 +17,8 @@ class OtherUserProfile: UIViewController {
     var collectionview: UICollectionView!
     
 //    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
-    
     var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
-    
-
-
-
     
     let titleLbl : UILabel = {
        let lbl = UILabel()
@@ -141,9 +136,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! OtherUserProfileHeader
-        header.otherUser = otherUser
-        header.currentUser = currentUser
+   
         header.controller = self
+        header.helps = helps(otherUser: otherUser, currentUser: currentUser, option: OtherUserFilterVM(target: TargetFilterView.otherUser.description, otherUser: otherUser, currentUser: currentUser))
         return header
     }
     
@@ -169,4 +164,9 @@ extension OtherUserProfile : GADInterstitialDelegate {
         print("failed")
     }
     
+}
+struct helps {
+    let otherUser : OtherUser
+    let currentUser : CurrentUser
+    let option : OtherUserFilterVM
 }

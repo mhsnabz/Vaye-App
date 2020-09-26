@@ -10,6 +10,7 @@ import UIKit
 
 class ProfileFilterCell: UICollectionViewCell {
     
+    
     var option : String!{
         didSet {
             titleLlb.text = option

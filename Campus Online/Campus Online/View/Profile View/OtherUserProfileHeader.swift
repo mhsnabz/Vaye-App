@@ -21,11 +21,12 @@ class OtherUserProfileHeader: UICollectionViewCell {
   
     var target : String = ""
     var controller : OtherUserProfile?
-    var currentUser : CurrentUser?
-    
-    var otherUser : OtherUser?{
+
+    var helps : helps?{
         didSet{
-            guard let user = otherUser else { return }
+          
+            guard let user = helps?.otherUser else { return }
+            
             name.text = user.name
             number.text = user.number
             major.text = user.bolum
@@ -45,33 +46,17 @@ class OtherUserProfileHeader: UICollectionViewCell {
             if user.github == ""{
                 github.isHidden = true
             }
+            filterView.helps = helps
+        }
+    }
+    var otherUser : OtherUser?{
+        didSet{
+           
+       
         }
     }
     
-    private let filterView = ProfileFilterView()
-    
-    
-    let segmentindicator: UIView = {
-          
-          let v = UIView()
-          
-          v.translatesAutoresizingMaskIntoConstraints = false
-          v.backgroundColor = UIColor.black
-          
-          return v
-      }()
-    let segmentedControl : UISegmentedControl = {
-           let segment = UISegmentedControl()
-//            segment.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
-//            segment.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
-            segment.selectedSegmentIndex = 0
-            segment.tintColor = .clear
-            
-            segment.addTarget(self, action: #selector(segmnetSelector(sender:)), for: .valueChanged)
-            return segment
-        }()
-    
-    
+    private let filterView = OtherUserProfileFilterView()
     let profileImage : UIImageView = {
         let image = UIImageView()
         image.clipsToBounds = true
@@ -176,6 +161,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         filterView.delegate = self
+   
         backgroundColor = .white
         addSubview(profileImage)
         profileImage.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 100, heigth: 100)
@@ -208,34 +194,8 @@ class OtherUserProfileHeader: UICollectionViewCell {
         addSubview(stackSocial)
         stackSocial.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
         
-        addSubview(segmentedControl)
-        segmentedControl.anchor(top: stackSocial.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width, heigth: 30)
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .normal)
-        
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
-    
-            
-        if currentUser?.short_school == otherUser?.short_school {
-                   if currentUser?.bolum == otherUser?.bolum {
-                       
-                       segmentedControl.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
-                       segmentedControl.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
-                       segmentedControl.insertSegment(withTitle: "Akış", at: 2, animated: true)
-                       segmentedControl.selectedSegmentIndex = 0
-                   }else{
-                       segmentedControl.insertSegment(withTitle: "Duyurular", at: 1, animated: true)
-                       segmentedControl.insertSegment(withTitle: "Akış", at: 2, animated: true)
-                       segmentedControl.selectedSegmentIndex = 0
-                   }
-               }else{
-                   segmentedControl.insertSegment(withTitle: "Paylaşımlar", at: 0, animated: true)
-                   segmentedControl.selectedSegmentIndex = 0
-               }
-//        addSubview(underLine)
-//        underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 3, heigth: 2)
-        addSubview(segmentindicator)
-        setupLayout()
-
+        addSubview(filterView)
+        filterView.anchor(top: stackSocial.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
         interstitalTwitter = createAd()
         interstitalGithub = createAd()
         interstitalLinked = createAd()
@@ -247,19 +207,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupLayout() {
-        
-        segmentindicator.snp.makeConstraints { (make) in
-            
-            make.top.equalTo(segmentedControl.snp.bottom).offset(3)
-            make.height.equalTo(0.75)
-            
-            make.width.equalTo(15 + segmentedControl.titleForSegment(at: 0)!.count * 8)
-            make.centerX.equalTo(segmentedControl.snp.centerX).dividedBy(segmentedControl.numberOfSegments)
-            
-        }
-        
-    }
+  
     
     //MARK:-selectors
     @objc func goGithub(){
@@ -318,30 +266,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
              UIApplication.shared.open(url)
         }
     }
-    
-    @objc func segmnetSelector(sender : UISegmentedControl)
-    {
-        let numberOfSegments = CGFloat(segmentedControl.numberOfSegments)
-        let selectedIndex = CGFloat(sender.selectedSegmentIndex)
-        let titlecount = CGFloat((segmentedControl.titleForSegment(at: sender.selectedSegmentIndex)!.count))
-        segmentindicator.snp.remakeConstraints { (make) in
-            
-            make.top.equalTo(segmentedControl.snp.bottom).offset(3)
-            make.height.equalTo(0.75)
-            make.width.equalTo(15 + titlecount * 8)
-            make.centerX.equalTo(segmentedControl.snp.centerX).dividedBy(numberOfSegments / CGFloat(3.0 + CGFloat(selectedIndex-1.0)*2.0))
-            
-        }
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            
-            self.segmentindicator.transform = CGAffineTransform(scaleX: 1.4, y: 1)
-        }) { (finish) in
-            UIView.animate(withDuration: 0.4, animations: {
-                self.segmentindicator.transform = CGAffineTransform.identity
-            })
-        }
-    }
+   
     private func createAd() ->GADInterstitial {
         let ad = GADInterstitial(adUnitID: adUnitID)
         ad.delegate = self

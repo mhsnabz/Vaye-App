@@ -30,7 +30,7 @@ class UserProfileFilterVM
     }
     
     init( target : String) {
-    
+        
         self.target = target
         
     }
