@@ -786,16 +786,22 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
             break
         case .googleDrive(_):
             handleShowPopUp(target: DriveLinks.googleDrive.descrpiton)
+            break
         case .dropBox(_):
             handleShowPopUp(target: DriveLinks.dropbox.descrpiton)
+            break
         case .yandexDisk(_):
             handleShowPopUp(target: DriveLinks.yandex.descrpiton)
+            break
         case .iClould(_):
             handleShowPopUp(target: DriveLinks.icloud.descrpiton)
+            break
         case .oneDrive(_):
             handleShowPopUp(target: DriveLinks.onedrive.descrpiton)
+            break
         case .mega(_):
             handleShowPopUp(target: DriveLinks.mega.descrpiton)
+            break
         }
     }
 }

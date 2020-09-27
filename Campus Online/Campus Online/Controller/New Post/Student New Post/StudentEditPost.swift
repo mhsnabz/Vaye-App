@@ -20,6 +20,7 @@ class StudentEditPost: UIViewController {
     var totolDataInMB : Float = 0.0
     var currentUser : CurrentUser
     var post : LessonPostModel
+    private var actionSheet : ActionSheetLauncher
     var h : CGFloat
     var link : String?
     var heigth : CGFloat = 0.0
@@ -34,7 +35,7 @@ class StudentEditPost: UIViewController {
         let view = PopUpWindow()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
-        //        view.delegate = self
+        view.delegate = self
         return view
     }()
     
@@ -115,7 +116,7 @@ class StudentEditPost: UIViewController {
     let addLink : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "link")!.withRenderingMode(.alwaysOriginal), for: .normal)
-        //           btn.addTarget(self, action: #selector(_addLink), for: .touchUpInside)
+                   btn.addTarget(self, action: #selector(_addLink), for: .touchUpInside)
         return btn
     }()
     let cloudLink : UIButton = {
@@ -168,6 +169,7 @@ class StudentEditPost: UIViewController {
         self.currentUser = currentUser
         self.post = post
         self.h = heigth
+        self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.drive.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -176,17 +178,26 @@ class StudentEditPost: UIViewController {
     }
     
     //    MARK:- selector
+    
+    @objc func _addLink(){
+        actionSheet.delegate = self
+        actionSheet.show()
+    }
+    
     @objc func removeLinkClick(){
         //İSTE/lesson-post/post/1600774976770
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(post.postId)
-        db.updateData(["link":""] as [String:Any]) {[weak self] (err) in
-            if err == nil {
-                Utilities.succesProgress(msg: "Bağlantıyı Kaldırdınız")
-                self?.cloudDriveLink.isHidden = true
-                self?.removeLink.isHidden = true
+        if post.link != ""{
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["link":""] as [String:Any]) {[weak self] (err) in
+                if err == nil {
+                    Utilities.succesProgress(msg: "Bağlantıyı Kaldırdınız")
+                    self?.cloudDriveLink.isHidden = true
+                    self?.removeLink.isHidden = true
+                }
             }
         }
+       
     }
     @objc func setNewPost(){
         text.endEditing(true)
@@ -230,6 +241,11 @@ class StudentEditPost: UIViewController {
     }
     
     //    MARK:- functions
+    private func goToLink(_ target : String)
+    {  if let url = URL(string: target){
+        UIApplication.shared.open(url) }
+        
+    }
     private func detectLink(_ link : String){
         let url = NSURL(string: link)
         let domain = url?.host
@@ -378,6 +394,7 @@ class StudentEditPost: UIViewController {
         }
         return attrString
     }
+
     
     func handleShowPopUp(target : String) {
         view.addSubview(popUpWindow)
@@ -693,3 +710,95 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
     }
    
 
+extension StudentEditPost : ActionSheetLauncherDelegate  {
+    func didSelect(option: ActionSheetOptions) {
+        switch option {
+        
+        case .addLesson(_):
+            break
+        case .lessonInfo(_):
+            break
+        case .reportLesson(_):
+            break
+        case .showPicture(_):
+            break
+        case .removePicture(_):
+            break
+        case .takePicture(_):
+            break
+        case .choosePicture(_):
+            break
+        case .googleDrive(_):
+            handleShowPopUp(target: DriveLinks.googleDrive.descrpiton)
+            break
+        case .dropBox(_):
+            handleShowPopUp(target: DriveLinks.dropbox.descrpiton)
+            break
+        case .yandexDisk(_):
+            handleShowPopUp(target: DriveLinks.yandex.descrpiton)
+            break
+        case .iClould(_):
+            handleShowPopUp(target: DriveLinks.icloud.descrpiton)
+            break
+        case .oneDrive(_):
+            handleShowPopUp(target: DriveLinks.onedrive.descrpiton)
+            break
+        case .mega(_):
+            handleShowPopUp(target: DriveLinks.mega.descrpiton)
+            break
+        }
+    }
+    
+    
+}
+extension StudentEditPost: PopUpDelegate {
+    func addTarget(_ target: String?)
+    {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popUpWindow.alpha = 0
+            self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) {[weak self] (_) in
+            self?.popUpWindow.removeFromSuperview()
+            
+            if let url = self?.popUpWindow.link.text {
+                
+               
+                self?.detectLink(url)
+                self?.popUpWindow.link.text = ""
+                self?.link = url
+                guard let sself = self else { return }
+                let db = Firestore.firestore().collection(sself.currentUser.short_school)
+                    .document("lesson-post").collection("post").document(sself.post.postId)
+                db.updateData(["link":url] as [String:Any]) {[weak self] (err) in
+                    if err == nil {
+                        Utilities.succesProgress(msg: "Yeni Bir Bağlantı Eklediniz")
+                        self?.cloudDriveLink.isHidden = false
+                        self?.removeLink.isHidden = false
+                        self?.post.link = url
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    func goDrive(_ target: String?) {
+        guard let target = target else { return }
+        goToLink(target)
+    }
+    
+    
+    func handleDismissal() {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popUpWindow.alpha = 0
+            self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { (_) in
+            self.popUpWindow.removeFromSuperview()
+            print("Did remove pop up window..")
+        }
+    }
+    
+    
+}
