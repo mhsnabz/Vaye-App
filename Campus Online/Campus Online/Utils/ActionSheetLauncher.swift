@@ -14,6 +14,7 @@ class ActionSheetLauncher : NSObject {
     private let target : String
     private let tableView = UITableView()
     private var window : UIWindow?
+
     private lazy var viewModel = ActionSheetViewModel(currentUser: currentUser, target: target)
     weak var delegate : ActionSheetLauncherDelegate?
     private var tableViewHeight : CGFloat?
@@ -50,9 +51,10 @@ class ActionSheetLauncher : NSObject {
     }()
     
     
-    init(currentUser : CurrentUser , target : String) {
+    init(currentUser : CurrentUser , target : String ) {
         self.currentUser = currentUser
         self.target = target
+
         super.init()
         configureTableView()  
     }

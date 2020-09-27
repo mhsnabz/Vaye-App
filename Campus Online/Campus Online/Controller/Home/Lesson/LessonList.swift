@@ -10,7 +10,7 @@ import FirebaseFirestore
 private let cellId = "cellId"
 class LessonList: UITableViewController {
     //MARK: -varibles
-    var centrelController : UIViewController!
+   weak var centrelController : UIViewController!
     var isSearching = false
     var currentUser : CurrentUser?
     var dataSourceFiltred = [LessonsModel]()

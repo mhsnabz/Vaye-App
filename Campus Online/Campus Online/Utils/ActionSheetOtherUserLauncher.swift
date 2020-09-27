@@ -20,10 +20,11 @@ class ActionSheetOtherUserLaunher : NSObject{
     weak var delegate : ActionSheetOtherUserLauncherDelegate?
     private var tableViewHeight : CGFloat?
     var post : LessonPostModel?
-    
+    lazy var isFallowingLesson : Bool = false
     var lessonIsSlient : Bool = false
     var postIsSlient : Bool = false
     var userIsSlient : Bool = false
+    weak var centrelController : UIViewController!
     private lazy var cancelButton : UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Vazgeç", for: .normal)
@@ -79,7 +80,6 @@ class ActionSheetOtherUserLaunher : NSObject{
     init(currentUser : CurrentUser , target : String ) {
         self.currentUser = currentUser
         self.target = target
-        
         super.init()
         configureTableView()
     }
@@ -313,6 +313,23 @@ class ActionSheetOtherUserLaunher : NSObject{
             completion(false)
         }
     }
+    
+    private func checkFollowingLesson(userId : String,lessonName : String , completion : @escaping(Bool) -> Void){
+        //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/fallowers/@deneme
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("fallowers").document(currentUser.username)
+        db.getDocument { (docSnap, err) in
+            guard let snap = docSnap else {
+                completion(false)
+                return}
+            if snap.exists {
+                completion(true)
+            }else{
+                completion(false)
+            }
+        }
+    }
+    
     private func setUserSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user").document(otherUserUid)
         db.updateData(["slient":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
@@ -355,6 +372,160 @@ class ActionSheetOtherUserLaunher : NSObject{
                                   sself.tableView.reloadData()
                               }
                }
+    }
+    private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: "Ders Siliniyor")
+       
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                let abc = Firestore.firestore().collection(sself.currentUser.short_school)
+                    .document("lesson").collection(sself.currentUser.bolum)
+                    .document(lessonName!).collection("fallowers").document(sself.currentUser.username)
+                abc.delete { (err) in
+                    if err == nil {
+                        sself.getAllPost(currentUser: sself.currentUser, lessonName: lessonName) { (val) in
+                            sself.removeAllPost(postId: val, currentUser: sself.currentUser) { (_) in
+                                completion(true)
+                                Utilities.succesProgress(msg : "Ders Silindi")
+                            }
+                        }
+                        
+                    }else{
+                        completion(false)
+                        Utilities.errorProgress(msg: "Ders Silinemedi")
+                    }
+                }
+            }else{
+                completion(false)
+                Utilities.errorProgress(msg: "Ders Silinemedi")
+            }
+        }
+    }
+    private func getAllPost(currentUser : CurrentUser , lessonName : String , completion : @escaping([String]) ->Void){
+         //İSTE/lesson-post/post/1599800825321
+         var postId = [String]()
+         let db = Firestore.firestore().collection(currentUser.short_school)
+             .document("lesson-post").collection("post").whereField("lessonName", isEqualTo: lessonName)
+         db.getDocuments { (querySnap, err) in
+             if err == nil {
+                 guard let snap = querySnap else {
+                     completion([])
+                     return }
+                 for doc in snap.documents {
+                     postId.append(doc.documentID)
+                 }
+                 completion(postId)
+             }
+         }
+     }
+    private func removeAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.delete { (err) in
+                if err == nil {
+                    completion(true)
+                    let dbFav = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("fav-post").document(item)
+                    dbFav.getDocument { (docSnap, err) in
+                        if err == nil {
+                          
+                            if docSnap!.exists{
+                                dbFav.delete()
+                            }else{
+                               
+                            }
+                        }
+                     
+                    }
+                    
+                }else{
+                    completion(false)
+                }
+            }
+        
+        }
+ 
+        
+    }
+    private func addAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.setData(["postId":item], merge: true) { (err) in
+                if err == nil {
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+            }
+        }
+        
+    }
+    private func getLessonInfo(lessonName : String,completion : @escaping(LessonInfoModel) ->Void){
+        let db =  Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson").collection(currentUser.bolum)
+            .document(lessonName)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists {
+                    completion(LessonInfoModel.init(dic: snap.data()!))
+                }
+            }
+        }
+    }
+    private func addLesson(lessonName : String! ,teacherName : String!, teacherID : String! , teacherEmail : String! )
+    {
+        Utilities.waitProgress(msg: "Ekleniyor")
+        
+        
+        let dic = ["teacherName":teacherName as Any,
+                   "teacherId":teacherID as Any,
+                   "teacherEmail":teacherEmail as Any,
+                   "lessonName":lessonName!] as [String:Any]
+        
+        Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!).setData(dic, merge: true) {[weak self] (err) in
+                guard let sself = self else {
+                    
+                    return }
+                if err == nil {
+                    //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
+                    let abc = Firestore.firestore().collection(sself.currentUser.short_school)
+                        .document("lesson").collection(sself.currentUser.bolum)
+                        .document(lessonName!).collection("fallowers").document(sself.currentUser.username)
+                    
+                    let dict = ["username":sself.currentUser.username as Any,"name":sself.currentUser.name as Any,"email":sself.currentUser.email as Any,"number":sself.currentUser.number as Any,"thumb_image":sself.currentUser.thumb_image ?? "" , "uid" : sself.currentUser.uid as Any] as [String:Any]
+                    abc.setData(dict, merge: true) { (err) in
+                        if err == nil {
+                            sself.getAllPost(currentUser: sself.currentUser, lessonName: lessonName) { (val) in
+                                sself.addAllPost(postId: val, currentUser: sself.currentUser) { (_val) in
+                                    if _val {
+                                        Utilities.succesProgress(msg : "Ders Eklendi")
+//                                        sself.tableView.reloadData()
+                                    }else{
+                                        Utilities.succesProgress(msg : "Ders Eklenemedi")
+//                                        sself.tableView.reloadData()
+                                    }
+                                }
+                            }
+                           
+                        }else{
+                            Utilities.errorProgress(msg: "Eklenemedi")
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Eklenemedi")
+                }
+        }
     }
 }
 
@@ -431,6 +602,19 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             }
             
         }
+        else if cell.titleLabel.text == ActionSheetOtherUserOptions.deleteLesson(currentUser).description{
+            checkFollowingLesson(userId: currentUser.uid, lessonName: post!.lessonName) {[weak self] (val) in
+                if val {
+                    cell.titleLabel.text = "Dersi Takip Etmeyi Bırak"
+                    cell.logo.image = #imageLiteral(resourceName: "cancel").withRenderingMode(.alwaysOriginal)
+                    self?.isFallowingLesson = true
+                }else{
+                    cell.titleLabel.text = "Dersi Takip Et"
+                    cell.logo.image = #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal)
+                    self?.isFallowingLesson = false
+                }
+            }
+        }
             
 
         return cell
@@ -481,7 +665,19 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
                     tableView.reloadData()
                 }
             }
+        }else if indexPath.row == 5 {
+            if isFallowingLesson {
+                removeLesson(lessonName: post!.lessonName) { (_val) in
+                    
+                }
+                tableView.reloadData()
+            }else{
+                getLessonInfo(lessonName: post!.lessonName!) {[weak self] (model) in
+                    self?.addLesson(lessonName: model.lessonName, teacherName: model.teacherName, teacherID: model.teacherName, teacherEmail: model.teacherEmail)}
+
+            }
         }
+        print("indexpath : \(indexPath.row)")
         dismissTableView(indexPath)
     }
     
@@ -497,4 +693,5 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
         }
     }
 }
+
 

@@ -794,14 +794,7 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
             
             break
         case .deleteLesson(_):
-            if schoolPotsDelegate {
-                guard let index = selectedIndex else {
-                Utilities.dismissProgress()
-                return }
-                removeLesson(lessonName: lessonPostModel[index.row].lessonName) { (_) in
-                    self.getPost()  
-            }
-            }
+           
         break
         case .slientLesson(_):
             
