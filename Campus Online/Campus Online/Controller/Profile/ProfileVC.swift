@@ -839,6 +839,9 @@ extension ProfileVC : ProfileHeaderDelegate {
 
 
 extension ProfileVC : NewPostHomeVCDelegate {
+    func clickMention(username: String) {
+        
+    }
     func goProfileByMention(userName: String) {
         if "@\(userName)" == currentUser.username {
             let vc = ProfileVC(currentUser: currentUser)

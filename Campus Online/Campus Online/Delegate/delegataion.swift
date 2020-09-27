@@ -59,6 +59,8 @@ protocol NewPostHomeVCDelegate : class {
     func linkClick(for cell : NewPostHomeVC)
     func showProfile(for cell : NewPostHomeVC)
     func goProfileByMention (userName : String)
+    func clickMention(username : String)
+    
 }
 protocol NewPostHomeVCDataDelegate : class {
     func options ( for cell : NewPostHomeVCData)

@@ -353,7 +353,7 @@ class NewPostHomeVC: UICollectionViewCell
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in
             guard let sself = self else { return }
-            sself.delegate?.goProfileByMention(userName : username)
+            sself.delegate?.clickMention(username : username)
         }
     }
 }

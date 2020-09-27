@@ -21,6 +21,7 @@ class StudentEditPost: UIViewController {
     var currentUser : CurrentUser
     var post : LessonPostModel
     var h : CGFloat
+    var link : String?
     var heigth : CGFloat = 0.0
     var data = [SelectedData]()
     var uploadTask : StorageUploadTask?
@@ -141,6 +142,13 @@ class StudentEditPost: UIViewController {
         
         return img
     }()
+    let removeLink : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "cancel").withRenderingMode(.alwaysOriginal), for: .normal)
+       
+        return btn
+    }()
+    
     //    MARK:-lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -150,6 +158,11 @@ class StudentEditPost: UIViewController {
         navigationItem.title = "Gönderiyi Düzenle"
         
         configureCollectionView()
+        hideKeyboardWhenTappedAround()
+        rigtBarButton()
+        detectLink(post.link)
+        removeLink.addTarget(self, action: #selector(removeLinkClick), for: .touchUpInside)
+
     }
     init(currentUser : CurrentUser , post : LessonPostModel , heigth : CGFloat) {
         self.currentUser = currentUser
@@ -163,6 +176,45 @@ class StudentEditPost: UIViewController {
     }
     
     //    MARK:- selector
+    @objc func removeLinkClick(){
+        //İSTE/lesson-post/post/1600774976770
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId)
+        db.updateData(["link":""] as [String:Any]) {[weak self] (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Bağlantıyı Kaldırdınız")
+                self?.cloudDriveLink.isHidden = true
+                self?.removeLink.isHidden = true
+            }
+        }
+    }
+    @objc func setNewPost(){
+        text.endEditing(true)
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
+        
+        if text.text == post.text {
+            Utilities.errorProgress(msg: "Hiç Değişklik Yapmadınız")
+            return
+        }
+        
+        var val = [Data]()
+        var dataType = [String]()
+//        let url = [String]()
+        for number in 0..<(data.count) {
+            val.append(data[number].data)
+            dataType.append(data[number].type)
+        }
+       
+        if data.isEmpty {
+            PostService.shared.updatePost(currentUser: currentUser, postId: post.postId, msgText: text.text, datas: [], link: link) { (_) in
+                Utilities.succesProgress(msg: "Gönderiniz Güncellendi")
+            }
+        }
+    }
     @objc func dismissVC(){
         dismiss(animated: true, completion: nil)
     }
@@ -178,7 +230,68 @@ class StudentEditPost: UIViewController {
     }
     
     //    MARK:- functions
-    
+    private func detectLink(_ link : String){
+        let url = NSURL(string: link)
+        let domain = url?.host
+        guard let link = domain else { return }
+        print(link)
+        if link == "drive.google.com" || link == "www.drive.google.com" {
+            self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
+            self.cloudImage.image = UIImage(named: "google-drive")
+            self.cloudLink.setTitle("Google Drive Bağlantısı", for: .normal)
+        }else if link == "dropbox.com" || link == "www.dropbox.com"{
+            self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
+
+            self.cloudImage.image = UIImage(named: "dropbox")
+            self.cloudLink.setTitle("Dropbox Bağlantısı", for: .normal)
+        }else if link == "icloud.com" || link == "www.icloud.com"{
+            self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
+
+            self.cloudImage.image = UIImage(named: "icloud")
+            self.cloudLink.setTitle("iCloud Bağlantısı", for: .normal)
+        }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com" || link == "yadi.sk"{
+            self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
+
+            self.cloudImage.image = UIImage(named: "yandex-disk")
+            self.cloudLink.setTitle("Yandex Disk Bağlantısı", for: .normal)
+        }else if link == "onedrive.live.com" || link == "www.onedrive.live.com" || link == "1drv.ms"{
+            self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
+
+            self.cloudImage.image = UIImage(named: "onedrive")
+            self.cloudLink.setTitle("OneDrive Bağlantısı", for: .normal)
+        }else if link == "mega.nz" || link == "www.mega.nz"{
+            self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
+
+            self.cloudImage.image = UIImage(named: "mega")
+            self.cloudLink.setTitle("Mega.nz Bağlantısı", for: .normal)
+        }else{
+            self.cloudDriveLink.isHidden = true
+            removeLink.isHidden = true
+            Utilities.errorProgress(msg: "Bu Bağlantıyı Tanımayamadık")
+        }
+        
+    }
+    fileprivate func rigtBarButton() {
+        //        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
+        
+        let button: UIButton = UIButton(type: .custom)
+        //set image for button
+        button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        //add function for button
+        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
+        //set frame
+        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        
+        let barButton = UIBarButtonItem(customView: button)
+        //assign button to navigationbar
+        self.navigationItem.rightBarButtonItem = barButton
+    }
     
     fileprivate func configureCollectionView() {
         view.addSubview(headerView)
@@ -204,6 +317,10 @@ class StudentEditPost: UIViewController {
         cloudDriveLink.anchor(top: stack.bottomAnchor, left: stack.leftAnchor, bottom: nil, rigth: nil, marginTop: 5, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         cloudDriveLink.isHidden = true
         
+        view.addSubview(removeLink)
+        removeLink.anchor(top: stack.bottomAnchor, left: nil, bottom: nil, rigth: stack.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 20, width: 0, heigth: 25)
+
+        removeLink.isHidden = true
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -541,6 +658,7 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
                     db.updateData(["data":FieldValue.arrayUnion([url as Any])]) { (err) in
                         if err == nil
                         {
+                            
                             sself.post.data.append(url)
                             sself.collectionview.reloadData()
                             Utilities.dismissProgress()
@@ -567,13 +685,7 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
                     _ = uploadTask!.observe(.progress) { snapshot in
                         
                         Utilities.waitProgress(msg: "Resim Yükleniyor")
-//                        
-//                        let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
-//                            / Float(snapshot.progress!.totalUnitCount)
-//                        
-//                        SVProgressHUD.showProgress(percentComplete, status: "Resim Yükleniyor \n \(Float(snapshot.progress!.totalUnitCount / 1_24) / 1000) MB % \(Int(percentComplete))")
-//                        
-//                        print(percentComplete) // NSProgress object
+
                     }
                 }
                

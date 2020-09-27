@@ -56,6 +56,14 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         btn.setTitleColor(.systemBlue, for: .normal)
         return btn
     }()
+    
+    let removeLink : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "cancel").withRenderingMode(.alwaysOriginal), for: .normal)
+       
+        return btn
+    }()
+    
     lazy var cloudDriveLink : UIView = {
         let v = UIView()
         v.backgroundColor = .white
@@ -64,6 +72,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         v.addSubview(cloudLink)
         cloudLink.anchor(top: nil, left: cloudImage.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         cloudLink.centerYAnchor.constraint(equalTo: cloudImage.centerYAnchor).isActive = true
+       
         return v
     }()
     var name : NSMutableAttributedString = {
@@ -184,6 +193,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         configure()
         hideKeyboardWhenTappedAround()
         rigtBarButton()
+        removeLink.addTarget(self, action: #selector(removeLinkClick), for: .touchUpInside)
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -191,6 +201,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     
     //MARK: - func
+    
+    @objc func removeLinkClick () {
+        link = ""
+        self.cloudDriveLink.isHidden = true
+        removeLink.isHidden = true
+    }
     private func detectLink(_ link : String){
         let url = NSURL(string: link)
         let domain = url?.host
@@ -198,30 +214,38 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         print(link)
         if link == "drive.google.com" || link == "www.drive.google.com" {
             self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
             self.cloudImage.image = UIImage(named: "google-drive")
             self.cloudLink.setTitle("Google Drive Bağlantısı", for: .normal)
         }else if link == "dropbox.com" || link == "www.dropbox.com"{
             self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = true
             self.cloudImage.image = UIImage(named: "dropbox")
             self.cloudLink.setTitle("Dropbox Bağlantısı", for: .normal)
         }else if link == "icloud.com" || link == "www.icloud.com"{
             self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
             self.cloudImage.image = UIImage(named: "icloud")
             self.cloudLink.setTitle("iCloud Bağlantısı", for: .normal)
         }else if link == "disk.yandex.com.tr" || link == "disk.yandex.com" || link == "yadi.sk"{
             self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
             self.cloudImage.image = UIImage(named: "yandex-disk")
             self.cloudLink.setTitle("Yandex Disk Bağlantısı", for: .normal)
         }else if link == "onedrive.live.com" || link == "www.onedrive.live.com" || link == "1drv.ms"{
             self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
             self.cloudImage.image = UIImage(named: "onedrive")
             self.cloudLink.setTitle("OneDrive Bağlantısı", for: .normal)
         }else if link == "mega.nz" || link == "www.mega.nz"{
             self.cloudDriveLink.isHidden = false
+            removeLink.isHidden = false
             self.cloudImage.image = UIImage(named: "mega")
             self.cloudLink.setTitle("Mega.nz Bağlantısı", for: .normal)
         }else{
             self.cloudDriveLink.isHidden = true
+            removeLink.isHidden = false
+            Utilities.errorProgress(msg: "Bu Bağlantıyı Tanımayamadık")
         }
         
     }
@@ -278,6 +302,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
         view.addSubview(cloudDriveLink)
         cloudDriveLink.anchor(top: stack.bottomAnchor, left: stack.leftAnchor, bottom: nil, rigth: nil, marginTop: 5, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
+        
+        view.addSubview(removeLink)
+        removeLink.anchor(top: stack.bottomAnchor, left: nil, bottom: nil, rigth: stack.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 20, width: 0, heigth: 25)
+
+        removeLink.isHidden = true
+        
         cloudDriveLink.isHidden = true
  
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()

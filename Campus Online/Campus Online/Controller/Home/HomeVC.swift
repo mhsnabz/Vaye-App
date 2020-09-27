@@ -819,6 +819,22 @@ extension HomeVC : NewPostHomeVCDataDelegate {
 
 extension HomeVC : NewPostHomeVCDelegate {
 
+    
+    func clickMention(username: String) {
+        if "@\(username)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true, completion: nil)
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+
+                sself.present(vc, animated: true, completion: nil)
+            }
+        }
+    }
     func showProfile(for cell: NewPostHomeVC) {
         guard  let post = cell.lessonPostModel else {
             return
