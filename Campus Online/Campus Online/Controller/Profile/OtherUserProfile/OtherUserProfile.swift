@@ -12,13 +12,16 @@ import FirebaseFirestore
 private let cellId = "id"
 private let profileId = "profileId"
 
-
+import FirebaseStorage
 private let cellID = "cell_text"
 private let cellData = "cell_data"
 private let cellAds = "cell_ads"
 private let loadMoreCell = "cell_load_more"
 class OtherUserProfile: UIViewController  {
 
+    var selectedIndex : IndexPath?
+    var selectedPostID : String?
+    
     weak var delegate : OtherUserProfileHeaderDelegate?
     var currentUser : CurrentUser
     var otherUser : OtherUser
@@ -41,6 +44,9 @@ class OtherUserProfile: UIViewController  {
     
     lazy var lessonPostModel = [LessonPostModel]()
     
+    
+
+    private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     
     
     var adUnitID = "ca-app-pub-3940256099942544/4411468910"
@@ -96,6 +102,7 @@ class OtherUserProfile: UIViewController  {
     init(currentUser : CurrentUser, otherUser : OtherUser) {
         self.currentUser = currentUser
         self.otherUser = otherUser
+        self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -105,8 +112,182 @@ class OtherUserProfile: UIViewController  {
     
     
     //MARK: -functions
+    private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: "Ders Siliniyor")
+       
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                let abc = Firestore.firestore().collection(sself.currentUser.short_school)
+                    .document("lesson").collection(sself.currentUser.bolum)
+                    .document(lessonName!).collection("fallowers").document(sself.currentUser.username)
+                abc.delete { (err) in
+                    if err == nil {
+                        sself.getAllPost(currentUser: sself.currentUser, lessonName: lessonName) { (val) in
+                            sself.removeAllPost(postId: val, currentUser: sself.currentUser) { (_val) in
+                                if _val{
+                                    completion(true)
+                                    Utilities.succesProgress(msg : "Ders Silindi")
+                                    sself.collectionview.reloadData()
+                                }else{
+                                    completion(false)
+                                  Utilities.errorProgress(msg: "Ders Silinemedi")
+                                }
+                            }
+                        }
+                        
+                    }else{
+                        completion(false)
+                        Utilities.errorProgress(msg: "Ders Silinemedi")
+                    }
+                }
+            }else{
+                completion(false)
+                Utilities.errorProgress(msg: "Ders Silinemedi")
+            }
+        }
+    }
     
+    private func removeAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.delete { (err) in
+                if err == nil {
+                    completion(true)
+                    let dbFav = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("fav-post").document(item)
+                    dbFav.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snap = docSnap else {
+                                completion(true)
+                                return }
+                            if snap.exists{
+                                dbFav.delete()
+                            }
+                        }
+                        completion(true)
+                    }
+                    
+                }else{
+                    completion(false)
+                }
+            }
+        }
+        
+    }
+    private func getAllPost(currentUser : CurrentUser , lessonName : String , completion : @escaping([String]) ->Void){
+         //İSTE/lesson-post/post/1599800825321
+         var postId = [String]()
+         let db = Firestore.firestore().collection(currentUser.short_school)
+             .document("lesson-post").collection("post").whereField("lessonName", isEqualTo: lessonName)
+         db.getDocuments { (querySnap, err) in
+             if err == nil {
+                 guard let snap = querySnap else {
+                     completion([])
+                     return }
+                 for doc in snap.documents {
+                     postId.append(doc.documentID)
+                 }
+                 completion(postId)
+             }
+         }
+     }
+    private func setLike(post : LessonPostModel , completion : @escaping(Bool) ->Void){
+        
+        if !post.likes.contains(currentUser.uid){
+            post.likes.append(self.currentUser.uid)
+            post.dislike.remove(element: self.currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                db.updateData(["dislike":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+                }
+            }
+        }else{
+            post.likes.remove(element: self.currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                completion(true)
+            }
+        }
+        
+      
+    }
+    private func setFav(post : LessonPostModel , completion : @escaping(Bool) ->Void){
+        if !post.favori.contains(currentUser.uid){
+            post.favori.append(currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayUnion([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid).collection("fav-post").document(post.postId)
+                let dic = ["postId":post.postId as Any] as [String:Any]
+                dbc.setData(dic, merge: true) { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+            }
+            
+        }
+        else{
+            post.favori.remove(element: currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayRemove([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid).collection("fav-post").document(post.postId)
+                dbc.delete { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+                
+            }
+            
+        }
+    }
     
+    private func setDislike(post : LessonPostModel , completion : @escaping(Bool)->Void){
+        if !post.dislike.contains(currentUser.uid){
+            post.likes.remove(element: currentUser.uid)
+            post.dislike.append(currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                if err == nil {
+                    db.updateData(["likes":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+                    }
+                }
+            }
+        }else{
+            post.dislike.remove(element: self.currentUser.uid)
+            collectionview.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                completion(true)
+            }
+        }
+    }
     fileprivate func getPost(){
             isHomePost = true
             lessonPostModel = [LessonPostModel]()
@@ -197,6 +378,20 @@ class OtherUserProfile: UIViewController  {
                 
 //                loadMore = false
                 
+            }
+        }
+    }
+    private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(userId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return }
+                if snap.exists {
+                    completion(OtherUser.init(dic: docSnap!.data()!))
+                }
             }
         }
     }
@@ -431,7 +626,25 @@ struct helps {
 
 extension OtherUserProfile : NewPostHomeVCDataDelegate {
     func options(for cell: NewPostHomeVCData) {
-        
+       print("click option")
+        if schoolPotsDelegate{
+            guard  let post = cell.lessonPostModel else {
+                return
+            }
+             
+                Utilities.waitProgress(msg: nil)
+                actionOtherUserSheet.delegate = self
+                guard let  index = collectionview.indexPath(for: cell) else { return }
+                selectedIndex = index
+                selectedPostID = lessonPostModel[index.row].postId
+                getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                    guard let sself = self else { return }
+                    Utilities.dismissProgress()
+                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    
+                }
+            
+        }
     }
     
     func like(for cell: NewPostHomeVCData) {
@@ -467,34 +680,60 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
 
 
 extension OtherUserProfile : NewPostHomeVCDelegate{
+    func showProfile(for cell: NewPostHomeVC) {
+    }
+    func linkClick(for cell: NewPostHomeVC) {
+        guard let url = URL(string: (cell.lessonPostModel?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+    
     func options(for cell: NewPostHomeVC) {
+        guard  let post = cell.lessonPostModel else {
+            return
+        }
+        print("click option")
+         if schoolPotsDelegate{
+             
             
+                 Utilities.waitProgress(msg: nil)
+                 actionOtherUserSheet.delegate = self
+                 guard let  index = collectionview.indexPath(for: cell) else { return }
+                 selectedIndex = index
+                 selectedPostID = lessonPostModel[index.row].postId
+                 getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                     guard let sself = self else { return }
+                     Utilities.dismissProgress()
+                     sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                     
+                 }
+             
+         }
+        
     }
     
     func like(for cell: NewPostHomeVC) {
         
+        
+        guard let post = cell.lessonPostModel else { return }
+        setLike(post: post) { (_) in }
     }
     
     func dislike(for cell: NewPostHomeVC) {
-        
+        guard let post = cell.lessonPostModel else { return }
+        setDislike(post: post) { (_) in }
     }
     
     func fav(for cell: NewPostHomeVC) {
-        
+        guard let post = cell.lessonPostModel else { return }
+        setFav(post: post) { (_) in }
     }
     
     func comment(for cell: NewPostHomeVC) {
-        
+        print("comment click")
     }
-    
-    func linkClick(for cell: NewPostHomeVC) {
-        
-    }
-    
-    func showProfile(for cell: NewPostHomeVC) {
-        
-    }
-    
+   
     
 }
 
@@ -522,6 +761,61 @@ extension OtherUserProfile : OtherUserProfileHeaderDelegate {
         schoolPost = false
         coPost = true
 
+    }
+    
+    
+}
+extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
+    func didSelect(option: ActionSheetOtherUserOptions)
+    {
+        switch option {
+        
+        case .fallowUser(_):
+            if schoolPotsDelegate {
+                print("called")
+                Utilities.waitProgress(msg: "")
+                guard let index = selectedIndex else {
+                    Utilities.dismissProgress()
+                    return }
+                UserService.shared.fetchOtherUser(uid: lessonPostModel[index.row].senderUid) {[weak self] (user) in
+                    guard let sself = self else {
+                        Utilities.dismissProgress()
+                        return}
+                    let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    sself.present(controller, animated: true) {
+                        Utilities.dismissProgress()
+                    }
+                }
+            }
+            break
+        case .slientUser(_):
+            
+            break
+        case .deleteLesson(_):
+            if schoolPotsDelegate {
+                guard let index = selectedIndex else {
+                Utilities.dismissProgress()
+                return }
+                removeLesson(lessonName: lessonPostModel[index.row].lessonName) { (_) in
+                    self.getPost()  
+            }
+            }
+        break
+        case .slientLesson(_):
+            
+            break
+        case .slientPost(_):
+           
+            break
+        case .reportPost(_):
+           
+            break
+        case .reportUser(_):
+           
+            break
+        }
     }
     
     
