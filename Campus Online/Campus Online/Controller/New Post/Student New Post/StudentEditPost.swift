@@ -504,6 +504,53 @@ class StudentEditPost: UIViewController {
         }
         
     }
+    private func getSavedTask(currentUser : CurrentUser ){
+        Utilities.waitProgress(msg: "")
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/saved-task/task
+        let db = Firestore.firestore().collection("user").document(currentUser.uid).collection("saved-task")
+            .document("task")
+        db.getDocument {[weak self] (docSnap, err) in
+            if err == nil {
+                guard let sself = self else { return }
+                guard let snap = docSnap else { return }
+                if snap.exists {
+                
+                
+                    sself.moveSavedTaskToPost(post: sself.post, urls: snap.get("data") as! [String], currentUser: sself.currentUser) { (_) in
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    
+ 
+
+    
+    private func moveSavedTaskToPost(post : LessonPostModel ,urls : [String], currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        ///İSTE/lesson-post/post/1600774976770
+        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")
+            .collection("post").document(post.postId)
+        for item in urls{
+            db.updateData(["data":FieldValue.arrayUnion([item as Any])]) {[weak self] (err) in
+                if err == nil {
+                    self?.removeSavedTask(url: item, currentUser: currentUser)
+                }
+            }
+        }
+        completion(true)
+    }
+    private func removeSavedTask(url : String,currentUser : CurrentUser  ){
+        let db = Firestore.firestore().collection("user").document(currentUser.uid).collection("saved-task")
+            .document("task")
+       
+        db.updateData(["data":FieldValue.arrayRemove([url as Any])]) { (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Dosya Eklendi")
+            }
+        }
+    }
 }
 extension StudentEditPost : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 {
@@ -611,7 +658,8 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
 //                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
                 UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
                     print(val[0])
-                    self?.updateData(url: val[0], postId: self!.post.postId, currentUser: self!.currentUser) { (_) in
+                    guard let sself = self else { return }
+                    self?.updateData(url: val[0], postId:sself.post.postId, currentUser: sself.currentUser) { (_) in
                         self?.post.data.append(val[0])
                         self?.collectionview.reloadData()
                         Utilities.succesProgress(msg: "Dosya Eklendi")
@@ -632,7 +680,8 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
 //                self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
                 UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["pdf"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
                     print(val[0])
-                    self?.updateData(url: val[0], postId: self!.post.postId, currentUser: self!.currentUser) { (_) in
+                    guard let sself = self else { return }
+                    self?.updateData(url: val[0], postId: sself.post.postId, currentUser: sself.currentUser) { (_) in
                         self?.post.data.append(val[0])
                         self?.collectionview.reloadData()
                         Utilities.succesProgress(msg: "Dosya Eklendi")
@@ -650,7 +699,8 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
             do {
                 UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
                     print(val[0])
-                    self?.updateData(url: val[0], postId: self!.post.postId, currentUser: self!.currentUser) { (_) in
+                    guard let sself = self else { return }
+                    self?.updateData(url: val[0], postId: sself.post.postId, currentUser: sself.currentUser) { (_) in
                         self?.post.data.append(val[0])
                         self?.collectionview.reloadData()
                         Utilities.succesProgress(msg: "Dosya Eklendi")
@@ -702,74 +752,116 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
 {
     //İSTE/Bilgisayar Mühendisliği/Bilişim Hukuku/@mhsnabz/1600038956210
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let date = Int64(Date().timeIntervalSince1970 * 1000).description
+        Utilities.waitProgress(msg: "Resim Ekleniyor")
         guard let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return}
         let metaDataForImage = StorageMetadata()
         metaDataForImage.contentType = "image/jpeg"
         guard let uploadData = selectedImage.jpegData(compressionQuality: 1) else { return }
-        let filename = date + ".jpg"
         let storageRef = Storage.storage().reference().child(currentUser.short_school)
-            .child(currentUser.bolum).child(post.lessonName).child(currentUser.username)
-            .child(post.postId).child(filename)
-        SVProgressHUD.setBackgroundColor(.black)
-        SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
-        SVProgressHUD.setDefaultStyle(.dark)
-        SVProgressHUD.setBorderColor(.white)
-        SVProgressHUD.setForegroundColor(.white)
-        
-      uploadTask =  storageRef.putData(uploadData, metadata: metaDataForImage, completion: { (metadata, err) in
-            if err != nil {
-                SVProgressHUD.showError(withStatus: "Hata Oluştu")
-                print("failed upload image")
-                return
-            }
-            Utilities.waitProgress(msg: "Resim Yükleniyor")
-            storageRef.downloadURL {[weak self] (url, err) in
-                if err == nil {
-                    guard let url = url?.absoluteString else {
-                        print("DEBUG : profile Image url is null")
-                        return
-                    }
-                    guard let sself = self else { return }
-                    ///İSTE/lesson-post/post/1599978424725
-                    let db = Firestore.firestore().collection(sself.currentUser.short_school).document("lesson-post")
-                        .collection("post").document(sself.post.postId)
-                    //db.updateData(["data":FieldValue.arrayRemove([url as Any])])
-                    db.updateData(["data":FieldValue.arrayUnion([url as Any])]) { (err) in
-                        if err == nil
-                        {
-                            
-                            sself.post.data.append(url)
-                            sself.collectionview.reloadData()
-                            Utilities.dismissProgress()
-                            Utilities.succesProgress(msg: "Resim Yüklendi")
-                            sself.dismiss(animated: true, completion: nil)
-                        }else{
-                            SVProgressHUD.showError(withStatus: "Hata Oluştu")
+            .child(currentUser.bolum).child(post.lessonName).child(currentUser.username).child(post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
+        uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage, completion: {[weak self] (metaData, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                storageRef.downloadURL { (url, err) in
+                    guard let downloadUrl = url?.absoluteString else { return }
+                    let db = Firestore.firestore().collection(sself.currentUser.short_school)
+                        .document("lesson-post").collection("post").document(sself.post.postId)
+                    db.updateData(["data": FieldValue.arrayUnion([downloadUrl as Any])]) { (err) in
+                        if err == nil {
+                            let thumbRef = Storage.storage().reference().child(sself.currentUser.short_school + " thumb")
+                                .child(sself.currentUser.bolum).child(sself.post.lessonName).child(sself.currentUser.username).child(sself.post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
+                            let image : UIImage = UIImage(data: uploadData)!
+                            guard let thumbData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
+                            thumbRef.putData(thumbData, metadata: metaDataForImage) { (metaData, err) in
+                                if err == nil {
+                                    thumbRef.downloadURL { (url, err) in
+                                        if err == nil {
+                                            guard let url = url?.absoluteString else { return }
+                                            let dbc = Firestore.firestore().collection(sself.currentUser.short_school)
+                                                .document("lesson-post").collection("post").document(sself.post.postId)
+                                            dbc.updateData(["thumbData":FieldValue.arrayUnion([url as Any])]) { (err) in
+                                                if err == nil {
+                                                   
+                                                    sself.dismiss(animated: true, completion: nil)
+                                                    sself.post.data.append(url)
+                                                    sself.collectionview.reloadData()
+                                                    Utilities.succesProgress(msg: "Resim Eklendi")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        
-                        
                     }
-                   
-                   
                 }
                
             }
-            
         })
+        uploadFiles(uploadTask: uploadTask! , count : 0 , percentTotal: 5 , data: uploadData)
+//        sself.post.data.append(url)
+//        sself.collectionview.reloadData()
+//        sself.dismiss(animated: true, completion: nil)
+//        Utilities.succesProgress(msg: "Dosya Eklendi")
+//        UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["jpg"], data: [uploadData]) {[weak self] (val) in
+//            print(val[0])
+//            guard let sself = self else { return }
+//            sself.updateData(url: val[0], postId: sself.post.postId, currentUser: sself.currentUser) { (_) in
+//
+//                sself.getSavedTask(currentUser: sself.currentUser)
+//                sself.post.data.append(val[0])
+//                sself.collectionview.reloadData()
+//                Utilities.succesProgress(msg: "Dosya Eklendi")
+//                sself.dismiss(animated: true, completion: nil)
+//            }
+            
+//        }
+        
+//      uploadTask =  storageRef.putData(uploadData, metadata: metaDataForImage, completion: { (metadata, err) in
+//            if err != nil {
+//                SVProgressHUD.showError(withStatus: "Hata Oluştu")
+//                print("failed upload image")
+//                return
+//            }
+//            Utilities.waitProgress(msg: "Resim Yükleniyor")
+//            storageRef.downloadURL {[weak self] (url, err) in
+//                if err == nil {
+//                    guard let url = url?.absoluteString else {
+//                        print("DEBUG : profile Image url is null")
+//                        return
+//                    }
+//                    guard let sself = self else { return }
+//                    ///İSTE/lesson-post/post/1599978424725
+//                    let db = Firestore.firestore().collection(sself.currentUser.short_school).document("lesson-post")
+//                        .collection("post").document(sself.post.postId)
+//                    //db.updateData(["data":FieldValue.arrayRemove([url as Any])])
+//                    db.updateData(["data":FieldValue.arrayUnion([url as Any])]) { (err) in
+//                        if err == nil
+//                        {
+//
+//                            sself.post.data.append(url)
+//                            sself.collectionview.reloadData()
+//                            Utilities.dismissProgress()
+//                            Utilities.succesProgress(msg: "Resim Yüklendi")
+//                            sself.dismiss(animated: true, completion: nil)
+//                        }else{
+//                            SVProgressHUD.showError(withStatus: "Hata Oluştu")
+//                        }
+//
+//
+//                    }
+//
+//
+//                }
+//
+//            }
+//
+//        })
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             picker.dismiss(animated: true, completion: nil)
         }
-   
-        if uploadTask != nil {
-                    _ = uploadTask!.observe(.progress) { snapshot in
-                        
-                        Utilities.waitProgress(msg: "Resim Yükleniyor")
-
-                    }
-                }
-               
-            }
+    
+    }
     }
    
 
