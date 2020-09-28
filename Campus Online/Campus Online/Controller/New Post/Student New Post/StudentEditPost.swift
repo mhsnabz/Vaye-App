@@ -13,6 +13,7 @@ private let pdf_cell = "pdf"
 private let doc_cell = "doc"
 import FirebaseStorage
 import FirebaseFirestore
+import MobileCoreServices
 import SVProgressHUD
 class StudentEditPost: UIViewController {
     // MARK:-properties
@@ -98,13 +99,13 @@ class StudentEditPost: UIViewController {
     let addDoc : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "doc")!.withRenderingMode(.alwaysOriginal), for: .normal)
-        //           btn.addTarget(self, action: #selector(_addDoc), for: .touchUpInside)
+                   btn.addTarget(self, action: #selector(_addDoc), for: .touchUpInside)
         return btn
     }()
     let addPdf : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "pdf")!.withRenderingMode(.alwaysOriginal), for: .normal)
-        //           btn.addTarget(self, action: #selector(_addPdf), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(_addPdf), for: .touchUpInside)
         return btn
     }()
     let addImage : UIButton = {
@@ -221,7 +222,7 @@ class StudentEditPost: UIViewController {
         }
        
         if data.isEmpty {
-            PostService.shared.updatePost(currentUser: currentUser, postId: post.postId, msgText: text.text, datas: [], link: link) { (_) in
+            PostService.shared.updatePost(currentUser: currentUser, postId: post.postId, msgText: text.text) { (_) in
                 Utilities.succesProgress(msg: "Gönderiniz Güncellendi")
             }
         }
@@ -239,6 +240,19 @@ class StudentEditPost: UIViewController {
         present(vc, animated: true, completion: nil)
                  
     }
+    
+      @objc func _addPdf(){
+          let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
+          importMenu.delegate = self
+          importMenu.modalPresentationStyle = .formSheet
+          self.present(importMenu, animated: true, completion: nil)
+      }
+      @objc func _addDoc(){
+          let importMenu = UIDocumentPickerViewController(documentTypes: ["com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"], in: .import)
+          importMenu.delegate = self
+          importMenu.modalPresentationStyle = .formSheet
+          self.present(importMenu, animated: true, completion: nil)
+      }
     
     //    MARK:- functions
     private func goToLink(_ target : String)
@@ -470,6 +484,26 @@ class StudentEditPost: UIViewController {
             }
         }
     }
+    
+    private func updateData(url : String , postId : String  , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId)
+        db.updateData(["data":FieldValue.arrayUnion([url as Any])]) { (err) in
+            if err == nil {
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson-post").collection("post").document(postId)
+                db.updateData(["thumbData":FieldValue.arrayUnion([url as Any])]) { (err) in
+                    if err == nil {
+                        completion(true)
+
+                    }
+                }
+
+            }
+        }
+        
+    }
 }
 extension StudentEditPost : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 {
@@ -572,9 +606,18 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         if myURL.uti == "com.microsoft.word.doc"
         {
             do {
-                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
-                self.collectionview.reloadData()
-                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+//                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
+//                self.collectionview.reloadData()
+//                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
+                    print(val[0])
+                    self?.updateData(url: val[0], postId: self!.post.postId, currentUser: self!.currentUser) { (_) in
+                        self?.post.data.append(val[0])
+                        self?.collectionview.reloadData()
+                        Utilities.succesProgress(msg: "Dosya Eklendi")
+                    }
+                    
+                }
             }
             catch{
                 print(error)
@@ -583,9 +626,21 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         }else if myURL.uti == "com.adobe.pdf"
         {
             do {
-                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.pdf.description))
-                self.collectionview.reloadData()
-                self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+//                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.pdf.description))
+//
+//                self.collectionview.reloadData()
+//                self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["pdf"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
+                    print(val[0])
+                    self?.updateData(url: val[0], postId: self!.post.postId, currentUser: self!.currentUser) { (_) in
+                        self?.post.data.append(val[0])
+                        self?.collectionview.reloadData()
+                        Utilities.succesProgress(msg: "Dosya Eklendi")
+                    }
+                    
+                    
+                    
+                }
             }
             catch{
                 print(error)
@@ -593,10 +648,17 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         }else if myURL.uti == "org.openxmlformats.wordprocessingml.document"
         {
             do {
-                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
-                
-                self.collectionview.reloadData()
-                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
+                    print(val[0])
+                    self?.updateData(url: val[0], postId: self!.post.postId, currentUser: self!.currentUser) { (_) in
+                        self?.post.data.append(val[0])
+                        self?.collectionview.reloadData()
+                        Utilities.succesProgress(msg: "Dosya Eklendi")
+                    }
+                    
+                    
+                    
+                }
             }
             catch{
                 print(error)
@@ -630,7 +692,8 @@ extension StudentEditPost : EditStudentPostDelegate {
     }
     
     func deletePdf(for cell: StudentEditPostPdfCell) {
-        print("pdf deleted")
+        guard let url = cell.url else { return }
+        self.deleteData(url: url, postId: post.postId, currentUser: currentUser)
     }
     
     

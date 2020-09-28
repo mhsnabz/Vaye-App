@@ -14,15 +14,11 @@ class PostService{
     static let shared = PostService()
     
  ///İSTE/lesson-post/post/1600774976770
-    func updatePost(currentUser : CurrentUser , postId : String , msgText : String ,datas : [String] , link : String?, completion : @escaping(Bool) -> Void ){
+    func updatePost(currentUser : CurrentUser , postId : String , msgText : String, completion : @escaping(Bool) -> Void ){
         
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("lesson-post").collection("post").document(postId)
-        let dic = [
-            "text":msgText,
-            "link":link ?? "",
-            "data":datas
-        ] as [String:Any]
+        let dic = [ "text":msgText ] as [String:Any]
         
         db.updateData(dic) { (err) in
             if err == nil {
