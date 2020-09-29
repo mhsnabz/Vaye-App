@@ -23,6 +23,7 @@ class OtherUserProfile: UIViewController  {
     var selectedPostID : String?
     
     weak var delegate : OtherUserProfileHeaderDelegate?
+    lazy var isFallowing : Bool = false
     var currentUser : CurrentUser
     var otherUser : OtherUser
     var collectionview: UICollectionView!
@@ -66,6 +67,13 @@ class OtherUserProfile: UIViewController  {
         
         return btn
     }()
+    let fallowBtn : UIButton = {
+        let btn = UIButton(type: .system)
+      
+        btn.addTarget(self, action: #selector(fallowUser), for: .touchUpInside)
+        return btn
+        
+    }()
     lazy var headerBar : UIView = {
        let v = UIView()
       
@@ -76,6 +84,10 @@ class OtherUserProfile: UIViewController  {
         titleLbl.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         titleLbl.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
                 titleLbl.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
+        
+        v.addSubview(fallowBtn)
+        fallowBtn.anchor(top: nil, left: nil, bottom: nil, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 12, width: 25, heigth: 25)
+        fallowBtn.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
         
         return v
     }()
@@ -97,6 +109,16 @@ class OtherUserProfile: UIViewController  {
                 self.interstitalAd.present(fromRootViewController: self)
             }
         })
+        UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUser) {[weak self] (val) in
+            guard let sself = self else { return }
+            sself.isFallowing = val
+            if val {
+                sself.fallowBtn.setImage(#imageLiteral(resourceName: "unfollow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+
+            }else{
+                sself.fallowBtn.setImage(#imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+            }
+        }
     }
     
     init(currentUser : CurrentUser, otherUser : OtherUser) {
@@ -480,6 +502,21 @@ class OtherUserProfile: UIViewController  {
     //MARK:- selector
     @objc func dismissVC(){
         self.dismiss(animated: true, completion: nil)
+    }
+    @objc func fallowUser(){
+        if isFallowing{
+            UserService.shared.unFollowUser(currentUser: currentUser, otherUser: otherUser) {[weak self] (_) in
+                guard let sself = self else { return }
+                sself.isFallowing = false
+                sself.fallowBtn.setImage(#imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+            }
+        }else{
+            UserService.shared.fallowUser(currentUser: currentUser, otherUser: otherUser) {[weak self] (_) in
+                guard let sself = self else { return }
+                sself.isFallowing = true
+                sself.fallowBtn.setImage(#imageLiteral(resourceName: "unfollow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+            }
+        }
     }
     
     

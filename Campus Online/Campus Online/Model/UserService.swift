@@ -130,6 +130,39 @@ struct UserService {
             
         }
     }
+     func checkFollowers(currentUser : CurrentUser , otherUser : OtherUser, completion : @escaping(Bool) -> Void ){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
+        db.getDocument { (docSnap, err) in
+          
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists{
+                    completion(true)
+                }else{
+                   completion(false)
+                }
+            }
+        }
+    }
+    func fallowUser(currentUser : CurrentUser , otherUser : OtherUser , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
+        db.setData(["user":currentUser.uid as Any] as [String:Any], merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
+    func unFollowUser(currentUser : CurrentUser , otherUser : OtherUser , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
+        db.delete { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
   
     
 }

@@ -799,64 +799,6 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
             }
         })
         uploadFiles(uploadTask: uploadTask! , count : 0 , percentTotal: 5 , data: uploadData)
-//        sself.post.data.append(url)
-//        sself.collectionview.reloadData()
-//        sself.dismiss(animated: true, completion: nil)
-//        Utilities.succesProgress(msg: "Dosya Eklendi")
-//        UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["jpg"], data: [uploadData]) {[weak self] (val) in
-//            print(val[0])
-//            guard let sself = self else { return }
-//            sself.updateData(url: val[0], postId: sself.post.postId, currentUser: sself.currentUser) { (_) in
-//
-//                sself.getSavedTask(currentUser: sself.currentUser)
-//                sself.post.data.append(val[0])
-//                sself.collectionview.reloadData()
-//                Utilities.succesProgress(msg: "Dosya Eklendi")
-//                sself.dismiss(animated: true, completion: nil)
-//            }
-            
-//        }
-        
-//      uploadTask =  storageRef.putData(uploadData, metadata: metaDataForImage, completion: { (metadata, err) in
-//            if err != nil {
-//                SVProgressHUD.showError(withStatus: "Hata Oluştu")
-//                print("failed upload image")
-//                return
-//            }
-//            Utilities.waitProgress(msg: "Resim Yükleniyor")
-//            storageRef.downloadURL {[weak self] (url, err) in
-//                if err == nil {
-//                    guard let url = url?.absoluteString else {
-//                        print("DEBUG : profile Image url is null")
-//                        return
-//                    }
-//                    guard let sself = self else { return }
-//                    ///İSTE/lesson-post/post/1599978424725
-//                    let db = Firestore.firestore().collection(sself.currentUser.short_school).document("lesson-post")
-//                        .collection("post").document(sself.post.postId)
-//                    //db.updateData(["data":FieldValue.arrayRemove([url as Any])])
-//                    db.updateData(["data":FieldValue.arrayUnion([url as Any])]) { (err) in
-//                        if err == nil
-//                        {
-//
-//                            sself.post.data.append(url)
-//                            sself.collectionview.reloadData()
-//                            Utilities.dismissProgress()
-//                            Utilities.succesProgress(msg: "Resim Yüklendi")
-//                            sself.dismiss(animated: true, completion: nil)
-//                        }else{
-//                            SVProgressHUD.showError(withStatus: "Hata Oluştu")
-//                        }
-//
-//
-//                    }
-//
-//
-//                }
-//
-//            }
-//
-//        })
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             picker.dismiss(animated: true, completion: nil)
         }
