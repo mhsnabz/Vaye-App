@@ -195,7 +195,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
         
         let stackFallow = UIStackView(arrangedSubviews: [fallowingNumber,fallowingLabel,fallowerNumber,fallowerLabel])
         stackFallow.axis = .horizontal
-        stackFallow.spacing = 6
+        stackFallow.spacing = 2
         stackFallow.alignment = .leading
         let stackFallowSize = stackFallow.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
@@ -316,7 +316,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
         }
     private func getFollowingCount(otherUser : OtherUser , completion :@escaping(String) ->Void){
         let db = Firestore.firestore().collection("user")
-            .document(otherUser.uid).collection("fallowing")
+            .document(otherUser.uid).collection("following")
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard  let snap = querySnap else {

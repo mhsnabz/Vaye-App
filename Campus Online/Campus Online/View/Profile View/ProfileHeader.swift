@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SDWebImage
 import SnapKit
-
+import FirebaseFirestore
 class ProfileHeader : UICollectionReusableView {
     var controller : OtherUserProfile?
     weak var delegate : ProfileHeaderDelegate?
@@ -38,9 +38,48 @@ class ProfileHeader : UICollectionReusableView {
             if user.github == ""{
                 github.isHidden = true
             }
-          
+            getFollowersCount(currentUser: user, completion: {[weak self] (val) in
+                guard let sself = self else {
+                    return
+                }
+                sself.fallowerNumber.text = val
+            })
+            getFollowingCount(currentUser: user, completion: {[weak self] (val) in
+                guard let sself = self else {
+                    return
+                }
+                sself.fallowingNumber.text = val
+            })
         }
     }
+    private func getFollowersCount(currentUser : CurrentUser , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
+    private func getFollowingCount(currentUser : CurrentUser , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("following")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
     private let filterView = ProfileFilterView()
   
     
