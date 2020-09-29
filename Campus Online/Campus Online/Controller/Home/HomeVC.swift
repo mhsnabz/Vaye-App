@@ -720,8 +720,9 @@ extension HomeVC : NewPostHomeVCDataDelegate {
         if post.senderUid == currentUser.uid{
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
+            navigationController?.pushViewController(vc, animated: true)
+//            vc.modalPresentationStyle = .fullScreen
+//            present(vc, animated: true, completion: nil)
         }else{
             Utilities.waitProgress(msg: nil)
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -731,9 +732,11 @@ extension HomeVC : NewPostHomeVCDataDelegate {
                 
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
                 vc.modalPresentationStyle = .fullScreen
-                sself.present(vc, animated: true) {
-                    Utilities.dismissProgress()
-                }
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+//                sself.present(vc, animated: true) {
+//
+//                }
         
             }
         }
@@ -843,8 +846,10 @@ extension HomeVC : NewPostHomeVCDelegate {
         if post.senderUid == currentUser.uid{
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
+            let controller = UINavigationController(rootViewController: vc)
+            controller.modalPresentationStyle = .fullScreen
+            present(controller, animated: true, completion: nil)
+//            self.navigationController?.pushViewController(vc, animated: true)
         }else{
             Utilities.waitProgress(msg: nil)
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -852,8 +857,11 @@ extension HomeVC : NewPostHomeVCDelegate {
                     Utilities.dismissProgress()
                 return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.present(vc, animated: true) {
+                let controller = UINavigationController(rootViewController: vc)
+                
+                
+                controller.modalPresentationStyle = .fullScreen
+                sself.present(controller, animated: true) {
                     Utilities.dismissProgress()
                 }
             }

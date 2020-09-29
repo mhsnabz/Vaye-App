@@ -33,29 +33,35 @@ class RepliesComment: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setNavigationBar()
         configureUI()
-        navigationItem.title = "Yanıtlar"
-        
         getComments(currentUser: currentUser)
+       
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         messagesListener?.remove()
+        navigationController?.navigationBar.isHidden = true
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         messagesListener?.remove()
+        navigationController?.navigationBar.isHidden = true
+
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        self.navigationController?.navigationBar.isHidden = false
+        self.setNavigationBar()
+        self.navigationItem.title = "Yanıtlar"
     }
     
     init(comment : CommentModel , currentUser : CurrentUser) {
         self.comment = comment
         self.currentUser = currentUser
+        
         super.init(nibName: nil, bundle: nil)
+       
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

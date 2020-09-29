@@ -49,7 +49,7 @@ class ProfileFilterView : UIView {
 }
 extension ProfileFilterView : UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return option.options.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -68,13 +68,14 @@ extension ProfileFilterView : UICollectionViewDelegate,UICollectionViewDataSourc
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 4, height: frame.height)
+        return CGSize(width: frame.width / CGFloat(option.options.count), height: frame.height)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath)
         delegate?.ShowFilterUnderLine(self, didSelect: indexPath)
         filterDelagate?.didSelectOption(option: option.options[indexPath.row])
     }

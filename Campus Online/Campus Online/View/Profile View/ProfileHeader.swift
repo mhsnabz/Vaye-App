@@ -113,7 +113,7 @@ class ProfileHeader : UICollectionReusableView {
         lbl.textColor = .black
         return lbl
     }()
-    private let underLine : UIView = {
+     let underLine : UIView = {
        let view = UIView()
         view.backgroundColor = .black
         return view
@@ -188,7 +188,9 @@ class ProfileHeader : UICollectionReusableView {
         addSubview(filterView)
         filterView.anchor(top: stackView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
 
-
+        addSubview(underLine)
+        
+        underLine.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: frame.width / 4, heigth: 2)
         
     }
     
@@ -270,8 +272,7 @@ extension ProfileHeader : ProfileFilterDelegate {
             ProfileFilterCell else{
                 return
         }
-        let xPosition = cell.frame.origin.x 
-     
+        let xPosition = cell.frame.origin.x
         UIView.animate(withDuration: 0.3) {
             self.underLine.frame.origin.x = xPosition
         }

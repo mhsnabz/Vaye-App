@@ -136,10 +136,10 @@ extension MenuController : MenuHeaderDelegate {
     
     func showProfile() {
         let vc = ProfileVC(currentUser: currentUser)
-        
-        vc.modalPresentationStyle = .fullScreen
         vc.currentUser = currentUser
-        self.present(vc, animated: true, completion: nil)
+        navigationController?.pushViewController(vc, animated: true)
+//        controller.modalPresentationStyle = .fullScreen
+//        self.present(controller, animated: true, completion: nil)
     }
     
     func editProfile() {

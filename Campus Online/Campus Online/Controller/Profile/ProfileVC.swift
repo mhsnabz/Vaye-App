@@ -20,7 +20,7 @@ import FirebaseStorage
 class ProfileVC: UIViewController {
 
     //MARK: - variables
-    
+    var controller : UIViewController!
     lazy var count : Int = 0
     lazy var sizeForItemAt : CGSize = .zero
     var currentUser : CurrentUser
@@ -100,14 +100,22 @@ class ProfileVC: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBar()
+        navigationController?.navigationBar.isHidden = false
+        navigationItem.title = currentUser.username
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
         configureUI()
+        
         configureCollectionView()
         titleLbl.text = currentUser.username
         getPost()
+   
     }
     
     
@@ -584,9 +592,9 @@ class ProfileVC: UIViewController {
     
     func configureUI(){
          view.backgroundColor = .white
-         view.addSubview(headerBar)
-        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
-         dissmisButton.addTarget(self, action: #selector(dissmis), for: .touchUpInside)
+//         view.addSubview(headerBar)
+//        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
+//         dissmisButton.addTarget(self, action: #selector(dissmis), for: .touchUpInside)
      }
     
     func configureCollectionView(){
@@ -604,11 +612,11 @@ class ProfileVC: UIViewController {
         
         collectionview.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
              view.addSubview(collectionview)
-        collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
          }
     
      @objc func dissmis(){
-         self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
      }
    
 
@@ -940,7 +948,14 @@ extension ProfileVC : NewPostHomeVCDelegate {
     }
     
     func comment(for cell: NewPostHomeVC) {
-        print("comment click")
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
+        
+//        let centralController = UINavigationController(rootViewController: vc)
+//        centralController.modalPresentationStyle = .fullScreen
+//        present(centralController, animated: true, completion: nil)
+      
     }
     
     
@@ -1017,7 +1032,12 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
     }
     
     func comment(for cell: NewPostHomeVCData) {
-        
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
+//        vc.modalPresentationStyle = .fullScreen
+//        present(vc, animated: true, completion: nil)
+//        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: NewPostHomeVCData) {

@@ -33,12 +33,12 @@ class CommentVC: UIViewController {
     }()
     
     //MARK: -lifeCycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setNavigationBar()
-        navigationItem.title = post.lessonName
+ 
+        
         hideKeyboardWhenTappedAround()
         configureUI()
         
@@ -58,6 +58,9 @@ class CommentVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        navigationController?.navigationBar.isHidden = false
+        setNavigationBar()
+        navigationItem.title = post.lessonName
 
     }
   
@@ -65,10 +68,12 @@ class CommentVC: UIViewController {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
         messagesListener?.remove()
+//        navigationController?.navigationBar.isHidden = true
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         messagesListener?.remove()
+//        navigationController?.navigationBar.isHidden = true
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -267,6 +272,7 @@ class CommentVC: UIViewController {
             guard let sself = self  else { return }
             sself.tableView.reloadData()
             let vc = RepliesComment(comment : sself.comment[indexPath.row] , currentUser : sself.currentUser)
+         
             sself.navigationController?.pushViewController(vc, animated: true)
         }
         action.backgroundColor = .mainColor()

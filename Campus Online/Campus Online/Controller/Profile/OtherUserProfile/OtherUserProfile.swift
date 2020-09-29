@@ -102,25 +102,34 @@ class OtherUserProfile: UIViewController  {
         configureCollectionView()
         getPost()
         interstitalAd = createAd()
-        navigationController?.navigationBar.isHidden = true
+   
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
             if self.interstitalAd.isReady {
                 self.interstitalAd.present(fromRootViewController: self)
             }
         })
+        navigationItem.title = otherUser.username
         UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUser) {[weak self] (val) in
             guard let sself = self else { return }
             sself.isFallowing = val
             if val {
-                sself.fallowBtn.setImage(#imageLiteral(resourceName: "unfollow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+                sself.navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "unfollow-user").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(sself.fallowUser))
+                
+               
 
             }else{
-                sself.fallowBtn.setImage(#imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+                sself.navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(sself.fallowUser))
             }
         }
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBar()
+        navigationController?.navigationBar.isHidden = false
+        
+        
+    }
     init(currentUser : CurrentUser, otherUser : OtherUser) {
         self.currentUser = currentUser
         self.otherUser = otherUser
@@ -492,7 +501,7 @@ class OtherUserProfile: UIViewController  {
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
         collectionview.register(OtherUserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
              view.addSubview(collectionview)
-        collectionview.anchor(top: headerBar.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
          }
     
      @objc func dissmis(){
@@ -518,6 +527,8 @@ class OtherUserProfile: UIViewController  {
             }
         }
     }
+    
+    
     
     
 }
@@ -686,18 +697,24 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
     
     func like(for cell: NewPostHomeVCData) {
         
+        guard let post = cell.lessonPostModel else { return }
+        setLike(post: post) { (_) in }
     }
     
     func dislike(for cell: NewPostHomeVCData) {
-                
+        guard let post = cell.lessonPostModel else { return }
+        setDislike(post: post) { (_) in }
     }
     
     func fav(for cell: NewPostHomeVCData) {
-            
+        guard let post = cell.lessonPostModel else { return }
+        setFav(post: post) { (_) in }
     }
     
     func comment(for cell: NewPostHomeVCData) {
-        
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: NewPostHomeVCData) {
@@ -795,7 +812,9 @@ extension OtherUserProfile : NewPostHomeVCDelegate{
     }
     
     func comment(for cell: NewPostHomeVC) {
-        print("comment click")
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
     }
    
    

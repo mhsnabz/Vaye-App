@@ -84,7 +84,12 @@ class RepliedHeader: UITableViewHeaderFooterView
         
         name = NSMutableAttributedString(string: "\(comment.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(comment.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
-        name.append(NSAttributedString(string: " \(comment.time!.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        if comment.time == nil {
+            name.append(NSAttributedString(string: " şimdi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        }else{
+            name.append(NSAttributedString(string: " \(comment.time!.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        }
+        
         userName.attributedText = name
         msgText.text = comment.comment
         profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
