@@ -102,6 +102,16 @@ class ActionSheetOtherUserLaunher : NSObject{
                         sself.tableView.reloadData()
                         Utilities.succesProgress(msg: nil)
                     }
+                    let db = Firestore.firestore().collection("user")
+                        .document(sself.currentUser.uid)
+                        .collection("following").document(sself.otherUser!.uid)
+                    db.delete { (err) in
+                        if err == nil {
+                            Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
+                        }else{
+                            Utilities.errorProgress(msg: nil)
+                        }
+                    }
                 
                 
                 }
@@ -118,7 +128,17 @@ class ActionSheetOtherUserLaunher : NSObject{
                         sself.tableView.reloadData()
                         Utilities.succesProgress(msg: nil)
                     }
-                
+                    let db = Firestore.firestore().collection("user")
+                        .document(sself.currentUser.uid)
+                        .collection("following").document(sself.otherUser!.uid)
+                  
+                    db.setData(["user":sself.otherUser!.uid as Any], merge: true) { (err) in
+                        if err == nil{
+                            Utilities.succesProgress(msg: "Takip Ediliyor")
+                        }else{
+                            Utilities.errorProgress(msg: nil)
+                        }
+                    }
                   
                 }
             }

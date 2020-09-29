@@ -514,24 +514,48 @@ class OtherUserProfile: UIViewController  {
     }
     @objc func fallowUser(){
         if isFallowing{
+            Utilities.waitProgress(msg: nil)
             UserService.shared.unFollowUser(currentUser: currentUser, otherUser: otherUser) {[weak self] (_) in
                 guard let sself = self else { return }
                 sself.isFallowing = false
-                sself.fallowBtn.setImage(#imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+                sself.navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(sself.fallowUser))
+                let db = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid)
+                    .collection("following").document(sself.otherUser.uid)
+                db.delete { (err) in
+                    if err == nil {
+                        Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
+                    }else{
+                        Utilities.errorProgress(msg: nil)
+                    }
+                }
+              
             }
         }else{
             UserService.shared.fallowUser(currentUser: currentUser, otherUser: otherUser) {[weak self] (_) in
                 guard let sself = self else { return }
                 sself.isFallowing = true
-                sself.fallowBtn.setImage(#imageLiteral(resourceName: "unfollow-user").withRenderingMode(.alwaysOriginal), for: .normal)
+                sself.navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "unfollow-user").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(sself.fallowUser))
+                let db = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid)
+                    .collection("following").document(sself.otherUser.uid)
+              
+                db.setData(["user":sself.otherUser.uid as Any], merge: true) { (err) in
+                    if err == nil{
+                        Utilities.succesProgress(msg: "Takip Ediliyor")
+                    }else{
+                        Utilities.errorProgress(msg: nil)
+                    }
+                }
             }
         }
     }
     
+   
+    }
     
     
-    
-}
+
 extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if homePost

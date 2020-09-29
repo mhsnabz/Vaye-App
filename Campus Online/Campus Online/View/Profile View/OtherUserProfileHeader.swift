@@ -11,6 +11,7 @@ import UIKit
 import SDWebImage
 import SnapKit
 import GoogleMobileAds
+import FirebaseFirestore
 class OtherUserProfileHeader: UICollectionViewCell {
   
     
@@ -50,6 +51,18 @@ class OtherUserProfileHeader: UICollectionViewCell {
             }
             filterView.helps = helps
      
+            getFollowersCount(otherUser: user, completion: {[weak self] (val) in
+                guard let sself = self else {
+                    return
+                }
+                sself.fallowerNumber.text = val
+            })
+            getFollowingCount(otherUser: user, completion: {[weak self] (val) in
+                guard let sself = self else {
+                    return
+                }
+                sself.fallowingNumber.text = val
+            })
         }
     }
 
@@ -129,7 +142,12 @@ class OtherUserProfileHeader: UICollectionViewCell {
         view.backgroundColor = .black
         return view
     }()
-    
+    lazy var sendMsg : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "send-msg")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(sendmsg), for: .touchUpInside)
+        return btn
+    }()
     lazy var github : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "github")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -185,12 +203,15 @@ class OtherUserProfileHeader: UICollectionViewCell {
         stackFallow.anchor(top: profileImage.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: stackFallowSize.width, heigth: stackFallowSize.height)
         print(stackFallowSize.height + 20 )
         
+        addSubview(sendMsg)
+        sendMsg.anchor(top: stackFallow.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 40, heigth: 40)
+        
         let stackSocial = UIStackView(arrangedSubviews: [github,linkedin,twitter,instagram])
         stackSocial.axis = .horizontal
         stackSocial.distribution = .fillEqually
         stackSocial.spacing = 20
         addSubview(stackSocial)
-        stackSocial.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
+        stackSocial.anchor(top: stackFallow.bottomAnchor, left: sendMsg.rightAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
         
         addSubview(filterView)
         filterView.anchor(top: stackSocial.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: frame.width, heigth: 30)
@@ -209,6 +230,9 @@ class OtherUserProfileHeader: UICollectionViewCell {
   
     
     //MARK:-selectors
+    @objc func sendmsg(){
+        
+    }
     @objc func goGithub(){
         if interstitalGithub.isReady {
             guard let vc = controller else {
@@ -276,6 +300,34 @@ class OtherUserProfileHeader: UICollectionViewCell {
         
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
     }
+    private func getFollowersCount(otherUser : OtherUser , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
+    private func getFollowingCount(otherUser : OtherUser , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("fallowing")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
 }
 
 extension OtherUserProfileHeader : GADInterstitialDelegate {

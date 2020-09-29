@@ -734,9 +734,7 @@ extension HomeVC : NewPostHomeVCDataDelegate {
                 vc.modalPresentationStyle = .fullScreen
                 sself.navigationController?.pushViewController(vc, animated: true)
                 Utilities.dismissProgress()
-//                sself.present(vc, animated: true) {
-//
-//                }
+
         
             }
         }
@@ -846,9 +844,7 @@ extension HomeVC : NewPostHomeVCDelegate {
         if post.senderUid == currentUser.uid{
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
-            let controller = UINavigationController(rootViewController: vc)
-            controller.modalPresentationStyle = .fullScreen
-            present(controller, animated: true, completion: nil)
+            navigationController?.pushViewController(vc, animated: true)
 //            self.navigationController?.pushViewController(vc, animated: true)
         }else{
             Utilities.waitProgress(msg: nil)
@@ -857,13 +853,10 @@ extension HomeVC : NewPostHomeVCDelegate {
                     Utilities.dismissProgress()
                 return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                let controller = UINavigationController(rootViewController: vc)
+                sself.navigationController?.pushViewController(vc, animated: true)
                 
+                Utilities.dismissProgress()
                 
-                controller.modalPresentationStyle = .fullScreen
-                sself.present(controller, animated: true) {
-                    Utilities.dismissProgress()
-                }
             }
         }
         
