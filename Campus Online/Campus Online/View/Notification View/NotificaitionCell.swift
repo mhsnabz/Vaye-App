@@ -13,7 +13,7 @@ class NotificaitionCell: UITableViewCell {
     
     weak var model : NotificationModel?{
         didSet {
-            
+            configure()
         }
     }
     
@@ -25,8 +25,21 @@ class NotificaitionCell: UITableViewCell {
         img.backgroundColor = .white
         return img
     }()
-    
-    
+   lazy var name : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
+    let userName : UILabel = {
+        let lbl = UILabel()
+        lbl.textAlignment = .left
+        return lbl
+    }()
+    let type : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 14)
+        lbl.textColor = .darkGray
+        return lbl
+    }()
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -35,6 +48,11 @@ class NotificaitionCell: UITableViewCell {
         addSubview(profile_image)
         profile_image.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 50, heigth: 50)
         profile_image.layer.cornerRadius = 25
+        addSubview(userName)
+        userName.anchor(top: profile_image.topAnchor, left: profile_image.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 25)
+        addSubview(type)
+        type.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 12, width: 0, heigth: 0)
+        
         
     }
     
@@ -48,6 +66,20 @@ class NotificaitionCell: UITableViewCell {
         // Initialization code
     }
 
+    
+    private func configure(){
+        guard let post = model else { return }
+        
+        name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+        name.append(NSAttributedString(string: " \(post.username ?? "")", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        name.append(NSAttributedString(string: " \(post.time!.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+       
+        userName.attributedText = name
+        profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
+        profile_image.sd_setImage(with: URL(string: post.senderImage))
+        
+        type.text = post.type
+    }
 
 
 }

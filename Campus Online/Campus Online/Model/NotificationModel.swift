@@ -19,6 +19,7 @@ class NotificationModel {
     var senderUid : String!
     var time : Timestamp!
     var type : String!
+    var username : String!
     
     init(not_id : String , dic : Dictionary<String,Any>){
         self.not_id = not_id
@@ -42,6 +43,9 @@ class NotificationModel {
         }
         if let type = dic["type"] as? String{
             self.type = type
+        }
+        if let username = dic["username"] as? String{
+            self.username = username
         }
         if let time = dic["time"] as? Timestamp{
             self.time = time

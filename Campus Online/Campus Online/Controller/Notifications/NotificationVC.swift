@@ -38,7 +38,7 @@ class NotificationVC: UIViewController {
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
         navigationItem.title = "Bildirimler"
-        get_notification(currentUser: currentUser)
+        configureTableViewController()
    
     }
     
@@ -51,6 +51,10 @@ class NotificationVC: UIViewController {
         listener?.remove()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        get_notification(currentUser: currentUser)
+    }
     //MARK: - functions
   
     private func configureTableViewController(){
@@ -64,22 +68,33 @@ class NotificationVC: UIViewController {
     }
     func get_notification(currentUser : CurrentUser )
     {
-        
+        ///user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601492948.048019
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid).collection("notification")
         
         listener = db.addSnapshotListener {[weak self] (querySnap, err) in
             if err == nil {
-                guard let snap = querySnap else {
+                guard let snap = querySnap?.documentChanges else {
                     return
                 }
                 guard let sself = self else { return }
-                for item in snap.documentChanges {
-                    if item.type == .added {
-                        sself.model.append(NotificationModel.init(not_id: item.document.get("not_id") as! String, dic: item.document.data()))
-                        sself.tableView.reloadData()
-                    }
-                }
+                
+                
+                snap.forEach({ (diff) in
+                        print(diff.document.data())
+                        if (diff.type == .added) {
+                            sself.model.append(NotificationModel.init(not_id: diff.document.get("not_id") as! String, dic: diff.document.data()))
+                            sself.tableView.reloadData()
+                        }
+                        else if (diff.type == .modified) {
+
+                        }
+                        else if (diff.type == .removed) {
+
+                        }
+                   })
+                
+
             }
         }
         
@@ -93,14 +108,14 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return model.count
     }
-    
+  
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NotificaitionCell
         cell.model = model[indexPath.row]
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return 100
     }
     
     

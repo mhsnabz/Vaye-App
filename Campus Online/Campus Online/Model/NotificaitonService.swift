@@ -24,6 +24,7 @@ class NotificaitonService{
                        "senderImage":currentUser.thumb_image as Any ,
                        "not_id":notificaitonId,
                        "isRead":false ,
+                       "username":currentUser.username as Any,
                        "postId":post.postId as Any,
                        "senderName":currentUser.name as Any,
                        "lessonName":post.lessonName as Any] as [String : Any]
