@@ -45,15 +45,19 @@ class NotificationVC: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         listener?.remove()
+     
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         listener?.remove()
+      
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        model = [NotificationModel]()
         get_notification(currentUser: currentUser)
+        
     }
     //MARK: - functions
   
@@ -71,6 +75,7 @@ class NotificationVC: UIViewController {
         ///user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601492948.048019
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid).collection("notification")
+       
         
         listener = db.addSnapshotListener {[weak self] (querySnap, err) in
             if err == nil {
@@ -84,13 +89,19 @@ class NotificationVC: UIViewController {
                         print(diff.document.data())
                         if (diff.type == .added) {
                             sself.model.append(NotificationModel.init(not_id: diff.document.get("not_id") as! String, dic: diff.document.data()))
+                            sself.model.sort { (model1, model2) -> Bool in
+                                return model1.not_id > model2.not_id
+                            }
                             sself.tableView.reloadData()
                         }
-                        else if (diff.type == .modified) {
+                        else if (diff.type == .modified)
+                        {
 
                         }
-                        else if (diff.type == .removed) {
-
+                        else if (diff.type == .removed)
+                        {
+                            sself.model.removeAll(where: {$0.not_id == diff.document.documentID})
+                            sself.tableView.reloadData()
                         }
                    })
                 
@@ -109,6 +120,9 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         return model.count
     }
   
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NotificaitionCell
         cell.model = model[indexPath.row]

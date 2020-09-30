@@ -421,10 +421,13 @@ class HomeVC: UIViewController {
             collectionview.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(post.postId)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
-                db.updateData(["dislike":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                db.updateData(["dislike":FieldValue.arrayRemove([sself.currentUser.uid as String])]) { (err) in
                     
                     completion(true)
+     
+                    NotificaitonService.shared.send_home_like_notification(post: post, currentUser: sself.currentUser, notificationDespriction: NotificaitonDescprition.like_home.desprition)
                 }
             }
         }else{
@@ -432,8 +435,9 @@ class HomeVC: UIViewController {
             collectionview.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(post.postId)
-            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
-               
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {[weak self]  (err) in
+                guard let sself = self else { return }
+                NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: sself.currentUser)
                 completion(true)
             }
         }
@@ -769,8 +773,8 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     func like(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
         setLike(post: post) {[weak self] (_) in
-            guard let sself = self else { return }
-            NotificaitonService.shared.send_home_like_notification(post: post, currentUser: sself.currentUser, notificationDespriction: NotificaitonDescprition.like_home.desprition)
+      
+           
         }
         
                
