@@ -25,6 +25,9 @@ class OtherUserProfileHeader: UICollectionViewCell {
     var target : String = ""
     var controller : OtherUserProfile?
     var otherUser : OtherUser?
+    
+    
+    
     var helps : helps?{
         didSet{
           
@@ -55,14 +58,26 @@ class OtherUserProfileHeader: UICollectionViewCell {
                 guard let sself = self else {
                     return
                 }
-                sself.fallowerNumber.text = val
+                sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+                sself.followers.append(NSAttributedString(string: "  Takipçi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+                print(sself.followers)
+                sself.fallowerLabel.attributedText = sself.followers
+              
+                
             })
             getFollowingCount(otherUser: user, completion: {[weak self] (val) in
                 guard let sself = self else {
                     return
                 }
-                sself.fallowingNumber.text = val
+                sself.following = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+                sself.following.append(NSAttributedString(string: "  Takip Edilen  ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+                sself.fallowingLabel.attributedText = sself.following
+                
             })
+            
+         
+            
+            
         }
     }
 
@@ -108,35 +123,26 @@ class OtherUserProfileHeader: UICollectionViewCell {
         lbl.textColor = .darkGray
         return lbl
     }()
-    
+    var followers : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
+    var following : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
     let fallowerLabel : UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
-        lbl.text = "Takipçi"
-        lbl.textColor = .darkGray
+       
         return lbl
     }()
-    let fallowerNumber : UILabel = {
-        let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
-        lbl.text = "25"
-        lbl.textColor = .black
-        return lbl
-    }()
+   
     let fallowingLabel : UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
-        lbl.text = "Takip Edilen"
-        lbl.textColor = .darkGray
+
         return lbl
     }()
-    let fallowingNumber : UILabel = {
-        let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
-        lbl.text = "38"
-        lbl.textColor = .black
-        return lbl
-    }()
+ 
      let underLine : UIView = {
        let view = UIView()
         view.backgroundColor = .black
@@ -185,7 +191,7 @@ class OtherUserProfileHeader: UICollectionViewCell {
         
         let stack = UIStackView(arrangedSubviews: [name,number,school,major,number])
         stack.axis = .vertical
-        stack.spacing = 2
+        stack.spacing = 4
         stack.alignment = .leading
         let stackSize = stack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         addSubview(stack)
@@ -193,15 +199,15 @@ class OtherUserProfileHeader: UICollectionViewCell {
         stack.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
         
         
-        let stackFallow = UIStackView(arrangedSubviews: [fallowingNumber,fallowingLabel,fallowerNumber,fallowerLabel])
+        let stackFallow = UIStackView(arrangedSubviews: [fallowingLabel,fallowerLabel])
         stackFallow.axis = .horizontal
         stackFallow.spacing = 2
         stackFallow.alignment = .leading
-        let stackFallowSize = stackFallow.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+//        let stackFallowSize = stackFallow.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
         addSubview(stackFallow)
-        stackFallow.anchor(top: profileImage.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: stackFallowSize.width, heigth: stackFallowSize.height)
-        print(stackFallowSize.height + 20 )
+        stackFallow.anchor(top: profileImage.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 20, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: 0, heigth: 20)
+ 
         
         addSubview(sendMsg)
         sendMsg.anchor(top: stackFallow.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 40, heigth: 40)

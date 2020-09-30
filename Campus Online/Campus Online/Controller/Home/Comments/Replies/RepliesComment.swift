@@ -210,7 +210,7 @@ class RepliesComment: UIViewController {
     private func setLike(repliedComment : CommentModel , commentID : String , completion : @escaping(Bool) ->Void){
         
         //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601045739666/1601063909445
-        print("comment Id \(comment.commentId)")
+
         if !(repliedComment.likes?.contains(currentUser.uid))!{
             
             repliedComment.likes?.append(currentUser.uid)

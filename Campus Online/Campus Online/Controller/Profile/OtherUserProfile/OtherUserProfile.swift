@@ -21,6 +21,7 @@ class OtherUserProfile: UIViewController  {
 
     var selectedIndex : IndexPath?
     var selectedPostID : String?
+ 
     
     weak var delegate : OtherUserProfileHeaderDelegate?
     lazy var isFallowing : Bool = false
@@ -103,6 +104,7 @@ class OtherUserProfile: UIViewController  {
         getPost()
         interstitalAd = createAd()
    
+      
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
             if self.interstitalAd.isReady {
@@ -488,6 +490,7 @@ class OtherUserProfile: UIViewController  {
          dissmisButton.addTarget(self, action: #selector(dissmis), for: .touchUpInside)
         titleLbl.text = otherUser.username
      }
+  
     
     func configureCollectionView(){
              let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -519,16 +522,8 @@ class OtherUserProfile: UIViewController  {
                 guard let sself = self else { return }
                 sself.isFallowing = false
                 sself.navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "follow-user").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(sself.fallowUser))
-                let db = Firestore.firestore().collection("user")
-                    .document(sself.currentUser.uid)
-                    .collection("following").document(sself.otherUser.uid)
-                db.delete { (err) in
-                    if err == nil {
-                        Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
-                    }else{
-                        Utilities.errorProgress(msg: nil)
-                    }
-                }
+                Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
+
               
             }
         }else{
@@ -550,8 +545,9 @@ class OtherUserProfile: UIViewController  {
             }
         }
     }
+
     
-   
+    
     }
     
     
@@ -646,7 +642,8 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! OtherUserProfileHeader
         header.delegate = self
         header.controller = self
-
+//        header.fallowCount = fallower
+//        header.falowingCount = fallowing
         header.helps = helps(otherUser: otherUser, currentUser: currentUser, option: OtherUserFilterVM(target: TargetFilterView.otherUser.description, otherUser: otherUser, currentUser: currentUser))
         let count = helps(otherUser: otherUser, currentUser: currentUser, option: OtherUserFilterVM(target: TargetFilterView.otherUser.description, otherUser: otherUser, currentUser: currentUser)).option.options.count
         header.underLine.frame = CGRect(x: 0, y: 235, width: Int(header.frame.width) / count, height: 2)

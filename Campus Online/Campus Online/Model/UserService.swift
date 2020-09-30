@@ -151,9 +151,13 @@ struct UserService {
         db.setData(["user":currentUser.uid as Any] as [String:Any], merge: true) { (err) in
             if err == nil {
                 completion(true)
+               
             }
         }
     }
+    
+    
+    
     func unFollowUser(currentUser : CurrentUser , otherUser : OtherUser , completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user")
             .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
@@ -163,6 +167,9 @@ struct UserService {
             }
         }
     }
-  
+    
+     
+    
+ 
     
 }

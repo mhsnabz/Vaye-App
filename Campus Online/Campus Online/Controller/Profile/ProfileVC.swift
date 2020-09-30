@@ -115,6 +115,8 @@ class ProfileVC: UIViewController {
         configureCollectionView()
         titleLbl.text = currentUser.username
         getPost()
+
+    
    
     }
     
