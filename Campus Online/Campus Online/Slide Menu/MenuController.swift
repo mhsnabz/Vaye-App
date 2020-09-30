@@ -138,6 +138,7 @@ extension MenuController : MenuHeaderDelegate {
         let vc = ProfileVC(currentUser: currentUser)
         vc.currentUser = currentUser
         navigationController?.pushViewController(vc, animated: true)
+        dismisMenu()
 //        controller.modalPresentationStyle = .fullScreen
 //        self.present(controller, animated: true, completion: nil)
     }

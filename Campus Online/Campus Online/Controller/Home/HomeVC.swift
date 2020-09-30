@@ -768,7 +768,11 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     
     func like(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
-        setLike(post: post) { (_) in }
+        setLike(post: post) {[weak self] (_) in
+            guard let sself = self else { return }
+            NotificaitonService.shared.send_home_like_notification(post: post, currentUser: sself.currentUser, notificationDespriction: NotificaitonDescprition.like_home.desprition)
+        }
+        
                
     }
     
@@ -933,11 +937,10 @@ extension HomeVC : ActionSheetOtherUserLauncherDelegate{
                     Utilities.dismissProgress()
                     return}
                 let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
-                let controller = UINavigationController(rootViewController: vc)
-                controller.modalPresentationStyle = .fullScreen
-                sself.present(controller, animated: true) {
-                    Utilities.dismissProgress()
-                }
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
+               
             }
     
             break
