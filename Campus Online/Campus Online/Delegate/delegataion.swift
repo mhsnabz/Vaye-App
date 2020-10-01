@@ -72,6 +72,28 @@ protocol NewPostHomeVCDataDelegate : class {
     func showProfile(for cell : NewPostHomeVCData)
     func goProfileByMention (userName : String)
 }
+
+protocol CommentVCDataDelegate : class {
+
+    func like (for header : CommentVCDataHeader)
+    func dislike (for header : CommentVCDataHeader)
+    func fav (for header : CommentVCDataHeader)
+
+    func linkClick(for header : CommentVCDataHeader)
+    func showProfile(for header : CommentVCDataHeader)
+    func goProfileByMention (userName : String)
+}
+protocol CommentVCHeaderDelegate : class {
+
+    func like (for header : CommentVCHeader)
+    func dislike (for header : CommentVCHeader)
+    func fav (for header : CommentVCHeader)
+
+    func linkClick(for header : CommentVCHeader)
+    func showProfile(for header : CommentVCHeader)
+    func goProfileByMention (userName : String)
+}
+
 protocol DataViewClick : class {
     
     func imageClik ( for cell : DataViewImageCell)

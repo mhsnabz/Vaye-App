@@ -10,8 +10,12 @@ import UIKit
 import ActiveLabel
 import SDWebImage
 class CommentVCDataHeader : UITableViewHeaderFooterView{
+    
+    weak var delegate : CommentVCDataDelegate?
+    
     //MARK: -properties
     lazy var filterView = DataView()
+    var currentUser : CurrentUser!
     var post : LessonPostModel?{
         didSet {
             configure()
@@ -20,6 +24,36 @@ class CommentVCDataHeader : UITableViewHeaderFooterView{
                 filterView.arrayOfUrl = post.thumbData
                 filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
+            }
+            
+            guard let currentUser = currentUser else { return }
+            checkIsDisliked(user: currentUser, post: post) {[weak self] (_val) in
+                guard let s = self else { return }
+                if _val {
+                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }else{
+                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }
+            }
+            checkIsLiked(user: currentUser, post: post) {[weak self] (_val) in
+                guard let s = self else { return }
+                if _val{
+                    s.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }else{
+                    s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }
+            }
+            checkIsFav(user: currentUser, post: post) {[weak self] (_val) in
+                guard let s = self else {  return }
+                if _val {
+                    s.addfav.setImage(#imageLiteral(resourceName: "fav-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }else{
+                    s.addfav.setImage(#imageLiteral(resourceName: "fav-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                    
+                }
             }
         }
     }
@@ -176,8 +210,72 @@ class CommentVCDataHeader : UITableViewHeaderFooterView{
         
         addSubview(line)
         line.anchor(top: bottomBar.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 4, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 0.40)
+        
+        
+
+        like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
+        dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
+        addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
+        profile_image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
+        profile_image.isUserInteractionEnabled = true
     }
     
+    
+    //MARK:-selectors
+    @objc func showData(){
+        print("data click")
+    }
+    
+   
+    @objc func likeClick(){
+        delegate?.like(for: self)
+    }
+    @objc func dislikeClick(){
+        delegate?.dislike(for: self)
+    }
+    @objc func addFavClick(){
+        delegate?.fav(for: self)
+    }
+    
+    @objc func linkClick(){
+        delegate?.linkClick(for : self)
+    }
+    @objc func showProfile(){
+        delegate?.showProfile(for : self)
+    }
+    
+    //MARK: -functions
+
+    
+    private func checkIsFav(user : CurrentUser , post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.favori.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    private func checkIsLiked(user : CurrentUser, post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        
+        guard let post = post else { return }
+        if post.likes.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    
+    private func checkIsDisliked(user : CurrentUser ,post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.dislike.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
     private func configure(){
         guard let post = post else { return }
         

@@ -85,7 +85,7 @@ class CommentVC: UIViewController {
     
     //MARK:- functions
     
-   
+    
     
     fileprivate func configureUI(){
         
@@ -131,6 +131,117 @@ class CommentVC: UIViewController {
                 }
             }
         })
+    }
+    private func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(userId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return }
+                if snap.exists {
+                    completion(OtherUser.init(dic: docSnap!.data()!))
+                }
+            }
+        }
+    }
+    
+    private func setLike(post : LessonPostModel , completion : @escaping(Bool) ->Void){
+        
+        if !post.likes.contains(currentUser.uid){
+            post.likes.append(self.currentUser.uid)
+            post.dislike.remove(element: self.currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                db.updateData(["dislike":FieldValue.arrayRemove([sself.currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+     
+                    NotificaitonService.shared.send_home_like_notification(post: post, currentUser: sself.currentUser, notificationDespriction: NotificaitonDescprition.like_home.desprition)
+                }
+            }
+        }else{
+            post.likes.remove(element: self.currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {[weak self]  (err) in
+                guard let sself = self else { return }
+                NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: sself.currentUser)
+                completion(true)
+            }
+        }
+        
+      
+    }
+    private func setFav(post : LessonPostModel , completion : @escaping(Bool) ->Void){
+        if !post.favori.contains(currentUser.uid){
+            post.favori.append(currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayUnion([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid).collection("fav-post").document(post.postId)
+                let dic = ["postId":post.postId as Any] as [String:Any]
+                dbc.setData(dic, merge: true) { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+            }
+            
+        }
+        else{
+            post.favori.remove(element: currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayRemove([currentUser.uid as String])]) {[weak self] (err) in
+                guard let sself = self else { return }
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid).collection("fav-post").document(post.postId)
+                dbc.delete { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+                
+            }
+            
+        }
+    }
+    
+    private func setDislike(post : LessonPostModel , completion : @escaping(Bool)->Void){
+        if !post.dislike.contains(currentUser.uid){
+            post.likes.remove(element: currentUser.uid)
+            post.dislike.append(currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                if err == nil {
+                    db.updateData(["likes":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+                    }
+                }
+            }
+        }else{
+            post.dislike.remove(element: self.currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                completion(true)
+            }
+        }
     }
     
     //MARK:- keyboard
@@ -409,7 +520,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
             let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
             header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
-            
+//            header.currentUser = currentUser
             header.post = post
             header.contentView.backgroundColor = .white
             return header
@@ -417,7 +528,8 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
             let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId_data) as! CommentVCDataHeader
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
             header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
-            
+            header.currentUser = currentUser
+            header.delegate = self
             header.post = post
             header.contentView.backgroundColor = .white
             return header
@@ -493,4 +605,93 @@ extension Array where Element: Equatable {
         return false
     }
 
+}
+
+//MARK: - data delegate
+extension CommentVC : CommentVCDataDelegate {
+    func options(for header: CommentVCDataHeader) {
+        
+    }
+    
+    func like(for header: CommentVCDataHeader) {
+        guard let post = header.post else { return }
+        setLike(post: post) { (_) in  }
+    }
+    
+    func dislike(for header: CommentVCDataHeader) {
+        guard let post = header.post else { return }
+        setDislike(post: post){ (_) in  }
+    }
+    
+    func fav(for header: CommentVCDataHeader) {
+        guard  let post = header.post else {
+            return
+        }
+        setFav(post: post){ (_) in  }
+    }
+  
+    func linkClick(for header: CommentVCDataHeader) {
+        
+    }
+    
+    func showProfile(for header: CommentVCDataHeader) {
+        guard  let post = header.post else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+//            vc.modalPresentationStyle = .fullScreen
+//            present(vc, animated: true, completion: nil)
+        }else{
+            Utilities.waitProgress(msg: nil)
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
+        
+            }
+        }
+    }
+    
+    func goProfileByMention(userName: String) {
+        
+    }
+    
+    
+}
+
+//MARK: - delegate
+extension CommentVC : CommentVCHeaderDelegate {
+    func like(for header: CommentVCHeader) {
+
+    }
+    
+    func dislike(for header: CommentVCHeader) {
+        
+    }
+    
+    func fav(for header: CommentVCHeader) {
+        
+    }
+    
+    
+    
+    func linkClick(for header: CommentVCHeader) {
+        
+    }
+    
+    func showProfile(for header: CommentVCHeader) {
+        
+    }
+    
+    
 }
