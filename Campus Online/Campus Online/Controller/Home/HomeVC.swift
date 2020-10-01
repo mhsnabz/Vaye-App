@@ -710,7 +710,12 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
                 self.loadMore = false
             }
         }
-    }   
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = CommentVC(currentUser: currentUser, post: lessonPost[indexPath.row])
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 extension HomeVC : NewPostHomeVCDataDelegate {
@@ -772,10 +777,7 @@ extension HomeVC : NewPostHomeVCDataDelegate {
     
     func like(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
-        setLike(post: post) {[weak self] (_) in
-      
-           
-        }
+        setLike(post: post) { (_) in  }
         
                
     }
@@ -814,9 +816,8 @@ extension HomeVC : NewPostHomeVCDataDelegate {
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-
-                sself.present(vc, animated: true, completion: nil)
+                sself.navigationController?.pushViewController(vc, animated: true)
+               
             }
         }
         
@@ -838,9 +839,7 @@ extension HomeVC : NewPostHomeVCDelegate {
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-
-                sself.present(vc, animated: true, completion: nil)
+                sself.navigationController?.pushViewController(vc, animated: true)
             }
         }
     }

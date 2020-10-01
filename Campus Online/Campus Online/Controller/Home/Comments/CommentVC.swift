@@ -11,6 +11,8 @@ import FirebaseFirestore
 import SwipeCellKit
 private let reuseIdentifier = "Cell"
 private let msgCellID = "msg_cell_id"
+private let headerId = "header_id"
+private let headerId_data = "header_id_data"
 class CommentVC: UIViewController {
     
     
@@ -93,8 +95,9 @@ class CommentVC: UIViewController {
         tableView.delegate = self
         tableView.register(CommentMsgCell.self, forCellReuseIdentifier: msgCellID)
         tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.interactive
-        
-        
+        tableView.register(CommentVCHeader.self, forHeaderFooterViewReuseIdentifier: headerId)
+        let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
+        self.tableView.sectionHeaderHeight = 74 + h + 65
     }
     
    
@@ -388,6 +391,19 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
         let reply = replyAction(at: indexPath)
         return UISwipeActionsConfiguration(actions: [reply])
     }
+    
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
+        let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
+        header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
+        
+        header.post = post
+        header.contentView.backgroundColor = .white
+        return header
+    }
+    
 }
 
 extension CommentVC : CommentDelegate {

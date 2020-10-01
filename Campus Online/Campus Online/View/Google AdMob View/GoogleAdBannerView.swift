@@ -51,19 +51,23 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
     
     let priceLbl : UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
+        lbl.font = UIFont(name: Utilities.font, size: 16)
+        lbl.textAlignment = .center
          return lbl
     }()
     let storeLbl : UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
-
+        lbl.font = UIFont(name: Utilities.font, size: 16)
+        lbl.textAlignment = .center
          return lbl
     }()
     let installBtn : UIButton = {
        let btn = UIButton()
-        btn.setTitleColor(.mainColor(), for: .normal)
-        btn.titleLabel?.font = UIFont(name: Utilities.font, size: 13)
+        btn.setTitleColor(.white, for: .normal)
+        btn.clipsToBounds = true
+        btn.layer.cornerRadius = 5
+        btn.titleLabel?.font = UIFont(name: Utilities.font, size: 16)
+        btn.setBackgroundColor(color: .mainColor(), forState: .normal)
         return btn
         
     }()
@@ -112,12 +116,18 @@ class GoogleAdBannerView: GADUnifiedNativeAdView {
             addSubview(mediaImage)
             mediaImage.anchor(top: bodyLbl.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 4, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 250)
             
-            addSubview(installBtn)
-            installBtn.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
-            addSubview(storeLbl)
-            storeLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
-            addSubview(priceLbl)
-            priceLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: storeLbl.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 100, heigth: 30)
+            let stack = UIStackView(arrangedSubviews: [priceLbl,storeLbl,installBtn])
+            stack.alignment = .center
+            stack.distribution = .fillEqually
+            stack.axis = .horizontal
+            stack.spacing = 2
+            
+            addSubview(stack)
+            stack.anchor(top: mediaImage.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 5, marginBottom: 0, marginRigth: 5, width: 0, heigth: 40)
+//            addSubview(storeLbl)
+//            storeLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: installBtn.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 75, heigth: 30)
+//            addSubview(priceLbl)
+//            priceLbl.anchor(top: mediaImage.bottomAnchor, left: nil, bottom: nil, rigth: storeLbl.leftAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 75, heigth: 30)
         }
 
 }

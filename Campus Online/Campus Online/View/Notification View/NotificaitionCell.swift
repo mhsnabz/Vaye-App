@@ -40,7 +40,12 @@ class NotificaitionCell: UITableViewCell {
         lbl.textColor = .darkGray
         return lbl
     }()
-    
+    let badge : UIView = {
+       let v = UIView()
+        v.clipsToBounds = true
+        v.backgroundColor = .red
+        return v
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: "id")
@@ -49,9 +54,15 @@ class NotificaitionCell: UITableViewCell {
         profile_image.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 50, heigth: 50)
         profile_image.layer.cornerRadius = 25
         addSubview(userName)
-        userName.anchor(top: profile_image.topAnchor, left: profile_image.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 25)
+        userName.anchor(top: profile_image.topAnchor, left: profile_image.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 25, width: 0, heigth: 25)
         addSubview(type)
-        type.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 12, width: 0, heigth: 0)
+        type.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 25, width: 0, heigth: 0)
+        addSubview(badge)
+        badge.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 5, marginBottom: 0, marginRigth: 5, width: 15, heigth: 15)
+        badge.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        badge.layer.cornerRadius = 15 / 2
+        badge.isHidden = true
+        
         
         
     }
@@ -79,6 +90,12 @@ class NotificaitionCell: UITableViewCell {
         profile_image.sd_setImage(with: URL(string: post.senderImage))
         
         type.text = post.type
+        
+        if post.isRead {
+            badge.isHidden = true
+        }else{
+            badge.isHidden = false
+        }
     }
 
 
