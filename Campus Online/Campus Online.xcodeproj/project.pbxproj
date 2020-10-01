@@ -125,6 +125,7 @@
 		66E326A924F991BB004CB61D /* LessonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E326A824F991BB004CB61D /* LessonCell.swift */; };
 		66E326AB24F9C01C004CB61D /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E326AA24F9C01C004CB61D /* UserService.swift */; };
 		66EF86C92525EACC00282FD4 /* CommentVCHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF86C82525EACC00282FD4 /* CommentVCHeader.swift */; };
+		66EF86CE25260E3200282FD4 /* CommentVCDataHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF86CD25260E3100282FD4 /* CommentVCDataHeader.swift */; };
 		66F25F1124F6BD39005B0591 /* FakulteTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F25F1024F6BD39005B0591 /* FakulteTB.swift */; };
 		66F25F1524F6E8E9005B0591 /* FakulteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F25F1424F6E8E9005B0591 /* FakulteCell.swift */; };
 		66F25F1724F78618005B0591 /* BolumTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F25F1624F78618005B0591 /* BolumTB.swift */; };
@@ -284,6 +285,7 @@
 		66E326A824F991BB004CB61D /* LessonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonCell.swift; sourceTree = "<group>"; };
 		66E326AA24F9C01C004CB61D /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		66EF86C82525EACC00282FD4 /* CommentVCHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentVCHeader.swift; sourceTree = "<group>"; };
+		66EF86CD25260E3100282FD4 /* CommentVCDataHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentVCDataHeader.swift; sourceTree = "<group>"; };
 		66F25F1024F6BD39005B0591 /* FakulteTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakulteTB.swift; sourceTree = "<group>"; };
 		66F25F1424F6E8E9005B0591 /* FakulteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakulteCell.swift; sourceTree = "<group>"; };
 		66F25F1624F78618005B0591 /* BolumTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BolumTB.swift; sourceTree = "<group>"; };
@@ -586,6 +588,7 @@
 			isa = PBXGroup;
 			children = (
 				66024C31251DEA03009E8A7E /* Comment Replies View */,
+				66EF86CD25260E3100282FD4 /* CommentVCDataHeader.swift */,
 				668B6A36251BBE6900A8902F /* CommentMsgCell.swift */,
 				66EF86C82525EACC00282FD4 /* CommentVCHeader.swift */,
 			);
@@ -1287,6 +1290,7 @@
 				66D911CF24EEA9E8002D760A /* AppDelegate.swift in Sources */,
 				661333FA24F3FDF2002677AB /* ForgetPasswordVC.swift in Sources */,
 				660F5AD12502F65300F72558 /* LessonFallowerUser.swift in Sources */,
+				66EF86CE25260E3200282FD4 /* CommentVCDataHeader.swift in Sources */,
 				66D9120524EEAA5B002D760A /* Enum.swift in Sources */,
 				661333F124F3F858002677AB /* SplashScreen.swift in Sources */,
 				6613341324F68DFF002677AB /* CurrentUser.swift in Sources */,

@@ -27,7 +27,7 @@ class CommentVC: UIViewController {
     weak var messagesListener : ListenerRegistration?
     
      var tableView : UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
         
@@ -95,9 +95,19 @@ class CommentVC: UIViewController {
         tableView.delegate = self
         tableView.register(CommentMsgCell.self, forCellReuseIdentifier: msgCellID)
         tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.interactive
-        tableView.register(CommentVCHeader.self, forHeaderFooterViewReuseIdentifier: headerId)
-        let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-        self.tableView.sectionHeaderHeight = 74 + h + 65
+        if post.data.isEmpty{
+            tableView.register(CommentVCHeader.self, forHeaderFooterViewReuseIdentifier: headerId)
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
+            self.tableView.sectionHeaderHeight = 74 + h + 65
+            self.tableView.reloadData()
+        }else{
+            tableView.register(CommentVCDataHeader.self, forHeaderFooterViewReuseIdentifier: headerId_data)
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
+            self.tableView.sectionHeaderHeight = 74 + h + 8 + 100 + 65
+            self.tableView.reloadData()
+        }
+        
+        
     }
     
    
@@ -395,13 +405,25 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
-        let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-        header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
+        if post.data.isEmpty{
+            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
+            header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
+            
+            header.post = post
+            header.contentView.backgroundColor = .white
+            return header
+        }else{
+            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId_data) as! CommentVCDataHeader
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
+            header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
+            
+            header.post = post
+            header.contentView.backgroundColor = .white
+            return header
+        }
         
-        header.post = post
-        header.contentView.backgroundColor = .white
-        return header
+      
     }
     
 }
