@@ -17,6 +17,10 @@ class CommentVC: UIViewController {
     
     
     //MARK:- variables
+    
+    private  var actionSheet : ActionSheetHomeLauncher
+    private var actionOtherUserSheet : ActionSheetOtherUserLaunher
+    
     var comment = [CommentModel]()
     var currentUser : CurrentUser
     var post : LessonPostModel
@@ -38,18 +42,16 @@ class CommentVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
- 
-        
         hideKeyboardWhenTappedAround()
         configureUI()
-        
         getComments(currentUser: currentUser, postID: post.postId)
 
     }
     init(currentUser : CurrentUser , post : LessonPostModel) {
         self.currentUser = currentUser
         self.post = post
+        self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
+        self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -89,6 +91,8 @@ class CommentVC: UIViewController {
     
     fileprivate func configureUI(){
         
+        let rigthBtn = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(optionsLauncher))
+        navigationItem.rightBarButtonItem = rigthBtn
         view.addSubview(tableView)
         tableView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         tableView.dataSource = self
@@ -337,7 +341,33 @@ class CommentVC: UIViewController {
     override var canBecomeFirstResponder: Bool {  return true  }
 
     
-    //MARK:-selectors
+    //MARK:-selectorsü
+    
+    @objc func optionsLauncher(){
+       
+        if post.senderUid == currentUser.uid
+        {
+            actionSheet.delegate = self
+            actionSheet.show(post: post)
+//            guard let  index = collectionview.indexPath(for: cell) else { return }
+//            selectedIndex = index
+//            selectedPostID = lessonPost[index.row].postId
+        }else{
+            Utilities.waitProgress(msg: nil)
+            actionOtherUserSheet.delegate = self
+//            guard let  index = collectionview.indexPath(for: cell) else { return }
+//            selectedIndex = index
+//            selectedPostID = lessonPost[index.row].postId
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionOtherUserSheet.show(post: sself.post, otherUser: user)
+                
+            }
+            
+            
+        }
+    }
     @objc func sendMsg()
     {
         guard let text = textField.text else { return }
@@ -705,7 +735,11 @@ extension CommentVC : CommentVCHeaderDelegate {
     
     
     func linkClick(for header: CommentVCHeader) {
-        
+        guard let post = header.post else { return }
+        guard let url = URL(string: post.link) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for header: CommentVCHeader) {
@@ -733,6 +767,51 @@ extension CommentVC : CommentVCHeaderDelegate {
         }
     }
 
+    
+    
+}
+//MARK: - ActionSheetHomeLauncherDelegate
+extension CommentVC : ActionSheetHomeLauncherDelegate {
+    func didSelect(option: ActionSheetHomeOptions) {
+        switch option {
+        
+        case .editPost(_):
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 13)!)
+                let vc = StudentEditPost(currentUser: currentUser , post : post , heigth : h )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            break
+        case .deletePost(_):
+            break
+        case .slientPost(_):
+            break
+        }
+    }
+    
+    
+}
+//MARK: -ActionSheetOtherUserLauncherDelegate
+extension CommentVC : ActionSheetOtherUserLauncherDelegate {
+    func didSelect(option: ActionSheetOtherUserOptions) {
+        switch option {
+        
+        case .fallowUser(_):
+            break
+        case .slientUser(_):
+            break
+        case .deleteLesson(_):
+            break
+        case .slientLesson(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            break
+        case .reportUser(_):
+            break
+        }
+    }
     
     
 }

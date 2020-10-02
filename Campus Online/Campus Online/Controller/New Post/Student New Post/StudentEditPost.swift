@@ -461,8 +461,9 @@ class StudentEditPost: UIViewController {
         
     }
     
-    private func deleteData(url : String,postId : String, currentUser : CurrentUser) {
+    private func deleteData(post : LessonPostModel ,url : String , index : IndexPath ,postId : String, currentUser : CurrentUser) {
         Utilities.waitProgress(msg: "Siliniyor")
+        
         let storage = Storage.storage()
         let r = storage.reference(forURL: url)
         r.delete { (err) in
@@ -471,16 +472,46 @@ class StudentEditPost: UIViewController {
                 let db = Firestore.firestore().collection(currentUser.short_school)
                     .document("lesson-post").collection("post")
                     .document(postId)
-                db.updateData(["data":FieldValue.arrayRemove([url as Any])]) { (err) in
+                db.updateData(["data":FieldValue.arrayRemove([url as Any])]) {[weak self] (err) in
                     if err == nil {
-                        if let index = self.post.data.firstIndex(of: url) {
+                        guard  let sself = self else {
+                            return
+                        }
+                        if let index = sself.post.data.firstIndex(of: url) {
                             Utilities.succesProgress(msg: "Dosya Silindi")
-                            self.post.data.remove(at: index)
-                            self.collectionview.reloadData()
+                            sself.post.data.remove(at: index)
+                            sself.collectionview.reloadData()
+
+                        }
+                        sself.deleteThumbData(index: index, post: post, postId: postId, currentUser: sself.currentUser)
                             
+                        
+                    }
+                }
+            }
+        }
+    }
+    private func deleteThumbData(index : IndexPath, post : LessonPostModel ,postId : String, currentUser : CurrentUser){
+        let url = post.thumbData[index.row]
+        print("thumb url \(url as Any)")
+        let storage = Storage.storage()
+        let r = storage.reference(forURL: url)
+        r.delete { (err) in
+            if err == nil {
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson-post").collection("post")
+                    .document(postId)
+                db.updateData(["thumbData":FieldValue.arrayRemove([url as Any])]) { (err) in
+                    if err == nil {
+                        if let index = self.post.thumbData.firstIndex(of: url) {
+                            Utilities.succesProgress(msg: "Dosya Silindi")
+                            self.post.thumbData.remove(at: index)
+                            self.collectionview.reloadData()
+
                         }
                     }
                 }
+
             }
         }
     }
@@ -733,17 +764,28 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
 extension StudentEditPost : EditStudentPostDelegate {
     func deleteImage(for cell: StudentEditPostImageCell) {
        guard let url = cell.url else { return }
-        self.deleteData(url: url, postId: post.postId, currentUser: currentUser)
+        guard let index = collectionview.indexPath(for: cell) else {
+            return
+        }
+       
+        self.deleteData(post: post, url: url, index: index , postId: post.postId, currentUser: currentUser)
     }
     
     func deleteDoc(for cell: StudentEditPostDocCell) {
         guard let url = cell.url else { return }
-        self.deleteData(url: url, postId: post.postId, currentUser: currentUser)
+        guard let index = collectionview.indexPath(for: cell) else {
+            return
+        }
+       
+        self.deleteData(post: post, url: url, index: index , postId: post.postId, currentUser: currentUser)
     }
     
     func deletePdf(for cell: StudentEditPostPdfCell) {
         guard let url = cell.url else { return }
-        self.deleteData(url: url, postId: post.postId, currentUser: currentUser)
+        guard let index = collectionview.indexPath(for: cell) else {
+            return
+        }
+        self.deleteData(post: post, url: url, index: index , postId: post.postId, currentUser: currentUser)
     }
     
     
