@@ -48,7 +48,7 @@ class OtherUserProfileFilterView : UIView{
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: "id")
         addSubview(collectionView)
         collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .left)
+//        collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .left)
     }
     
     required init?(coder: NSCoder) {

@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseStorage
 import SwipeCellKit
 private let reuseIdentifier = "Cell"
 private let msgCellID = "msg_cell_id"
@@ -87,7 +88,35 @@ class CommentVC: UIViewController {
     
     //MARK:- functions
     
+    private func deleteToStorage(data : [String],thumdata : [String], postId : String , completion : @escaping(Bool) -> Void){
+        if data.count == 0{
+            completion(true)
+            return
+        }
+        deleteThumbToStorage(thumbData: thumdata) { (_) in
+            for item in data{
+                
+                let ref = Storage.storage().reference(forURL: item)
+                ref.delete { (err) in
+                    completion(true)
+                }
+            }
+        }
+      
+    }
     
+    private func deleteThumbToStorage(thumbData : [String],completion : @escaping(Bool) -> Void ){
+        if thumbData.count == 0{
+            completion(true)
+            return
+        }
+        for item in thumbData{
+            let ref = Storage.storage().reference(forURL: item)
+            ref.delete { (err) in
+                completion(true)
+            }
+        }
+    }
     
     fileprivate func configureUI(){
         
@@ -551,6 +580,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
             header.msgText.frame = CGRect(x: 12, y: 74, width: view.frame.width - 24, height: h)
 //            header.currentUser = currentUser
+            header.delegate = self
             header.post = post
             header.contentView.backgroundColor = .white
             return header
@@ -754,12 +784,11 @@ extension CommentVC : CommentVCHeaderDelegate {
 //            self.navigationController?.pushViewController(vc, animated: true)
         }else{
             Utilities.waitProgress(msg: nil)
-            getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else {
-                    Utilities.dismissProgress()
-                return }
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                sself.navigationController?.pushViewController(vc, animated: true)
+            getOtherUser(userId: post.senderUid) { (user) in
+               
+                let vc = OtherUserProfile(currentUser: self.currentUser, otherUser: user)
+                
+                self.navigationController?.pushViewController(vc, animated: true)
                 
                 Utilities.dismissProgress()
                 
@@ -783,6 +812,28 @@ extension CommentVC : ActionSheetHomeLauncherDelegate {
                 self.present(controller, animated: true, completion: nil)
             break
         case .deletePost(_):
+            
+                Utilities.waitProgress(msg: "Siliniyor")
+               
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson-post")
+                    .collection("post")
+                    .document(post.postId)
+                db.delete {[weak self] (err) in
+                    guard let sself = self else { return }
+                    if err == nil {
+                        sself.deleteToStorage(data: sself.post.data , thumdata: sself.post.thumbData, postId: sself.post.postId) { (_val) in
+                            if _val{
+                                Utilities.succesProgress(msg: "Silindi")
+                            }else{
+                                Utilities.errorProgress(msg: "Hata Oluştu")
+                            }
+                        }
+                    }else{
+                        Utilities.errorProgress(msg: "Hata Oluştu")
+                    }
+                }
+            
             break
         case .slientPost(_):
             break

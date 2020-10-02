@@ -12,6 +12,7 @@ import SDWebImage
 class CommentVCHeader: UITableViewHeaderFooterView
 {
     
+    weak var delegate : CommentVCHeaderDelegate?
     //MARK: -properties
     var post : LessonPostModel?{
         didSet {
@@ -168,8 +169,34 @@ class CommentVCHeader: UITableViewHeaderFooterView
         
         addSubview(line)
         line.anchor(top: bottomBar.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 4, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 0.40)
+        profile_image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
+        profile_image.isUserInteractionEnabled = true
+  
+        like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
+        dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
+        addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
+
+        linkBtn.isHidden = true
+        
     }
+    //MARK: -selectors
     
+     @objc func likeClick(){
+         delegate?.like(for: self)
+     }
+     @objc func dislikeClick(){
+         delegate?.dislike(for: self)
+     }
+     @objc func addFavClick(){
+         delegate?.fav(for: self)
+     }
+     
+     @objc func linkClick(){
+         delegate?.linkClick(for : self)
+     }
+     @objc func showProfile(){
+         delegate?.showProfile(for : self)
+     }
     private func configure(){
         guard let post = post else { return }
         
