@@ -478,7 +478,7 @@ class StudentEditPost: UIViewController {
                             return
                         }
                         if let index = sself.post.data.firstIndex(of: url) {
-                            Utilities.succesProgress(msg: "Dosya Silindi")
+                            
                             sself.post.data.remove(at: index)
                             sself.collectionview.reloadData()
 
@@ -488,6 +488,11 @@ class StudentEditPost: UIViewController {
                         
                     }
                 }
+            }else{
+                
+                print("err \(err?.localizedDescription as Any)")
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return
             }
         }
     }
@@ -509,9 +514,13 @@ class StudentEditPost: UIViewController {
                             self.collectionview.reloadData()
 
                         }
+                    }else{
+                        print("err \(err?.localizedDescription as Any)")
                     }
                 }
 
+            }else{
+                print("err \(err?.localizedDescription as Any)")
             }
         }
     }
