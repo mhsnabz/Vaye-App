@@ -15,6 +15,11 @@ class ActionSheetCell: UITableViewCell {
             configure()
         }
     }
+    var notificationOption : NotificationOptions?{
+        didSet{
+            configure()
+        }
+    }
     
     private let logo : UIImageView = {
        let img = UIImageView()
@@ -50,6 +55,10 @@ class ActionSheetCell: UITableViewCell {
     func configure(){
         titleLabel.text = options?.description
         logo.image = options?.image
+    }
+    func configureNotificaiton(){
+        titleLabel.text = notificationOption?.descriptions
+        logo.image = notificationOption?.image
     }
   
 

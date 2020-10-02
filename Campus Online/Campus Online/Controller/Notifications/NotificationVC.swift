@@ -15,6 +15,9 @@ class NotificationVC: UIViewController {
     
    weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
+    
+    private var notificationLauncher : NotificationLaunher
+    
     //MARK: -properties
     var tableView : UITableView = {
        let tableView = UITableView()
@@ -24,6 +27,7 @@ class NotificationVC: UIViewController {
     //MARK: - lifeCycle
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
+        notificationLauncher = NotificationLaunher(currentUser: currentUser, target: NotifictionTarget.notification.descriptions)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -36,6 +40,7 @@ class NotificationVC: UIViewController {
         setNavigationBar()
         navigationItem.title = "Bildirimler"
         configureTableViewController()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showLauncher))
    
     }
     
@@ -133,7 +138,11 @@ class NotificationVC: UIViewController {
         }
         
     }
-    
+    //MARK:-selector
+    @objc func showLauncher(){
+        notificationLauncher.show()
+        notificationLauncher.delegate = self
+    }
     
 
 }
@@ -160,6 +169,19 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         }
     }
     
+    
+    
+}
+extension NotificationVC : NotificationLauncherDelegate{
+    func didSelect(option: NotificationOptions) {
+        switch option {
+        
+        case .makeAllRead(_):
+            print("make all read")
+        case .deleteAll(_):
+            print("delete all")
+        }
+    }
     
     
 }

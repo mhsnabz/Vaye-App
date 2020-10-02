@@ -28,6 +28,9 @@ protocol ActionSheetHomeLauncherDelegate : class {
 protocol ActionSheetOtherUserLauncherDelegate : class {
     func didSelect(option : ActionSheetOtherUserOptions)
 }
+protocol NotificationLauncherDelegate : class {
+    func didSelect(option : NotificationOptions)
+}
 protocol PopUpDelegate : class {
     func handleDismissal()
     func addTarget(_ target : String?)
