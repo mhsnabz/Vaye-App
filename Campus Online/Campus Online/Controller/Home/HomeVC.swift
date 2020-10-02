@@ -25,6 +25,7 @@ class HomeVC: UIViewController {
     var time : Timestamp!
     /// The native ad view that is being presented.
     var nativeAdView: GADUnifiedNativeAdView!
+    weak var notificaitonListener : ListenerRegistration?
 
     /// The ad unit ID.
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
@@ -83,16 +84,17 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        listenNewPost(currentUser: currentUser) {[weak self] (isNew) in
-//            if isNew {
-//                self?.newAdded.isHidden = false
-//            }
-//        }
+        getNotificationCount()
         
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.listenerRegistiration?.remove()
+
+        notificaitonListener?.remove()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+//        notificaitonListener?.remove()
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
@@ -130,7 +132,26 @@ class HomeVC: UIViewController {
     }
     //MARK: - functions
    
-    
+    private func getNotificationCount(){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("notification").whereField("isRead", isEqualTo: false)
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                guard let sself = self else {
+                    self?.tabBarController?.tabBar.items?[2].badgeValue = nil
+                    return
+                }
+                if snap.isEmpty {
+                   sself.tabBarController?.tabBar.items?[2].badgeValue = nil
+                }else{
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = snap.documents.count.description
+                }
+            }
+        })
+    }
     
     func fetchAds() {
            adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,

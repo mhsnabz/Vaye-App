@@ -46,6 +46,8 @@ class NotificaitionCell: UITableViewCell {
         v.backgroundColor = .red
         return v
     }()
+   
+
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: "id")
@@ -62,6 +64,7 @@ class NotificaitionCell: UITableViewCell {
         badge.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         badge.layer.cornerRadius = 15 / 2
         badge.isHidden = true
+    
         
         
         
