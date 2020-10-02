@@ -246,7 +246,12 @@ class CommentVCDataHeader : UITableViewHeaderFooterView{
     
     //MARK: -functions
 
-    
+    private func mentionClick(){
+        msgText.handleMentionTap {[weak self] (username) in
+            guard let sself = self else { return }
+            sself.delegate?.goProfileByMention(userName : username)
+        }
+    }
     private func checkIsFav(user : CurrentUser , post : LessonPostModel? , completion : @escaping(Bool) ->Void)
     {
         guard let post = post else { return }
@@ -297,13 +302,13 @@ class CommentVCDataHeader : UITableViewHeaderFooterView{
         nameLbl.attributedText = name
         profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
         profile_image.sd_setImage(with: URL(string: post.thumb_image))
-//        mentionClick()
+        mentionClick()
         lessonName.text = post.lessonName
         msgText.text = post.text
         like_lbl.text = post.likes.count.description
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
-//        linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
+        linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
         if post.link.isEmpty {
             linkBtn.isHidden = true
             

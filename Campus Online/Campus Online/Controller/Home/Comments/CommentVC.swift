@@ -519,7 +519,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
         if post.data.isEmpty{
             let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-            header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
+            header.msgText.frame = CGRect(x: 12, y: 74, width: view.frame.width - 24, height: h)
 //            header.currentUser = currentUser
             header.post = post
             header.contentView.backgroundColor = .white
@@ -527,7 +527,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
         }else{
             let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId_data) as! CommentVCDataHeader
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-            header.msgText.frame = CGRect(x: 24, y: 74, width: view.frame.width - 24, height: h)
+            header.msgText.frame = CGRect(x: 12, y: 74, width: view.frame.width - 24, height: h)
             header.currentUser = currentUser
             header.delegate = self
             header.post = post
@@ -631,7 +631,11 @@ extension CommentVC : CommentVCDataDelegate {
     }
   
     func linkClick(for header: CommentVCDataHeader) {
-        
+        guard let post = header.post else { return }
+        guard let url = URL(string: post.link) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for header: CommentVCDataHeader) {
@@ -663,7 +667,17 @@ extension CommentVC : CommentVCDataDelegate {
     }
     
     func goProfileByMention(userName: String) {
-        
+        if "@\(userName)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+               
+            }
+        }
     }
     
     
@@ -672,15 +686,20 @@ extension CommentVC : CommentVCDataDelegate {
 //MARK: - delegate
 extension CommentVC : CommentVCHeaderDelegate {
     func like(for header: CommentVCHeader) {
-
+        guard let post = header.post else { return }
+        setLike(post: post) { (_) in  }
     }
     
     func dislike(for header: CommentVCHeader) {
-        
+        guard let post = header.post else { return }
+        setDislike(post: post){ (_) in  }
     }
     
     func fav(for header: CommentVCHeader) {
-        
+        guard  let post = header.post else {
+            return
+        }
+        setFav(post: post){ (_) in  }
     }
     
     
@@ -690,8 +709,30 @@ extension CommentVC : CommentVCHeaderDelegate {
     }
     
     func showProfile(for header: CommentVCHeader) {
-        
+        guard  let post = header.post else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+//            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            Utilities.waitProgress(msg: nil)
+            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                
+                Utilities.dismissProgress()
+                
+            }
+        }
     }
+
     
     
 }
