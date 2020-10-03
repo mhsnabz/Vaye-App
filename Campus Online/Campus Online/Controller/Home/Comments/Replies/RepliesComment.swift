@@ -16,6 +16,7 @@ class RepliesComment: UIViewController {
     //MARK:- variables
     var comment : CommentModel
     var currentUser : CurrentUser
+    var post : LessonPostModel
     var customInputView: UIView!
     var sendButton: UIButton!
     var addMediaButtom: UIButton!
@@ -56,10 +57,10 @@ class RepliesComment: UIViewController {
         self.navigationItem.title = "Yanıtlar"
     }
     
-    init(comment : CommentModel , currentUser : CurrentUser) {
+    init(comment : CommentModel , currentUser : CurrentUser , post : LessonPostModel) {
         self.comment = comment
         self.currentUser = currentUser
-        
+        self.post = post
         super.init(nibName: nil, bundle: nil)
        
     }
@@ -218,12 +219,15 @@ class RepliesComment: UIViewController {
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(repliedComment.postId!).collection("comment-replied")
                 .document("comment").collection(commentID).document(repliedComment.commentId!)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+                guard let sself = self else { return }
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
                 }
                 else{
                     completion(true)
+                    NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+               
                 }
             }
         }else{
@@ -232,11 +236,14 @@ class RepliesComment: UIViewController {
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(repliedComment.postId!).collection("comment-replied")
                 .document("comment").collection(commentID).document(repliedComment.commentId!)
-            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
+                guard let sself = self else { return }
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
                     completion(true)
+                    NotificaitonService.shared.remove_comment_like(post: sself.post, currentUser:sself.currentUser)
+                    
                 }
         }
     }

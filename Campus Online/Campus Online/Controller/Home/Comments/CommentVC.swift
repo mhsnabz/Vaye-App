@@ -456,7 +456,7 @@ class CommentVC: UIViewController {
         let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
             guard let sself = self  else { return }
             sself.tableView.reloadData()
-            let vc = RepliesComment(comment : sself.comment[indexPath.row] , currentUser : sself.currentUser)
+            let vc = RepliesComment(comment : sself.comment[indexPath.row] , currentUser : sself.currentUser , post: sself.post)
          
             sself.navigationController?.pushViewController(vc, animated: true)
         }
@@ -619,13 +619,13 @@ extension CommentVC : CommentDelegate {
     
     func replyClick(cell: CommentMsgCell) {
         guard let comment = cell.comment else { return }
-        let vc = RepliesComment(comment: comment, currentUser: currentUser)
+        let vc = RepliesComment(comment: comment, currentUser: currentUser, post: post)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func seeAllReplies(cell: CommentMsgCell) {
         guard let comment = cell.comment else { return }
-        let vc = RepliesComment(comment: comment, currentUser: currentUser)
+        let vc = RepliesComment(comment: comment, currentUser: currentUser, post: post)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     func goProfile(cell: CommentMsgCell) {

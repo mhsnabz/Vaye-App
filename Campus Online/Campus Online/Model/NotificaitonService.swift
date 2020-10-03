@@ -34,6 +34,7 @@ class NotificaitonService{
             }
             }
     }
+
     func send_home_remove_like_notification(post : LessonPostModel , currentUser : CurrentUser){
         let db = Firestore.firestore().collection("user")
             .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: Notification_description.like_home.desprition)
@@ -51,10 +52,6 @@ class NotificaitonService{
         }
     }
     func remove_comment_like(post : LessonPostModel , currentUser : CurrentUser){
-        print("postId : \(post.postId)")
-        print("senderUid : \(currentUser.uid)")
-        print("type : \(Notification_description.comment_like.desprition)")
-        
         let db = Firestore.firestore().collection("user")
             .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.comment_like.desprition)
         db.getDocuments { (querySnap, err) in
