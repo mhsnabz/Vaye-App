@@ -100,6 +100,8 @@ class NotificaitionCell: UITableViewCell {
             
         }else if post.type == NotificationType.reply_comment.desprition{
             
+        }else if post.type == NotificationType.comment_like.desprition{
+            type.text = Notification_description.comment_like.desprition
         }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])

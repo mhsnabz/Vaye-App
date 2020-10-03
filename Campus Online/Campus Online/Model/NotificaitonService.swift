@@ -50,6 +50,26 @@ class NotificaitonService{
             }
         }
     }
+    func remove_comment_like(post : LessonPostModel , currentUser : CurrentUser){
+        print("postId : \(post.postId)")
+        print("senderUid : \(currentUser.uid)")
+        print("type : \(Notification_description.comment_like.desprition)")
+        
+        let db = Firestore.firestore().collection("user")
+            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.comment_like.desprition)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    for item in snap.documents{
+                        let db = Firestore.firestore().collection("user")
+                            .document(post.senderUid).collection("notification").document(item.documentID)
+                        db.delete()
+                    }
+                }
+            }
+        }
+    }
     
   
     
@@ -58,6 +78,7 @@ enum Notification_description {
     case like_home
     case comment_home
     case reply_comment
+    case comment_like
     var desprition : String {
         switch self {
        
@@ -67,6 +88,9 @@ enum Notification_description {
             return "Gönderinize Yorum Yaptı"
         case .reply_comment:
             return "Yorumunuza Cevap Verdi"
+            
+        case .comment_like:
+            return "Yorumunuzu Beğendi"
         }
     }
 }
@@ -74,6 +98,7 @@ enum NotificationType{
     case home_like
     case comment_home
     case reply_comment
+    case comment_like
     var desprition : String {
         switch self{
         
@@ -83,6 +108,8 @@ enum NotificationType{
             return "comment_home"
         case .reply_comment:
             return "reply_comment"
+        case .comment_like :
+        return "like_comment"
         }
     }
 }

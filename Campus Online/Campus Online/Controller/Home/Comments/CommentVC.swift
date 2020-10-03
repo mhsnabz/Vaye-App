@@ -482,9 +482,12 @@ class CommentVC: UIViewController {
             tableView.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(comment.postId!).collection("comment").document(comment.commentId!)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+                guard let sself = self else { return }
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
+                }else{
+                    NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
             }
         }else{
@@ -492,9 +495,13 @@ class CommentVC: UIViewController {
             tableView.reloadData()
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post").collection("post").document(comment.postId!).collection("comment").document(comment.commentId!)
-            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
+                guard let sself = self else { return }
                 if err != nil{
+                    
                     print("like err \(err?.localizedDescription as Any)")
+                }else{
+                    NotificaitonService.shared.remove_comment_like(post: sself.post, currentUser: sself.currentUser)
                 }
         }
     }
