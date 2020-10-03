@@ -859,6 +859,11 @@ extension String {
         return arr_hasStrings
     }
 }
+extension String {
+    func removingWhitespaces() -> String {
+        return components(separatedBy: .whitespaces).joined()
+    }
+}
 extension StudentNewPost : DeleteDoc  {
     func deleteDoc(for cell: NewPostDocCell) {
         guard let indexPath = self.collectionview.indexPath(for: cell) else { return }

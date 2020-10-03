@@ -81,7 +81,7 @@ class CommentService {
     }
     
     
-    func setRepliedComment(currentUser : CurrentUser , targetCommentId : String , commentId : String,commentText : String, postId : String , completion : @escaping(()) ->())
+    func setRepliedComment(currentUser : CurrentUser , targetCommentId : String , commentId : String,commentText : String, postId : String , completion : @escaping(Bool) ->Void)
     {
     
         ///İSTE/lesson-post/post/1600870068749/commet-replies/comment/commentId/Cy6C2SQs5RDcxa7lKBav
@@ -101,7 +101,7 @@ class CommentService {
             guard let sself = self else { return }
             if err == nil {
                 sself.setRepliedCommentId(targetCommentID: targetCommentId, commentId: commentId, currentUser: currentUser, postId: postId) { (_) in
-                 
+                 completion(true)
                 }
             }
         }

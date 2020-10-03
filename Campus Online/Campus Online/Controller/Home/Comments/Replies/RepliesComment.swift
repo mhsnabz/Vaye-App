@@ -167,12 +167,19 @@ class RepliesComment: UIViewController {
     @objc func sendMsg()
     {
         guard let text = textField.text else { return }
-
+        print(text.findMentionText())
+       
         if textField.hasText {
             textField.text = ""
             let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
-            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) { (_) in
+            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
+                guard let sself = self else { return }
                 print("comment succeesed ")
+                for item in text.findMentionText(){
+                    
+                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+                    
+                }
             }
         }
         

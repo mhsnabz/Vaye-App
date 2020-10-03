@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import ActiveLabel
 class NotificaitionCell: UITableViewCell {
 
     
@@ -42,7 +43,6 @@ class NotificaitionCell: UITableViewCell {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 13)
         lbl.numberOfLines = 0
-        lbl.textColor = .darkGray
         return lbl
     }()
     let badge : UIView = {
@@ -102,6 +102,10 @@ class NotificaitionCell: UITableViewCell {
             
         }else if post.type == NotificationType.comment_like.desprition{
             type.text = Notification_description.comment_like.desprition
+        }else if post.type == NotificationType.comment_mention.desprition{
+            notification =  NSMutableAttributedString(string: "\(Notification_description.comment_mention.desprition) :", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
+            type.attributedText = notification
         }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
