@@ -19,12 +19,16 @@ class NotificationModel {
     var senderUid : String!
     var time : Timestamp!
     var type : String!
+    var text : String!
     var username : String!
     
     init(not_id : String , dic : Dictionary<String,Any>){
         self.not_id = not_id
         if let isRead = dic["isRead"] as? Bool {
             self.isRead = isRead
+        }
+        if let text = dic["text"] as? String{
+            self.text = text
         }
         if let lessonName = dic["lessonName"] as? String{
             self.lessonName = lessonName

@@ -126,6 +126,9 @@ extension NotificationLaunher : UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         return footerView
     }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 60
+    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let option = viewModel.imageOptions[indexPath.row]
         delegate?.didSelect(option: option)

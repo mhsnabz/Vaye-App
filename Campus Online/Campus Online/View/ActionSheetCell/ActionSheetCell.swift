@@ -17,7 +17,7 @@ class ActionSheetCell: UITableViewCell {
     }
     var notificationOption : NotificationOptions?{
         didSet{
-            configure()
+            configureNotificaiton()
         }
     }
     

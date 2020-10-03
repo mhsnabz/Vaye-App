@@ -94,7 +94,7 @@ class HomeVC: UIViewController {
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-//        notificaitonListener?.remove()
+        notificaitonListener?.remove()
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
@@ -448,7 +448,7 @@ class HomeVC: UIViewController {
                     
                     completion(true)
      
-                    NotificaitonService.shared.send_home_like_notification(post: post, currentUser: sself.currentUser, notificationDespriction: NotificaitonDescprition.like_home.desprition)
+                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: sself.currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
                 }
             }
         }else{

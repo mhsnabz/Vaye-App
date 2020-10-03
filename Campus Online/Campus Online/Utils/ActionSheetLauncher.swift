@@ -32,6 +32,7 @@ class ActionSheetLauncher : NSObject {
     }()
     private lazy var footerView : UIView = {
        let view = UIView()
+   
         view.addSubview(cancelButton)
         cancelButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         cancelButton.anchor(top: nil, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 0)

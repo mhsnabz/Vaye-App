@@ -194,7 +194,8 @@ class CommentVC: UIViewController {
                     
                     completion(true)
      
-                    NotificaitonService.shared.send_home_like_notification(post: post, currentUser: sself.currentUser, notificationDespriction: NotificaitonDescprition.like_home.desprition)
+                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: sself.currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
+              
                 }
             }
         }else{
@@ -404,9 +405,10 @@ class CommentVC: UIViewController {
         if textField.hasText {
             textField.text = ""
             let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
-             CommentService.shared.setNewComment(currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) { (_val) in
+             CommentService.shared.setNewComment(currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (_val) in
+                guard let sself = self else { return }
                  if _val {
-                     print("succes")
+                    NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
                  }
              }
         }

@@ -9,7 +9,7 @@
 import FirebaseFirestore
 class NotificaitonService{
    static let shared = NotificaitonService()
-    func send_home_like_notification(post : LessonPostModel , currentUser : CurrentUser, notificationDespriction : String){
+    func send_post_like_comment_notification(post : LessonPostModel , currentUser : CurrentUser, text : String , type : String){
         if post.senderUid == currentUser.uid{
             return
         }else{
@@ -18,7 +18,8 @@ class NotificaitonService{
                 
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
-                let dic = ["type":notificationDespriction ,
+                let dic = ["type":type ,
+                           "text" : text,
                            "senderUid" : currentUser.uid as Any,
                            "time":FieldValue.serverTimestamp(),
                            "senderImage":currentUser.thumb_image as Any ,
@@ -35,7 +36,7 @@ class NotificaitonService{
     }
     func send_home_remove_like_notification(post : LessonPostModel , currentUser : CurrentUser){
         let db = Firestore.firestore().collection("user")
-            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificaitonDescprition.like_home.desprition)
+            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: Notification_description.like_home.desprition)
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -50,25 +51,38 @@ class NotificaitonService{
         }
     }
     
-}
-enum NotificaitonDescprition {
-    case like_home
+  
     
+}
+enum Notification_description {
+    case like_home
+    case comment_home
+    case reply_comment
     var desprition : String {
         switch self {
        
         case .like_home:
             return "Gönderini Beğendi"
+        case .comment_home:
+            return "Gönderinize Yorum Yaptı"
+        case .reply_comment:
+            return "Yorumunuza Cevap Verdi"
         }
     }
 }
 enum NotificationType{
     case home_like
+    case comment_home
+    case reply_comment
     var desprition : String {
         switch self{
         
         case .home_like:
-            return "home_like"
+            return "like"
+        case .comment_home:
+            return "comment_home"
+        case .reply_comment:
+            return "reply_comment"
         }
     }
 }

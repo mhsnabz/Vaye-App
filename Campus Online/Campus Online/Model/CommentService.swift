@@ -31,6 +31,8 @@ class CommentService {
                     commentCount.setData(["comment":total] as [String : Any], merge: true) { (err) in
                         if err != nil {
                             print("comment err \(err?.localizedDescription as Any)")
+                        }else{
+                            completion(true)
                         }
                     }
                 }

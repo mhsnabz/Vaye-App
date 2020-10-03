@@ -29,6 +29,10 @@ class NotificaitionCell: UITableViewCell {
         let name = NSMutableAttributedString()
         return name
     }()
+    lazy var notification : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
     let userName : UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .left
@@ -36,7 +40,8 @@ class NotificaitionCell: UITableViewCell {
     }()
     let type : UILabel = {
         let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 14)
+        lbl.font = UIFont(name: Utilities.font, size: 13)
+        lbl.numberOfLines = 0
         lbl.textColor = .darkGray
         return lbl
     }()
@@ -84,6 +89,19 @@ class NotificaitionCell: UITableViewCell {
     private func configure(){
         guard let post = model else { return }
         
+        if post.type == NotificationType.home_like.desprition{
+            type.text = Notification_description.like_home.desprition
+            
+        }else if post.type == NotificationType.comment_home.desprition{
+            notification =  NSMutableAttributedString(string: "\(Notification_description.comment_home.desprition) :", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
+            print(notification)
+            type.attributedText = notification
+            
+        }else if post.type == NotificationType.reply_comment.desprition{
+            
+        }
+        
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username ?? "")", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
         name.append(NSAttributedString(string: " \(post.time!.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
@@ -91,9 +109,6 @@ class NotificaitionCell: UITableViewCell {
         userName.attributedText = name
         profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
         profile_image.sd_setImage(with: URL(string: post.senderImage))
-        
-        type.text = post.type
-        
         if post.isRead {
             badge.isHidden = true
         }else{
