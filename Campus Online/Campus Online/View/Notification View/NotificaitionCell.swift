@@ -93,17 +93,20 @@ class NotificaitionCell: UITableViewCell {
             type.text = Notification_description.like_home.desprition
             
         }else if post.type == NotificationType.comment_home.desprition{
-            notification =  NSMutableAttributedString(string: "\(Notification_description.comment_home.desprition) :", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            notification =  NSMutableAttributedString(string: "\(Notification_description.comment_home.desprition):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
             notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
             print(notification)
             type.attributedText = notification
             
         }else if post.type == NotificationType.reply_comment.desprition{
-            
+            notification =  NSMutableAttributedString(string: "\(Notification_description.reply_comment.desprition):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
+            print(notification)
+            type.attributedText = notification
         }else if post.type == NotificationType.comment_like.desprition{
             type.text = Notification_description.comment_like.desprition
         }else if post.type == NotificationType.comment_mention.desprition{
-            notification =  NSMutableAttributedString(string: "\(Notification_description.comment_mention.desprition) :", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            notification =  NSMutableAttributedString(string: "\(Notification_description.comment_mention.desprition):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
             notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
             type.attributedText = notification
         }

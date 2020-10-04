@@ -17,7 +17,7 @@ class NotificationVC: UIViewController {
     weak var notificaitonListener : ListenerRegistration?
     
     private var notificationLauncher : NotificationLaunher
-    
+    var refreshControl = UIRefreshControl()
     //MARK: -properties
     var tableView : UITableView = {
         let tableView = UITableView()
@@ -41,7 +41,7 @@ class NotificationVC: UIViewController {
         navigationItem.title = "Bildirimler"
         configureTableViewController()
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showLauncher))
-        
+        get_notification(currentUser: currentUser)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -60,7 +60,7 @@ class NotificationVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        get_notification(currentUser: currentUser)
+
         getNotificationCount()
         
     }
@@ -162,46 +162,42 @@ class NotificationVC: UIViewController {
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
         tableView.register(NotificaitionCell.self, forCellReuseIdentifier: cellId)
+        tableView.addSubview(refreshControl)
+        refreshControl.addTarget(self, action: #selector(swipeAndRfresh), for: .valueChanged)
+        tableView.alwaysBounceVertical = true
+        tableView.isUserInteractionEnabled = true
     }
     func get_notification(currentUser : CurrentUser )
     {
-        ///user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601492948.048019
-        model = [NotificationModel]()
+        tableView.refreshControl?.beginRefreshing()
+        
         let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true)
+            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10)
         
-        
-        listener = db.addSnapshotListener {[weak self] (querySnap, err) in
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
             if err == nil {
-                guard let snap = querySnap?.documentChanges else {
+                guard let snap = querySnap else {
                     return
                 }
-                guard let sself = self else { return }
-                
-                
-                snap.forEach({ (diff) in
-                    print(diff.document.data())
-                    if (diff.type == .added) {
-                        sself.model.append(NotificationModel.init(not_id: diff.document.get("not_id") as! String, dic: diff.document.data()))
-//                        sself.model.sort { (model1, model2) -> Bool in
-//                            return model1.not_id > model2.not_id
-//                        }
-                        sself.tableView.reloadData()
-                    }
-                    else if (diff.type == .modified)
-                    {
+                for item in snap.documents {
+                    if item.exists{
+                        sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
+                       
                         
                     }
-                    else if (diff.type == .removed)
-                    {
-                        sself.model.removeAll(where: {$0.not_id == diff.document.documentID})
-                        sself.tableView.reloadData()
-                    }
-                })
-                
-                
+                }
             }
+            
+            DispatchQueue.main.async(execute: {
+                sself.tableView.reloadData()
+                sself.refreshControl.endRefreshing()
+                sself.tableView.contentOffset = .zero
+
+            })
         }
+        
+  
         
     }
     func markAsRead(at indexPath :IndexPath) ->UIContextualAction {
@@ -285,7 +281,11 @@ class NotificationVC: UIViewController {
         notificationLauncher.show()
         notificationLauncher.delegate = self
     }
-    
+    @objc func swipeAndRfresh(){
+        model = [NotificationModel]()
+        tableView.reloadData()
+        get_notification(currentUser: currentUser)
+    }
     
 }
 
@@ -352,7 +352,9 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
             Utilities.dismissProgress()
         }
     }
-    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+    }
     
     
 }
