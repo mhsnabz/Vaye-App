@@ -9,13 +9,14 @@
 import UIKit
 import FirebaseFirestore
 private let cellId = "NotificaitionCell"
+private let footerId = "footerID"
 class NotificationVC: UIViewController {
     var currentUser : CurrentUser
     var model = [NotificationModel]()
-    
+    var isLoadMore : Bool = false
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
-    
+     var page : DocumentSnapshot? = nil
     private var notificationLauncher : NotificationLaunher
     var refreshControl = UIRefreshControl()
     //MARK: -properties
@@ -67,6 +68,70 @@ class NotificationVC: UIViewController {
     
     
     //MARK: - functions
+    func get_notification(currentUser : CurrentUser )
+    {
+        tableView.refreshControl?.beginRefreshing()
+        
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10)
+        
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else {
+                return
+            }
+            if err == nil {
+               
+                for item in snap.documents {
+                    if item.exists{
+                        sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
+                        sself.page = snap.documents.last
+                        
+                    }
+                }
+                
+            }
+            
+            DispatchQueue.main.async(execute: {
+                sself.tableView.reloadData()
+                sself.refreshControl.endRefreshing()
+                sself.tableView.contentOffset = .zero
+               
+            })
+        }
+        
+  
+        
+    }
+    private func loadMoreNotification(completion : @escaping(Bool) ->Void){
+        guard let pagee = page else {
+
+            tableView.reloadData()
+            completion(false)
+            tableView.tableFooterView = nil
+            return }
+        let  db =  Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10).start(afterDocument: pagee)
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = querySnap else {
+                    return
+                }
+                for item in snap.documents {
+                    if item.exists{
+                        sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
+                        sself.tableView.reloadData()
+                        completion(true)
+
+                    }
+                }
+                sself.page = snap.documents.last
+                sself.tableView.stopLoading()
+            }
+        }
+    }
+    
     
     private func getNotificationCount(){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
@@ -162,44 +227,13 @@ class NotificationVC: UIViewController {
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
         tableView.register(NotificaitionCell.self, forCellReuseIdentifier: cellId)
+        tableView.tableFooterView?.isHidden = true
         tableView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(swipeAndRfresh), for: .valueChanged)
         tableView.alwaysBounceVertical = true
         tableView.isUserInteractionEnabled = true
     }
-    func get_notification(currentUser : CurrentUser )
-    {
-        tableView.refreshControl?.beginRefreshing()
-        
-        let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10)
-        
-        db.getDocuments {[weak self] (querySnap, err) in
-            guard let sself = self else { return }
-            if err == nil {
-                guard let snap = querySnap else {
-                    return
-                }
-                for item in snap.documents {
-                    if item.exists{
-                        sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
-                       
-                        
-                    }
-                }
-            }
-            
-            DispatchQueue.main.async(execute: {
-                sself.tableView.reloadData()
-                sself.refreshControl.endRefreshing()
-                sself.tableView.contentOffset = .zero
 
-            })
-        }
-        
-  
-        
-    }
     func markAsRead(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Okundu") {[weak self] (action, view, completion) in
             guard let sself = self else { return }
@@ -230,10 +264,6 @@ class NotificationVC: UIViewController {
                 }
         
             }
-            //            sself.tableView.reloadData()
-            //            let vc = RepliesComment(comment : sself.comment[indexPath.row] , currentUser : sself.currentUser)
-            
-            //            sself.navigationController?.pushViewController(vc, animated: true)
         }
         action.backgroundColor = .mainColor()
         action.title = "Görüntüle"
@@ -245,13 +275,13 @@ class NotificationVC: UIViewController {
     func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
             guard let sself = self else { return }
-            sself.deleteNotification(not_id: sself.model[indexPath.row].not_id) { (_) in
-                
-                sself.tableView.reloadData()
+            let notId = sself.model[indexPath.row].not_id
+            sself.model.remove(at: indexPath.row)
+            sself.tableView.reloadData()
+            sself.deleteNotification(not_id: notId!) { (_) in
+          
             }
-            //            sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!)
-            //            sself.comment.remove(at: indexPath.row)
-            
+    
         }
         action.backgroundColor = .red
         
@@ -306,10 +336,6 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         let delete = deleteAction(at: indexPath)
         
         return UISwipeActionsConfiguration(actions: [delete,edit])
-        
-        
-        
-        
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         Utilities.waitProgress(msg: nil)
@@ -317,6 +343,8 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         Utilities.dismissProgress()
         return UISwipeActionsConfiguration(actions: [reply])
     }
+    
+   
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NotificaitionCell
@@ -329,7 +357,6 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         guard let text = model[indexPath.row].text else { return 0}
         
         let h = text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-        print(h)
         if h < 25 {
             return 62
         }else{
@@ -353,6 +380,20 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         }
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        
+        if model.count > 9 {
+           
+            if indexPath.item == model.count - 1 {
+                tableView.addLoading(indexPath) {
+                    self.loadMoreNotification {(val) in
+                       
+                    }
+                }
+               
+            }
+        }
+        
         
     }
     
@@ -382,4 +423,40 @@ extension NotificationVC : NotificationLauncherDelegate{
     }
     
     
+}
+
+extension UITableView{
+
+    func indicatorView() -> UIActivityIndicatorView{
+        var activityIndicatorView = UIActivityIndicatorView()
+        if self.tableFooterView == nil{
+            let indicatorFrame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 40)
+            activityIndicatorView = UIActivityIndicatorView(frame: indicatorFrame)
+            activityIndicatorView.isHidden = false
+            activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin]
+            activityIndicatorView.isHidden = true
+            self.tableFooterView = activityIndicatorView
+            return activityIndicatorView
+        }else{
+            return activityIndicatorView
+        }
+    }
+
+    func addLoading(_ indexPath:IndexPath, closure: @escaping (() -> Void)){
+        indicatorView().startAnimating()
+        if let lastVisibleIndexPath = self.indexPathsForVisibleRows?.last {
+            if indexPath == lastVisibleIndexPath && indexPath.row == self.numberOfRows(inSection: 0) - 1 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    closure()
+                }
+            }
+        }
+        indicatorView().isHidden = false
+    }
+
+    func stopLoading(){
+        indicatorView().stopAnimating()
+        indicatorView().isHidden = true
+       
+    }
 }
