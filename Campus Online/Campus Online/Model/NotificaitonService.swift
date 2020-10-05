@@ -36,8 +36,9 @@ class NotificaitonService{
     }
 
     func send_home_remove_like_notification(post : LessonPostModel , currentUser : CurrentUser){
+   
         let db = Firestore.firestore().collection("user")
-            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: Notification_description.like_home.desprition)
+            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.home_like.desprition)
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -96,8 +97,27 @@ class NotificaitonService{
                 }
                 
             }
+        }  }
+    func start_following_you(currentUser : CurrentUser , otherUser : OtherUser , text : String , type : String , completion:@escaping(Bool)->Void){
+        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("notification").document(notificaitonId)
+        let dic = ["type":type ,
+                   "text" : text,
+                   "senderUid" : currentUser.uid as Any,
+                   "time":FieldValue.serverTimestamp(),
+                   "senderImage":currentUser.thumb_image as Any ,
+                   "not_id":notificaitonId,
+                   "isRead":false ,
+                   "username":currentUser.username as Any,
+                   "postId":"post.postId" as Any,
+                   "senderName":currentUser.name as Any,
+                   "lessonName":"post.lessonName" as Any] as [String : Any]
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
         }
-        
         
     }
   
@@ -109,6 +129,7 @@ enum Notification_description {
     case reply_comment
     case comment_like
     case comment_mention
+    case following_you
     var desprition : String {
         switch self {
        
@@ -122,7 +143,9 @@ enum Notification_description {
         case .comment_like:
             return "Yorumunuzu Beğendi"
         case .comment_mention :
-            return "Bir Yorumda Sizden Bahsetti "
+            return "Bir Yorumda Sizden Bahsetti"
+        case.following_you:
+            return "Sizi Takip Etmeye Başladı"
             
         }
     }
@@ -133,6 +156,7 @@ enum NotificationType{
     case reply_comment
     case comment_like
     case comment_mention
+    case following_you
     var desprition : String {
         switch self{
         
@@ -146,6 +170,8 @@ enum NotificationType{
         return "like_comment"
         case.comment_mention:
         return "comment_mention"
+        case .following_you:
+            return "follow"
         }
     }
 }

@@ -853,8 +853,7 @@ extension HomeVC : NewPostHomeVCDelegate {
     func clickMention(username: String) {
         if "@\(username)" == currentUser.username {
             let vc = ProfileVC(currentUser: currentUser)
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
+            self.navigationController?.pushViewController(vc, animated: true)
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }

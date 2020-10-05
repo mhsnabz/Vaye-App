@@ -253,17 +253,54 @@ class NotificationVC: UIViewController {
        
         let action = UIContextualAction(style: .normal, title: "Görüntüle") {[weak self] (action, view, completion) in
             guard let sself = self  else { return }
-            sself.getPost(postID: sself.model[indexPath.row].postId, not_id: sself.model[indexPath.row].not_id) { (postModel) in
-                guard let post = postModel else { return }
-                let vc = CommentVC(currentUser: sself.currentUser, post: post)
-                sself.navigationController?.pushViewController(vc, animated: true)
-                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
-                    sself.model[indexPath.row].isRead = true
-                    sself.tableView.reloadData()
-                    completion(true)
+            
+            
+            Utilities.waitProgress(msg: nil)
+            
+            if sself.model[indexPath.row].type == NotificationType.following_you.desprition
+            {
+                UserService.shared.fetchOtherUser(uid: sself.model[indexPath.row].senderUid) {(user) in
+                 
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                    sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                        sself.model[indexPath.row].isRead = true
+                        sself.tableView.reloadData()
+                        
+                    }
                 }
-        
+            }else if sself.model[indexPath.row].type == NotificationType.comment_home.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.comment_like.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.comment_mention.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.home_like.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.reply_comment.desprition {
+                sself.getPost(postID: sself.model[indexPath.row].postId, not_id: sself.model[indexPath.row].not_id) { (postModel) in
+                    guard let post = postModel else {
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return }
+                    let vc = CommentVC(currentUser: sself.currentUser, post: post)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                        sself.model[indexPath.row].isRead = true
+                        sself.tableView.reloadData()
+                        
+                    }
+                    Utilities.dismissProgress()
+                }
             }
+            
+//            sself.getPost(postID: sself.model[indexPath.row].postId, not_id: sself.model[indexPath.row].not_id) { (postModel) in
+//                guard let post = postModel else { return }
+//                let vc = CommentVC(currentUser: sself.currentUser, post: post)
+//                sself.navigationController?.pushViewController(vc, animated: true)
+//                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+//                    sself.model[indexPath.row].isRead = true
+//                    sself.tableView.reloadData()
+//                    completion(true)
+//                }
+//
+//            }
         }
         action.backgroundColor = .mainColor()
         action.title = "Görüntüle"
@@ -367,33 +404,51 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         Utilities.waitProgress(msg: nil)
-        getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) { (postModel) in
-            guard let post = postModel else { return }
-            let vc = CommentVC(currentUser: self.currentUser, post: post)
-            self.navigationController?.pushViewController(vc, animated: true)
-            self.makeReadNotificaiton(not_id: self.model[indexPath.row].not_id) { (_) in
-                self.model[indexPath.row].isRead = true
-                self.tableView.reloadData()
-                
-            }
-            Utilities.dismissProgress()
-        }
-    }
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        
-        if model.count > 9 {
-           
-            if indexPath.item == model.count - 1 {
-                tableView.addLoading(indexPath) {
-                    self.loadMoreNotification {(val) in
-                       
-                    }
+        if model[indexPath.row].type == NotificationType.following_you.desprition
+        {
+            UserService.shared.fetchOtherUser(uid: model[indexPath.row].senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
                 }
                
             }
+        }else if model[indexPath.row].type == NotificationType.comment_home.desprition ||
+                    model[indexPath.row].type == NotificationType.comment_like.desprition ||
+                    model[indexPath.row].type == NotificationType.comment_mention.desprition ||
+                    model[indexPath.row].type == NotificationType.home_like.desprition ||
+                    model[indexPath.row].type == NotificationType.reply_comment.desprition
+        {
+            getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) { (postModel) in
+                guard let post = postModel else {
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    return }
+                let vc = CommentVC(currentUser: self.currentUser, post: post)
+                self.navigationController?.pushViewController(vc, animated: true)
+                self.makeReadNotificaiton(not_id: self.model[indexPath.row].not_id) { (_) in
+                    self.model[indexPath.row].isRead = true
+                    self.tableView.reloadData()
+                    
+                }
+                Utilities.dismissProgress()
+            }
         }
-        
+      
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if model.count > 9 {
+           
+            if indexPath.item == model.count - 1 {
+                self.loadMoreNotification {(val) in
+                }
+            }
+        }
         
     }
     

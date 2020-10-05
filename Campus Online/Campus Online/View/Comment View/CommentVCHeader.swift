@@ -13,10 +13,43 @@ class CommentVCHeader: UITableViewHeaderFooterView
 {
     
     weak var delegate : CommentVCHeaderDelegate?
+    var currentUser : CurrentUser!
     //MARK: -properties
     var post : LessonPostModel?{
         didSet {
-            configure()
+            
+                configure()
+                guard let post = post else { return }
+                guard let currentUser = currentUser else { return }
+                checkIsDisliked(user: currentUser, post: post) {[weak self] (_val) in
+                    guard let s = self else { return }
+                    if _val {
+                        s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                        
+                    }else{
+                        s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                        
+                    }
+                }
+                checkIsLiked(user: currentUser, post: post) {[weak self] (_val) in
+                    guard let s = self else { return }
+                    if _val{
+                        s.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                    }else{
+                        s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                    }
+                }
+                checkIsFav(user: currentUser, post: post) {[weak self] (_val) in
+                    guard let s = self else {  return }
+                    if _val {
+                        s.addfav.setImage(#imageLiteral(resourceName: "fav-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                        
+                    }else{
+                        s.addfav.setImage(#imageLiteral(resourceName: "fav-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                        
+                    }
+                }
+            
         }
     }
     let profile_image : UIImageView = {
@@ -197,6 +230,44 @@ class CommentVCHeader: UITableViewHeaderFooterView
      @objc func showProfile(){
          delegate?.showProfile(for : self)
      }
+    
+    //MARK: -funtions
+    private func mentionClick(){
+        msgText.handleMentionTap {[weak self] (username) in
+            guard let sself = self else { return }
+            sself.delegate?.clickMention(username : username)
+        }
+    }
+    private func checkIsFav(user : CurrentUser , post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.favori.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    private func checkIsLiked(user : CurrentUser, post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        
+        guard let post = post else { return }
+        if post.likes.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    
+    private func checkIsDisliked(user : CurrentUser ,post : LessonPostModel? , completion : @escaping(Bool) ->Void)
+    {
+        guard let post = post else { return }
+        if post.dislike.contains(user.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    
     private func configure(){
         guard let post = post else { return }
         
@@ -218,7 +289,7 @@ class CommentVCHeader: UITableViewHeaderFooterView
         nameLbl.attributedText = name
         profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
         profile_image.sd_setImage(with: URL(string: post.thumb_image))
-//        mentionClick()
+        mentionClick()
         lessonName.text = post.lessonName
         msgText.text = post.text
         like_lbl.text = post.likes.count.description

@@ -95,6 +95,7 @@ protocol CommentVCHeaderDelegate : class {
     func linkClick(for header : CommentVCHeader)
     func showProfile(for header : CommentVCHeader)
     func goProfileByMention (userName : String)
+    func clickMention(username : String)
 }
 
 protocol DataViewClick : class {

@@ -252,8 +252,9 @@ class OtherUserProfile: UIViewController  {
                 .document("lesson-post").collection("post").document(post.postId)
             db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {[weak self] (err) in
                 guard let sself = self else { return }
-                NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: sself.currentUser)
                 completion(true)
+                NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: sself.currentUser)
+               
             }
         }
         
@@ -539,8 +540,12 @@ class OtherUserProfile: UIViewController  {
                     .collection("following").document(sself.otherUser.uid)
               
                 db.setData(["user":sself.otherUser.uid as Any], merge: true) { (err) in
+                 
                     if err == nil{
                         Utilities.succesProgress(msg: "Takip Ediliyor")
+                        NotificaitonService.shared.start_following_you(currentUser: sself.currentUser, otherUser: sself.otherUser, text: Notification_description.following_you.desprition, type: NotificationType.following_you.desprition) { (_) in
+                            
+                        }
                     }else{
                         Utilities.errorProgress(msg: nil)
                     }

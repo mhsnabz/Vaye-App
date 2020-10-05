@@ -758,6 +758,19 @@ extension CommentVC : CommentVCDataDelegate {
 
 //MARK: - delegate
 extension CommentVC : CommentVCHeaderDelegate {
+    func clickMention(username: String) {
+        if "@\(username)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+               
+            }
+        }
+    }
     func like(for header: CommentVCHeader) {
         guard let post = header.post else { return }
         setLike(post: post) { (_) in  }
@@ -774,9 +787,6 @@ extension CommentVC : CommentVCHeaderDelegate {
         }
         setFav(post: post){ (_) in  }
     }
-    
-    
-    
     func linkClick(for header: CommentVCHeader) {
         guard let post = header.post else { return }
         guard let url = URL(string: post.link) else {
