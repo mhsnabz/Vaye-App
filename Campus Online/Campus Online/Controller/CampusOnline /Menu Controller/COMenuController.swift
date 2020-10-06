@@ -34,18 +34,19 @@ class COMenuController : UIViewController{
         tableView.backgroundColor = .white
         tableView.separatorColor = .none
         tableView.separatorStyle = .none
-        tableView.register(HomeMenuCell.self, forCellReuseIdentifier: HomeMenuCell.reuseIdentifier)
+        tableView.register(CoMenuCell.self, forCellReuseIdentifier: CoMenuCell.reuseIdentifier)
         tableView.register(CoMenuHeader.self, forHeaderFooterViewReuseIdentifier: CoMenuHeader.reuseIdentifier )
     }
     
 }
 extension COMenuController : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: HomeMenuCell.reuseIdentifier, for: indexPath) as! HomeMenuCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CoMenuCell.reuseIdentifier, for: indexPath) as! CoMenuCell
         cell.backgroundColor = .white
         let menuOption = COMenuOption(rawValue: indexPath.row)
         cell.homeBtn.setImage(menuOption?.image, for: .normal)
@@ -73,13 +74,16 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
     }
     
 }
-extension COMenuController :  SlideMenuDelegate , CoSlideHeaderDelegate {
+extension COMenuController :  CoSlideMenuDelegate , CoSlideHeaderDelegate {
+   
+    
     func dismisMenu() {
         print("dismis")
     }
    
-    func handleSlideMenuItems(for cell: HomeMenuCell) {
-        print("click menu item one")
+    func handleSlideMenuItems(for cell: CoMenuCell) {
+        let menuOption = COMenuOption(rawValue: self.tableView.indexPath(for: cell)!.row)
+        delegate?.handleMenuToggle(forMenuOption: menuOption)
     }
     
     
