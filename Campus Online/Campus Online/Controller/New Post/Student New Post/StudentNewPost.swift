@@ -279,11 +279,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         controller.dismiss(animated: true, completion: nil)
         gallery = nil
     }
-    
+
     fileprivate func configureCollectionView() {
         view.addSubview(headerView)
         headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 80)
-        
+
         view.addSubview(text)
         
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 100)
@@ -429,11 +429,12 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
            if self.data.isEmpty{
                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
                 
-                self?.setMyPostOnDatabase(postId: date) { (_) in
+                self?.setMyPostOnDatabase(postId: date) {[weak self] (_) in
                     Utilities.succesProgress(msg: "Paylaşıldı")
+                 
                 }
-                
                }
+            self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
            }else {
             
             
@@ -453,6 +454,31 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
            }
         
     }
+
+  
+    
+    private func sendNotification(lessonName : String ,text : String , type : String , postId : String){
+        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+        var getterUids = [NotificationGetter]()
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter")
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else { return }
+            if snap.isEmpty{
+           
+            }else{
+                for item in snap.documents{
+                    getterUids.append(NotificationGetter(uid: item.get("uid") as! String))
+                }
+                NotificaitonService.shared.new_home_post_notification(currentUser: sself.currentUser, postId: postId, getterUids: getterUids,  text: text, type: NotificationType.home_new_post.desprition, lessonName: lessonName, notificaitonId: notificaitonId) { (_) in
+                    print("succes")
+                }
+            }
+        }
+    }
+    
+    
     
     //MARK: - getMentions
     private func getMention(completion : @escaping([String]) ->Void){
@@ -566,10 +592,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
         })
     }
-    
-    
-    
-    
     
 }
 extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
@@ -742,7 +764,6 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
     
     
 }
-
 extension URL {
     
     var uti: String {
@@ -750,7 +771,6 @@ extension URL {
     }
     
 }
-
 extension String {
     func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
@@ -766,7 +786,6 @@ extension String {
         return ceil(boundingBox.width)
     }
 }
-
 extension StudentNewPost : ActionSheetLauncherDelegate {
     func didSelect(option: ActionSheetOptions) {
         switch option {
@@ -805,7 +824,6 @@ extension StudentNewPost : ActionSheetLauncherDelegate {
         }
     }
 }
-
 extension StudentNewPost: PopUpDelegate {
     func addTarget(_ target: String?)
     {

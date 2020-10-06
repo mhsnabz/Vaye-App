@@ -255,6 +255,12 @@ class LessonList: UITableViewController {
                                     if _val {
                                         Utilities.succesProgress(msg : "Ders Eklendi")
                                         self.tableView.reloadData()
+                                        let dbNoti = Firestore.firestore().collection(currentUser.short_school)
+                                            .document("lesson").collection(currentUser.bolum)
+                                            .document(lessonName!).collection("notification_getter").document(currentUser.uid)
+                                        dbNoti.setData(["uid":currentUser.uid as Any], merge: true) { (err) in
+                                            
+                                        }
                                     }else{
                                         Utilities.succesProgress(msg : "Ders Eklenemedi")
                                         self.tableView.reloadData()
@@ -354,6 +360,11 @@ class LessonList: UITableViewController {
                                 if _val{
                                     Utilities.succesProgress(msg : "Ders Silindi")
                                     self.tableView.reloadData()
+                                    let dbNoti = Firestore.firestore().collection(currentUser.short_school)
+                                        .document("lesson").collection(currentUser.bolum)
+                                        .document(lessonName!).collection("notification_getter").document(currentUser.uid)
+                                    dbNoti.delete()
+                                    
                                 }else{
                                   Utilities.errorProgress(msg: "Ders Silinemedi")
                                 }

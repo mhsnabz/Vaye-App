@@ -31,7 +31,7 @@ class ActionSheetOtherUserLaunher : NSObject{
     private var tableViewHeight : CGFloat?
     var post : LessonPostModel?
     lazy var isFallowingLesson : Bool = false
-    lazy var lessonIsSlient : Bool = false
+    lazy var lessonIsSlient : Bool = true
     lazy var postIsSlient : Bool = false
     lazy var userIsSlient : Bool = false
     lazy var isFallowingUser : Bool = false
@@ -250,8 +250,9 @@ class ActionSheetOtherUserLaunher : NSObject{
     }
     private func checkLessonIsSlient(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: nil)
+        ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/notification_getter
         let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("slient-user").document(currentUser.uid)
+            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter").document(currentUser.uid)
         db.getDocument {[weak self] (docSnap, err) in
             guard let sself = self else {
                 Utilities.dismissProgress()
@@ -265,12 +266,12 @@ class ActionSheetOtherUserLaunher : NSObject{
                 return}
             if snap.exists{
                 Utilities.dismissProgress()
-                sself.lessonIsSlient = true
-                completion(true)
-            }else{
-                Utilities.dismissProgress()
                 sself.lessonIsSlient = false
                 completion(false)
+            }else{
+                Utilities.dismissProgress()
+                sself.lessonIsSlient = true
+                completion(true)
             }
         }
     }
@@ -278,7 +279,22 @@ class ActionSheetOtherUserLaunher : NSObject{
     private func setSlientLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection(currentUser.short_school)
-                  .document("lesson").collection(currentUser.bolum).document(lessonName).collection("slient-user").document(currentUser.uid)
+                  .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter").document(currentUser.uid)
+        db.delete { (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Bildirimler Kapatıldı")
+                self.lessonIsSlient = false
+                completion(false)
+                
+            }
+        }
+      
+    }
+    private func setNotSlientLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
+          Utilities.waitProgress(msg: nil)
+          let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter").document(currentUser.uid)
+        
         let dic = ["uid":currentUser.uid as Any] as [String:Any]
         db.setData(dic, merge: true) {[weak self] (err) in
             guard let sself = self else {
@@ -292,22 +308,6 @@ class ActionSheetOtherUserLaunher : NSObject{
                 
             }else{
                  Utilities.succesProgress(msg: "Bildirimler Açıldı")
-                sself.lessonIsSlient = false
-                completion(false)
-            }
-        }
-    }
-    private func setNotSlientLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
-          Utilities.waitProgress(msg: nil)
-          let db = Firestore.firestore().collection(currentUser.short_school)
-                    .document("lesson").collection(currentUser.bolum).document(lessonName).collection("slient-user").document(currentUser.uid)
-        db.delete {[weak self] (err) in
-            guard let sself = self else {
-                Utilities.dismissProgress()
-                completion(false)
-                return }
-            if err == nil {
-                Utilities.dismissProgress()
                 sself.lessonIsSlient = false
                 completion(false)
             }

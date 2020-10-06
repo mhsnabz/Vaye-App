@@ -274,7 +274,8 @@ class NotificationVC: UIViewController {
                         sself.model[indexPath.row].type == NotificationType.comment_like.desprition ||
                         sself.model[indexPath.row].type == NotificationType.comment_mention.desprition ||
                         sself.model[indexPath.row].type == NotificationType.home_like.desprition ||
-                        sself.model[indexPath.row].type == NotificationType.reply_comment.desprition {
+                        sself.model[indexPath.row].type == NotificationType.reply_comment.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.home_new_post.desprition {
                 sself.getPost(postID: sself.model[indexPath.row].postId, not_id: sself.model[indexPath.row].not_id) { (postModel) in
                     guard let post = postModel else {
                         Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
@@ -290,17 +291,7 @@ class NotificationVC: UIViewController {
                 }
             }
             
-//            sself.getPost(postID: sself.model[indexPath.row].postId, not_id: sself.model[indexPath.row].not_id) { (postModel) in
-//                guard let post = postModel else { return }
-//                let vc = CommentVC(currentUser: sself.currentUser, post: post)
-//                sself.navigationController?.pushViewController(vc, animated: true)
-//                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
-//                    sself.model[indexPath.row].isRead = true
-//                    sself.tableView.reloadData()
-//                    completion(true)
-//                }
-//
-//            }
+        
         }
         action.backgroundColor = .mainColor()
         action.title = "Görüntüle"
