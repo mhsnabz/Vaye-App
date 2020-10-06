@@ -147,7 +147,5 @@ extension ContainerController : HomeControllerDelegate {
         isExanded = !isExanded
         showMenuController(shouldExpand: isExanded, menuOption: menuOption)
     }
-    
-    
-    
+      
 }

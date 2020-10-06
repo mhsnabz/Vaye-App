@@ -10,8 +10,17 @@
 protocol HomeControllerDelegate : class {
     func handleMenuToggle(forMenuOption menuOption : MenuOption?)
 }
-protocol SlideMenuDelegate {
+protocol CoControllerDelegate : class {
+    func handleMenuToggle(forMenuOption menuOption : COMenuOption?)
+}
+protocol SlideMenuDelegate : class  {
     func handleSlideMenuItems(for cell : HomeMenuCell)
+}
+protocol CoSlideMenuDelegate : class{
+    func handleSlideMenuItems(for cell : CoMenuCell)
+}
+protocol CoSlideHeaderDelegate : class{
+    func dismisMenu()
 }
 protocol MenuHeaderDelegate : class {
     func dismisMenu()

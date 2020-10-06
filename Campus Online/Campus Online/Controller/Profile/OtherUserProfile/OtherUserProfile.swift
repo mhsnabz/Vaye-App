@@ -760,15 +760,12 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
     func goProfileByMention(userName: String) {
         if "@\(userName)" == currentUser.username {
             let vc = ProfileVC(currentUser: currentUser)
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
+            navigationController?.pushViewController(vc, animated: true)
         }else{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-
-                sself.present(vc, animated: true, completion: nil)
+                sself.navigationController?.pushViewController(vc, animated: true)
             }
         }
     }
@@ -781,15 +778,12 @@ extension OtherUserProfile : NewPostHomeVCDelegate{
     func clickMention(username: String) {
         if "@\(username)" == currentUser.username {
             let vc = ProfileVC(currentUser: currentUser)
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
+            navigationController?.pushViewController(vc, animated: true)
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-
-                sself.present(vc, animated: true, completion: nil)
+                sself.navigationController?.pushViewController(vc, animated: true)
             }
         }
     }
@@ -898,11 +892,10 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
                         Utilities.dismissProgress()
                         return}
                     let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    sself.present(controller, animated: true) {
-                        Utilities.dismissProgress()
-                    }
+
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+//
                 }
             }
             break

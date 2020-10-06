@@ -68,15 +68,15 @@ class MenuController: UIViewController {
         tableView.register(HomeMenuCell.self, forCellReuseIdentifier: HomeMenuCell.reuseIdentifier)
         tableView.register(SlideMenuHeader.self, forHeaderFooterViewReuseIdentifier: SlideMenuHeader.reuseIdentifier )
     }
-   
-
+    
+    
 }
 
 extension MenuController : UITableViewDataSource , UITableViewDelegate {
-     func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeMenuCell.reuseIdentifier, for: indexPath) as! HomeMenuCell
         cell.backgroundColor = .white
@@ -92,7 +92,7 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
         return cell
         
     }
-     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: SlideMenuHeader.reuseIdentifier) as! SlideMenuHeader
         header.delegate = self
         header.currentUser = currentUser
@@ -100,17 +100,17 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
         
         
     }
-     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 250
     }
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 6
     }
-     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
             headerView.contentView.backgroundColor = .white // Works!
         }
@@ -139,8 +139,8 @@ extension MenuController : MenuHeaderDelegate {
         vc.currentUser = currentUser
         navigationController?.pushViewController(vc, animated: true)
         dismisMenu()
-//        controller.modalPresentationStyle = .fullScreen
-//        self.present(controller, animated: true, completion: nil)
+        //        controller.modalPresentationStyle = .fullScreen
+        //        self.present(controller, animated: true, completion: nil)
     }
     
     func editProfile() {
@@ -292,7 +292,7 @@ extension MenuController : UIImagePickerControllerDelegate,UINavigationControlle
         SVProgressHUD.setBorderColor(.white)
         
         SVProgressHUD.setForegroundColor(.white)
-         uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage) {
+        uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage) {
             (metadata , err ) in
             if err != nil {
                 print("failed upload image")
@@ -337,7 +337,7 @@ extension MenuController : UIImagePickerControllerDelegate,UINavigationControlle
                                             self?.currentUser.thumb_image = thumb_image
                                             self?.currentUser.profileImage = profileImageUrl
                                         }}}}}
-                }
+                    }
                 func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
                     picker.dismiss(animated: true, completion: nil)
                 }
@@ -356,6 +356,6 @@ extension MenuController : UIImagePickerControllerDelegate,UINavigationControlle
                 print(percentComplete) // NSProgress object
             }
         }
-       
+        
     }
 }

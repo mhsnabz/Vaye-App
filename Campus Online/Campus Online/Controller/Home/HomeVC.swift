@@ -33,7 +33,7 @@ class HomeVC: UIViewController {
     var nativeAd: GADUnifiedNativeAd?
     
     var centerController : UIViewController!
-    var delegate : HomeControllerDelegate?
+    weak var delegate : HomeControllerDelegate?
     var currentUser : CurrentUser
     var isMenuOpen : Bool = false
     var otherUser : OtherUser?

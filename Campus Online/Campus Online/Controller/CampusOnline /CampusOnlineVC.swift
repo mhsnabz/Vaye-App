@@ -8,10 +8,13 @@
 
 import UIKit
 
-class CampusOnlineVC: UIViewController {
+class CampusOnlineVC: UIViewController{
 
     var currentUser : CurrentUser
-      
+    weak var delegate : CoControllerDelegate?
+    var isMenuOpen : Bool = false
+    
+    
       init(currentUser : CurrentUser){
           self.currentUser = currentUser
           super.init(nibName: nil, bundle: nil)
@@ -26,18 +29,26 @@ class CampusOnlineVC: UIViewController {
 
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
+        view.backgroundColor = .collectionColor()
         navigationItem.title = "Online Kampüs"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menu")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
+     
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    
+    //MARK:-selectors
+    @objc func menuClick(){
+        print("work click")
+        self.delegate?.handleMenuToggle(forMenuOption: nil)
+        if !isMenuOpen {
+            self.isMenuOpen = false
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menu")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
+        }
+        else{
+            self.isMenuOpen = true
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "back").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
+        }
     }
-    */
-
 }
+

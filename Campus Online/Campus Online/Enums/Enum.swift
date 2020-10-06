@@ -47,6 +47,28 @@ enum MenuOption : Int ,CustomStringConvertible {
        }
 }
 
+enum COMenuOption : Int ,CustomStringConvertible
+{
+   
+    case fallowing
+    
+    var description: String{
+        switch self{
+        
+        case .fallowing:
+            return "Takip Ettiklerin"
+        }
+    }
+    var image : UIImage{
+        switch self{
+        
+        case .fallowing:  return UIImage(named: "home")!.withRenderingMode(.alwaysOriginal)
+        }
+    }
+    
+    
+}
+
  enum DriveLinks {
      case googleDrive
      case dropbox

@@ -855,16 +855,12 @@ extension ProfileVC : NewPostHomeVCDelegate {
     func goProfileByMention(userName: String) {
         if "@\(userName)" == currentUser.username {
             let vc = ProfileVC(currentUser: currentUser)
-            vc.modalPresentationStyle = .fullScreen
-
-            present(vc, animated: true, completion: nil)
+            navigationController?.pushViewController(vc, animated: true)
         }else{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
                 let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-
-                sself.present(vc, animated: true, completion: nil)
+                sself.navigationController?.pushViewController(vc, animated: true)
             }
         }
     }
@@ -953,10 +949,7 @@ extension ProfileVC : NewPostHomeVCDelegate {
         guard let post = cell.lessonPostModel else { return }
         let vc = CommentVC(currentUser: currentUser, post : post)
         navigationController?.pushViewController(vc, animated: true)
-        
-//        let centralController = UINavigationController(rootViewController: vc)
-//        centralController.modalPresentationStyle = .fullScreen
-//        present(centralController, animated: true, completion: nil)
+
       
     }
     
@@ -1037,9 +1030,7 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
         guard let post = cell.lessonPostModel else { return }
         let vc = CommentVC(currentUser: currentUser, post : post)
         navigationController?.pushViewController(vc, animated: true)
-//        vc.modalPresentationStyle = .fullScreen
-//        present(vc, animated: true, completion: nil)
-//        navigationController?.pushViewController(vc, animated: true)
+
     }
     
     func linkClick(for cell: NewPostHomeVCData) {
@@ -1069,11 +1060,9 @@ extension ProfileVC : ActionSheetOtherUserLauncherDelegate {
                         Utilities.dismissProgress()
                         return}
                     let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    sself.present(controller, animated: true) {
-                        Utilities.dismissProgress()
-                    }
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                   
                 }
             }else if favPostDelegate {
                 print("called")
@@ -1086,12 +1075,9 @@ extension ProfileVC : ActionSheetOtherUserLauncherDelegate {
                         Utilities.dismissProgress()
                         return}
                     let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    sself.present(controller, animated: true) {
-                        Utilities.dismissProgress()
-                       
-                    }
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                    
                 }
             }
             break
@@ -1159,26 +1145,30 @@ extension ProfileVC : ActionSheetHomeLauncherDelegate{
                 if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
                     
                     let vc = StudentEditPost(currentUser: currentUser , post : favPostModel[index.row] , heigth : h.msgText.frame.height )
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    _ = UINavigationController(rootViewController: vc)
+                    navigationController?.pushViewController(vc, animated: true)
+//                    controller.modalPresentationStyle = .fullScreen
+//                    self.present(controller, animated: true, completion: nil)
                 }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
                     let vc = StudentEditPost(currentUser: currentUser , post : favPostModel[index.row] , heigth : h.msgText.frame.height )
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    navigationController?.pushViewController(vc, animated: true)
+//                    let controller = UINavigationController(rootViewController: vc)
+//                    controller.modalPresentationStyle = .fullScreen
+//                    self.present(controller, animated: true, completion: nil)
                 }
             }else if schoolPotsDelegate{
                 if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
                     let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    navigationController?.pushViewController(vc, animated: true)
+//                    let controller = UINavigationController(rootViewController: vc)
+//                    controller.modalPresentationStyle = .fullScreen
+//                    self.present(controller, animated: true, completion: nil)
                 }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
                     let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
-                    let controller = UINavigationController(rootViewController: vc)
-                    controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    navigationController?.pushViewController(vc, animated: true)
+//                    let controller = UINavigationController(rootViewController: vc)
+//                    controller.modalPresentationStyle = .fullScreen
+//                    self.present(controller, animated: true, completion: nil)
                 }
             }
            
