@@ -68,6 +68,26 @@ class NotificationVC: UIViewController {
     
     
     //MARK: - functions
+    
+    func getTypeText(type : String) -> String{
+        if type == NotificationType.comment_home.desprition{
+            return Notification_description.comment_home.desprition
+        }else if type == NotificationType.comment_like.desprition{
+            return Notification_description.comment_like.desprition
+        }else if type == NotificationType.comment_mention.desprition {
+            return Notification_description.comment_mention.desprition
+        }else if type == NotificationType.following_you.desprition{
+            return Notification_description.following_you.desprition
+        }else if type == NotificationType.home_like.desprition{
+            return  Notification_description.like_home.desprition
+        }else if type == NotificationType.home_new_post.desprition{
+            return Notification_description.home_new_post.desprition
+        }else if type == NotificationType.reply_comment.desprition {
+            return Notification_description.reply_comment.desprition
+        }
+        return ""
+    }
+    
     func get_notification(currentUser : CurrentUser )
     {
         tableView.refreshControl?.beginRefreshing()
@@ -212,13 +232,20 @@ class NotificationVC: UIViewController {
     private func deleteNotification(not_id : String ,completion : @escaping(Bool) -> Void){
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid).collection("notification").document(not_id)
-        db.delete { (err) in
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
             if err == nil{
                 Utilities.dismissProgress()
+                if let index = sself.model.firstIndex(where: {$0.not_id == not_id}) {
+                    sself.model.remove(at: index)
+                    sself.tableView.reloadData()
+                }
+              
                 completion(true)
             }
         }
     }
+    
     private func configureTableViewController(){
         view.addSubview(tableView)
         tableView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
@@ -328,6 +355,7 @@ class NotificationVC: UIViewController {
                 }else{
                     sself.deleteNotification(not_id: not_id) { (_) in
                         Utilities.errorProgress(msg: "Bu Gönderi Silinmiş")
+                        sself.tableView.reloadData()
                         
                     }
                 }
@@ -383,8 +411,9 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         
         
         guard let text = model[indexPath.row].text else { return 0}
-        
-        let h = text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+        let totalText = text + getTypeText(type: model[indexPath.row].type)
+        let h = totalText.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            
         if h < 25 {
             return 62
         }else{
@@ -414,7 +443,8 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
                     model[indexPath.row].type == NotificationType.comment_like.desprition ||
                     model[indexPath.row].type == NotificationType.comment_mention.desprition ||
                     model[indexPath.row].type == NotificationType.home_like.desprition ||
-                    model[indexPath.row].type == NotificationType.reply_comment.desprition
+                    model[indexPath.row].type == NotificationType.reply_comment.desprition ||
+                    model[indexPath.row].type == NotificationType.home_new_post.desprition
         {
             getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) { (postModel) in
                 guard let post = postModel else {

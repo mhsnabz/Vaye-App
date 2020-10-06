@@ -115,8 +115,7 @@ class NotificaitionCell: UITableViewCell {
            
             type.textColor = .black
         } else if post.type == NotificationType.home_new_post.desprition{
-            notification =  NSMutableAttributedString(string: "\(Notification_description.home_new_post.desprition):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
-            notification.append(NSAttributedString(string: " \(post.lessonName.description)\n", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+            notification =  NSMutableAttributedString(string: "\(post.lessonName.description):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
             notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
             type.attributedText = notification
             
