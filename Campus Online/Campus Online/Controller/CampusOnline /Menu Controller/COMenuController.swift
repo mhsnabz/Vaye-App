@@ -64,7 +64,7 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
     }
      func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
-        return 40
+        return 125
     }
     
      func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
