@@ -52,6 +52,7 @@ enum COMenuOption : Int ,CustomStringConvertible
    
     case fallowing
     case party
+    case camp
     case al_sat
     case foodme
   
@@ -62,7 +63,8 @@ enum COMenuOption : Int ,CustomStringConvertible
             return "Takip Ettiklerin"
         case.party:
         return "Etkinlikler"
-     
+        case .camp:
+            return "Kamp"
         case.al_sat:
         return "Al-Sat"
         case .foodme :
@@ -71,18 +73,14 @@ enum COMenuOption : Int ,CustomStringConvertible
     }
     var image : UIImage{
         switch self{
-        
         case .fallowing:  return UIImage(named: "home")!.withRenderingMode(.alwaysOriginal)
-            
         case .party: return #imageLiteral(resourceName: "party").withRenderingMode(.alwaysOriginal)
         case .al_sat: return #imageLiteral(resourceName: "al-sat").withRenderingMode(.alwaysOriginal)
         case .foodme: return #imageLiteral(resourceName: "foodme").withRenderingMode(.alwaysOriginal)
-
+        case .camp: return #imageLiteral(resourceName: "camp").withRenderingMode(.alwaysOriginal)
             
         }
     }
-    
-    
 }
 
  enum DriveLinks {

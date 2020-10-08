@@ -45,14 +45,7 @@ class COContainerController : UIViewController{
         addChild(centrelController)
         centrelController.didMove(toParent: self)
     }
-    func configurePartiesContainerController(){
-        let homeController = PartiesVC()
-        homeController.delegate = self
-        centrelController = UINavigationController(rootViewController: homeController)
-        view.addSubview(centrelController.view)
-        addChild(centrelController)
-        centrelController.didMove(toParent: self)
-    }
+    
     func configureMenuController()  {
         if menuController == nil {
             self.menuController = COMenuController(currentUser : currentUser)
@@ -90,15 +83,20 @@ class COContainerController : UIViewController{
         switch menuOPtion {
         
         case .fallowing:
-            print("following")
+          break
         case .party:
-            let vc = PartiesVC()
-            self.navigationController?.pushViewController(vc, animated: false)
+            let vc = PartiesVC(currentUser : currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
             
         case .foodme:
-            print("foodme")
+            let vc = FoodMe(currentUser : currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
         case .al_sat:
-            print("alsat")
+            let vc = BuyAndCellVC(currentUser : currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        case .camp :
+            let vc = CampVC(currentUser : currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
         }
         
     }
