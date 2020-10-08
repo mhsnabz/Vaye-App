@@ -1076,13 +1076,5 @@ extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUn
         }
         self.loadMore = false
         self.collectionview.reloadData()
-//        let time_e = self.lessonPost[self.lessonPost.count - 1].postTime
-//
-//        self.lessonPost.sort(by: { (post, post1) -> Bool in
-//            return post.postTime?.dateValue() ?? time_e!.dateValue()  > post1.postTime?.dateValue() ??  time_e!.dateValue()
-//        })
-        
-       
-
     }
 }

@@ -36,6 +36,7 @@ class COMenuController : UIViewController{
         tableView.separatorStyle = .none
         tableView.register(CoMenuCell.self, forCellReuseIdentifier: CoMenuCell.reuseIdentifier)
         tableView.register(CoMenuHeader.self, forHeaderFooterViewReuseIdentifier: CoMenuHeader.reuseIdentifier )
+        tableView.rowHeight = 70
     }
     
 }
@@ -52,7 +53,7 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
         cell.homeBtn.setImage(menuOption?.image, for: .normal)
         cell.homeTitle.setTitle(menuOption?.description, for: .normal)
         cell.delegate = self
-        cell.selectionStyle = .none
+        cell.selectionStyle = .blue
         cell.line.isHidden = true
 
         return cell
@@ -64,7 +65,7 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
     }
      func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
-        return 125
+        return 175
     }
     
      func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -73,8 +74,10 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         let menuOption = COMenuOption(rawValue: indexPath.row)
         delegate?.handleMenuToggle(forMenuOption: menuOption)
+        tableView.reloadData()
     }
     
 }
@@ -82,12 +85,13 @@ extension COMenuController :  CoSlideMenuDelegate , CoSlideHeaderDelegate {
    
     
     func dismisMenu() {
-        print("dismis")
+        delegate?.handleMenuToggle(forMenuOption: nil)
     }
    
     func handleSlideMenuItems(for cell: CoMenuCell) {
         let menuOption = COMenuOption(rawValue: self.tableView.indexPath(for: cell)!.row)
         delegate?.handleMenuToggle(forMenuOption: menuOption)
+        
     }
     
     

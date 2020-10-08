@@ -20,7 +20,7 @@ class CoMenuCell: UITableViewCell {
            let btn = UIButton(type: .system)
            btn.tintColor = .black
            btn.titleLabel?.textColor = .black
-           btn.titleLabel?.font = UIFont(name: Utilities.font, size: 14)
+           btn.titleLabel?.font = UIFont(name: Utilities.font, size: 17)
            return btn
        }()
       let line : UIView = {

@@ -29,9 +29,9 @@ class CoMenuHeader: UITableViewHeaderFooterView {
        let v = UIView()
 
         v.addSubview(logo)
-        logo.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0 , marginBottom: 0, marginRigth: 0, width: 75, heigth: 75)
+        logo.anchor(top: v.topAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0 , marginBottom: 0, marginRigth: 20, width: 75, heigth: 75)
         logo.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
-        logo.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
+     
         return v
     }()
     
