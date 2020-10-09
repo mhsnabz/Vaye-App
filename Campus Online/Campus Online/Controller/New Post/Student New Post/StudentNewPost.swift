@@ -75,7 +75,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
        
         return v
     }()
-    var name : NSMutableAttributedString = {
+  lazy  var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
     }()
@@ -108,7 +108,6 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     let userName : UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .left
-        
         return lbl
     }()
     let lessonName : UILabel = {

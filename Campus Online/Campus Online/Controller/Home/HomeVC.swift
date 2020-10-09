@@ -315,14 +315,7 @@ class HomeVC: UIViewController {
                     self?.fetchAds()
                     self?.collectionview.refreshControl?.endRefreshing()
                     self?.collectionview.reloadData()
-                }
-               
-                
-               
-
-//            self?.collectionview.reloadData()
-      
-            
+                }        
         }
         
     }
