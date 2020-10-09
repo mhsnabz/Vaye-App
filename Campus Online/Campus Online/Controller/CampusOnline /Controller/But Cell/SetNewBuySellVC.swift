@@ -29,6 +29,23 @@ class SetNewBuySellVC: UIViewController {
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationItem.title = "Yeni Bir İlan Ver"
+        rigtBarButton()
         
+    }
+    
+    
+    //MARK: -functions
+    fileprivate func rigtBarButton() {
+        let button: UIButton = UIButton(type: .custom)
+        button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
+        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        let barButton = UIBarButtonItem(customView: button)
+        self.navigationItem.rightBarButtonItem = barButton
+    }
+    
+    //MARK:- selectors
+    @objc func setNewPost(){
+        print("post it")
     }
 }

@@ -334,16 +334,12 @@ class HomeVC: UIViewController {
         collectionview.dataSource = self
         collectionview.delegate = self
         collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
-        
         view.addSubview(collectionview)
         collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         view.addSubview(newPostButton)
         newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
-        
         newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
         newPostButton.layer.cornerRadius = 25
-        
-        //        collectionview.refreshControl?.isEnabled = true
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
