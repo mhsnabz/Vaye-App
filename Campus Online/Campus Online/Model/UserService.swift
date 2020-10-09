@@ -203,7 +203,25 @@ struct UserService {
         }
     }
     
-     
+    func getFollowers(uid : String , completion : @escaping([String])->Void){
+        var user = [String]()
+        let db = Firestore.firestore().collection("user")
+            .document(uid).collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty{
+                    for item in snap.documents{
+                        user.append(item.documentID)
+                        
+                    }
+                }else{
+                    completion([])
+                }
+                completion(user)
+            }
+        }
+    }
     
  
     

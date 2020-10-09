@@ -8,11 +8,12 @@
 
 import UIKit
 import Lottie
+import FirebaseFirestore
 class PartiesVC: UIViewController {
     
     var currentUser : CurrentUser
     var waitAnimation = AnimationView()
-    
+    var followers = [String]()
     let label : UILabel = {
        let lbl = UILabel()
         lbl.textAlignment = .center
@@ -25,6 +26,9 @@ class PartiesVC: UIViewController {
    
         return name
     }()
+    
+    //MARK: - lifeCycle
+    
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
@@ -43,6 +47,12 @@ class PartiesVC: UIViewController {
         navigationItem.title = "Etkinlikler"
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         animationView()
+        UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (user) in
+            if let sself = self{
+                sself.followers = user
+            }
+          
+        }
     }
     
     //MARK:-functions
@@ -50,17 +60,13 @@ class PartiesVC: UIViewController {
         waitAnimation = .init(name : "parties")
         waitAnimation.animationSpeed = 1
         waitAnimation.loopMode = .loop
-        
         view.addSubview(waitAnimation)
         waitAnimation.anchor(top: view.topAnchor , left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 0, heigth: 0)
         waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waitAnimation.play()
-        
-        
         msg_text =  NSMutableAttributedString(string: "Yakınlarda Yeni Bir Etkinlik Yok\n", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
         msg_text.append(NSAttributedString(string: "Hemen Bir Etkinlik Düzenle", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
         label.attributedText = msg_text
-        
         view.addSubview(label)
         label.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         

@@ -53,8 +53,6 @@ class HomeVC: UIViewController {
         btn.clipsToBounds = true
         btn.setImage(UIImage(named: "new-post")?.withRenderingMode(.alwaysOriginal), for: .normal)
         btn.setBackgroundColor(color: .mainColor(), forState: .normal)
-        
-        
         return btn
     }()
     
