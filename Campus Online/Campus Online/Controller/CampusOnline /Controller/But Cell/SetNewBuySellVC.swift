@@ -9,13 +9,14 @@
 import UIKit
 import SDWebImage
 import FirebaseFirestore
+import CoreLocation
 class SetNewBuySellVC: UIViewController {
 
     
     var currentUser : CurrentUser
     var followers = [String]()
     lazy var heigth : CGFloat = 0.0
-
+    var locationManager : CLLocationManager!
     //MARK: -properties
     let profileImage : UIImageView = {
         let imagee = UIImageView()
@@ -109,8 +110,7 @@ class SetNewBuySellVC: UIViewController {
         
     }
     @objc func _addLocation(){
-        let vc = MapVC(currentUser: currentUser)
-        self.navigationController?.pushViewController(vc, animated: true)
+        enableLocaitonMenager()
     }
     //MARK: -functions
     fileprivate func rigtBarButton() {
@@ -226,4 +226,26 @@ extension SetNewBuySellVC: UITextViewDelegate {
     
     
     
+}
+
+extension SetNewBuySellVC : CLLocationManagerDelegate {
+    func enableLocaitonMenager(){
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        switch CLLocationManager.authorizationStatus(){
+        
+        case .notDetermined:
+            print("needed permisson")
+        case .restricted:
+            print("")
+        case .denied:
+            print("denied")
+        case .authorizedAlways:
+            print("always")
+        case .authorizedWhenInUse:
+            print("when used permission")
+        @unknown default:
+            print("nil")
+        }
+    }
 }
