@@ -109,7 +109,8 @@ class SetNewBuySellVC: UIViewController {
         
     }
     @objc func _addLocation(){
-        
+        let vc = MapVC(currentUser: currentUser)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     //MARK: -functions
     fileprivate func rigtBarButton() {
