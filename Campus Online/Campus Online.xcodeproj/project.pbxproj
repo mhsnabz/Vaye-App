@@ -90,6 +90,8 @@
 		6677559B252F68F800DBF3CD /* food.json in Resources */ = {isa = PBXBuildFile; fileRef = 6677559A252F68F800DBF3CD /* food.json */; };
 		667755A0252FECA600DBF3CD /* SetNewBuySellVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6677559F252FECA600DBF3CD /* SetNewBuySellVC.swift */; };
 		667755A625309BEE00DBF3CD /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667755A525309BEE00DBF3CD /* MapVC.swift */; };
+		667755AB25309FCE00DBF3CD /* MapKitPermissonVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667755AA25309FCE00DBF3CD /* MapKitPermissonVC.swift */; };
+		667755B02530A0B900DBF3CD /* location-pin.json in Resources */ = {isa = PBXBuildFile; fileRef = 667755AF2530A0B900DBF3CD /* location-pin.json */; };
 		667A50EE2519E8A5009000D2 /* UserProfileFilterVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A50ED2519E8A5009000D2 /* UserProfileFilterVM.swift */; };
 		6687921124FABC2700A43A41 /* ActionSheetLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */; };
 		6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6687921324FB0AA500A43A41 /* ActionSheetCell.swift */; };
@@ -261,6 +263,8 @@
 		6677559A252F68F800DBF3CD /* food.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = food.json; sourceTree = "<group>"; };
 		6677559F252FECA600DBF3CD /* SetNewBuySellVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNewBuySellVC.swift; sourceTree = "<group>"; };
 		667755A525309BEE00DBF3CD /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
+		667755AA25309FCE00DBF3CD /* MapKitPermissonVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKitPermissonVC.swift; sourceTree = "<group>"; };
+		667755AF2530A0B900DBF3CD /* location-pin.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "location-pin.json"; sourceTree = "<group>"; };
 		667A50ED2519E8A5009000D2 /* UserProfileFilterVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileFilterVM.swift; sourceTree = "<group>"; };
 		6687921024FABC2700A43A41 /* ActionSheetLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetLauncher.swift; sourceTree = "<group>"; };
 		6687921324FB0AA500A43A41 /* ActionSheetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetCell.swift; sourceTree = "<group>"; };
@@ -388,6 +392,7 @@
 		6608990024FC724C0023E53B /* anim */ = {
 			isa = PBXGroup;
 			children = (
+				667755AF2530A0B900DBF3CD /* location-pin.json */,
 				6677559A252F68F800DBF3CD /* food.json */,
 				66775595252F670700DBF3CD /* camping.json */,
 				66775590252F664D00DBF3CD /* parties.json */,
@@ -635,6 +640,7 @@
 			isa = PBXGroup;
 			children = (
 				667755A525309BEE00DBF3CD /* MapVC.swift */,
+				667755AA25309FCE00DBF3CD /* MapKitPermissonVC.swift */,
 			);
 			path = "Map Kit";
 			sourceTree = "<group>";
@@ -1170,6 +1176,7 @@
 				6677559B252F68F800DBF3CD /* food.json in Resources */,
 				66775596252F670700DBF3CD /* camping.json in Resources */,
 				660F5AC82502A4F500F72558 /* newton.json in Resources */,
+				667755B02530A0B900DBF3CD /* location-pin.json in Resources */,
 				6677558C252F658900DBF3CD /* cell.json in Resources */,
 				66D911D824EEA9EA002D760A /* Assets.xcassets in Resources */,
 				66775574252EA38E00DBF3CD /* no-one-follow.json in Resources */,
@@ -1367,6 +1374,7 @@
 				66AF72C025133019007E96BC /* GoogleAdBannerView.swift in Sources */,
 				660F5ADA2503DB0800F72558 /* LicenceCell.swift in Sources */,
 				665E5CD424FFB5BE00B5B5E3 /* CaptionText.swift in Sources */,
+				667755AB25309FCE00DBF3CD /* MapKitPermissonVC.swift in Sources */,
 				66775531252CCBF300DBF3CD /* COContaninerController.swift in Sources */,
 				667755A625309BEE00DBF3CD /* MapVC.swift in Sources */,
 				66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */,

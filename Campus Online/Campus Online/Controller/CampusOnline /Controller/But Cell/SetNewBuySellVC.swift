@@ -235,7 +235,12 @@ extension SetNewBuySellVC : CLLocationManagerDelegate {
         switch CLLocationManager.authorizationStatus(){
         
         case .notDetermined:
-            print("needed permisson")
+            DispatchQueue.main.async {
+                let vc = MapKitPermissonVC()
+                vc.modalPresentationStyle = .fullScreen
+                self.present(vc, animated: true, completion: nil)
+            }
+            
         case .restricted:
             print("")
         case .denied:
