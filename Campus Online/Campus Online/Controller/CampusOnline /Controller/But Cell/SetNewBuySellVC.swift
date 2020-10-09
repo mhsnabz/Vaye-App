@@ -110,7 +110,9 @@ class SetNewBuySellVC: UIViewController {
         
     }
     @objc func _addLocation(){
-        enableLocaitonMenager()
+        let vc = MapVC(currentUser: currentUser)
+        vc.locationManager = locationManager
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     //MARK: -functions
     fileprivate func rigtBarButton() {
@@ -228,29 +230,3 @@ extension SetNewBuySellVC: UITextViewDelegate {
     
 }
 
-extension SetNewBuySellVC : CLLocationManagerDelegate {
-    func enableLocaitonMenager(){
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        switch CLLocationManager.authorizationStatus(){
-        
-        case .notDetermined:
-            DispatchQueue.main.async {
-                let vc = MapKitPermissonVC()
-                vc.modalPresentationStyle = .fullScreen
-                self.present(vc, animated: true, completion: nil)
-            }
-            
-        case .restricted:
-            print("")
-        case .denied:
-            print("denied")
-        case .authorizedAlways:
-            print("always")
-        case .authorizedWhenInUse:
-            print("when used permission")
-        @unknown default:
-            print("nil")
-        }
-    }
-}

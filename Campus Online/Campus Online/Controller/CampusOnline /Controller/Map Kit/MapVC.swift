@@ -14,7 +14,7 @@ class MapVC: UIViewController {
     //MARK: - properties
     var currentUser : CurrentUser
      var mapView : MKMapView!
-    
+    var locationManager : CLLocationManager?
 
     //MARK: -lifeCycle
     init(currentUser : CurrentUser) {
@@ -27,12 +27,15 @@ class MapVC: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        enableLocaitonMenager()
         configureViews()
+        
         
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        centerMapInUserLocation()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -65,4 +68,40 @@ class MapVC: UIViewController {
     
 
 
+}
+extension MapVC : CLLocationManagerDelegate {
+    func enableLocaitonMenager(){
+        locationManager = CLLocationManager()
+        locationManager!.delegate = self
+        switch CLLocationManager.authorizationStatus(){
+        
+        case .notDetermined:
+            DispatchQueue.main.async {
+                let vc = MapKitPermissonVC()
+                vc.modalPresentationStyle = .fullScreen
+                vc.locationManager = self.locationManager
+                self.present(vc, animated: true, completion: nil)
+            }
+            
+        case .restricted:
+            print("")
+        case .denied:
+            print("denied")
+        case .authorizedAlways:
+            print("always")
+        case .authorizedWhenInUse:
+            print("when used permission")
+        @unknown default:
+            print("nil")
+        }
+    }
+}
+//MARK: - map kit helper functions
+extension MapVC
+{
+    func centerMapInUserLocation(){
+        guard let coordinat = locationManager?.location?.coordinate else { return }
+        let coordinateReigon = MKCoordinateRegion(center: coordinat, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        mapView.setRegion(coordinateReigon, animated: true)
+    }
 }
