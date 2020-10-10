@@ -60,6 +60,10 @@ class BuyAndCellVC: UIViewController {
             }
         }
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        waitAnimation.play()
+    }
     //MARK:-functions
     fileprivate func animationView() {
         waitAnimation = .init(name : "cell")
@@ -69,7 +73,7 @@ class BuyAndCellVC: UIViewController {
         view.addSubview(waitAnimation)
         waitAnimation.anchor(top: view.topAnchor , left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 0, heigth: 0)
         waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        waitAnimation.play()
+        
         
         
         msg_text =  NSMutableAttributedString(string: "Yakınlarda Yeni Bir İlan Yok\n", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])

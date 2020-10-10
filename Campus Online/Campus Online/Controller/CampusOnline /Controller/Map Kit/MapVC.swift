@@ -13,9 +13,9 @@ class MapVC: UIViewController {
 
     //MARK: - properties
     var currentUser : CurrentUser
-     var mapView : MKMapView!
+    var mapView : MKMapView!
     var locationManager : CLLocationManager?
-
+    var seacrhInputView : SearchInputView!
     //MARK: -lifeCycle
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
@@ -64,6 +64,9 @@ class MapVC: UIViewController {
         mapView.showsUserLocation = true
         view.addSubview(mapView)
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        seacrhInputView = SearchInputView()
+        view.addSubview(seacrhInputView)
+        seacrhInputView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: -(view.frame.height - 80), marginRigth: 0, width: 0, heigth: view.frame.height)
     }
     
 

@@ -16,23 +16,28 @@ class CampusOnlineVC: UIViewController{
     
     
     let label : UILabel = {
-       let lbl = UILabel()
+        let lbl = UILabel()
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
         return lbl
     }()
     lazy var msg_text : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
-    
-   
+        
+        
         return name
     }()
     
-      init(currentUser : CurrentUser){
-          self.currentUser = currentUser
-          super.init(nibName: nil, bundle: nil)
-      
-      }
+    //MARK: -lifeCycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        waitAnimation.play()
+    }
+    init(currentUser : CurrentUser){
+        self.currentUser = currentUser
+        super.init(nibName: nil, bundle: nil)
+        
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -45,7 +50,7 @@ class CampusOnlineVC: UIViewController{
         view.addSubview(waitAnimation)
         waitAnimation.anchor(top: view.topAnchor , left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 0, heigth: 0)
         waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        waitAnimation.play()
+        
         
         
         msg_text =  NSMutableAttributedString(string: "Hiç Kimseyi Takip Etmiyorsunuz\n", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
@@ -66,7 +71,7 @@ class CampusOnlineVC: UIViewController{
         view.backgroundColor = .white
         navigationItem.title = "Takip Ettiklerin"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menu")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
-     
+        
     }
     
     
