@@ -47,7 +47,7 @@ class MapVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
-        centerMapInUserLocation()
+        centerMapInUserLocation(loadAnnotation: true)
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -89,13 +89,18 @@ class MapVC: UIViewController {
     
     //MARK:-selectors
     @objc func centerMapClick(){
-        guard let coordinat = locationManager?.location?.coordinate else { return }
-        let coordinateReigon = MKCoordinateRegion(center: coordinat, latitudinalMeters: 2000, longitudinalMeters: 2000)
-        mapView.setRegion(coordinateReigon, animated: true)
+        centerMapInUserLocation(loadAnnotation: false)
     }
 }
 
 extension MapVC : SearchInputViewDelagete {
+    func handleSearch(with SearchText: String) {
+        removeAnnotions()
+        loadAnnotationByQuery(query: SearchText)
+    }
+    
+    
+    
     func animateCenterMapButton(expansionState: SearchInputView.ExpansionState , hideButton : Bool) {
         switch expansionState{
         
@@ -129,7 +134,19 @@ extension MapVC : SearchInputViewDelagete {
         }
     }
     
-    
+    func loadAnnotationByQuery( query : String){
+        guard let coordinate = locationManager?.location?.coordinate else { return }
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        searchBy(natureLanguage: query, region: region, coordinate: coordinate) { (response, err) in
+            response?.mapItems.forEach({ (mapItem) in
+              let annotion = MKPointAnnotation()
+                annotion.title = mapItem.name
+                annotion.coordinate = mapItem.placemark.coordinate
+                self.mapView.addAnnotation(annotion)
+            })
+            self.seacrhInputView.searchResult = response?.mapItems
+        }
+    }
     
     
 }
@@ -164,9 +181,51 @@ extension MapVC : CLLocationManagerDelegate {
 //MARK: - map kit helper functions
 extension MapVC
 {
-    func centerMapInUserLocation(){
+    func centerMapInUserLocation(loadAnnotation : Bool){
         guard let coordinat = locationManager?.location?.coordinate else { return }
         let coordinateReigon = MKCoordinateRegion(center: coordinat, latitudinalMeters: 2000, longitudinalMeters: 2000)
         mapView.setRegion(coordinateReigon, animated: true)
+        if loadAnnotation{
+           loadAnnotationByQuery(query: "Market")
+        }
     }
+    
+    func searchBy(natureLanguage : String , region : MKCoordinateRegion , coordinate : CLLocationCoordinate2D , completion : @escaping(_ reposponse : MKLocalSearch.Response? , _ Error : NSError?) ->Void){
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = natureLanguage
+        request.region = region
+        let search = MKLocalSearch(request: request)
+        search.start { (response, err) in
+            guard let response = response else {
+                completion(nil, err as NSError? )
+                return
+                
+            }
+            completion(response,nil)
+            
+        }
+    }
+    
+    func removeAnnotions(){
+        mapView.annotations.forEach { (annotion) in
+            if let annotion = annotion as? MKPointAnnotation{
+                mapView.removeAnnotation(annotion)
+            }
+        }
+    }
+    
+    func loadIntialSeacrData(searchQuery : String){
+        guard let coordinate = locationManager?.location?.coordinate else { return }
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        searchBy(natureLanguage: searchQuery, region: region, coordinate: coordinate) { (response, err) in
+            response?.mapItems.forEach({ (mapItem) in
+              let annotion = MKPointAnnotation()
+                annotion.title = mapItem.name
+                annotion.coordinate = mapItem.placemark.coordinate
+                self.mapView.addAnnotation(annotion)
+            })
+        }
+    }
+    
+    
 }

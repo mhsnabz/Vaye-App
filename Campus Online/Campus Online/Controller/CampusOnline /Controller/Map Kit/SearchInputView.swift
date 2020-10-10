@@ -7,8 +7,10 @@
 //
 
 import UIKit
+import MapKit
 protocol SearchInputViewDelagete : class {
     func animateCenterMapButton(expansionState : SearchInputView.ExpansionState , hideButton : Bool )
+    func handleSearch(with SearchText : String)
 }
 class SearchInputView: UIView {
     //MARK: -properites
@@ -23,6 +25,12 @@ class SearchInputView: UIView {
     var tableView : UITableView!
     var expansionState : ExpansionState!
     weak var delegate : SearchInputViewDelagete?
+    var searchResult : [MKMapItem]?{
+        didSet{
+           tableView.reloadData()
+        }
+    }
+    
     let indicatorView : UIView = {
         let v = UIView()
         v.backgroundColor = .lightGray
@@ -130,19 +138,21 @@ class SearchInputView: UIView {
         }
     }
 }
-extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+
+extension SearchInputView : UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchText = searchBar.text else { return }
+        delegate?.handleSearch(with: searchText)
+        searchBar.endEditing(true)
+        searchBar.showsCancelButton = false
+
+        animationInputView(targetPostion: self.frame.origin.y  + self.frame.width - 100) { (_) in
+            self.delegate?.animateCenterMapButton(expansionState: self.expansionState, hideButton: false)
+            self.expansionState = .partiallyExpanded
+        }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! SearchCell
-        return cell
-     }
-    
-    
-}
-extension SearchInputView : UISearchBarDelegate{
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
      
         if expansionState == .notExpanded{
@@ -175,4 +185,17 @@ extension SearchInputView : UISearchBarDelegate{
         }
 
     }
+}
+extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let count = searchResult?.count else { return 0}
+        return count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! SearchCell
+        return cell
+     }
+    
+    
 }
