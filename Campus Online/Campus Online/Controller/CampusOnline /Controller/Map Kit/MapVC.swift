@@ -16,6 +16,18 @@ class MapVC: UIViewController {
     var mapView : MKMapView!
     var locationManager : CLLocationManager?
     var seacrhInputView : SearchInputView!
+    
+    let centerMapButton : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "location").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.clipsToBounds = true
+        btn.setBackgroundColor(color: .white, forState: .normal)
+        btn.layer.borderColor = UIColor.darkGray.cgColor
+        btn.layer.borderWidth = 0.75
+        btn.addTarget(self, action: #selector(centerMapClick), for: .touchUpInside)
+        return btn
+    }()
+    
     //MARK: -lifeCycle
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
@@ -62,16 +74,66 @@ class MapVC: UIViewController {
         mapView = MKMapView()
         mapView.userTrackingMode = .follow
         mapView.showsUserLocation = true
+        
         view.addSubview(mapView)
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        view.addSubview(centerMapButton)
+       
         seacrhInputView = SearchInputView()
+        seacrhInputView.delegate = self
         view.addSubview(seacrhInputView)
         seacrhInputView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: -(view.frame.height - 80), marginRigth: 0, width: 0, heigth: view.frame.height)
+        centerMapButton.anchor(top: nil, left: nil, bottom: seacrhInputView.topAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 10, marginRigth: 10, width: 45, heigth: 45)
+        centerMapButton.layer.cornerRadius = 45 / 2
     }
     
-
-
+    //MARK:-selectors
+    @objc func centerMapClick(){
+        guard let coordinat = locationManager?.location?.coordinate else { return }
+        let coordinateReigon = MKCoordinateRegion(center: coordinat, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        mapView.setRegion(coordinateReigon, animated: true)
+    }
 }
+
+extension MapVC : SearchInputViewDelagete {
+    func animateCenterMapButton(expansionState: SearchInputView.ExpansionState , hideButton : Bool) {
+        switch expansionState{
+        
+        case .notExpanded:
+            UIView.animate(withDuration: 0.25) {
+                self.centerMapButton.frame.origin.y -= self.view.frame.width / 2
+            }
+            if hideButton{
+                self.centerMapButton.alpha = 0.0
+            }else{
+                self.centerMapButton.alpha = 1.0
+            }
+        case .partiallyExpanded:
+            UIView.animate(withDuration: 0.25) {
+                if hideButton {
+                    self.centerMapButton.alpha = 0.0
+                    }else{
+                        UIView.animate(withDuration: 0.25) {
+                            self.centerMapButton.frame.origin.y += self.view.frame.width / 2
+                        }
+                }
+                
+            }
+            //
+        case .fullyExpanded:
+            UIView.animate(withDuration: 0.25) {
+                self.centerMapButton.alpha = 1.0
+            }
+            
+     
+        }
+    }
+    
+    
+    
+    
+}
+
 extension MapVC : CLLocationManagerDelegate {
     func enableLocaitonMenager(){
         locationManager = CLLocationManager()
