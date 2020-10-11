@@ -24,12 +24,12 @@ class SearchCell: UITableViewCell {
     }
 
 
-    lazy var addLocaitonButton : UIButton = {
+        lazy var addLocaitonButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), for: .normal)
         btn.setBackgroundColor(color: .white, forState: .normal)
-
-        btn.alpha = 0
+        btn.addTarget(self, action: #selector(addLocation), for: .touchUpInside)
+//        btn.alpha = 0
         return btn
         
     }()
@@ -67,13 +67,14 @@ class SearchCell: UITableViewCell {
         stack.spacing = 4
         
         addSubview(stack)
-        stack.anchor(top: nil, left: locationImage.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        stack.anchor(top: nil, left: locationImage.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 40, width: 0, heigth: 0)
         stack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         addSubview(addLocaitonButton)
-        addLocaitonButton.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 12, width: 35, heigth: 35)
+        addLocaitonButton.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 12, width: 60, heigth: 60)
         addLocaitonButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        addLocaitonButton.addTarget(self, action: #selector(addLocation), for: .touchUpInside)
+ 
+//        addLocaitonButton.isHidden = true
         
     }
     
@@ -97,7 +98,6 @@ class SearchCell: UITableViewCell {
     }
     
     //MARK: -functions
-    
     func animateButtonIn(){
         addLocaitonButton.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseInOut) {
@@ -106,7 +106,6 @@ class SearchCell: UITableViewCell {
         } completion: { (_) in
             self.addLocaitonButton.transform = .identity
         }
-
     }
     
    func configure(){

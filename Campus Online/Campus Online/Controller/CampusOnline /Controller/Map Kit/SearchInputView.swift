@@ -212,7 +212,7 @@ extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
         }
         let item = searchResult[indexPath.row]
         
-        //FIXME: - refactor
+        //FIXME: -refactor
         
         if expansionState == .fullyExpanded{
             self.delegate?.animateCenterMapButton(expansionState: self.expansionState, hideButton: false)
@@ -226,12 +226,13 @@ extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
         
         searchResult.remove(at: indexPath.row)
         searchResult.insert(item, at: 0)
+     
         self.searchResult = searchResult
         let index = NSIndexPath(row: 0, section: 0)
 
         tableView.scrollToRow(at: index as IndexPath, at: .top, animated: true)
-        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: index as IndexPath) as! SearchCell
-        cell.animateButtonIn()
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: index as IndexPath) as! SearchCell
+//        cell.animateButtonIn()
         
         
         
