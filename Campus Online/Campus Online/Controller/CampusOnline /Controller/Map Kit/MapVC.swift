@@ -16,7 +16,9 @@ class MapVC: UIViewController {
     var mapView : MKMapView!
     var locationManager : CLLocationManager?
     var seacrhInputView : SearchInputView!
-    
+  
+    weak var route : MKRoute?
+    var choosenAnnotation : MKAnnotation?
     let centerMapButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "location").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -25,6 +27,15 @@ class MapVC: UIViewController {
         btn.layer.borderColor = UIColor.darkGray.cgColor
         btn.layer.borderWidth = 0.75
         btn.addTarget(self, action: #selector(centerMapClick), for: .touchUpInside)
+        return btn
+    }()
+    let removeRoutateBtn : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "x").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.clipsToBounds = true
+        btn.setBackgroundColor(color: .red, forState: .normal)
+        btn.alpha = 0
+        btn.addTarget(self, action: #selector(handleRemoveRaoutae), for: .touchUpInside)
         return btn
     }()
     
@@ -74,7 +85,7 @@ class MapVC: UIViewController {
         mapView = MKMapView()
         mapView.userTrackingMode = .follow
         mapView.showsUserLocation = true
-        
+        mapView.delegate = self
         view.addSubview(mapView)
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         view.addSubview(centerMapButton)
@@ -87,16 +98,59 @@ class MapVC: UIViewController {
         centerMapButton.anchor(top: nil, left: nil, bottom: seacrhInputView.topAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 10, marginRigth: 10, width: 45, heigth: 45)
         centerMapButton.layer.cornerRadius = 45 / 2
         
-        
+        view.addSubview(removeRoutateBtn)
+        removeRoutateBtn.anchor(top: nil, left: view.leftAnchor, bottom: seacrhInputView.topAnchor, rigth: nil, marginTop: 0, marginLeft: 10, marginBottom: view.frame.width / 2 + 10, marginRigth: 0, width: 45, heigth: 45)
+        removeRoutateBtn.layer.cornerRadius = 45 / 2
     }
     
     //MARK:-selectors
     @objc func centerMapClick(){
         centerMapInUserLocation(loadAnnotation: false)
     }
+    @objc func handleRemoveRaoutae(){
+        
+        seacrhInputView.directionEnable = false
+        UIView.animate(withDuration: 0.5) {
+            self.removeRoutateBtn.alpha = 0
+            self.centerMapButton.alpha = 1
+        }
+        if mapView.overlays.count > 0 {
+            self.mapView.removeOverlay(mapView.overlays[0])
+            centerMapInUserLocation(loadAnnotation: false)
+        }
+        
+        seacrhInputView.disableViewIntercation(directionIsEnabled: false)
+        guard let selectedAnno = self.choosenAnnotation else { return }
+        mapView.deselectAnnotation(selectedAnno, animated: true)
+    }
 }
 
 extension MapVC : SearchInputViewDelagete {
+    
+    
+    func selectAnnotation(selectAnnotation mapItem: MKMapItem)
+    {
+        mapView.annotations.forEach { (annotation ) in
+            if annotation.title == mapItem.name{
+                self.mapView.selectAnnotation(annotation, animated: true)
+                self.zoomToFit(selectedAnnotation: annotation)
+                self.choosenAnnotation = annotation
+                UIView.animate(withDuration: 0.5) {
+                    self.removeRoutateBtn.alpha = 1
+                    self.centerMapButton.alpha = 0
+                }
+          
+            }
+        }
+    }
+    
+    func addPolyLine(destinationMapItem: MKMapItem) {
+//        directionEnable = true
+//        seacrhInputView.directionEnable = directionEnable
+        seacrhInputView.disableViewIntercation(directionIsEnabled: true)
+        genaratePollyLine(forDestinationMapItem: destinationMapItem)
+    }
+    
     func handleSearch(with SearchText: String) {
         removeAnnotions()
         loadAnnotationByQuery(query: SearchText)
@@ -129,9 +183,12 @@ extension MapVC : SearchInputViewDelagete {
             }
             //
         case .fullyExpanded:
-            UIView.animate(withDuration: 0.25) {
-                self.centerMapButton.alpha = 1.0
+            if !hideButton{
+                UIView.animate(withDuration: 0.25) {
+                    self.centerMapButton.alpha = 1.0
+                }
             }
+            
             
      
         }
@@ -181,9 +238,58 @@ extension MapVC : CLLocationManagerDelegate {
         }
     }
 }
+
+//MARK: -map view delegate
+extension MapVC : MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let route = self.route {
+            let polyLine = route.polyline
+            let lineRenderer = MKPolylineRenderer(overlay: polyLine)
+            lineRenderer.strokeColor = .mainColor()
+            lineRenderer.lineWidth = 3
+            return lineRenderer
+        }
+        return MKOverlayRenderer()
+    }
+}
+
 //MARK: - map kit helper functions
 extension MapVC
 {
+    
+    
+    func zoomToFit(selectedAnnotation: MKAnnotation?) {
+        if mapView.annotations.count == 0 {
+            return
+        }
+        
+        var topLeftCoordinate = CLLocationCoordinate2D(latitude: -90, longitude: 180)
+        var bottomRightCoordinate = CLLocationCoordinate2D(latitude: 90, longitude: -180)
+        
+        if let selectedAnnotation = selectedAnnotation {
+            for annotation in mapView.annotations {
+                if let userAnno = annotation as? MKUserLocation {
+                    topLeftCoordinate.longitude = fmin(topLeftCoordinate.longitude, userAnno.coordinate.longitude)
+                    topLeftCoordinate.latitude = fmax(topLeftCoordinate.latitude, userAnno.coordinate.latitude)
+                    bottomRightCoordinate.longitude = fmax(bottomRightCoordinate.longitude, userAnno.coordinate.longitude)
+                    bottomRightCoordinate.latitude = fmin(bottomRightCoordinate.latitude, userAnno.coordinate.latitude)
+                }
+                
+                if annotation.title == selectedAnnotation.title {
+                    topLeftCoordinate.longitude = fmin(topLeftCoordinate.longitude, annotation.coordinate.longitude)
+                    topLeftCoordinate.latitude = fmax(topLeftCoordinate.latitude, annotation.coordinate.latitude)
+                    bottomRightCoordinate.longitude = fmax(bottomRightCoordinate.longitude, annotation.coordinate.longitude)
+                    bottomRightCoordinate.latitude = fmin(bottomRightCoordinate.latitude, annotation.coordinate.latitude)
+                }
+            }
+            
+            var region = MKCoordinateRegion(center: CLLocationCoordinate2DMake(topLeftCoordinate.latitude - (topLeftCoordinate.latitude - bottomRightCoordinate.latitude) * 0.65, topLeftCoordinate.longitude + (bottomRightCoordinate.longitude - topLeftCoordinate.longitude) * 0.65), span: MKCoordinateSpan(latitudeDelta: fabs(topLeftCoordinate.latitude - bottomRightCoordinate.latitude) * 3.0, longitudeDelta: fabs(bottomRightCoordinate.longitude - topLeftCoordinate.longitude) * 3.0))
+            
+            region = mapView.regionThatFits(region)
+            mapView.setRegion(region, animated: true)
+        }
+    }
+    
     func centerMapInUserLocation(loadAnnotation : Bool){
         guard let coordinat = locationManager?.location?.coordinate else { return }
         let coordinateReigon = MKCoordinateRegion(center: coordinat, latitudinalMeters: 2000, longitudinalMeters: 2000)
@@ -230,9 +336,26 @@ extension MapVC
         }
     }
     
-    
+    func genaratePollyLine ( forDestinationMapItem destination : MKMapItem){
+        let request = MKDirections.Request()
+        request.source = MKMapItem.forCurrentLocation()
+        request.destination = destination
+        request.transportType = .walking
+        let directions = MKDirections(request: request)
+        directions.calculate { (response, err) in
+            guard let response = response else { return }
+            self.route = response.routes[0]
+            guard let pollyline = self.route?.polyline else { return }
+            self.mapView.addOverlay(pollyline)
+            
+        }
+    }
 }
 extension MapVC : SearchCellDelegate {
+    func getDirection(forMapItem mapItem: MKMapItem) {
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
+    }
+    
     func distanceFromUser(location: CLLocation) -> CLLocationDistance? {
         guard let userLocation = locationManager?.location else { return nil}
         return userLocation.distance(from: location)

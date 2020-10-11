@@ -9,8 +9,10 @@
 import UIKit
 import MapKit
 protocol SearchInputViewDelagete : class {
-    func animateCenterMapButton(expansionState : SearchInputView.ExpansionState , hideButton : Bool )
+    func animateCenterMapButton(expansionState : SearchInputView.ExpansionState ,hideButton : Bool )
     func handleSearch(with SearchText : String)
+    func addPolyLine(destinationMapItem : MKMapItem)
+    func selectAnnotation(selectAnnotation mapItem : MKMapItem)
 }
 class SearchInputView: UIView {
     //MARK: -properites
@@ -26,6 +28,7 @@ class SearchInputView: UIView {
     var expansionState : ExpansionState!
     weak var delegate : SearchInputViewDelagete?
     weak var mapController : MapVC?
+    var directionEnable : Bool = false
     var searchResult : [MKMapItem]?{
         didSet{
            tableView.reloadData()
@@ -101,8 +104,27 @@ class SearchInputView: UIView {
         }
 
     }
+    
+    
+    func disableViewIntercation(directionIsEnabled : Bool){
+        self.directionEnable = directionIsEnabled
+        if directionIsEnabled{
+            tableView.allowsSelection = false
+            searchBar.isUserInteractionEnabled = false
+        }else{
+            tableView.allowsSelection = true
+            searchBar.isUserInteractionEnabled = true
+        }
+ 
+    }
+    
     //MARK: -selectors
     @objc func handleSwipeUp(sender : UISwipeGestureRecognizer){
+        
+        if directionEnable{
+            return
+        }
+        
         if sender.direction == .up{
             
             
@@ -196,6 +218,7 @@ extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! SearchCell
+        cell.contentView.isUserInteractionEnabled = false
         if let result = searchResult {
             cell.item = result[indexPath.row]
         }
@@ -205,20 +228,23 @@ extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
    
         return cell
      }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         guard var searchResult = searchResult else{
             return
         }
         let item = searchResult[indexPath.row]
-        
+        delegate?.selectAnnotation(selectAnnotation: item)
         //FIXME: -refactor
         
         if expansionState == .fullyExpanded{
-            self.delegate?.animateCenterMapButton(expansionState: self.expansionState, hideButton: false)
             self.searchBar.showsCancelButton = false
             self.searchBar.endEditing(true)
+         
+          
             animationInputView(targetPostion: self.frame.origin.y  + self.frame.width - 100) { (_) in
+                self.delegate?.animateCenterMapButton(expansionState: self.expansionState, hideButton: true)
                 self.expansionState = .partiallyExpanded
                 
             }
@@ -226,14 +252,13 @@ extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
         
         searchResult.remove(at: indexPath.row)
         searchResult.insert(item, at: 0)
-     
         self.searchResult = searchResult
-        let index = NSIndexPath(row: 0, section: 0)
+        let index = IndexPath(row: 0, section: 0)
+        tableView.scrollToRow(at: index, at: .top , animated: true)
 
-        tableView.scrollToRow(at: index as IndexPath, at: .top, animated: true)
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: index as IndexPath) as! SearchCell
-//        cell.animateButtonIn()
-        
+        delegate?.addPolyLine(destinationMapItem: item)
+
+   
         
         
         

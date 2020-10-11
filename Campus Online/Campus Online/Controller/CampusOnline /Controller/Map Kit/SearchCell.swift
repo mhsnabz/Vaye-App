@@ -11,12 +11,13 @@ import MapKit
 
 protocol SearchCellDelegate : class {
     func distanceFromUser(location : CLLocation) ->CLLocationDistance?
+    func getDirection(forMapItem mapItem : MKMapItem)
 }
 
 class SearchCell: UITableViewCell {
 
     weak var delegate : SearchCellDelegate?
-    
+    var direction : Bool?
     var item : MKMapItem?{
         didSet{
             configure()
@@ -24,7 +25,8 @@ class SearchCell: UITableViewCell {
     }
 
 
-        lazy var addLocaitonButton : UIButton = {
+       
+    lazy var addLocaitonButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), for: .normal)
         btn.setBackgroundColor(color: .white, forState: .normal)
@@ -65,14 +67,14 @@ class SearchCell: UITableViewCell {
         stack.distribution = .fillEqually
         stack.axis = .vertical
         stack.spacing = 4
-        
-        addSubview(stack)
-        stack.anchor(top: nil, left: locationImage.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 40, width: 0, heigth: 0)
-        stack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        
         addSubview(addLocaitonButton)
         addLocaitonButton.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 12, width: 60, heigth: 60)
         addLocaitonButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        addSubview(stack)
+        stack.anchor(top: nil, left: locationImage.rightAnchor, bottom: nil, rigth: addLocaitonButton.leftAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 4, width: 0, heigth: 0)
+        stack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        
+       
  
 //        addLocaitonButton.isHidden = true
         
@@ -94,7 +96,8 @@ class SearchCell: UITableViewCell {
     }
     //MARK: -selector
     @objc func addLocation(){
-            print("locaiton added")
+        guard let item = self.item else { return }
+        delegate?.getDirection(forMapItem: item)
     }
     
     //MARK: -functions
