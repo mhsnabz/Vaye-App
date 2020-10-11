@@ -81,10 +81,13 @@ class MapVC: UIViewController {
        
         seacrhInputView = SearchInputView()
         seacrhInputView.delegate = self
+        seacrhInputView.mapController = self
         view.addSubview(seacrhInputView)
         seacrhInputView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: -(view.frame.height - 80), marginRigth: 0, width: 0, heigth: view.frame.height)
         centerMapButton.anchor(top: nil, left: nil, bottom: seacrhInputView.topAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 10, marginRigth: 10, width: 45, heigth: 45)
         centerMapButton.layer.cornerRadius = 45 / 2
+        
+        
     }
     
     //MARK:-selectors
@@ -225,6 +228,14 @@ extension MapVC
                 self.mapView.addAnnotation(annotion)
             })
         }
+    }
+    
+    
+}
+extension MapVC : SearchCellDelegate {
+    func distanceFromUser(location: CLLocation) -> CLLocationDistance? {
+        guard let userLocation = locationManager?.location else { return nil}
+        return userLocation.distance(from: location)
     }
     
     

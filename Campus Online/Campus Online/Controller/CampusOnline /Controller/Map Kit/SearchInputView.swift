@@ -21,10 +21,11 @@ class SearchInputView: UIView {
  
         
     }
-    var searchBar : UISearchBar!
-    var tableView : UITableView!
+     var searchBar : UISearchBar!
+     var tableView : UITableView!
     var expansionState : ExpansionState!
     weak var delegate : SearchInputViewDelagete?
+    weak var mapController : MapVC?
     var searchResult : [MKMapItem]?{
         didSet{
            tableView.reloadData()
@@ -45,6 +46,7 @@ class SearchInputView: UIView {
         
         configureViewComponent()
         expansionState = .notExpanded
+        
     }
     
     required init?(coder: NSCoder) {
@@ -73,10 +75,10 @@ class SearchInputView: UIView {
     func configureTableView()
     {
         tableView = UITableView()
-        tableView.rowHeight = 72
+        tableView.rowHeight = 60
         tableView.register(SearchCell.self, forCellReuseIdentifier: "id")
         addSubview(tableView)
-        tableView.anchor(top: searchBar.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        tableView.anchor(top: searchBar.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 10, marginLeft: 0, marginBottom: 130, marginRigth: 0, width: 0, heigth:0)
         tableView.delegate = self
         tableView.dataSource = self
         configureGestureReginozers()
@@ -194,8 +196,46 @@ extension SearchInputView : UITableViewDelegate , UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! SearchCell
+        if let result = searchResult {
+            cell.item = result[indexPath.row]
+        }
+        if let controller = mapController {
+            cell.delegate = controller
+        }
+   
         return cell
      }
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard var searchResult = searchResult else{
+            return
+        }
+        let item = searchResult[indexPath.row]
+        
+        //FIXME: - refactor
+        
+        if expansionState == .fullyExpanded{
+            self.delegate?.animateCenterMapButton(expansionState: self.expansionState, hideButton: false)
+            self.searchBar.showsCancelButton = false
+            self.searchBar.endEditing(true)
+            animationInputView(targetPostion: self.frame.origin.y  + self.frame.width - 100) { (_) in
+                self.expansionState = .partiallyExpanded
+                
+            }
+        }
+        
+        searchResult.remove(at: indexPath.row)
+        searchResult.insert(item, at: 0)
+        self.searchResult = searchResult
+        let index = NSIndexPath(row: 0, section: 0)
+
+        tableView.scrollToRow(at: index as IndexPath, at: .top, animated: true)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: index as IndexPath) as! SearchCell
+        cell.animateButtonIn()
+        
+        
+        
+        
+    }
     
 }
