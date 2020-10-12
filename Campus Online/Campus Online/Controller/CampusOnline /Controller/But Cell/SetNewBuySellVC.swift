@@ -10,9 +10,29 @@ import UIKit
 import SDWebImage
 import FirebaseFirestore
 import CoreLocation
+private let imageCell = "cell"
+protocol CoordinateManagerDelagete : class {
+    func addCoordinateToDatabase(lat : Double , lonLat : Double , completion : @escaping(Bool) ->Void)
+}
+
 class SetNewBuySellVC: UIViewController {
 
-    
+    var geoPoing : GeoPoint?{
+        didSet{
+            guard let loacaiton = geoPoing else {
+                pinView.removeFromSuperview()
+                return }
+            Utilities.succesProgress(msg: "Konum Eklendi")
+            print("lat : \(loacaiton.latitude)")
+            print("lat : \(loacaiton.longitude)")
+            view.addSubview(pinView)
+            pinView.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 48 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 25)
+            
+        }
+    }
+   
+    var collectionview: UICollectionView!
+    weak var delegate : CoordinateManagerDelagete?
     var currentUser : CurrentUser
     var followers = [String]()
     lazy var heigth : CGFloat = 0.0
@@ -46,8 +66,10 @@ class SetNewBuySellVC: UIViewController {
         view.addSubview(userName)
         userName.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
         userName.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+
         return view
     }()
+  
     lazy var text : CaptionText = {
         let text = CaptionText()
         text.backgroundColor = .white
@@ -78,6 +100,37 @@ class SetNewBuySellVC: UIViewController {
         btn.addTarget(self, action: #selector(_addLocation), for: .touchUpInside)
         return btn
     }()
+    let pin : UIImageView = {
+       let img = UIImageView()
+        img.image = #imageLiteral(resourceName: "location-orange").withRenderingMode(.alwaysOriginal)
+        return img
+    }()
+    let pinDespriction : UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Konum Eklendi"
+        lbl.font = UIFont(name: Utilities.fontBold, size: 14)
+        return lbl
+    }()
+    lazy var removeLaciton : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "cancel").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(removeLocation), for: .touchUpInside)
+        return btn
+    }()
+    
+    lazy var pinView : UIView = {
+       let view = UIView()
+        let stackPin = UIStackView(arrangedSubviews: [pin,pinDespriction])
+        stackPin.axis = .horizontal
+        view.addSubview(stackPin)
+        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 30, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
+        
+        view.addSubview(removeLaciton)
+        removeLaciton.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 25, heigth: 25)
+        
+       return view
+    }()
+    
     //MARK:- lifeCycle
     init(currentUser : CurrentUser , followers : [String]){
         self.currentUser = currentUser
@@ -96,9 +149,12 @@ class SetNewBuySellVC: UIViewController {
         rigtBarButton()
         configureHeader()
         configureCollectionView()
+        delegate = self
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
     }
-    
     //MARK:- selectors
     @objc func setNewPost(){
         print("post it")
@@ -113,6 +169,9 @@ class SetNewBuySellVC: UIViewController {
         let vc = MapVC(currentUser: currentUser)
         vc.locationManager = locationManager
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    @objc func removeLocation(){
+        geoPoing = nil
     }
     //MARK: -functions
     fileprivate func rigtBarButton() {
@@ -133,6 +192,7 @@ class SetNewBuySellVC: UIViewController {
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 100)
         text.delegate = self
         text.isScrollEnabled = true
+        textViewDidChange(text)
         let stack = UIStackView(arrangedSubviews: [addImage,addPrice,addLocations])
         stack.axis = .horizontal
         stack.spacing = (view.frame.width - 40) / (100)
@@ -142,9 +202,22 @@ class SetNewBuySellVC: UIViewController {
         view.addSubview(stack)
         
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
+      
         
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.backgroundColor = .white
+        view.addSubview(collectionview)
         
+        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 40, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
+     
+        
+
     }
+   
     private func configureHeader(){
         
         name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
@@ -230,3 +303,21 @@ extension SetNewBuySellVC: UITextViewDelegate {
     
 }
 
+extension SetNewBuySellVC : CoordinateManagerDelagete {
+    func addCoordinateToDatabase(lat: Double, lonLat: Double, completion: @escaping (Bool) -> Void) {
+        print("lat : \(lat)")
+        print("long lat : \(lonLat)")
+    }
+}
+extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! NewPostImageCell
+        return cell
+    }
+    
+    
+}

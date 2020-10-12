@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import FirebaseFirestore
 class MapVC: UIViewController {
 
     //MARK: - properties
@@ -16,8 +17,9 @@ class MapVC: UIViewController {
     var mapView : MKMapView!
     var locationManager : CLLocationManager?
     var seacrhInputView : SearchInputView!
-  
+    weak var coordinateDelegate : CoordinateManagerDelagete?
     weak var route : MKRoute?
+     var coordinate : SetNewBuySellVC?
     var choosenAnnotation : MKAnnotation?
     let centerMapButton : UIButton = {
         let btn = UIButton(type: .system)
@@ -353,7 +355,28 @@ extension MapVC
 }
 extension MapVC : SearchCellDelegate {
     func getDirection(forMapItem mapItem: MKMapItem) {
-        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
+//        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
+        coordinate = SetNewBuySellVC(currentUser: currentUser, followers: [])
+        print("title : \(mapItem.placemark.title)")
+        print("addres : \(mapItem.placemark.name)")
+        
+        
+//        Utilities.waitProgress(msg: "Konum Ekleniyor")
+        let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
+        coordinate?.geoPoing = location
+        self.navigationController?.popViewController(animated: true)
+//        Utilities.succesProgress(msg: "Konum Eklendi")
+//        let db = Firestore.firestore().collection("user")
+//            .document(currentUser.uid)
+//            .collection("coordinate").document("locaiton")
+//        let dic = ["geoPoint" : location] as [String : Any]
+//        db.setData(dic) { (err) in
+//            if err == nil {
+//                
+//               
+//            }
+//        }
+        
     }
     
     func distanceFromUser(location: CLLocation) -> CLLocationDistance? {

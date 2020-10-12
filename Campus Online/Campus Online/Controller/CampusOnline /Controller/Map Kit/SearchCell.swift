@@ -11,7 +11,7 @@ import MapKit
 
 protocol SearchCellDelegate : class {
     func distanceFromUser(location : CLLocation) ->CLLocationDistance?
-    func getDirection(forMapItem mapItem : MKMapItem)
+      func getDirection(forMapItem mapItem : MKMapItem)
 }
 
 class SearchCell: UITableViewCell {
@@ -25,7 +25,7 @@ class SearchCell: UITableViewCell {
     }
 
 
-       
+    
     lazy var addLocaitonButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -98,6 +98,8 @@ class SearchCell: UITableViewCell {
     @objc func addLocation(){
         guard let item = self.item else { return }
         delegate?.getDirection(forMapItem: item)
+     
+       
     }
     
     //MARK: -functions
