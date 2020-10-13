@@ -10,13 +10,18 @@ import UIKit
 import SDWebImage
 import FirebaseFirestore
 import CoreLocation
+import ImagePicker
+import Lightbox
+import Gallery
+import  SVProgressHUD
 private let imageCell = "cell"
-protocol CoordinateManagerDelagete : class {
-    func addCoordinateToDatabase(lat : Double , lonLat : Double , completion : @escaping(Bool) ->Void)
-}
 
-class SetNewBuySellVC: UIViewController {
+class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
+    
 
+    
+    
+    
     var snapShotlistener : ListenerRegistration?
     var geoPoing : GeoPoint?{
         didSet{
@@ -26,13 +31,16 @@ class SetNewBuySellVC: UIViewController {
             Utilities.succesProgress(msg: "Konum Eklendi")
             print("lat : \(loacaiton.latitude)")
             print("lat : \(loacaiton.longitude)")
-           
+            
             
         }
     }
-   
+    var gallery: GalleryController!
+    lazy var dataModel = [DatasModel]()
+    lazy var data = [SelectedData]()
+     var postDate : String!
     var collectionview: UICollectionView!
-    weak var delegate : CoordinateManagerDelagete?
+   
     var currentUser : CurrentUser
     var followers = [String]()
     lazy var heigth : CGFloat = 0.0
@@ -44,7 +52,7 @@ class SetNewBuySellVC: UIViewController {
         imagee.contentMode = .scaleAspectFit
         imagee.layer.borderColor = UIColor.lightGray.cgColor
         imagee.layer.borderWidth = 0.5
-       
+        
         return imagee
         
     }()
@@ -53,7 +61,7 @@ class SetNewBuySellVC: UIViewController {
         lbl.textAlignment = .left
         return lbl
     }()
-   lazy var name : NSMutableAttributedString = {
+    lazy var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
     }()
@@ -66,10 +74,10 @@ class SetNewBuySellVC: UIViewController {
         view.addSubview(userName)
         userName.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
         userName.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
-
+        
         return view
     }()
-  
+    
     lazy var text : CaptionText = {
         let text = CaptionText()
         text.backgroundColor = .white
@@ -101,7 +109,7 @@ class SetNewBuySellVC: UIViewController {
         return btn
     }()
     let pin : UIImageView = {
-       let img = UIImageView()
+        let img = UIImageView()
         img.image = #imageLiteral(resourceName: "pin").withRenderingMode(.alwaysOriginal)
         return img
     }()
@@ -119,17 +127,17 @@ class SetNewBuySellVC: UIViewController {
     }()
     
     lazy var pinView : UIView = {
-       let view = UIView()
+        let view = UIView()
         let stackPin = UIStackView(arrangedSubviews: [pin,pinDespriction])
         stackPin.axis = .horizontal
         view.addSubview(stackPin)
         stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 2.5, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 20)
-       
+        
         view.addSubview(removeLaciton)
         removeLaciton.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 20, heigth: 20)
         removeLaciton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
-       return view
+        return view
     }()
     
     //MARK:- lifeCycle
@@ -137,6 +145,7 @@ class SetNewBuySellVC: UIViewController {
         self.currentUser = currentUser
         self.followers = followers
         super.init(nibName: nil, bundle: nil)
+        self.postDate = Int64(Date().timeIntervalSince1970 * 1000).description
     }
     
     required init?(coder: NSCoder) {
@@ -150,14 +159,13 @@ class SetNewBuySellVC: UIViewController {
         rigtBarButton()
         configureHeader()
         configureCollectionView()
-        delegate = self
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection("user")
-                   .document(currentUser.uid)
-                   .collection("coordinate").document("locaiton")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
         snapShotlistener =  db.addSnapshotListener {[weak self] (docSnap, err) in
             guard let sself = self else {
                 Utilities.dismissProgress()
@@ -193,7 +201,12 @@ class SetNewBuySellVC: UIViewController {
         print("post it")
     }
     @objc func _addImage(){
-        
+        Config.Camera.recordLocation = false
+        Config.tabsToShow = [.imageTab]
+        gallery = GalleryController()
+        gallery.delegate = self
+        gallery.modalPresentationStyle = .fullScreen
+        present(gallery, animated: true, completion: nil)
     }
     @objc func _addPrice(){
         
@@ -206,15 +219,109 @@ class SetNewBuySellVC: UIViewController {
     @objc func removeLocation(){
         Utilities.waitProgress(msg: "Konum Siliniyor")
         let db = Firestore.firestore().collection("user")
-                   .document(currentUser.uid)
-                   .collection("coordinate").document("locaiton")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
         db.delete { (err) in
             if err == nil {
                 Utilities.succesProgress(msg: "Konum Silindi")
             }
         }
     }
+    
+    
+    
+    //MARK: -image picker controller
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        controller.dismiss(animated: true, completion: nil)
+        
+    }
+    func showLightbox(images: [UIImage]) {
+        guard images.count > 0 else {
+            return
+        }
+        
+        let lightboxImages = images.map({ LightboxImage(image: $0) })
+        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
+        lightbox.dismissalDelegate = self
+        lightbox.modalPresentationStyle = .fullScreen
+        
+        gallery.present(lightbox, animated: true, completion: nil)
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        controller.dismiss(animated: true) {
+            for image  in images {
+                image.resolve {[weak self] (img) in
+                    guard let sself = self else { return }
+                    if let img_data = img!.jpegData(compressionQuality: 0.8){
+                        if sself.checkDataModelHasValue(data:  img_data){
+                            print("data is exist")
+                        }else{
+                            sself.data.append(SelectedData.init(data: img_data, type: DataTypes.image.description))
+                            
+                            //                            self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.image.description, data: img_data))
+                            sself.collectionview.reloadData()
+                            sself.navigationItem.title = "\( sself.getSizeOfData(data: sself.data)) mb"
+                        }
+                        
+                    }
+                }
+            }
+        }
+        gallery = nil
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+        
+    }
+    
+    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+        LightboxConfig.DeleteButton.enabled = true
+        
+        SVProgressHUD.show()
+        Image.resolve(images: images, completion: { [weak self] resolvedImages in
+            SVProgressHUD.dismiss()
+            self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
+        })
+    }
+    
+    func galleryControllerDidCancel(_ controller: GalleryController) {
+        controller.dismiss(animated: true, completion: nil)
+        gallery = nil
+    }
+    
+    
     //MARK: -functions
+    
+    
+    
+    
+    private func checkDataModelHasValue(data : Data) ->Bool{
+        dataModel.contains { (model) -> Bool in
+            return  model.data == data
+        }
+    }
+    
+    private func getSizeOfData(data : [SelectedData]) -> String {
+        var val : Float = 0
+        for item in data {
+            let bcf = ByteCountFormatter()
+            bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
+            bcf.countStyle = .file
+            
+            val += Float(item.data.count)
+            
+        }
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
+        
+        formatter.numberStyle = .decimal
+        
+        return formatter.string(from: val / (1024 * 1024) as NSNumber) ?? "n/a"
+        
+    }
+    
     fileprivate func rigtBarButton() {
         let button: UIButton = UIButton(type: .custom)
         button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -224,7 +331,7 @@ class SetNewBuySellVC: UIViewController {
         self.navigationItem.rightBarButtonItem = barButton
     }
     
-   
+    
     fileprivate func configureCollectionView() {
         view.addSubview(headerView)
         headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 64)
@@ -255,11 +362,11 @@ class SetNewBuySellVC: UIViewController {
         
         collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
         collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
-     
         
-
+        
+        
     }
-   
+    
     private func configureHeader(){
         
         name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
@@ -341,19 +448,12 @@ extension SetNewBuySellVC: UITextViewDelegate {
         textView.attributedText = convertHashtags(text: textView.text)
     }
     
-    
-    
 }
 
-extension SetNewBuySellVC : CoordinateManagerDelagete {
-    func addCoordinateToDatabase(lat: Double, lonLat: Double, completion: @escaping (Bool) -> Void) {
-        print("lat : \(lat)")
-        print("long lat : \(lonLat)")
-    }
-}
+
 extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -365,3 +465,5 @@ extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegat
         return CGSize(width: width, height: width)
     }
 }
+//MARK: -LightboxControllerDismissalDelegate ,GalleryControllerDelegate
+

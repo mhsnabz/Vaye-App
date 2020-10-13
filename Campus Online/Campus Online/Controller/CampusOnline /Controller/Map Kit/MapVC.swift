@@ -18,7 +18,7 @@ class MapVC: UIViewController {
     var mapView : MKMapView!
     var locationManager : CLLocationManager?
     var seacrhInputView : SearchInputView!
-    weak var coordinateDelegate : CoordinateManagerDelagete?
+    
     weak var route : MKRoute?
      var coordinate : SetNewBuySellVC?
     var choosenAnnotation : MKAnnotation?
@@ -360,13 +360,6 @@ extension MapVC : SearchCellDelegate {
         coordinate = SetNewBuySellVC(currentUser: currentUser, followers: [])
 //        Utilities.waitProgress(msg: "Konum Ekleniyor")
         let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
-//
-//        coordinate?.geoPoing = location
-//        coordinate?.adressTitle = mapItem.placemark.title
-//        coordinate?.addresName = mapItem.placemark.name
-        
-     
-//        Utilities.succesProgress(msg: "Konum Eklendi")
         Utilities.waitProgress(msg: "Konum Ekleniyor")
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
