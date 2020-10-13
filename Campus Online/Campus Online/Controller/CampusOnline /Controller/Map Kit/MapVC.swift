@@ -13,6 +13,7 @@ import FirebaseFirestore
 class MapVC: UIViewController {
 
     //MARK: - properties
+   public  var completion : ((GeoPoint) ->Void)?
     var currentUser : CurrentUser
     var mapView : MKMapView!
     var locationManager : CLLocationManager?
@@ -357,25 +358,26 @@ extension MapVC : SearchCellDelegate {
     func getDirection(forMapItem mapItem: MKMapItem) {
 //        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
         coordinate = SetNewBuySellVC(currentUser: currentUser, followers: [])
-        print("title : \(mapItem.placemark.title)")
-        print("addres : \(mapItem.placemark.name)")
-        
-        
 //        Utilities.waitProgress(msg: "Konum Ekleniyor")
         let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
-        coordinate?.geoPoing = location
-        self.navigationController?.popViewController(animated: true)
+//
+//        coordinate?.geoPoing = location
+//        coordinate?.adressTitle = mapItem.placemark.title
+//        coordinate?.addresName = mapItem.placemark.name
+        
+     
 //        Utilities.succesProgress(msg: "Konum Eklendi")
-//        let db = Firestore.firestore().collection("user")
-//            .document(currentUser.uid)
-//            .collection("coordinate").document("locaiton")
-//        let dic = ["geoPoint" : location] as [String : Any]
-//        db.setData(dic) { (err) in
-//            if err == nil {
-//                
-//               
-//            }
-//        }
+        Utilities.waitProgress(msg: "Konum Ekleniyor")
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
+        let dic = ["geoPoint" : location] as [String : Any]
+        db.setData(dic) {[weak self] (err) in
+            if err == nil {
+                guard let sself = self else { return }
+                sself.navigationController?.popViewController(animated: true)
+            }
+        }
         
     }
     

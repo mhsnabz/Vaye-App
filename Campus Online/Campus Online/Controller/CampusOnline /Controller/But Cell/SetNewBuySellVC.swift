@@ -17,6 +17,7 @@ protocol CoordinateManagerDelagete : class {
 
 class SetNewBuySellVC: UIViewController {
 
+    var snapShotlistener : ListenerRegistration?
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {
@@ -25,8 +26,7 @@ class SetNewBuySellVC: UIViewController {
             Utilities.succesProgress(msg: "Konum Eklendi")
             print("lat : \(loacaiton.latitude)")
             print("lat : \(loacaiton.longitude)")
-            view.addSubview(pinView)
-            pinView.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 48 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 25)
+           
             
         }
     }
@@ -102,13 +102,13 @@ class SetNewBuySellVC: UIViewController {
     }()
     let pin : UIImageView = {
        let img = UIImageView()
-        img.image = #imageLiteral(resourceName: "location-orange").withRenderingMode(.alwaysOriginal)
+        img.image = #imageLiteral(resourceName: "pin").withRenderingMode(.alwaysOriginal)
         return img
     }()
     let pinDespriction : UILabel = {
         let lbl = UILabel()
         lbl.text = "Konum Eklendi"
-        lbl.font = UIFont(name: Utilities.fontBold, size: 14)
+        lbl.font = UIFont(name: Utilities.font, size: 14)
         return lbl
     }()
     lazy var removeLaciton : UIButton = {
@@ -123,10 +123,11 @@ class SetNewBuySellVC: UIViewController {
         let stackPin = UIStackView(arrangedSubviews: [pin,pinDespriction])
         stackPin.axis = .horizontal
         view.addSubview(stackPin)
-        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 30, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
-        
+        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 2.5, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 20)
+       
         view.addSubview(removeLaciton)
-        removeLaciton.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 25, heigth: 25)
+        removeLaciton.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 20, heigth: 20)
+        removeLaciton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
        return view
     }()
@@ -153,7 +154,39 @@ class SetNewBuySellVC: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("user")
+                   .document(currentUser.uid)
+                   .collection("coordinate").document("locaiton")
+        snapShotlistener =  db.addSnapshotListener {[weak self] (docSnap, err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                self?.pinView.isHidden = true
+                return
+            }
+            if err == nil {
+                guard let snap = docSnap else {
+                    sself.pinView.isHidden = true
+                    Utilities.dismissProgress()
+                    return
+                }
+                if snap.exists{
+                    sself.pinView.isHidden = false
+                    Utilities.succesProgress(msg: "Konum Eklendi")
+                }else{
+                    sself.pinView.isHidden = true
+                    Utilities.dismissProgress()
+                }
+            }
+        }
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        snapShotlistener?.remove()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        snapShotlistener?.remove()
     }
     //MARK:- selectors
     @objc func setNewPost(){
@@ -171,7 +204,15 @@ class SetNewBuySellVC: UIViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     @objc func removeLocation(){
-        geoPoing = nil
+        Utilities.waitProgress(msg: "Konum Siliniyor")
+        let db = Firestore.firestore().collection("user")
+                   .document(currentUser.uid)
+                   .collection("coordinate").document("locaiton")
+        db.delete { (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Konum Silindi")
+            }
+        }
     }
     //MARK: -functions
     fileprivate func rigtBarButton() {
@@ -202,8 +243,9 @@ class SetNewBuySellVC: UIViewController {
         view.addSubview(stack)
         
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
-      
-        
+        view.addSubview(pinView)
+        pinView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 25)
+        pinView.isHidden = true
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -211,7 +253,7 @@ class SetNewBuySellVC: UIViewController {
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 40, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
         collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
      
         
@@ -318,6 +360,8 @@ extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegat
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! NewPostImageCell
         return cell
     }
-    
-    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width  = (view.frame.width - 30 ) / 3
+        return CGSize(width: width, height: width)
+    }
 }
