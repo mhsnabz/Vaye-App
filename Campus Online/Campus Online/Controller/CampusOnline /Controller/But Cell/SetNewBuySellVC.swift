@@ -244,7 +244,6 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
         lightbox.dismissalDelegate = self
         lightbox.modalPresentationStyle = .fullScreen
-        
         gallery.present(lightbox, animated: true, completion: nil)
     }
     
