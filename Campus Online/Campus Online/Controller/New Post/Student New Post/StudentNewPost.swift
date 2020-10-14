@@ -428,7 +428,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
            if self.data.isEmpty{
                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
                 
-                self?.setMyPostOnDatabase(postId: date) {[weak self] (_) in
+                self?.setMyPostOnDatabase(postId: date) { (_) in
                     Utilities.succesProgress(msg: "Paylaşıldı")
                  
                 }

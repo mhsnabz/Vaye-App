@@ -75,6 +75,8 @@
 		665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */; };
 		665E5CD224FEF3EB00B5B5E3 /* NewPostDocCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CD124FEF3EB00B5B5E3 /* NewPostDocCell.swift */; };
 		665E5CD424FFB5BE00B5B5E3 /* CaptionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CD324FFB5BE00B5B5E3 /* CaptionText.swift */; };
+		666B2DCB253791DA0014C5A7 /* BuySellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666B2DCA253791DA0014C5A7 /* BuySellModel.swift */; };
+		666B2DD1253793040014C5A7 /* BuySellCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666B2DD0253793040014C5A7 /* BuySellCell.swift */; };
 		66775531252CCBF300DBF3CD /* COContaninerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66775530252CCBF300DBF3CD /* COContaninerController.swift */; };
 		66775539252CCC4100DBF3CD /* COMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66775538252CCC4100DBF3CD /* COMenuController.swift */; };
 		6677553F252CED1400DBF3CD /* CoMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6677553E252CED1400DBF3CD /* CoMenuCell.swift */; };
@@ -250,6 +252,8 @@
 		665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostPdfCell.swift; sourceTree = "<group>"; };
 		665E5CD124FEF3EB00B5B5E3 /* NewPostDocCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostDocCell.swift; sourceTree = "<group>"; };
 		665E5CD324FFB5BE00B5B5E3 /* CaptionText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionText.swift; sourceTree = "<group>"; };
+		666B2DCA253791DA0014C5A7 /* BuySellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuySellModel.swift; sourceTree = "<group>"; };
+		666B2DD0253793040014C5A7 /* BuySellCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuySellCell.swift; sourceTree = "<group>"; };
 		66775530252CCBF300DBF3CD /* COContaninerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COContaninerController.swift; sourceTree = "<group>"; };
 		66775538252CCC4100DBF3CD /* COMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COMenuController.swift; sourceTree = "<group>"; };
 		6677553E252CED1400DBF3CD /* CoMenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoMenuCell.swift; sourceTree = "<group>"; };
@@ -577,6 +581,14 @@
 			path = "TabBar Controller";
 			sourceTree = "<group>";
 		};
+		666B2DCF253792E40014C5A7 /* BuySell View */ = {
+			isa = PBXGroup;
+			children = (
+				666B2DD0253793040014C5A7 /* BuySellCell.swift */,
+			);
+			path = "BuySell View";
+			sourceTree = "<group>";
+		};
 		6677552F252CCBBF00DBF3CD /* Menu Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -862,6 +874,7 @@
 				668F04AC2520CC94007BD9C7 /* LessonInfoModel.swift */,
 				668F04B12524BF24007BD9C7 /* NotificaitonService.swift */,
 				66AA9C5E25251175008DFB86 /* NotificationModel.swift */,
+				666B2DCA253791DA0014C5A7 /* BuySellModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -888,6 +901,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				666B2DCF253792E40014C5A7 /* BuySell View */,
 				6677553D252CECF000DBF3CD /* CO Menu View */,
 				66AA9C5525251025008DFB86 /* Notification View */,
 				668B6A35251BBE4600A8902F /* Comment View */,
@@ -1346,6 +1360,7 @@
 				6615FC8D250B38D200776664 /* NewPostHomeVCData.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
 				66AF72C825133096007E96BC /* FieldListLiteAdCell.swift in Sources */,
+				666B2DD1253793040014C5A7 /* BuySellCell.swift in Sources */,
 				665E5CCA24FE5B0C00B5B5E3 /* UploadDataToDatabase.swift in Sources */,
 				661333FC24F4206A002677AB /* ChooseSchool.swift in Sources */,
 				66F4CD3F250DF5E60076D12E /* StudentEditPost.swift in Sources */,
@@ -1370,6 +1385,7 @@
 				66D9122824EEAC6E002D760A /* delegataion.swift in Sources */,
 				660F5ACD2502D06C00F72558 /* AddUserCell.swift in Sources */,
 				661333E824F3B25B002677AB /* ProfileCell.swift in Sources */,
+				666B2DCB253791DA0014C5A7 /* BuySellModel.swift in Sources */,
 				66A5F0E0250F4BB8005C93B3 /* OtherUserProfile.swift in Sources */,
 				661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */,
 				66AA9C5725251053008DFB86 /* NotificaitionCell.swift in Sources */,

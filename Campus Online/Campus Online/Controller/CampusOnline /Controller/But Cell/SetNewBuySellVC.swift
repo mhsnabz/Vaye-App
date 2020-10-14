@@ -13,15 +13,10 @@ import CoreLocation
 import ImagePicker
 import Lightbox
 import Gallery
-import  SVProgressHUD
+
 private let imageCell = "cell"
 
 class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
-    
-
-    
-    
-    
     var snapShotlistener : ListenerRegistration?
     var geoPoing : GeoPoint?{
         didSet{
@@ -36,7 +31,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         }
     }
     var gallery: GalleryController!
-    lazy var dataModel = [DatasModel]()
+    lazy var dataModel = [BuySellModel]()
     lazy var data = [SelectedData]()
      var postDate : String!
     var collectionview: UICollectionView!
@@ -257,8 +252,8 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                             print("data is exist")
                         }else{
                             sself.data.append(SelectedData.init(data: img_data, type: DataTypes.image.description))
-                            
-                            //                            self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.image.description, data: img_data))
+                            sself.dataModel.append(BuySellModel.init(postDate: sself.postDate, currentUser: sself.currentUser, type: DataTypes.image.description, data: img_data))
+                
                             sself.collectionview.reloadData()
                             sself.navigationItem.title = "\( sself.getSizeOfData(data: sself.data)) mb"
                         }
@@ -277,9 +272,9 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
         LightboxConfig.DeleteButton.enabled = true
         
-        SVProgressHUD.show()
+        Utilities.waitProgress(msg: nil)
         Image.resolve(images: images, completion: { [weak self] resolvedImages in
-            SVProgressHUD.dismiss()
+            Utilities.dismissProgress()
             self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
         })
     }
@@ -360,7 +355,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         view.addSubview(collectionview)
         
         collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
-        collectionview.register(NewPostImageCell.self, forCellWithReuseIdentifier: imageCell)
+        collectionview.register(BuySellCell.self, forCellWithReuseIdentifier: imageCell)
         
         
         
@@ -452,11 +447,20 @@ extension SetNewBuySellVC: UITextViewDelegate {
 
 extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+        return data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! NewPostImageCell
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! BuySellCell
+        if dataModel[indexPath.row].type == DataTypes.image.description
+        {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! BuySellCell
+            cell.backgroundColor = .white
+//            cell.delegate = self
+            cell.data = dataModel[indexPath.row]
+            cell.img.image = UIImage(data: data[indexPath.row].data)
+       
+        }
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
