@@ -135,6 +135,16 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         return view
     }()
     
+    lazy var popUpWindow: PopUpWindow = {
+        let view = PopUpWindow()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 5
+        view.delegate = self
+        return view
+    }()
+    
+    
+    
     //MARK:- lifeCycle
     init(currentUser : CurrentUser , followers : [String]){
         self.currentUser = currentUser
@@ -477,4 +487,19 @@ extension SetNewBuySellVC : DeleteImageSetNewBuySell {
     func deleteImage(for cell: BuySellCell) {
         print("deleted")
     }
+}
+//MARK:- PopUpDelegate
+extension SetNewBuySellVC : PopUpDelegate {
+    func handleDismissal() {
+        
+    }
+    
+    func addTarget(_ target: String?) {
+        
+    }
+    
+    func goDrive(_ target: String?) {
+        
+    }
+     
 }
