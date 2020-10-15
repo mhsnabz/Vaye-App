@@ -456,9 +456,10 @@ extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegat
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! BuySellCell
             cell.backgroundColor = .white
-//            cell.delegate = self
+            cell.delegate = self
             cell.data = dataModel[indexPath.row]
-            cell.img.image = UIImage(data: data[indexPath.row].data)
+
+            return cell
        
         }
         return cell
@@ -472,4 +473,8 @@ extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegat
         return 1
     }
 }
-
+extension SetNewBuySellVC : DeleteImageSetNewBuySell {
+    func deleteImage(for cell: BuySellCell) {
+        print("deleted")
+    }
+}

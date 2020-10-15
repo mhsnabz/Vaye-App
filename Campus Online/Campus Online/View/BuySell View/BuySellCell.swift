@@ -9,9 +9,14 @@
 import UIKit
 
 class BuySellCell: UICollectionViewCell {
-    weak var delegate: DeleteImage?
+    weak var delegate: DeleteImageSetNewBuySell?
     
-    var data : BuySellModel?
+    var data : BuySellModel?{
+        didSet{
+            guard let data = data else { return }
+            img.image = UIImage(data: data.data)
+        }
+    }
     
     let deleteBtn : UIButton = {
         let btn = UIButton(type: .system)
@@ -39,6 +44,6 @@ class BuySellCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     @objc func deleteImage(){
-//        delegate?.deleteImage(for: self)
+    delegate?.deleteImage(for: self)
     }
 }

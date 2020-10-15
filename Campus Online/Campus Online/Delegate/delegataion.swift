@@ -5,7 +5,7 @@
 //  Created by mahsun abuzeyitoğlu on 20.08.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
-
+import Foundation
 
 protocol HomeControllerDelegate : class {
     func handleMenuToggle(forMenuOption menuOption : MenuOption?)
@@ -56,6 +56,9 @@ protocol DeleteDoc : class {
 }
 protocol DeleteImage : class  {
     func deleteImage( for cell : NewPostImageCell)
+}
+protocol DeleteImageSetNewBuySell : class  {
+    func deleteImage( for cell : BuySellCell)
 }
 protocol EditStudentPostDelegate : class {
      func deleteImage( for cell : StudentEditPostImageCell)
