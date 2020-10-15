@@ -45,6 +45,11 @@ protocol PopUpDelegate : class {
     func addTarget(_ target : String?)
     func goDrive(_ target : String?)
 }
+protocol PopUpNumberDelegate : class {
+    func handleDismissal()
+    func addValue(_ target : String?)
+ 
+}
 protocol AddUserDelegate : class {
     func addUser(username : String?)
 }

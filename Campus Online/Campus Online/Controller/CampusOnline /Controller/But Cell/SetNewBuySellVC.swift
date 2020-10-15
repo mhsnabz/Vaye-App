@@ -33,9 +33,13 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     var gallery: GalleryController!
     lazy var dataModel = [BuySellModel]()
     lazy var data = [SelectedData]()
-     var postDate : String!
+    var postDate : String!
     var collectionview: UICollectionView!
-   
+    var total_value : String?{
+        didSet{
+            valuesView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        }
+    }
     var currentUser : CurrentUser
     var followers = [String]()
     lazy var heigth : CGFloat = 0.0
@@ -108,11 +112,27 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         img.image = #imageLiteral(resourceName: "pin").withRenderingMode(.alwaysOriginal)
         return img
     }()
+    let value_image : UIImageView = {
+        let img = UIImageView()
+        img.image = #imageLiteral(resourceName: "price").withRenderingMode(.alwaysOriginal)
+        return img
+    }()
+    let value_description : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 14)
+        return lbl
+    }()
     let pinDespriction : UILabel = {
         let lbl = UILabel()
         lbl.text = "Konum Eklendi"
         lbl.font = UIFont(name: Utilities.font, size: 14)
         return lbl
+    }()
+    lazy var remove_Value : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "cancel").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(removeValue), for: .touchUpInside)
+        return btn
     }()
     lazy var removeLaciton : UIButton = {
         let btn = UIButton(type: .system)
@@ -134,12 +154,32 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         
         return view
     }()
+    lazy var valuesView : UIView = {
+        let view = UIView()
+        let stackPin = UIStackView(arrangedSubviews: [pin,pinDespriction])
+        stackPin.axis = .horizontal
+        view.addSubview(stackPin)
+        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 2.5, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 20)
+        
+        view.addSubview(remove_Value)
+        remove_Value.anchor(top: nil, left: nil, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 2.5, marginBottom: 2.5, marginRigth: 5, width: 20, heigth: 0)
+        
+        
+        return view
+    }()
     
-    lazy var popUpWindow: PopUpWindow = {
-        let view = PopUpWindow()
+    lazy var popUpWindow: PopUpNumberController = {
+        let view = PopUpNumberController()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
         view.delegate = self
+        return view
+    }()
+    
+    let visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
+        let view = UIVisualEffectView(effect: blurEffect)
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -213,8 +253,9 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         gallery.modalPresentationStyle = .fullScreen
         present(gallery, animated: true, completion: nil)
     }
-    @objc func _addPrice(){
-        
+    @objc func _addPrice()
+    {
+        handleShowPopUp(target: "")
     }
     @objc func _addLocation(){
         let vc = MapVC(currentUser: currentUser)
@@ -231,6 +272,9 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 Utilities.succesProgress(msg: "Konum Silindi")
             }
         }
+    }
+    @objc func removeValue(){
+        
     }
     
     
@@ -263,7 +307,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                         }else{
                             sself.data.append(SelectedData.init(data: img_data, type: DataTypes.image.description))
                             sself.dataModel.append(BuySellModel.init(postDate: sself.postDate, currentUser: sself.currentUser, type: DataTypes.image.description, data: img_data))
-                
+                            
                             sself.collectionview.reloadData()
                             sself.navigationItem.title = "\( sself.getSizeOfData(data: sself.data)) mb"
                         }
@@ -298,7 +342,23 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     //MARK: -functions
     
     
-    
+    func handleShowPopUp(target : String) {
+        view.addSubview(popUpWindow)
+        popUpWindow.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -80).isActive = true
+        popUpWindow.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        popUpWindow.heightAnchor.constraint(equalToConstant: view.frame.width - 200).isActive = true
+        popUpWindow.widthAnchor.constraint(equalToConstant: view.frame.width - 44).isActive = true
+        popUpWindow.values = target
+        
+        UIView.animate(withDuration: 0.5) {
+            self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+            self.visualEffectView.alpha = 1
+            self.popUpWindow.alpha = 1
+            self.popUpWindow.transform = CGAffineTransform.identity
+            
+        }
+        return
+    }
     
     private func checkDataModelHasValue(data : Data) ->Bool{
         dataModel.contains { (model) -> Bool in
@@ -355,8 +415,12 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
         view.addSubview(pinView)
-        pinView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 25)
+        pinView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 1)
         pinView.isHidden = true
+        
+        view.addSubview(valuesView)
+        valuesView.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 0.1)
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -364,8 +428,18 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.anchor(top: valuesView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
         collectionview.register(BuySellCell.self, forCellWithReuseIdentifier: imageCell)
+        
+        
+        view.addSubview(visualEffectView)
+        visualEffectView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        visualEffectView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        
+        visualEffectView.alpha = 0
+        
         
         
         
@@ -468,9 +542,9 @@ extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegat
             cell.backgroundColor = .white
             cell.delegate = self
             cell.data = dataModel[indexPath.row]
-
+            
             return cell
-       
+            
         }
         return cell
     }
@@ -489,17 +563,28 @@ extension SetNewBuySellVC : DeleteImageSetNewBuySell {
     }
 }
 //MARK:- PopUpDelegate
-extension SetNewBuySellVC : PopUpDelegate {
+extension SetNewBuySellVC : PopUpNumberDelegate {
     func handleDismissal() {
-        
+        print("cancel")
     }
     
-    func addTarget(_ target: String?) {
-        
+    func addValue(_ target: String?) {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popUpWindow.alpha = 0
+            self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) {[weak self] (_) in
+            self?.popUpWindow.removeFromSuperview()
+            
+            if let url = self?.popUpWindow.value.text {
+                Utilities.succesProgress(msg: "Fiyat Eklendi : \(url)")
+                self?.total_value = url
+                
+            }
+            
+        }
     }
     
-    func goDrive(_ target: String?) {
-        
-    }
-     
+    
+    
 }

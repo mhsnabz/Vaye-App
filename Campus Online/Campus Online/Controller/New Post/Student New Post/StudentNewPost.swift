@@ -834,8 +834,6 @@ extension StudentNewPost: PopUpDelegate {
             self?.popUpWindow.removeFromSuperview()
             
             if let url = self?.popUpWindow.link.text {
-                
-               
                 self?.detectLink(url)
                 self?.popUpWindow.link.text = ""
                 self?.link = url
