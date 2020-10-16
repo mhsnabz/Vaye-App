@@ -37,7 +37,12 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     var collectionview: UICollectionView!
     var total_value : String?{
         didSet{
-            valuesView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+            if total_value == nil {
+                valuesView.isHidden = true
+            }else{
+                valuesView.isHidden = false
+            }
+           
         }
     }
     var currentUser : CurrentUser
@@ -146,23 +151,23 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         let stackPin = UIStackView(arrangedSubviews: [pin,pinDespriction])
         stackPin.axis = .horizontal
         view.addSubview(stackPin)
-        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 2.5, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 20)
+        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
         
         view.addSubview(removeLaciton)
-        removeLaciton.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 20, heigth: 20)
+        removeLaciton.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 25, heigth: 25)
         removeLaciton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         return view
     }()
     lazy var valuesView : UIView = {
         let view = UIView()
-        let stackPin = UIStackView(arrangedSubviews: [pin,pinDespriction])
+        let stackPin = UIStackView(arrangedSubviews: [value_image,value_description])
         stackPin.axis = .horizontal
         view.addSubview(stackPin)
-        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 2.5, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 20)
+        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
         
         view.addSubview(remove_Value)
-        remove_Value.anchor(top: nil, left: nil, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 2.5, marginBottom: 2.5, marginRigth: 5, width: 20, heigth: 0)
+        remove_Value.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 25, heigth: 25)
         
         
         return view
@@ -273,8 +278,10 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             }
         }
     }
-    @objc func removeValue(){
-        
+    @objc func removeValue()
+    {
+            total_value = nil
+            valuesView.isHidden = true
     }
     
     
@@ -360,6 +367,16 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         return
     }
     
+    func _handleDismissal() {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.visualEffectView.alpha = 0
+            self.popUpWindow.alpha = 0
+            self.popUpWindow.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { (_) in
+            self.popUpWindow.removeFromSuperview()
+            print("Did remove pop up window..")
+        }
+    }
     private func checkDataModelHasValue(data : Data) ->Bool{
         dataModel.contains { (model) -> Bool in
             return  model.data == data
@@ -414,13 +431,17 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         view.addSubview(stack)
         
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
-        view.addSubview(pinView)
-        pinView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 1)
-        pinView.isHidden = true
         
         view.addSubview(valuesView)
-        valuesView.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 0.1)
+        valuesView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
+        valuesView.isHidden = true
         
+        
+        view.addSubview(pinView)
+        pinView.anchor(top: valuesView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
+        pinView.isHidden = true
+        
+       
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -428,7 +449,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
-        collectionview.anchor(top: valuesView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
         collectionview.register(BuySellCell.self, forCellWithReuseIdentifier: imageCell)
         
         
@@ -565,7 +586,7 @@ extension SetNewBuySellVC : DeleteImageSetNewBuySell {
 //MARK:- PopUpDelegate
 extension SetNewBuySellVC : PopUpNumberDelegate {
     func handleDismissal() {
-        print("cancel")
+        _handleDismissal()
     }
     
     func addValue(_ target: String?) {
@@ -579,6 +600,7 @@ extension SetNewBuySellVC : PopUpNumberDelegate {
             if let url = self?.popUpWindow.value.text {
                 Utilities.succesProgress(msg: "Fiyat Eklendi : \(url)")
                 self?.total_value = url
+                self?.value_description.text = "  Fiyat : " + url
                 
             }
             
