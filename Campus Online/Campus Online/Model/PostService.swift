@@ -62,6 +62,11 @@ class PostService{
             }
         }
     }
+    
+    
+    
+    
+    
     func setPostForUser (userId : [LessonFallowerUser] , postId : String , completion : @escaping(Bool) ->Void){
         
         let db = Firestore.firestore().collection("user")
@@ -77,9 +82,12 @@ class PostService{
             }
             
         }
-        
-        
     }
+    
+  
+    
+   
+    
     func setPostForLesson(currentUser : CurrentUser,dic : [String:Any] , short_school : String , lessonName : String ,postId : String, completion : @escaping(Bool) -> Void){
         let db = Firestore.firestore().collection(short_school).document("lesson-post")
             .collection("post").document(postId)

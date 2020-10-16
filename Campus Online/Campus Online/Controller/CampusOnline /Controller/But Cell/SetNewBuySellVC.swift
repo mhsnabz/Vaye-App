@@ -18,6 +18,7 @@ private let imageCell = "cell"
 
 class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
     var snapShotlistener : ListenerRegistration?
+    lazy var totolDataInMB : Float = 0.0
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {
@@ -237,6 +238,8 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 }
             }
         }
+        
+     
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -248,7 +251,30 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     }
     //MARK:- selectors
     @objc func setNewPost(){
-        print("post it")
+        text.endEditing(true)
+        
+        if SizeOfData(data: data) > 14.95 {
+            Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
+        }
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
+        Utilities.waitProgress(msg: "Paylaşılıyor")
+        let date =  Int64(Date().timeIntervalSince1970 * 1000).description
+        var val = [Data]()
+        var dataType = [String]()
+        let url = [String]()
+        for number in 0..<(data.count) {
+            val.append(data[number].data)
+            dataType.append(data[number].type)
+        }
+        if self.data.isEmpty{
+            
+        }else{
+            
+        }
     }
     @objc func _addImage(){
         Config.Camera.recordLocation = false
@@ -349,6 +375,20 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     
     //MARK: -functions
     
+    
+    private func SizeOfData(data : [SelectedData]) -> Float {
+       
+        for item in data {
+            let bcf = ByteCountFormatter()
+            bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
+            bcf.countStyle = .file
+            
+            totolDataInMB += Float(item.data.count)
+            
+        }
+       return totolDataInMB / (1024 * 1024 )
+        
+    }
     
     func handleShowPopUp(target : String) {
         view.addSubview(popUpWindow)

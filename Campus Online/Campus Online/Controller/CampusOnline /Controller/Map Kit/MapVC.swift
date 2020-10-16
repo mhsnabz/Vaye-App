@@ -21,7 +21,7 @@ class MapVC: UIViewController {
     
     weak var route : MKRoute?
      var coordinate : SetNewBuySellVC?
-    var choosenAnnotation : MKAnnotation?
+  weak var choosenAnnotation : MKAnnotation?
     let centerMapButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "location").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -43,6 +43,10 @@ class MapVC: UIViewController {
     }()
     
     //MARK: -lifeCycle
+    deinit {
+        print("denit map")
+    }
+    
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
