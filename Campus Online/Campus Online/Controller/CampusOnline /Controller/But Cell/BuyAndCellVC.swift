@@ -50,7 +50,7 @@ class BuyAndCellVC: UIViewController {
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationController?.navigationBar.isHidden = false
-        navigationItem.title = "Al - Sat "
+        navigationItem.title = "Al - Sat"
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         animationView()
         
@@ -137,25 +137,19 @@ class BuyAndCellVC: UIViewController {
         //İSTE/sell-buy/followers/StTsYlJUVX4zOUzhRzXt
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("sell-buy").collection("followers").document(currentUser.uid)
-        db.getDocument {[weak self] (docSnap, err) in
-            guard let sself = self else { return }
+        db.getDocument { (docSnap, err) in
             if err == nil {
                 guard let snap = docSnap else {
-
                     completion(false)
-                    
                     return
                 }
                 if snap.exists{
-
                     completion(true)
                 }
                 else{
-
                     completion(false)
                 }
             }else{
- 
                 completion(false)
             }
         }
@@ -200,13 +194,13 @@ class BuyAndCellVC: UIViewController {
     }
     @objc func newPost(){
         Utilities.waitProgress(msg: nil)
-        UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (user) in
+        SellBuyService.shared.getTopicFollowers(currentUser: currentUser) {[weak self] (user) in
             guard let sself = self else { return }
             let vc = SetNewBuySellVC(currentUser : sself.currentUser, followers : user)
             sself.navigationController?.pushViewController(vc, animated: true)
             Utilities.dismissProgress()
         }
-        
+      
     }
 
 }

@@ -270,10 +270,16 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             val.append(data[number].data)
             dataType.append(data[number].type)
         }
-        if self.data.isEmpty{
-            
+        // link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum
+        if self.data.isEmpty
+        {
+            SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school)
+            {[weak self] (_) in
+                guard let sself = self else { return }
+                SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+            }
         }else{
-            
+       
         }
     }
     @objc func _addImage(){

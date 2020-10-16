@@ -149,10 +149,34 @@ class NotificaitonService{
                 }
             }
         }
+    }
+    
+    func set_new_buy_sell_notification(currentUser : CurrentUser ,postId : String , getterUids : [String] , text : String ,type : String, topic : String,notificaitonId : String ,completion : @escaping(Bool) ->Void){
+        let dic = ["type" : type ,
+                   "text" : text ,
+                   "senderUid" : currentUser.uid as Any,
+                   "time":FieldValue.serverTimestamp(),
+                   "senderImage":currentUser.thumb_image as Any ,
+                   "not_id":notificaitonId,
+                   "isRead":false ,
+                   "username":currentUser.username as Any,
+                   "postId": postId  as Any,
+                   "senderName":currentUser.name as Any,
+                   "lessonName":topic as Any] as [String : Any]
+        for item in getterUids{
         
-       
-        
-        
+            if item != currentUser.uid{
+                let db = Firestore.firestore().collection("user")
+                    .document(item).collection("notification").document(notificaitonId)
+                db.setData(dic, merge: true) { (err) in
+                    if err == nil {
+                        print("succes")
+                    }else{
+                        print("err \(err?.localizedDescription as Any)")
+                    }
+                }
+            }
+        }
     }
     
 }
@@ -167,7 +191,7 @@ enum Notification_description {
     case comment_mention
     case following_you
     case home_new_post
-    
+    case new_ad
     var desprition : String {
         switch self {
        
@@ -186,6 +210,8 @@ enum Notification_description {
             return "Sizi Takip Etmeye Başladı"
         case.home_new_post :
             return "Yeni Bir Gönderi Paylaştı"
+        case .new_ad:
+        return "Yeni Bir İlan Paylaştı"
             
         }
     }
@@ -198,6 +224,7 @@ enum NotificationType{
     case comment_mention
     case following_you
     case home_new_post
+    case new_ad
     var desprition : String {
         switch self{
         
@@ -215,6 +242,8 @@ enum NotificationType{
             return "follow"
         case.home_new_post:
             return "home_new_post"
+        case.new_ad :
+            return "new_ad"
         }
     }
 }
