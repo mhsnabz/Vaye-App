@@ -14,8 +14,8 @@ import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
   lazy var filterView = DataView()
     weak var delegate : NewPostHomeVCDataDelegate?
-    var currentUser : CurrentUser?
-    var lessonPostModel : LessonPostModel?{
+    weak var currentUser : CurrentUser?
+   weak var lessonPostModel : LessonPostModel?{
         didSet {
             configure()
             guard let post = lessonPostModel else { return }

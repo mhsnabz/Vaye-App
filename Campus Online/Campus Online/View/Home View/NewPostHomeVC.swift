@@ -16,7 +16,7 @@ class NewPostHomeVC: UICollectionViewCell
     
     //MARK:- variables
     
-    var lessonPostModel : LessonPostModel?{
+   weak var lessonPostModel : LessonPostModel?{
         didSet {
             configure()
             guard let currentUser = currentUser else { return }

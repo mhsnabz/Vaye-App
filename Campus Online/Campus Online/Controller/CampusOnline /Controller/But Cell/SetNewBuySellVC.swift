@@ -216,7 +216,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
-        snapShotlistener =  db.addSnapshotListener {[weak self] (docSnap, err) in
+            db.getDocument {[weak self] (docSnap, err) in
             guard let sself = self else {
                 Utilities.dismissProgress()
                 self?.pinView.isHidden = true
@@ -240,11 +240,11 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        snapShotlistener?.remove()
+       
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        snapShotlistener?.remove()
+    
     }
     //MARK:- selectors
     @objc func setNewPost(){
@@ -275,6 +275,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         db.delete { (err) in
             if err == nil {
                 Utilities.succesProgress(msg: "Konum Silindi")
+                self.pinView.isHidden = true
             }
         }
     }
