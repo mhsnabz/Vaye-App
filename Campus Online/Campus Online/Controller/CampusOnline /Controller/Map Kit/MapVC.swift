@@ -361,7 +361,7 @@ extension MapVC
 extension MapVC : SearchCellDelegate {
     func getDirection(forMapItem mapItem: MKMapItem) {
 //        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
-        coordinate = SetNewBuySellVC(currentUser: currentUser, followers: [])
+        coordinate = SetNewBuySellVC(currentUser: currentUser, followers: [] , currentUserFollowers: [])
 //        Utilities.waitProgress(msg: "Konum Ekleniyor")
         let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
         Utilities.waitProgress(msg: "Konum Ekleniyor")

@@ -19,6 +19,7 @@ private let imageCell = "cell"
 class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
     var snapShotlistener : ListenerRegistration?
     lazy var totolDataInMB : Float = 0.0
+    var currentUserFollowers : [String]
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {
@@ -192,9 +193,10 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     
     
     //MARK:- lifeCycle
-    init(currentUser : CurrentUser , followers : [String]){
+    init(currentUser : CurrentUser , followers : [String] , currentUserFollowers : [String]){
         self.currentUser = currentUser
         self.followers = followers
+        self.currentUserFollowers = currentUserFollowers
         super.init(nibName: nil, bundle: nil)
         self.postDate = Int64(Date().timeIntervalSince1970 * 1000).description
     }
@@ -231,6 +233,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 }
                 if snap.exists{
                     sself.pinView.isHidden = false
+                    sself.geoPoing = snap.get("geoPoint") as? GeoPoint
                     Utilities.succesProgress(msg: "Konum Eklendi")
                 }else{
                     sself.pinView.isHidden = true
@@ -270,14 +273,28 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             val.append(data[number].data)
             dataType.append(data[number].type)
         }
-        // link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum
         if self.data.isEmpty
         {
-            SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school)
-            {[weak self] (_) in
-                guard let sself = self else { return }
-                SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+
+            if total_value != nil {
+                SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: total_value, short_school: currentUser.short_school) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                    Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
+                    sself.navigationController?.popViewController(animated: true)
+                }
+              
+            }else{
+                
+                SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: nil , postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: nil, short_school: currentUser.short_school) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                    Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
+                    sself.navigationController?.popViewController(animated: true)
+
+                }
             }
+           
         }else{
        
         }
