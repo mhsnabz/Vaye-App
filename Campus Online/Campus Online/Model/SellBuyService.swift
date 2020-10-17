@@ -47,12 +47,25 @@ class SellBuyService {
     func setPostForBuySell(currentUser : CurrentUser , dic : [String : Any] , short_school : String , postId : String , completion : @escaping(Bool)->Void){
         let db = Firestore.firestore().collection(short_school).document("main-post")
             .collection("post").document(postId)
-        db.setData(dic, merge: true) { (err) in
+        db.setData(dic, merge: true) {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                sself.setPostOnBuySellCollection(postId: postId, currentUser: currentUser) { (val) in
+                    completion(val)
+                }
+            }
+        }
+        
+    }
+    func setPostOnBuySellCollection(postId : String , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("buy-sell").collection("post").document(postId)
+        db.setData(["postId":postId], merge: true){
+            (err) in
             if err == nil {
                 completion(true)
             }
         }
-        
     }
     func setPostForFollowers(postId : String , followers : [String] , completion : @escaping(Bool) ->Void){
         for item in followers{
