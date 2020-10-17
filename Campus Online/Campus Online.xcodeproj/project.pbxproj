@@ -110,6 +110,7 @@
 		668F04B22524BF24007BD9C7 /* NotificaitonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F04B12524BF24007BD9C7 /* NotificaitonService.swift */; };
 		6690A6602539BE1E00E88BC0 /* SellBuyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A65F2539BE1E00E88BC0 /* SellBuyService.swift */; };
 		6690A665253A223F00E88BC0 /* MainPostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A664253A223F00E88BC0 /* MainPostModel.swift */; };
+		6690A66A253B38A000E88BC0 /* MainPostUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A669253B38A000E88BC0 /* MainPostUploadService.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
@@ -290,6 +291,7 @@
 		668F04B12524BF24007BD9C7 /* NotificaitonService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificaitonService.swift; sourceTree = "<group>"; };
 		6690A65F2539BE1E00E88BC0 /* SellBuyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellBuyService.swift; sourceTree = "<group>"; };
 		6690A664253A223F00E88BC0 /* MainPostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostModel.swift; sourceTree = "<group>"; };
+		6690A669253B38A000E88BC0 /* MainPostUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostUploadService.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
@@ -678,6 +680,7 @@
 				66A5F0D5250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift */,
 				660F5AC92502C98200F72558 /* AddUserLaunher.swift */,
 				665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */,
+				6690A669253B38A000E88BC0 /* MainPostUploadService.swift */,
 				665E5CD324FFB5BE00B5B5E3 /* CaptionText.swift */,
 				6618F6A725003840005E5873 /* PopUpWindow.swift */,
 				6615FC8A250AF67B00776664 /* LottieRefreshControl.swift */,
@@ -1398,6 +1401,7 @@
 				66A5F0E0250F4BB8005C93B3 /* OtherUserProfile.swift in Sources */,
 				661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */,
 				66AA9C5725251053008DFB86 /* NotificaitionCell.swift in Sources */,
+				6690A66A253B38A000E88BC0 /* MainPostUploadService.swift in Sources */,
 				667755A0252FECA600DBF3CD /* SetNewBuySellVC.swift in Sources */,
 				66D9121E24EEAB97002D760A /* MessagesVC.swift in Sources */,
 				66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */,

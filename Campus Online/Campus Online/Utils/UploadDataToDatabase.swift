@@ -18,7 +18,6 @@ class UploadDataToDatabase : NSObject {
             completion(listOfUrl)
         }
     }
-    
     static func save_datas ( date : String ,currentUser : CurrentUser , lessonName : String , type : [String] , datas : [Data] ,completionHandler: @escaping ([String]) -> () ){
         var uploadedImageUrlsArray = [String]()
         var uploadCount = 0

@@ -273,30 +273,25 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             val.append(data[number].data)
             dataType.append(data[number].type)
         }
-        if self.data.isEmpty
-        {
-
-            if total_value != nil {
+        if self.data.isEmpty  {
                 SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: total_value, short_school: currentUser.short_school) {[weak self] (_) in
                     guard let sself = self else { return }
                     SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                     Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                     sself.navigationController?.popViewController(animated: true)
+                    
                 }
-              
-            }else{
-                
-                SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: nil , postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: nil, short_school: currentUser.short_school) {[weak self] (_) in
-                    guard let sself = self else { return }
-                    SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
-                    Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
-                    sself.navigationController?.popViewController(animated: true)
-
+             }
+        else
+        {
+            MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser, postType: PostType.buySell.despription, type: dataType, data: val) {[weak self] (url) in
+                guard let sself = self else { return }
+                SellBuyService.shared.setNewBuySellPost(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
+                    MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
+                        Utilities.succesProgress(msg: "Paylaşıldı")
+                    }
                 }
             }
-           
-        }else{
-       
         }
     }
     @objc func _addImage(){
