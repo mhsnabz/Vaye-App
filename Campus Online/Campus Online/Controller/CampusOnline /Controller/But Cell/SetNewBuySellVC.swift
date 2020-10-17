@@ -289,6 +289,8 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 SellBuyService.shared.setNewBuySellPost(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
+                        SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                        sself.navigationController?.popViewController(animated: true)
                     }
                 }
             }
