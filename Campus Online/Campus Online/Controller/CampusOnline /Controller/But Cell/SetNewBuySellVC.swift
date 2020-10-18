@@ -279,7 +279,6 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                     SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                     Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                     sself.navigationController?.popViewController(animated: true)
-                    
                 }
              }
         else

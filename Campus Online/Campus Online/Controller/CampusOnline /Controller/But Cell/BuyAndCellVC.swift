@@ -13,6 +13,7 @@ import GoogleMobileAds
 import SDWebImage
 import FirebaseStorage
 private let cellID = "cellID"
+private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
 class BuyAndCellVC: UIViewController {
 
@@ -68,7 +69,6 @@ class BuyAndCellVC: UIViewController {
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationController?.navigationBar.isHidden = false
-        navigationItem.title = "Al - Sat"
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
      
         
@@ -86,9 +86,13 @@ class BuyAndCellVC: UIViewController {
                 sself.animationView()
             }
         }
+        
+       
+      
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.title = "Al - Sat"
         waitAnimation.play()
         checkFollowingTopic(currentUser: currentUser) { [weak self] (_val) in
             guard let sself = self else { return }
@@ -97,9 +101,11 @@ class BuyAndCellVC: UIViewController {
     }
     //MARK:-functions
     fileprivate func animationView() {
+    
         waitAnimation = .init(name : "cell")
         waitAnimation.animationSpeed = 1
         waitAnimation.loopMode = .loop
+        waitAnimation.play()
         view.addSubview(waitAnimation)
         waitAnimation.anchor(top: view.topAnchor , left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 0, heigth: 0)
         waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -111,6 +117,8 @@ class BuyAndCellVC: UIViewController {
         label.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         view.addSubview(newPostButton)
         newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
+        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
+        newPostButton.layer.cornerRadius = 25
         
     }
     fileprivate  func setNavigationBarItems(val : Bool) {
@@ -147,7 +155,7 @@ class BuyAndCellVC: UIViewController {
             
     }
     fileprivate func configureUI(){
-        
+        waitAnimation.isHidden = true
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -155,13 +163,8 @@ class BuyAndCellVC: UIViewController {
         collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
         view.addSubview(collectionview)
         collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        view.addSubview(newPostButton)
-        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
-        
-        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
-        newPostButton.layer.cornerRadius = 25
-        
         collectionview.register(BuyAndSellView.self, forCellWithReuseIdentifier: cellID)
+        collectionview.register(BuyAndSellDataView.self , forCellWithReuseIdentifier: cellData)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
@@ -169,8 +172,14 @@ class BuyAndCellVC: UIViewController {
         refresher.tintColor = .white
         collectionview.refreshControl?.beginRefreshing()
         
+        view.addSubview(newPostButton)
+        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
+        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
+        newPostButton.layer.cornerRadius = 25
+        getPost()
+        
     }
-    fileprivate func getPost(){
+    fileprivate func  getPost(){
           
             mainPost = [MainPostModel]()
             loadMore = true
@@ -200,19 +209,20 @@ class BuyAndCellVC: UIViewController {
         collectionview.refreshControl?.beginRefreshing()
         var post = [MainPostModel]()
         //  let db : Query!
-
-        let  db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post").limit(to: 5).order(by: "postId", descending: true)
+        ///İSTE/sell-buy/post/1602982498401
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("sell-buy").collection("post").limit(to: 5).order(by: "postId" , descending: true)
+     
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
                 if snap.isEmpty {
                     completion([])
                 }else{
-                    
+                    //İSTE/main-post/post/1602875543801
                     for postId in snap.documents {
                         let db = Firestore.firestore().collection(currentUser.short_school)
-                            .document("lesson-post").collection("post").document(postId.documentID)
+                            .document("main-post").collection("post").document(postId.documentID)
                         db.getDocument { (docSnap, err) in
                             if err == nil {
                                 guard let snap = docSnap else { return }
@@ -224,7 +234,7 @@ class BuyAndCellVC: UIViewController {
                                 }else{
                                     
                                     let deleteDb = Firestore.firestore().collection("user")
-                                        .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
+                                        .document(currentUser.uid).collection("main-post").document(postId.documentID)
                                     deleteDb.delete()
                                 }
                                 completion(post)
@@ -252,20 +262,21 @@ class BuyAndCellVC: UIViewController {
     
     private func checkHasPost(completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("buy-cell")
-        db.getDocument { (docSnap, err) in
+            .document("sell-buy").collection("post")
+        db.getDocuments { (docSnap, err) in
             if err == nil {
                 guard let snap = docSnap else {
                     completion(false)
-                    return
-                }
-                if snap.exists{
-                    completion(true)
-                }else{
+                    return}
+                
+                if snap.isEmpty{
                     completion(false)
+                }else{
+                    completion(true)
                 }
             }
         }
+    
     }
     
     private func checkFollowingTopic(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
@@ -341,24 +352,56 @@ class BuyAndCellVC: UIViewController {
       
     }
     @objc func loadData(){
-        
+        collectionview.refreshControl?.beginRefreshing()
+        getPost()
     }
 
 }
 extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return mainPost.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-        return cell
+        
+       
+            if mainPost[indexPath.row].data.isEmpty {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
+                cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.mainPost = mainPost[indexPath.row]
+                
+                return cell
+            }else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
+                
+                cell.backgroundColor = .white
+                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.mainPost = mainPost[indexPath.row]
+                
+                return cell
+            }
+        
+
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: loadMoreCell, for: indexPath)
             as! LoadMoreCell
         cell.activityView.startAnimating()
         return cell
+        
+        
         
     }
     
@@ -371,6 +414,33 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
        
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if mainPost[indexPath.row].postId == nil {
+            return CGSize(width: view.frame.width, height: 409)
+            
+        }else{
+            
+            if mainPost[indexPath.row].text == nil {
+                return .zero
+            }
+            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            
+            if mainPost[indexPath.row].data.isEmpty{
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5)
+            }
+            else{
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+            }
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
 }
 //MARK: - GADAdLoaderDelegate
 extension BuyAndCellVC : GADAdLoaderDelegate{
@@ -379,4 +449,70 @@ extension BuyAndCellVC : GADAdLoaderDelegate{
     }
     
     
+}
+extension BuyAndCellVC : BuySellVCDelegate{
+    func options(for cell: BuyAndSellView) {
+        
+    }
+    
+    func like(for cell: BuyAndSellView) {
+        
+    }
+    
+    func dislike(for cell: BuyAndSellView) {
+        
+    }
+    
+    func fav(for cell: BuyAndSellView) {
+        
+    }
+    
+    func comment(for cell: BuyAndSellView) {
+        
+    }
+    
+    func linkClick(for cell: BuyAndSellView) {
+        
+    }
+    
+    func showProfile(for cell: BuyAndSellView) {
+        
+    }
+    
+    func goProfileByMention(userName: String) {
+        
+    }
+    
+    
+}
+extension BuyAndCellVC : BuySellVCDataDelegate {
+    func options(for cell: BuyAndSellDataView) {
+            
+    }
+    
+    func like(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    func dislike(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    func fav(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    func comment(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    func linkClick(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    func showProfile(for cell: BuyAndSellDataView) {
+        
+    }
+    
+        
 }

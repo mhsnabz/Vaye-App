@@ -15,11 +15,11 @@ class BuyAndSellView: UICollectionViewCell {
     weak var delegate : BuySellVCDelegate?
     
     var currentUser : CurrentUser?
-    weak var lessonPostModel : MainPostModel?{
+    weak var mainPost : MainPostModel?{
         didSet{
             configure()
             guard let currentUser = currentUser else { return }
-            checkIsDisliked(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
+            checkIsDisliked(user: currentUser, post: mainPost) {[weak self] (_val) in
                 guard let s = self else { return }
                 if _val {
                     s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -29,7 +29,7 @@ class BuyAndSellView: UICollectionViewCell {
                     
                 }
             }
-            checkIsLiked(user: currentUser, post: lessonPostModel) {[weak self] (_val) in
+            checkIsLiked(user: currentUser, post: mainPost) {[weak self] (_val) in
                    guard let s = self else { return }
                 if _val{
                     s.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -222,7 +222,6 @@ class BuyAndSellView: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    //MARK: - selectors
     //MARK:-selectors
     @objc func commentClick() {
         delegate?.comment(for: self)
@@ -278,7 +277,7 @@ class BuyAndSellView: UICollectionViewCell {
              }
          }
     private func configure(){
-        guard let post = lessonPostModel else { return }
+        guard let post = mainPost else { return }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
@@ -293,13 +292,13 @@ class BuyAndSellView: UICollectionViewCell {
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
         linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
-        if post.link.isEmpty {
-            linkBtn.isHidden = true
-            
-        }else{
-            linkBtn.isHidden = false
-//            detectLink(post.link)
-        }
+//        if post.link.isEmpty {
+//            linkBtn.isHidden = true
+//            
+//        }else{
+//            linkBtn.isHidden = false
+////            detectLink(post.link)
+//        }
     }
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in

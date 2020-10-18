@@ -59,7 +59,7 @@ class SellBuyService {
     }
     func setPostOnBuySellCollection(postId : String , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("buy-sell").collection("post").document(postId)
+            .document("sell-buy").collection("post").document(postId)
         db.setData(["postId":postId], merge: true){
             (err) in
             if err == nil {
