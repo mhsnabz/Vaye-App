@@ -455,12 +455,19 @@ extension BuyAndCellVC : BuySellVCDelegate{
         
     }
     
-    func like(for cell: BuyAndSellView) {
-        
+    func like(for cell: BuyAndSellView)
+    {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: "buy-sell", collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: "buy-sell", collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func fav(for cell: BuyAndSellView) {
@@ -491,11 +498,17 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
     }
     
     func like(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: "buy-sell", collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: "buy-sell", collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func fav(for cell: BuyAndSellDataView) {

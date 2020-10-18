@@ -419,7 +419,6 @@ class HomeVC: UIViewController {
     }
     
     private func setLike(post : LessonPostModel , completion : @escaping(Bool) ->Void){
-        
         if !post.likes.contains(currentUser.uid){
             post.likes.append(self.currentUser.uid)
             post.dislike.remove(element: self.currentUser.uid)
