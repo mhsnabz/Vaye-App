@@ -498,7 +498,6 @@ class HomeVC: UIViewController {
             db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
                 if err == nil {
                     db.updateData(["likes":FieldValue.arrayRemove([self.currentUser.uid as String])]) { (err) in
-                    
                     completion(true)
                     }
                 }

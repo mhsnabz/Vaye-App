@@ -23,7 +23,6 @@ class BuyAndSellView: UICollectionViewCell {
                 guard let s = self else { return }
                 if _val {
                     s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
-                    
                 }else{
                     s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
                     
@@ -186,6 +185,7 @@ class BuyAndSellView: UICollectionViewCell {
         let btn = UIButton(type: .system)
         btn.clipsToBounds = true
         btn.imageView?.contentMode = .scaleAspectFit
+        btn.setImage(#imageLiteral(resourceName: "location-orange"), for: .normal)
         return btn
     }()
     
@@ -214,7 +214,7 @@ class BuyAndSellView: UICollectionViewCell {
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
 
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
-        linkBtn.isHidden = true
+        linkBtn.isHidden = false
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
     }

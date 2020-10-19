@@ -34,7 +34,6 @@ class NotificaitonService{
             }
             }
     }
-
     func send_home_remove_like_notification(post : LessonPostModel , currentUser : CurrentUser){
    
         let db = Firestore.firestore().collection("user")
@@ -121,8 +120,6 @@ class NotificaitonService{
         
     }
     func new_home_post_notification(currentUser : CurrentUser ,postId : String , getterUids : [NotificationGetter] , text : String ,type : String, lessonName : String,notificaitonId : String ,completion : @escaping(Bool) ->Void){
-      
- 
         let dic = ["type" : type ,
                    "text" : text ,
                    "senderUid" : currentUser.uid as Any,
@@ -164,7 +161,6 @@ class NotificaitonService{
                    "senderName":currentUser.name as Any,
                    "lessonName":topic as Any] as [String : Any]
         for item in getterUids{
-        
             if item != currentUser.uid{
                 let db = Firestore.firestore().collection("user")
                     .document(item).collection("notification").document(notificaitonId)
@@ -173,6 +169,47 @@ class NotificaitonService{
                         print("succes")
                     }else{
                         print("err \(err?.localizedDescription as Any)")
+                    }
+                }
+            }
+        }
+    }
+    
+    func send_mainpost_like_notification(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
+        if post.senderUid == currentUser.uid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(post.senderUid).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.lessonName as Any] as [String : Any]
+                db.setData(dic, merge: true) }
+            }
+        
+    }
+    func mainpost_remove_like_notification(post : MainPostModel , currentUser : CurrentUser){
+        let db = Firestore.firestore().collection("user")
+            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.like_sell_buy.desprition)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    for item in snap.documents{
+                        let db = Firestore.firestore().collection("user")
+                            .document(post.senderUid).collection("notification").document(item.documentID)
+                        db.delete()
                     }
                 }
             }
@@ -192,6 +229,7 @@ enum Notification_description {
     case following_you
     case home_new_post
     case new_ad
+    case like_sell_buy
     var desprition : String {
         switch self {
        
@@ -212,6 +250,8 @@ enum Notification_description {
             return "Yeni Bir Gönderi Paylaştı"
         case .new_ad:
         return "Yeni Bir İlan Paylaştı"
+        case .like_sell_buy:
+            return "Paylaştığın İlanı Beğendi"
             
         }
     }
@@ -225,6 +265,7 @@ enum NotificationType{
     case following_you
     case home_new_post
     case new_ad
+    case like_sell_buy
     var desprition : String {
         switch self{
         
@@ -244,6 +285,8 @@ enum NotificationType{
             return "home_new_post"
         case.new_ad :
             return "new_ad"
+        case .like_sell_buy:
+            return "like_sell_buy"
         }
     }
 }

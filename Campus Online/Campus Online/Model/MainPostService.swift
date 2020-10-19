@@ -22,11 +22,9 @@ class MainPostService {
                 db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
-                            
                             completion(true)
-             
-//                            NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
-                    }
+                            NotificaitonService.shared.send_mainpost_like_notification(post: post, currentUser: currentUser, text: Notification_description.like_sell_buy.desprition, type: NotificationType.like_sell_buy.desprition)
+                        }
                 }
             }
         }
@@ -38,9 +36,8 @@ class MainPostService {
                 let db = Firestore.firestore().collection(user.short_school).document("main-post")
                     .collection("post").document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
-//                    guard let sself = self else { return }
-//                    NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: sself.currentUser)
                     completion(true)
+                    NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
                 }
             }
             
@@ -78,5 +75,5 @@ class MainPostService {
         }
     }
     
- 
+    
 }
