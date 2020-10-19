@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseFirestore
+
 class MainPostService {
     static var shared = MainPostService()
     func setLikePost(target : String ,collectionview : UICollectionView!,currentUser : CurrentUser, post : MainPostModel! , completion : @escaping(Bool) ->Void){
@@ -74,6 +75,6 @@ class MainPostService {
         }
         }
     }
-    
+ 
     
 }

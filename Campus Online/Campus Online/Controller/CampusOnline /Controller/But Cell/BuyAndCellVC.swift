@@ -12,16 +12,18 @@ import FirebaseFirestore
 import GoogleMobileAds
 import SDWebImage
 import FirebaseStorage
+import MapKit
+
+import CoreLocation
 private let cellID = "cellID"
 private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
 class BuyAndCellVC: UIViewController {
-
     var currentUser : CurrentUser
     var waitAnimation = AnimationView()
     lazy var followers = [String]()
-     var collectionview: UICollectionView!
-     var refresher = UIRefreshControl()
+    var collectionview: UICollectionView!
+    var refresher = UIRefreshControl()
     var page : DocumentSnapshot? = nil
     var loadMore : Bool = false
     var lastDocumentSnapshot: DocumentSnapshot!
@@ -33,7 +35,7 @@ class BuyAndCellVC: UIViewController {
     var mainPost = [MainPostModel]()
     /// The ad unit ID.
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
-//    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
+    //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     
     //MARK:-properties
@@ -45,7 +47,7 @@ class BuyAndCellVC: UIViewController {
         return btn
     }()
     let label : UILabel = {
-       let lbl = UILabel()
+        let lbl = UILabel()
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
         return lbl
@@ -54,7 +56,7 @@ class BuyAndCellVC: UIViewController {
         let name = NSMutableAttributedString()
         return name
     }()
-//    MARK: -lifeCycle
+    //    MARK: -lifeCycle
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
@@ -65,12 +67,12 @@ class BuyAndCellVC: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationController?.navigationBar.isHidden = false
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-     
+        
         
         UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (user) in
             if let sself = self {
@@ -87,8 +89,8 @@ class BuyAndCellVC: UIViewController {
             }
         }
         
-       
-      
+        
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -101,7 +103,7 @@ class BuyAndCellVC: UIViewController {
     }
     //MARK:-functions
     fileprivate func animationView() {
-    
+        
         waitAnimation = .init(name : "cell")
         waitAnimation.animationSpeed = 1
         waitAnimation.loopMode = .loop
@@ -128,21 +130,21 @@ class BuyAndCellVC: UIViewController {
             btn1.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
             btn1.addTarget(self, action: #selector(enableNotification), for: .touchUpInside)
             let item1 = UIBarButtonItem(customView: btn1)
-
+            
             let btn2 = UIButton(type: .custom)
             btn2.setImage(#imageLiteral(resourceName: "info"), for: .normal)
             btn2.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
             btn2.addTarget(self, action: #selector(aboutPage), for: .touchUpInside)
             let item2 = UIBarButtonItem(customView: btn2)
             self.navigationItem.setRightBarButtonItems([item2,item1], animated: true)
-      
+            
         }else{
             let btn1 = UIButton(type: .custom)
             btn1.setImage(#imageLiteral(resourceName: "not"), for: .normal)
             btn1.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
             btn1.addTarget(self, action: #selector(enableNotification), for: .touchUpInside)
             let item1 = UIBarButtonItem(customView: btn1)
-
+            
             let btn2 = UIButton(type: .custom)
             btn2.setImage(#imageLiteral(resourceName: "info"), for: .normal)
             btn2.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -152,7 +154,7 @@ class BuyAndCellVC: UIViewController {
             
         }
         
-            
+        
     }
     fileprivate func configureUI(){
         waitAnimation.isHidden = true
@@ -180,28 +182,28 @@ class BuyAndCellVC: UIViewController {
         
     }
     fileprivate func  getPost(){
-          
-            mainPost = [MainPostModel]()
-            loadMore = true
-            collectionview.reloadData()
-  
+        
+        mainPost = [MainPostModel]()
+        loadMore = true
+        collectionview.reloadData()
+        
         fetchMainPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.mainPost = post
-//            self?.fetchAds()
-                if self?.mainPost.count ?? -1 > 0{
-                    self?.collectionview.refreshControl?.endRefreshing()
-                    if  let time_e = self?.mainPost[(self?.mainPost.count)! - 1].postTime{
-                        self?.time = self?.mainPost[(self?.mainPost.count)! - 1].postTime
-                        self?.mainPost.sort(by: { (post, post1) -> Bool in
-                            return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
-                        })
-                        self?.collectionview.reloadData()
-                    }
-                }else{
-                    self?.fetchAds()
-                    self?.collectionview.refreshControl?.endRefreshing()
+            //            self?.fetchAds()
+            if self?.mainPost.count ?? -1 > 0{
+                self?.collectionview.refreshControl?.endRefreshing()
+                if  let time_e = self?.mainPost[(self?.mainPost.count)! - 1].postTime{
+                    self?.time = self?.mainPost[(self?.mainPost.count)! - 1].postTime
+                    self?.mainPost.sort(by: { (post, post1) -> Bool in
+                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
                     self?.collectionview.reloadData()
                 }
+            }else{
+                self?.fetchAds()
+                self?.collectionview.refreshControl?.endRefreshing()
+                self?.collectionview.reloadData()
+            }
         }
         
     }
@@ -212,7 +214,7 @@ class BuyAndCellVC: UIViewController {
         ///İSTE/sell-buy/post/1602982498401
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("sell-buy").collection("post").limit(to: 5).order(by: "postId" , descending: true)
-     
+        
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -229,8 +231,8 @@ class BuyAndCellVC: UIViewController {
                                 if snap.exists
                                 {
                                     post.append(MainPostModel.init(postId: snap.documentID, dic: snap.data()!))
-                                  
-                  
+                                    
+                                    
                                 }else{
                                     
                                     let deleteDb = Firestore.firestore().collection("user")
@@ -246,7 +248,7 @@ class BuyAndCellVC: UIViewController {
                     self.page = snap.documents.last
                     self.fetchAds()
                     self.loadMore = true
-                   
+                    
                 }
                 
             }
@@ -254,11 +256,11 @@ class BuyAndCellVC: UIViewController {
         
     }
     func fetchAds() {
-           adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
-                                  adTypes: [ .unifiedNative ], options: nil)
-           adLoader.delegate = self
-           adLoader.load(GADRequest())
-       }
+        adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
+                               adTypes: [ .unifiedNative ], options: nil)
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
+    }
     
     private func checkHasPost(completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection(currentUser.short_school)
@@ -276,7 +278,7 @@ class BuyAndCellVC: UIViewController {
                 }
             }
         }
-    
+        
     }
     
     private func checkFollowingTopic(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
@@ -307,7 +309,7 @@ class BuyAndCellVC: UIViewController {
             
             if _val{
                 let db = Firestore.firestore().collection(currentUser.short_school)
-               .document("sell-buy").collection("followers").document(currentUser.uid)
+                    .document("sell-buy").collection("followers").document(currentUser.uid)
                 db.delete { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg: "Bildirimler Kapandı")
@@ -315,18 +317,23 @@ class BuyAndCellVC: UIViewController {
                     }
                 }
             }else{
-                 let db = Firestore.firestore().collection(currentUser.short_school)
-                .document("sell-buy").collection("followers").document(currentUser.uid)
-            db.setData(["userId":currentUser.uid as Any] as [String : Any], merge: true) { (err) in
-                if err == nil {
-                    Utilities.succesProgress(msg: "Bildirimler Açıldı")
-                    sself.setNavigationBarItems(val: true)
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("sell-buy").collection("followers").document(currentUser.uid)
+                db.setData(["userId":currentUser.uid as Any] as [String : Any], merge: true) { (err) in
+                    if err == nil {
+                        Utilities.succesProgress(msg: "Bildirimler Açıldı")
+                        sself.setNavigationBarItems(val: true)
+                    }
                 }
-            }
             }
         }
         
-       
+        
+    }
+    func openMapForPlace(lat : String , longLat : String) {
+        
+        
+        
     }
     
     //MARK: -selectors
@@ -349,13 +356,13 @@ class BuyAndCellVC: UIViewController {
             }
             
         }
-      
+        
     }
     @objc func loadData(){
         collectionview.refreshControl?.beginRefreshing()
         getPost()
     }
-
+    
 }
 extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -364,37 +371,38 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-       
-            if mainPost[indexPath.row].data.isEmpty {
-                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-                cell.delegate = self
-                cell.currentUser = currentUser
-                cell.backgroundColor = .white
-                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-                cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-                cell.mainPost = mainPost[indexPath.row]
-                
-                return cell
-            }else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
-                
-                cell.backgroundColor = .white
-                cell.delegate = self
-                cell.currentUser = currentUser
-                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-
-                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
-
-                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-                cell.mainPost = mainPost[indexPath.row]
-                
-                return cell
-            }
         
-
+        if mainPost[indexPath.row].data.isEmpty {
+            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
+            cell.delegate = self
+            cell.currentUser = currentUser
+            
+            cell.backgroundColor = .white
+            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+            cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+            cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+            cell.mainPost = mainPost[indexPath.row]
+            
+            return cell
+        }else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
+            
+            cell.backgroundColor = .white
+            cell.delegate = self
+            cell.currentUser = currentUser
+            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+            
+            cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+            
+            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+            cell.mainPost = mainPost[indexPath.row]
+            
+            return cell
+        }
+        
+        
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: loadMoreCell, for: indexPath)
@@ -412,7 +420,7 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
         }else{
             return .zero
         }
-       
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -455,7 +463,22 @@ extension BuyAndCellVC : BuySellVCDelegate{
     func options(for cell: BuyAndSellView) {
         
     }
-    
+    func mapClick(for cell: BuyAndSellView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+//                mapItem.name = “Destination/Target Address or Name”
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+//        let url = "http://maps.apple.com/maps?saddr=\(lat),\(long)"
+//        
+//        if let url = URL(string: "\(url)"), !url.absoluteString.isEmpty {
+//            
+//            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//            
+//            
+//        }
+    }
     func like(for cell: BuyAndSellView)
     {
         guard let post = cell.mainPost else { return }
@@ -494,8 +517,11 @@ extension BuyAndCellVC : BuySellVCDelegate{
     
 }
 extension BuyAndCellVC : BuySellVCDataDelegate {
+    func mapClick(for cell: BuyAndSellDataView) {
+        
+    }
     func options(for cell: BuyAndSellDataView) {
-            
+        
     }
     
     func like(for cell: BuyAndSellDataView) {
@@ -528,5 +554,5 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
         
     }
     
-        
+    
 }

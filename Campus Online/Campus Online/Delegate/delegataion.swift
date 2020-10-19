@@ -104,6 +104,7 @@ protocol BuySellVCDelegate : class {
     func comment ( for cell : BuyAndSellView)
     func linkClick(for cell : BuyAndSellView)
     func showProfile(for cell : BuyAndSellView)
+    func mapClick(for cell : BuyAndSellView)
     func goProfileByMention (userName : String)
 }
 protocol BuySellVCDataDelegate : class {
@@ -113,6 +114,7 @@ protocol BuySellVCDataDelegate : class {
     func fav ( for cell : BuyAndSellDataView)
     func comment ( for cell : BuyAndSellDataView)
     func linkClick(for cell : BuyAndSellDataView)
+    func mapClick(for cell : BuyAndSellDataView)
     func showProfile(for cell : BuyAndSellDataView)
     func goProfileByMention (userName : String)
 }

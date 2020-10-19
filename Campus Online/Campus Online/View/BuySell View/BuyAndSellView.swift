@@ -10,6 +10,7 @@ import UIKit
 import SDWebImage
 import ActiveLabel
 import FirebaseFirestore
+
 class BuyAndSellView: UICollectionViewCell {
     //MARK: - variables
     weak var delegate : BuySellVCDelegate?
@@ -181,12 +182,11 @@ class BuyAndSellView: UICollectionViewCell {
         return v
     }()
     
-    let linkBtn : UIButton = {
+    lazy var mapBtn : UIButton = {
         let btn = UIButton(type: .system)
         btn.clipsToBounds = true
         btn.imageView?.contentMode = .scaleAspectFit
         btn.setImage(#imageLiteral(resourceName: "location-orange").withRenderingMode(.alwaysOriginal), for: .normal)
-        
         return btn
     }()
     let priceLbl : UILabel = {
@@ -208,24 +208,25 @@ class BuyAndSellView: UICollectionViewCell {
 //        configure()
         addSubview(msgText)
         addSubview(priceLbl)
-        priceLbl.text = "fiyat : 20 tl"
+
         addSubview(bottomBar)
-        addSubview(linkBtn)
-        linkBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 28, marginBottom: 10, marginRigth: 0, width: 25, heigth: 25)
+        addSubview(mapBtn)
+        mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 28, marginBottom: 10, marginRigth: 0, width: 25, heigth: 25)
         
         
-        linkBtn.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.50).cgColor
-        linkBtn.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
-        linkBtn.layer.shadowOpacity = 1.0
-        linkBtn.layer.shadowRadius = 3.0
-        linkBtn.layer.masksToBounds = false
+        mapBtn.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.50).cgColor
+        mapBtn.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        mapBtn.layer.shadowOpacity = 1.0
+        mapBtn.layer.shadowRadius = 3.0
+        mapBtn.layer.masksToBounds = false
         
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
 
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
-        linkBtn.isHidden = false
+        mapBtn.addTarget(self, action: #selector(mapClick), for: .touchUpInside)
+        mapBtn.isHidden = false
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
     }
@@ -255,6 +256,10 @@ class BuyAndSellView: UICollectionViewCell {
     @objc func showProfile(){
         print("click")
         delegate?.showProfile(for : self)
+    }
+    @objc func mapClick(){
+        print("map click")
+        delegate?.mapClick(for: self)
     }
     //MARK: -functions
     private func checkIsFav(user : CurrentUser , post : MainPostModel? , completion : @escaping(Bool) ->Void)
@@ -302,7 +307,7 @@ class BuyAndSellView: UICollectionViewCell {
         like_lbl.text = post.likes.count.description
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
-        linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
+        mapBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
         price = NSMutableAttributedString(string: "Fiyat : ", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
         if post.value.isEmpty {
             price.append(NSAttributedString(string: " Fiyat Belirtilmemiş", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
@@ -311,6 +316,13 @@ class BuyAndSellView: UICollectionViewCell {
         }
        
         priceLbl.attributedText = price
+        
+        if post.geoPoint != nil{
+            mapBtn.isHidden = false
+        }else{
+            line.isHidden = true
+        }
+        
 //        if post.link.isEmpty {
 //            linkBtn.isHidden = true
 //            
@@ -325,4 +337,5 @@ class BuyAndSellView: UICollectionViewCell {
             sself.delegate?.goProfileByMention(userName : username)
         }
     }
+   
 }
