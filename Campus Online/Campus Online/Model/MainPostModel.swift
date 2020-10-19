@@ -75,7 +75,7 @@ class MainPostModel {
         if let thumbData = dic?["thumbData"] as? [String] {
             self.thumbData = thumbData
         }
-        if let silent = dic?["silent"] as? [String] {
+        if let silent = dic?["slient"] as? [String] {
                    self.silent = silent
                }
         if let thumb_image = dic?["thumb_image"] as? String {

@@ -185,9 +185,20 @@ class BuyAndSellView: UICollectionViewCell {
         let btn = UIButton(type: .system)
         btn.clipsToBounds = true
         btn.imageView?.contentMode = .scaleAspectFit
-        btn.setImage(#imageLiteral(resourceName: "location-orange"), for: .normal)
+        btn.setImage(#imageLiteral(resourceName: "location-orange").withRenderingMode(.alwaysOriginal), for: .normal)
+        
         return btn
     }()
+    let priceLbl : UILabel = {
+        let lbl = UILabel()
+        lbl.textAlignment = .left
+        return lbl
+    }()
+    var price : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
+    
     
     //MARK: -lifeCycle
     override init(frame: CGRect) {
@@ -196,17 +207,17 @@ class BuyAndSellView: UICollectionViewCell {
         headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
 //        configure()
         addSubview(msgText)
+        addSubview(priceLbl)
+        priceLbl.text = "fiyat : 20 tl"
         addSubview(bottomBar)
         addSubview(linkBtn)
-        linkBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
-        
-        linkBtn.layer.cornerRadius = 25
+        linkBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 28, marginBottom: 10, marginRigth: 0, width: 25, heigth: 25)
         
         
         linkBtn.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.50).cgColor
         linkBtn.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
         linkBtn.layer.shadowOpacity = 1.0
-        linkBtn.layer.shadowRadius = 5.0
+        linkBtn.layer.shadowRadius = 3.0
         linkBtn.layer.masksToBounds = false
         
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
@@ -292,6 +303,14 @@ class BuyAndSellView: UICollectionViewCell {
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
         linkBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
+        price = NSMutableAttributedString(string: "Fiyat : ", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+        if post.value.isEmpty {
+            price.append(NSAttributedString(string: " Fiyat Belirtilmemiş", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
+        }else{
+            price.append(NSAttributedString(string: " \(post.value.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
+        }
+       
+        priceLbl.attributedText = price
 //        if post.link.isEmpty {
 //            linkBtn.isHidden = true
 //            

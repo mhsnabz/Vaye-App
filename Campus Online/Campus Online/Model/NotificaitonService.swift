@@ -181,7 +181,7 @@ class NotificaitonService{
         }else{
             if !post.silent.contains(post.senderUid){
                 let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-                
+
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
                 let dic = ["type":type ,

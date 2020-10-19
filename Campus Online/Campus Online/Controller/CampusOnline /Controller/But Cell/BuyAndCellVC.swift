@@ -372,7 +372,8 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
                 cell.backgroundColor = .white
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.mainPost = mainPost[indexPath.row]
                 
                 return cell
@@ -426,7 +427,7 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
             let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             
             if mainPost[indexPath.row].data.isEmpty{
-                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5)
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
             }
             else{
                 return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
