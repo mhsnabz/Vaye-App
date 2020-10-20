@@ -19,6 +19,7 @@ class MainPostModel {
     var senderUid : String!
     var dislike : [String]!
     var link : String!
+    var locationName : String!
     var postId  :String!
     var postID : Int64!
     var data : [String]!
@@ -92,6 +93,9 @@ class MainPostModel {
         }
         if let value = dic?["value"] as? String {
             self.value = value
+        }
+        if let locationName = dic?["locationName"] as? String {
+            self.locationName = locationName
         }
         if let geoPoint = dic?["geoPoint"] as? GeoPoint {
             self.geoPoint = geoPoint

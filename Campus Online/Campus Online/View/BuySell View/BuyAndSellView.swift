@@ -320,7 +320,7 @@ class BuyAndSellView: UICollectionViewCell {
         if post.geoPoint != nil{
             mapBtn.isHidden = false
         }else{
-            line.isHidden = true
+            mapBtn.isHidden = true
         }
         
 //        if post.link.isEmpty {

@@ -368,7 +368,7 @@ extension MapVC : SearchCellDelegate {
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
-        let dic = ["geoPoint" : location] as [String : Any]
+         let dic = ["geoPoint" : location , "locationName" : mapItem.placemark.name as Any] as [String : Any]
         db.setData(dic) {[weak self] (err) in
             if err == nil {
                 guard let sself = self else { return }

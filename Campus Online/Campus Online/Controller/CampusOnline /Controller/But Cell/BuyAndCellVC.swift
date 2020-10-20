@@ -330,11 +330,7 @@ class BuyAndCellVC: UIViewController {
         
         
     }
-    func openMapForPlace(lat : String , longLat : String) {
-        
-        
-        
-    }
+    
     
     //MARK: -selectors
     @objc func enableNotification(){
@@ -393,8 +389,8 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
             cell.currentUser = currentUser
             let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-            
-            cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+            cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+            cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
             
             cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
             cell.mainPost = mainPost[indexPath.row]
@@ -409,9 +405,6 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
             as! LoadMoreCell
         cell.activityView.startAnimating()
         return cell
-        
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
@@ -420,13 +413,11 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
         }else{
             return .zero
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if mainPost[indexPath.row].postId == nil {
             return CGSize(width: view.frame.width, height: 409)
-            
         }else{
             
             if mainPost[indexPath.row].text == nil {
@@ -438,7 +429,7 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
                 return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
             }
             else{
-                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
             }
         }
     }
@@ -468,16 +459,11 @@ extension BuyAndCellVC : BuySellVCDelegate{
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
                 let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
-//                mapItem.name = “Destination/Target Address or Name”
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
-//        let url = "http://maps.apple.com/maps?saddr=\(lat),\(long)"
-//        
-//        if let url = URL(string: "\(url)"), !url.absoluteString.isEmpty {
-//            
-//            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-//            
-//            
-//        }
+
     }
     func like(for cell: BuyAndSellView)
     {
@@ -518,7 +504,14 @@ extension BuyAndCellVC : BuySellVCDelegate{
 }
 extension BuyAndCellVC : BuySellVCDataDelegate {
     func mapClick(for cell: BuyAndSellDataView) {
-        
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
     func options(for cell: BuyAndSellDataView) {
         

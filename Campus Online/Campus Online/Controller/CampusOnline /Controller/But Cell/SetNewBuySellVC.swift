@@ -20,6 +20,11 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     var snapShotlistener : ListenerRegistration?
     lazy var totolDataInMB : Float = 0.0
     var currentUserFollowers : [String]
+    var locationName : String?{
+        didSet{
+            print("\(locationName) setted")
+        }
+    }
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {
@@ -44,7 +49,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             }else{
                 valuesView.isHidden = false
             }
-           
+            
         }
     }
     var currentUser : CurrentUser
@@ -167,11 +172,8 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         stackPin.axis = .horizontal
         view.addSubview(stackPin)
         stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
-        
         view.addSubview(remove_Value)
         remove_Value.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 25, heigth: 25)
-        
-        
         return view
     }()
     
@@ -219,7 +221,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
-            db.getDocument {[weak self] (docSnap, err) in
+        db.getDocument {[weak self] (docSnap, err) in
             guard let sself = self else {
                 Utilities.dismissProgress()
                 self?.pinView.isHidden = true
@@ -228,12 +230,14 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             if err == nil {
                 guard let snap = docSnap else {
                     sself.pinView.isHidden = true
+                   
                     Utilities.dismissProgress()
                     return
                 }
                 if snap.exists{
                     sself.pinView.isHidden = false
                     sself.geoPoing = snap.get("geoPoint") as? GeoPoint
+                    sself.locationName = snap.get("locationName")  as? String
                     Utilities.succesProgress(msg: "Konum Eklendi")
                 }else{
                     sself.pinView.isHidden = true
@@ -242,15 +246,15 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             }
         }
         
-     
+        
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-       
+        
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-    
+        
     }
     //MARK:- selectors
     @objc func setNewPost(){
@@ -274,22 +278,25 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             dataType.append(data[number].type)
         }
         if self.data.isEmpty  {
-                SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: total_value, short_school: currentUser.short_school) {[weak self] (_) in
-                    guard let sself = self else { return }
-                    SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
-                    Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
-                    sself.navigationController?.popViewController(animated: true)
-                }
-             }
+            SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: total_value, short_school: currentUser.short_school) {[weak self] (_) in
+                guard let sself = self else { return }
+                Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
+                sself.navigationController?.popViewController(animated: true)
+                SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                
+                
+            }
+        }
         else
         {
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser, postType: PostType.buySell.despription, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
-                SellBuyService.shared.setNewBuySellPost(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
+                SellBuyService.shared.setNewBuySellPost(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
-                        SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                         sself.navigationController?.popViewController(animated: true)
+                        SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                        
                     }
                 }
             }
@@ -326,8 +333,8 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     }
     @objc func removeValue()
     {
-            total_value = nil
-            valuesView.isHidden = true
+        total_value = nil
+        valuesView.isHidden = true
     }
     
     
@@ -396,7 +403,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     
     
     private func SizeOfData(data : [SelectedData]) -> Float {
-       
+        
         for item in data {
             let bcf = ByteCountFormatter()
             bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
@@ -405,7 +412,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             totolDataInMB += Float(item.data.count)
             
         }
-       return totolDataInMB / (1024 * 1024 )
+        return totolDataInMB / (1024 * 1024 )
         
     }
     
@@ -501,7 +508,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         pinView.anchor(top: valuesView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
         pinView.isHidden = true
         
-       
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
