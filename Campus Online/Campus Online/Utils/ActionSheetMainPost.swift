@@ -99,7 +99,7 @@ class ActionSheetMainPost : NSObject{
         tableView.separatorStyle = .none
         tableView.layer.cornerRadius = 5
         tableView.isScrollEnabled = false
-        tableView.register(ActionSheetHomeCell.self, forCellReuseIdentifier: "id")
+        tableView.register(ASMainPostCell.self, forCellReuseIdentifier: "id")
       
     }
     @objc  func handleDismiss(){

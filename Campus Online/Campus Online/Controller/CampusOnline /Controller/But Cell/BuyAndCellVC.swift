@@ -33,6 +33,9 @@ class BuyAndCellVC: UIViewController {
     weak var notificaitonListener : ListenerRegistration?
     weak var delegate : BuySellVCDelegate?
     var mainPost = [MainPostModel]()
+    var selectedIndex : IndexPath?
+    var selectedPostID : String?
+    private var actionSheetCurrentUser : ActionSheetMainPost
     /// The ad unit ID.
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
     //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
@@ -59,6 +62,7 @@ class BuyAndCellVC: UIViewController {
     //    MARK: -lifeCycle
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
+        self.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -452,7 +456,30 @@ extension BuyAndCellVC : GADAdLoaderDelegate{
 }
 extension BuyAndCellVC : BuySellVCDelegate{
     func options(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+//        else{
+//            Utilities.waitProgress(msg: nil)
+//            actionOtherUserSheet.delegate = self
+//            guard let  index = collectionview.indexPath(for: cell) else { return }
+//            selectedIndex = index
+//            selectedPostID = lessonPost[index.row].postId
+//            getOtherUser(userId: post.senderUid) {[weak self] (user) in
+//                guard let sself = self else { return }
+//                Utilities.dismissProgress()
+//                sself.actionOtherUserSheet.show(post: post, otherUser: user)
+//
+//            }
+//
+//
+//        }
     }
     func mapClick(for cell: BuyAndSellView) {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
@@ -514,7 +541,15 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
     func options(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
     }
     
     func like(for cell: BuyAndSellDataView) {
@@ -545,6 +580,22 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
     
     func showProfile(for cell: BuyAndSellDataView) {
         
+    }
+    
+    
+}
+//MARK: -ASMainPostLaungerDelgate
+extension BuyAndCellVC : ASMainPostLaungerDelgate {
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option {
+        
+        case .editPost(_):
+            print("edit post")
+        case .deletePost(_):
+            print("delete post")
+        case .slientPost(_):
+            print("slient post")
+        }
     }
     
     
