@@ -359,13 +359,12 @@ class BuyAndCellVC: UIViewController {
     }
     @objc func newPost(){
         Utilities.waitProgress(msg: nil)
-        SellBuyService.shared.getTopicFollowers(currentUser: currentUser) {[weak self] (user) in
-            guard let sself = self else { return }
-            UserService.shared.getFollowers(uid: sself.currentUser.uid) { (currentUserFollowers) in
-                let vc = SetNewBuySellVC(currentUser : sself.currentUser, followers : user , currentUserFollowers: currentUserFollowers)
+
+            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                guard let sself = self else { return }
+                let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
                 sself.navigationController?.pushViewController(vc, animated: true)
                 Utilities.dismissProgress()
-            }
             
         }
         

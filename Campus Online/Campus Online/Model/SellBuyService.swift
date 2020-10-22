@@ -33,7 +33,8 @@ class SellBuyService {
             "geoPoint":location ?? "" ] as [String : Any]
     
         setPostForCurrentUser(postId: postId, currentUser: currentUser)
-        setPostForBuySell(currentUser: currentUser, dic: dic, short_school: short_school, postId: postId) {[weak self] (val) in
+        add_post_for_universty(uni: currentUser.short_school, postId: postId)
+        setPostForBuySell( dic: dic, postId: postId) {[weak self] (val) in
             guard let sself = self else { return }
             if val{
                 completion(true)
@@ -45,20 +46,26 @@ class SellBuyService {
 
     }
     
-    func setPostForBuySell(currentUser : CurrentUser , dic : [String : Any] , short_school : String , postId : String , completion : @escaping(Bool)->Void){
-        ///main-post/post/buy-cell/40gKIDjQxWn21DEmiwd1
+    func setPostForBuySell( dic : [String : Any] , postId : String , completion : @escaping(Bool)->Void){
+ 
         let db = Firestore.firestore().collection("main-post")
             .document("sell-buy").collection("post").document(postId)
-    
-        db.setData(dic, merge: true) {[weak self] (err) in
-            guard let sself = self else { return }
+
+        db.setData(dic, merge: true) { (err) in
             if err == nil {
-                sself.setPostOnBuySellCollection(postId: postId, currentUser: currentUser) { (val) in
-                    completion(val)
-                }
+                completion(true)
             }
         }
         
+    }
+    
+    func add_post_for_universty(uni shortname : String, postId : String ){
+    
+        let db = Firestore.firestore().collection(shortname)
+            .document("main-post")
+            .collection("sell-buy")
+            .document(postId)
+        db.setData(["postId":postId])
     }
     func setPostOnBuySellCollection(postId : String , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("main-post")
@@ -70,6 +77,11 @@ class SellBuyService {
             }
         }
     }
+    /// add post on user followers
+    /// - Parameters:
+    ///   - postId: main post ıd
+    ///   - followers: current user followers id
+    ///   - completion: nil
     func setPostForFollowers(postId : String , followers : [String] , completion : @escaping(Bool) ->Void){
         for item in followers{
             let db = Firestore.firestore().collection("user")
@@ -93,10 +105,12 @@ class SellBuyService {
         }
     }
     
-    func getTopicFollowers(currentUser : CurrentUser , completion : @escaping([String])->Void){
+    
+    
+    func getTopicFollowers(completion : @escaping([String])->Void){
         ///İSTE/sell-buy/followers/2YZzIIAdcUfMFHnreosXZOTLZat1
         var user = [String]()
-        let db = Firestore.firestore().collection(currentUser.short_school)
+        let db = Firestore.firestore().collection("main-post")
             .document("sell-buy").collection("followers")
        
         db.getDocuments { (querySnap, err) in
@@ -118,13 +132,14 @@ class SellBuyService {
     
     func sendNotificaiton(currentUser : CurrentUser ,user : [String] ,text : String , type : String , postId : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-      
             NotificaitonService.shared.set_new_buy_sell_notification(currentUser: currentUser, postId: postId, getterUids: user, text: text, type: NotificationType.new_ad.desprition, topic: Notification_description.new_ad.desprition, notificaitonId: notificaitonId) { (_) in
                 print("succes")
           
         }
     }
 }
+    
+
 enum PostType {
     case buySell
     case foodMe

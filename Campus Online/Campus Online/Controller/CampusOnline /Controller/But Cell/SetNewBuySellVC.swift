@@ -53,7 +53,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         }
     }
     var currentUser : CurrentUser
-    var followers = [String]()
+//    var followers = [String]()
     lazy var heigth : CGFloat = 0.0
     var locationManager : CLLocationManager!
     //MARK: -properties
@@ -195,9 +195,9 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     
     
     //MARK:- lifeCycle
-    init(currentUser : CurrentUser , followers : [String] , currentUserFollowers : [String]){
+    init(currentUser : CurrentUser , currentUserFollowers : [String]){
         self.currentUser = currentUser
-        self.followers = followers
+      
         self.currentUserFollowers = currentUserFollowers
         super.init(nibName: nil, bundle: nil)
         self.postDate = Int64(Date().timeIntervalSince1970 * 1000).description
@@ -282,8 +282,10 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
-                SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
-                
+                SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.currentUserFollowers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                SellBuyService.shared.getTopicFollowers { (user) in
+                    SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                }
                 
             }
         }
@@ -295,7 +297,10 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)
-                        SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.followers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                        SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user:sself.currentUserFollowers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                        SellBuyService.shared.getTopicFollowers { (user) in
+                            SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
+                        }
                         
                     }
                 }
