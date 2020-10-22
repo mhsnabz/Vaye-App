@@ -61,15 +61,24 @@ class MainPostUploadService{
             metaDataForData.contentType = DataTypes.image.contentType
             
             
-            let storageRef = Storage.storage().reference().child(currentUser.short_school)
-                .child(currentUser.bolum).child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
+            
+            let storageRef  = Storage.storage().reference().child("main-post")
+                .child(currentUser.short_school).child(postType)
+                .child(currentUser.username)
+                .child(date)
+                .child(dataName + DataTypes.image.mimeType)
+            
+  
             
             uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
                 if err != nil
                 {  print("err \(err as Any)") }
                 else {
-                    Storage.storage().reference().child(currentUser.short_school)
-                        .child(currentUser.bolum).child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                    Storage.storage().reference().child("main-post")
+                       .child(currentUser.short_school).child(postType)
+                       .child(currentUser.username)
+                       .child(date)
+                       .child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
                             guard let dataUrl = url?.absoluteString else {
                                 print("DEBUG :  Image url is null")
                                 return
@@ -206,8 +215,8 @@ class MainPostUploadService{
     }
     func moveThumbDatas(currentUser : CurrentUser ,array : [String], postId : String , completion : @escaping(Bool) ->Void){
         
-        let db = Firestore.firestore().collection(currentUser.short_school).document("main-post")
-            .collection("post").document(postId)
+        let db = Firestore.firestore().collection("main-post")
+            .document("post").collection("sell-buy").document(postId)
         db.setData(["thumbData":array] as [String : Any], merge: true) { (err) in
             if err == nil {
                 completion(true)

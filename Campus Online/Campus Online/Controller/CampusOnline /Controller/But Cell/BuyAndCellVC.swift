@@ -214,10 +214,13 @@ class BuyAndCellVC: UIViewController {
     func fetchMainPost(currentUser : CurrentUser, completion : @escaping([MainPostModel])->Void){
         collectionview.refreshControl?.beginRefreshing()
         var post = [MainPostModel]()
-        //  let db : Query!
-        ///İSTE/sell-buy/post/1602982498401
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("sell-buy").collection("post").limit(to: 5).order(by: "postId" , descending: true)
+    
+        ///main-post/post/sell-buy/1603270897707
+        let db = Firestore.firestore().collection("main-post")
+            .document("sell-buy").collection("post")
+            .limit(to: 5)
+            .order(by: "postId",descending: true)
+   
         
         db.getDocuments {(querySnap, err) in
             if err == nil {
@@ -267,7 +270,8 @@ class BuyAndCellVC: UIViewController {
     }
     
     private func checkHasPost(completion : @escaping(Bool) ->Void){
-        let db = Firestore.firestore().collection(currentUser.short_school)
+       
+        let db = Firestore.firestore().collection("main-post")
             .document("sell-buy").collection("post")
         db.getDocuments { (docSnap, err) in
             if err == nil {
@@ -287,8 +291,9 @@ class BuyAndCellVC: UIViewController {
     
     private func checkFollowingTopic(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         //İSTE/sell-buy/followers/StTsYlJUVX4zOUzhRzXt
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("sell-buy").collection("followers").document(currentUser.uid)
+        let db = Firestore.firestore().collection("main-post")
+            .document("sell-buy").collection("followers")
+            .document(currentUser.uid)
         db.getDocument { (docSnap, err) in
             if err == nil {
                 guard let snap = docSnap else {
@@ -312,8 +317,12 @@ class BuyAndCellVC: UIViewController {
             guard let sself = self else { return }
             
             if _val{
-                let db = Firestore.firestore().collection(currentUser.short_school)
-                    .document("sell-buy").collection("followers").document(currentUser.uid)
+                ///main-post/sell-buy/post/1603292156873
+                
+                let db = Firestore.firestore().collection("main-post")
+                    .document("sell-buy")
+                    .collection("followers")
+                    .document(currentUser.uid)
                 db.delete { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg: "Bildirimler Kapandı")
@@ -321,8 +330,11 @@ class BuyAndCellVC: UIViewController {
                     }
                 }
             }else{
-                let db = Firestore.firestore().collection(currentUser.short_school)
-                    .document("sell-buy").collection("followers").document(currentUser.uid)
+              
+                let db = Firestore.firestore().collection("main-post")
+                    .document("sell-buy")
+                    .collection("followers").document(currentUser.uid)
+ 
                 db.setData(["userId":currentUser.uid as Any] as [String : Any], merge: true) { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg: "Bildirimler Açıldı")

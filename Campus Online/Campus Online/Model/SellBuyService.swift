@@ -46,8 +46,10 @@ class SellBuyService {
     }
     
     func setPostForBuySell(currentUser : CurrentUser , dic : [String : Any] , short_school : String , postId : String , completion : @escaping(Bool)->Void){
-        let db = Firestore.firestore().collection(short_school).document("main-post")
-            .collection("post").document(postId)
+        ///main-post/post/buy-cell/40gKIDjQxWn21DEmiwd1
+        let db = Firestore.firestore().collection("main-post")
+            .document("sell-buy").collection("post").document(postId)
+    
         db.setData(dic, merge: true) {[weak self] (err) in
             guard let sself = self else { return }
             if err == nil {
@@ -59,7 +61,7 @@ class SellBuyService {
         
     }
     func setPostOnBuySellCollection(postId : String , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
-        let db = Firestore.firestore().collection(currentUser.short_school)
+        let db = Firestore.firestore().collection("main-post")
             .document("sell-buy").collection("post").document(postId)
         db.setData(["postId":postId], merge: true){
             (err) in
@@ -96,6 +98,7 @@ class SellBuyService {
         var user = [String]()
         let db = Firestore.firestore().collection(currentUser.short_school)
             .document("sell-buy").collection("followers")
+       
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
