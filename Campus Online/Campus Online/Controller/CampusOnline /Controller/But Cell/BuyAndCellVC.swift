@@ -18,6 +18,7 @@ import CoreLocation
 private let cellID = "cellID"
 private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
+private let cellAds = "cellAds"
 class BuyAndCellVC: UIViewController {
     var currentUser : CurrentUser
     var waitAnimation = AnimationView()
@@ -172,6 +173,7 @@ class BuyAndCellVC: UIViewController {
         collectionview.register(BuyAndSellView.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(BuyAndSellDataView.self , forCellWithReuseIdentifier: cellData)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
+        collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -214,14 +216,10 @@ class BuyAndCellVC: UIViewController {
     func fetchMainPost(currentUser : CurrentUser, completion : @escaping([MainPostModel])->Void){
         collectionview.refreshControl?.beginRefreshing()
         var post = [MainPostModel]()
-    
-        ///main-post/post/sell-buy/1603270897707
-        let db = Firestore.firestore().collection("main-post")
-            .document("sell-buy").collection("post")
-            .limit(to: 5)
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("main-post")
+            .collection("sell-buy").limit(to: 5)
             .order(by: "postId",descending: true)
-   
-        
         db.getDocuments {(querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -230,20 +228,22 @@ class BuyAndCellVC: UIViewController {
                 }else{
                     //İSTE/main-post/post/1602875543801
                     for postId in snap.documents {
-                        let db = Firestore.firestore().collection(currentUser.short_school)
-                            .document("main-post").collection("post").document(postId.documentID)
+                        //main-post/sell-buy/post/1603356076781
+                        let db = Firestore.firestore().collection("main-post")
+                            .document("sell-buy")
+                            .collection("post")
+                            .document(postId.documentID)
                         db.getDocument { (docSnap, err) in
                             if err == nil {
                                 guard let snap = docSnap else { return }
                                 if snap.exists
                                 {
                                     post.append(MainPostModel.init(postId: snap.documentID, dic: snap.data()!))
-                                    
-                                    
                                 }else{
                                     
-                                    let deleteDb = Firestore.firestore().collection("user")
-                                        .document(currentUser.uid).collection("main-post").document(postId.documentID)
+                                    let deleteDb = Firestore.firestore().collection(currentUser.short_school)
+                                        .document("main-post")
+                                        .collection("sell-buy").document(postId.documentID)
                                     deleteDb.delete()
                                 }
                                 completion(post)
@@ -335,7 +335,7 @@ class BuyAndCellVC: UIViewController {
                     .document("sell-buy")
                     .collection("followers").document(currentUser.uid)
  
-                db.setData(["userId":currentUser.uid as Any] as [String : Any], merge: true) { (err) in
+                db.setData(["userId":currentUser.uid as Any , "school":currentUser.short_school as Any] as [String : Any], merge: true) { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg: "Bildirimler Açıldı")
                         sself.setNavigationBarItems(val: true)
@@ -382,36 +382,42 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        
-        if mainPost[indexPath.row].data.isEmpty {
-            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-            cell.delegate = self
-            cell.currentUser = currentUser
-            
-            cell.backgroundColor = .white
-            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-            cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-            cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-            cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-            cell.mainPost = mainPost[indexPath.row]
-            
+        if mainPost[indexPath.row].postId == nil {
+            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+            cell.nativeAd = mainPost[indexPath.row].nativeAd
             return cell
-        }else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
-            
-            cell.backgroundColor = .white
-            cell.delegate = self
-            cell.currentUser = currentUser
-            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-            cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-            cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-            cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
-            
-            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-            cell.mainPost = mainPost[indexPath.row]
-            
-            return cell
+        }else{
+            if mainPost[indexPath.row].data.isEmpty {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
+                cell.delegate = self
+                cell.currentUser = currentUser
+                
+                cell.backgroundColor = .white
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.mainPost = mainPost[indexPath.row]
+                
+                return cell
+            }else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
+                
+                cell.backgroundColor = .white
+                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.mainPost = mainPost[indexPath.row]
+                
+                return cell
+            }
         }
+       
         
         
     }
@@ -457,14 +463,8 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     }
     
 }
-//MARK: - GADAdLoaderDelegate
-extension BuyAndCellVC : GADAdLoaderDelegate{
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-        
-    }
-    
-    
-}
+
+
 extension BuyAndCellVC : BuySellVCDelegate{
     func options(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
@@ -610,4 +610,31 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
     }
     
     
+}
+
+//MARK: - GADAdLoaderDelegate
+extension BuyAndCellVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
+    
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+      
+        print("\(adLoader) failed with error: \(error.localizedDescription)")
+        self.loadMore = false
+        self.collectionview.reloadData()
+    }
+    
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        self.nativeAd = nativeAd
+        if mainPost.count > 0{
+            if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                self.mainPost.sort(by: { (post, post1) -> Bool in
+                    
+                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                })
+                
+                self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
+            }
+        }
+        self.loadMore = false
+        self.collectionview.reloadData()
+    }
 }

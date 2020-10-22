@@ -282,11 +282,9 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
-                SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: sself.currentUserFollowers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                 SellBuyService.shared.getTopicFollowers { (user) in
                     SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                 }
-                
             }
         }
         else
@@ -297,11 +295,9 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)
-                        SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user:sself.currentUserFollowers, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                         SellBuyService.shared.getTopicFollowers { (user) in
                             SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
                         }
-                        
                     }
                 }
             }
