@@ -17,9 +17,11 @@ class MainPostService {
             post.dislike.remove(element: currentUser.uid)
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
-                ///İSTE/main-post/post/1602875543801
-                let db = Firestore.firestore().collection(user.short_school).document("main-post")
-                    .collection("post").document(post.postId)
+                //main-post/sell-buy/post/1603357054085
+                let db = Firestore.firestore().collection("main-post")
+                    .document(target)
+                    .collection("post")
+                    .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
@@ -34,8 +36,10 @@ class MainPostService {
             post.likes.remove(element: currentUser.uid)
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
-                let db = Firestore.firestore().collection(user.short_school).document("main-post")
-                    .collection("post").document(post.postId)
+                let db = Firestore.firestore().collection("main-post")
+                    .document(target)
+                    .collection("post")
+                    .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
                     completion(true)
                     NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
@@ -52,8 +56,10 @@ class MainPostService {
             post.dislike.append(currentUser.uid)
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
-                let db = Firestore.firestore().collection(user.short_school).document("main-post")
-                    .collection("post").document(post.postId)
+                let db = Firestore.firestore().collection("main-post")
+                    .document(target)
+                    .collection("post")
+                    .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
                     if err == nil {
                         db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
@@ -67,8 +73,10 @@ class MainPostService {
             post.dislike.remove(element: currentUser.uid)
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
-                let db = Firestore.firestore().collection(user.short_school).document("main-post")
-                    .collection("post").document(post.postId)
+                let db = Firestore.firestore().collection("main-post")
+                    .document(target)
+                    .collection("post")
+                    .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                     completion(true)
             }
@@ -77,4 +85,23 @@ class MainPostService {
     }
  
     
+}
+enum MainPostLikeTarget {
+    case buy_sell
+    case food_me
+    case camp
+    case parties
+    var description : String{
+        switch self{
+        
+        case .buy_sell:
+            return "sell-buy"
+        case .food_me:
+            return "food-me"
+        case .camp:
+            return "camp"
+        case .parties:
+            return "parties"
+        }
+    }
 }
