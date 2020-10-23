@@ -45,7 +45,6 @@ class MainPostService {
                     NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
                 }
             }
-            
         }
     }
     
