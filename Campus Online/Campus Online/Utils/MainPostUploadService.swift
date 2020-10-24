@@ -101,8 +101,7 @@ class MainPostUploadService{
             metaDataForData.contentType = DataTypes.image.contentType
             
             
-            let storageRef = Storage.storage().reference().child(currentUser.short_school + " thumb")
-                .child(currentUser.bolum).child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
+            let storageRef = Storage.storage().reference().child("main-post-thumb").child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
             //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
             let image : UIImage = UIImage(data: data)!
             guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
@@ -110,8 +109,7 @@ class MainPostUploadService{
                 if err != nil
                 {  print("err \(err as Any)") }
                 else {
-                    Storage.storage().reference().child(currentUser.short_school  + " thumb")
-                        .child(currentUser.bolum).child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                    Storage.storage().reference().child("main-post-thumb").child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
                             guard let dataUrl = url?.absoluteString else {
                                 print("DEBUG :  Image url is null")
                                 return
@@ -187,7 +185,7 @@ class MainPostUploadService{
     }
     
     
-    func setThumbDatas(currentUser : CurrentUser , postId : String ,completion : @escaping(Bool)->Void){
+    func setThumbDatas(currentUser : CurrentUser,postType : String , postId : String ,completion : @escaping(Bool)->Void){
         ///user/2YZzIIAdcUfMFHnreosXZOTLZat1/saved-task/task
         let db = Firestore.firestore().collection("user").document(currentUser.uid).collection("saved-task")
             .document("task")
@@ -198,7 +196,7 @@ class MainPostUploadService{
                     return }
                 if snap.exists {
                     let data = snap.get("data") as! [String]
-                    self?.moveThumbDatas(currentUser: currentUser, array: data, postId: postId) { (_) in
+                    self?.moveThumbDatas(currentUser: currentUser, array: data, target: postType, postId: postId) { (_) in
                         db.setData(["data":[]], merge: true) { (err) in
                             if err == nil {
                                 completion(true)
@@ -213,10 +211,10 @@ class MainPostUploadService{
         }
         
     }
-    func moveThumbDatas(currentUser : CurrentUser ,array : [String], postId : String , completion : @escaping(Bool) ->Void){
-        
+    func moveThumbDatas(currentUser : CurrentUser ,array : [String],target : String, postId : String , completion : @escaping(Bool) ->Void){
+        ///main-post/sell-buy/post/1603357054085
         let db = Firestore.firestore().collection("main-post")
-            .document("post").collection("sell-buy").document(postId)
+            .document(target).collection("post").document(postId)
         db.setData(["thumbData":array] as [String : Any], merge: true) { (err) in
             if err == nil {
                 completion(true)

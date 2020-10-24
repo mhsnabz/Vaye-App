@@ -470,8 +470,8 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-//            actionSheetCurrentUser.delegate = self
-//            actionSheetCurrentUser.show(post: post)
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId

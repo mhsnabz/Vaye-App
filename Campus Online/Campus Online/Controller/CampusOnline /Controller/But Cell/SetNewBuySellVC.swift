@@ -289,10 +289,10 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         }
         else
         {
-            MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser, postType: PostType.buySell.despription, type: dataType, data: val) {[weak self] (url) in
+            MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.buySell.despription, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
                 SellBuyService.shared.setNewBuySellPost(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
-                    MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postId: date) { (_) in
+                    MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.buySell.despription, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)
                         SellBuyService.shared.getTopicFollowers { (user) in
