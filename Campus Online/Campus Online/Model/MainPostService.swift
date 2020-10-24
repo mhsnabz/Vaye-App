@@ -78,12 +78,7 @@ class MainPostService {
                     .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                     completion(true)
-            }
-        }
-        }
-    }
- 
-    
+            }}}}
 }
 enum MainPostLikeTarget {
     case buy_sell
