@@ -166,7 +166,9 @@ class Utilities  {
     static var font =  "AvenirNext-Medium"
     static var fontBold =  "AvenirNext-DemiBold"
     static var italic = "AvenirNext-Italic"
-    
+    static var adUnitID = "ca-app-pub-3940256099942544/2521693316" 
+    //   let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
+    //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     static var takip = "Sizi Takip Etmeye Başladı"
     static var mesajIstegi = "Size Mesaj Göndemek İstiyor"
     static var begeni = "Sizin Gönderinizi Beğendi"
