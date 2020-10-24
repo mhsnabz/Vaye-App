@@ -656,7 +656,31 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
         case .editPost(_):
             print("edit post")
         case .deletePost(_):
-            print("delete post")
+
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            guard let target = self.mainPost[index.row].postType else { return }
+            let db = Firestore.firestore().collection("main-post")
+                .document(target)
+                .collection("post")
+                .document(postId)
+           
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    MainPostService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId, index: index) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+            break
         case .slientPost(_):
             print("slient post")
         }

@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseStorage
 
 class MainPostService {
     static var shared = MainPostService()
@@ -79,6 +80,19 @@ class MainPostService {
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                     completion(true)
             }}}}
+    
+    func deleteToStorage(data : [String], postId : String , index : IndexPath , completion : @escaping(Bool) -> Void){
+        if data.count == 0{
+            completion(true)
+            return
+        }
+        for item in data{
+            let ref = Storage.storage().reference(forURL: item)
+            ref.delete { (err) in
+                completion(true)
+            }
+        }
+    }
 }
 enum MainPostLikeTarget {
     case buy_sell

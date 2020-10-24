@@ -112,10 +112,12 @@ class ActionSheetMainPost : NSObject{
     }
 private func addSlient(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
     Utilities.waitProgress(msg: nil)
-    let db = Firestore.firestore().collection(currentUser.short_school)
-    .document("lesson-post")
-    .collection("post")
+    ///main-post/sell-buy/post/1603357054085
+    let db = Firestore.firestore().collection("main-post")
+        .document("sell-buy")
+        .collection("post")
         .document(post!.postId)
+   
     db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
         if err == nil {
             Utilities.succesProgress(msg: "Bildirimler Kapatıldı")
@@ -128,10 +130,10 @@ private func addSlient(currentUser : CurrentUser , completion : @escaping(Bool) 
 }
 private func removeSlient(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
        Utilities.waitProgress(msg: nil)
-       let db = Firestore.firestore().collection(currentUser.short_school)
-       .document("lesson-post")
-       .collection("post")
-           .document(post!.postId)
+    let db = Firestore.firestore().collection("main-post")
+        .document("sell-buy")
+        .collection("post")
+        .document(post!.postId)
     
     db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
         if err == nil {

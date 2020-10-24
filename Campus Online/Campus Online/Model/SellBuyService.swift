@@ -148,7 +148,7 @@ enum PostType {
     var despription : String {
         switch self{
         case .buySell:
-            return "buy-cell"
+            return "sell-buy"
         case .foodMe:
             return "food-me"
         case .party:
