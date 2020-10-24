@@ -223,6 +223,19 @@ struct UserService {
         }
     }
     
- 
+     func getOtherUser(userId : String , completion : @escaping(OtherUser)->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(userId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return }
+                if snap.exists {
+                    completion(OtherUser.init(dic: docSnap!.data()!))
+                }
+            }
+        }
+    }
     
 }

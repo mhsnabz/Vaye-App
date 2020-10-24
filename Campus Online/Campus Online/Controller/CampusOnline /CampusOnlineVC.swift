@@ -36,7 +36,10 @@ class CampusOnlineVC: UIViewController{
     var adLoader: GADAdLoader!
     var time : Timestamp!
     var nativeAdView: GADUnifiedNativeAdView!
-    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
+    
+    private var actionSheetCurrentUser : ActionSheetMainPost
+    
+    let adUnitID = Utilities.adUnitID // "ca-app-pub-3940256099942544/3986624511"
     //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     let label : UILabel = {
         let lbl = UILabel()
@@ -58,6 +61,7 @@ class CampusOnlineVC: UIViewController{
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
+        self.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -344,8 +348,8 @@ extension CampusOnlineVC :  BuySellVCDelegate{
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-//            actionSheetCurrentUser.delegate = self
-//            actionSheetCurrentUser.show(post: post)
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -398,16 +402,54 @@ extension CampusOnlineVC :  BuySellVCDelegate{
         
     }
     
-    func linkClick(for cell: BuyAndSellView) {
-        
+    func linkClick(for cell: BuyAndSellView)
+    {
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
-    func goProfileByMention(userName: String) {
-        
+    func goProfileByMention(userName: String)
+    {
+        if "@\(userName)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+               
+            }
+        }
     }
     
     
@@ -457,11 +499,37 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
     }
     
     func linkClick(for cell: BuyAndSellDataView) {
-        
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellDataView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
     
@@ -492,4 +560,19 @@ extension CampusOnlineVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegat
         self.collectionview.reloadData()
     }
 }
-
+//MARK:- ASMainPostLaungerDelgate
+extension CampusOnlineVC : ASMainPostLaungerDelgate {
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option {
+        
+        case .editPost(_):
+            print("edit post")
+        case .deletePost(_):
+            print("delete post")
+        case .slientPost(_):
+            print("slient post")
+        }
+    }
+    
+    
+}

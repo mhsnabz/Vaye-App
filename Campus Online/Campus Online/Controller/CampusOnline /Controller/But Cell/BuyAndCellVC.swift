@@ -525,18 +525,51 @@ extension BuyAndCellVC : BuySellVCDelegate{
     }
     
     func linkClick(for cell: BuyAndSellView) {
-        
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
     func goProfileByMention(userName: String) {
-        
+        if "@\(userName)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
     }
-    
-    
 }
 extension BuyAndCellVC : BuySellVCDataDelegate {
     func mapClick(for cell: BuyAndSellDataView) {
@@ -574,19 +607,43 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
             print("succes")
         }
     }
-    
-    
-    
     func comment(for cell: BuyAndSellDataView) {
         
     }
     
     func linkClick(for cell: BuyAndSellDataView) {
-        
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellDataView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+//            vc.modalPresentationStyle = .fullScreen
+//            present(vc, animated: true, completion: nil)
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
     
