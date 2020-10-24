@@ -103,7 +103,7 @@ protocol BuySellVCDelegate : class {
     func options ( for cell : BuyAndSellView)
     func like ( for cell : BuyAndSellView)
     func dislike ( for cell : BuyAndSellView)
-    func fav ( for cell : BuyAndSellView)
+    
     func comment ( for cell : BuyAndSellView)
     func linkClick(for cell : BuyAndSellView)
     func showProfile(for cell : BuyAndSellView)
@@ -114,7 +114,7 @@ protocol BuySellVCDataDelegate : class {
     func options ( for cell : BuyAndSellDataView)
     func like ( for cell : BuyAndSellDataView)
     func dislike ( for cell : BuyAndSellDataView)
-    func fav ( for cell : BuyAndSellDataView)
+
     func comment ( for cell : BuyAndSellDataView)
     func linkClick(for cell : BuyAndSellDataView)
     func mapClick(for cell : BuyAndSellDataView)

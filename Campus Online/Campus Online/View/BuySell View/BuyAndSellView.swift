@@ -244,9 +244,7 @@ class BuyAndSellView: UICollectionViewCell {
     @objc func dislikeClick(){
         delegate?.dislike(for: self)
     }
-    @objc func addFavClick(){
-        delegate?.fav(for: self)
-    }
+   
     @objc func optionsClick(){
         delegate?.options(for: self)
     }

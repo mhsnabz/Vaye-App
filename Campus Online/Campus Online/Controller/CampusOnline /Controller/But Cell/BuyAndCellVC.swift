@@ -518,9 +518,7 @@ extension BuyAndCellVC : BuySellVCDelegate{
         }
     }
     
-    func fav(for cell: BuyAndSellView) {
-        
-    }
+    
     
     func comment(for cell: BuyAndSellView) {
         
@@ -577,9 +575,7 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
         }
     }
     
-    func fav(for cell: BuyAndSellDataView) {
-        
-    }
+    
     
     func comment(for cell: BuyAndSellDataView) {
         
