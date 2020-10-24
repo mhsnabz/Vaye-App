@@ -817,10 +817,7 @@ extension CommentVC : CommentVCHeaderDelegate {
                 
             }
         }
-    }
-
-    
-    
+    } 
 }
 //MARK: - ActionSheetHomeLauncherDelegate
 extension CommentVC : ActionSheetHomeLauncherDelegate {
