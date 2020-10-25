@@ -118,6 +118,7 @@
 		6690A686253F688C00E88BC0 /* ASCurrentUserMainPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A685253F688C00E88BC0 /* ASCurrentUserMainPostViewModel.swift */; };
 		6690A68F253F6A7400E88BC0 /* ASMainPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A68E253F6A7400E88BC0 /* ASMainPostCell.swift */; };
 		6690A6952544E8FB00E88BC0 /* MainPostCommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */; };
+		6690A69B2545E00E00E88BC0 /* SellBuyCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
@@ -306,6 +307,7 @@
 		6690A685253F688C00E88BC0 /* ASCurrentUserMainPostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASCurrentUserMainPostViewModel.swift; sourceTree = "<group>"; };
 		6690A68E253F6A7400E88BC0 /* ASMainPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASMainPostCell.swift; sourceTree = "<group>"; };
 		6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostCommentVC.swift; sourceTree = "<group>"; };
+		6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellBuyCommentHeader.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
@@ -784,6 +786,14 @@
 			path = "Main Post Comment";
 			sourceTree = "<group>";
 		};
+		6690A6992545DFF600E88BC0 /* Main Post Comment View */ = {
+			isa = PBXGroup;
+			children = (
+				6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */,
+			);
+			path = "Main Post Comment View";
+			sourceTree = "<group>";
+		};
 		66A5F0DB250F04E8005C93B3 /* ActionSheet Other User Cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -949,6 +959,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				6690A6992545DFF600E88BC0 /* Main Post Comment View */,
 				666B2DCF253792E40014C5A7 /* BuySell View */,
 				6677553D252CECF000DBF3CD /* CO Menu View */,
 				66AA9C5525251025008DFB86 /* Notification View */,
@@ -1417,6 +1428,7 @@
 				660F5AD425033E9600F72558 /* SettingCell.swift in Sources */,
 				6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */,
 				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,
+				6690A69B2545E00E00E88BC0 /* SellBuyCommentHeader.swift in Sources */,
 				6613340B24F51272002677AB /* KullanımKosulları.swift in Sources */,
 				661333E124F370B4002677AB /* EditProfile.swift in Sources */,
 				66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */,

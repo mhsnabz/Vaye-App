@@ -400,7 +400,7 @@ extension CampusOnlineVC :  BuySellVCDelegate{
     
     func comment(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post)
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -498,7 +498,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
     
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post)
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
         navigationController?.pushViewController(vc, animated: true)
     }
     

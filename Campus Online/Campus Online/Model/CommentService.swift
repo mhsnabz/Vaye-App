@@ -154,8 +154,12 @@ class CommentService {
         if !(comment.likes?.contains(currentUser.uid))!{
             comment.likes?.append(currentUser.uid)
             tableView.reloadData()
-            let db = Firestore.firestore().collection(currentUser.short_school)
-                .document("lesson-post").collection("post").document(comment.postId!).collection("comment").document(comment.commentId!)
+            ///main-post/sell-buy/post/1603580081581
+            let db = Firestore.firestore().collection("main-post")
+                .document(post.postType)
+                .collection("post")
+                .document(post.postId)
+                .collection("comment").document(comment.commentId!)
             db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
 
                 if err != nil{
@@ -167,8 +171,11 @@ class CommentService {
         }else{
             comment.likes?.remove(element: currentUser.uid)
             tableView.reloadData()
-            let db = Firestore.firestore().collection(currentUser.short_school)
-                .document("lesson-post").collection("post").document(comment.postId!).collection("comment").document(comment.commentId!)
+            let db = Firestore.firestore().collection("main-post")
+                .document(post.postType)
+                .collection("post")
+                .document(post.postId)
+                .collection("comment").document(comment.commentId!)
             db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {
             (err) in
       

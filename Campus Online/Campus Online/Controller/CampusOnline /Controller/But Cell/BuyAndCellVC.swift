@@ -521,7 +521,9 @@ extension BuyAndCellVC : BuySellVCDelegate{
     
     
     func comment(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post , target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: BuyAndSellView) {
@@ -608,7 +610,9 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
         }
     }
     func comment(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: BuyAndSellDataView) {
