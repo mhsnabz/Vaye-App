@@ -399,7 +399,9 @@ extension CampusOnlineVC :  BuySellVCDelegate{
     
     
     func comment(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: BuyAndSellView)

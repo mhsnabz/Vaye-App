@@ -84,7 +84,25 @@ class MainPostCommentVC: UIViewController {
         tableView.register(CommentMsgCell.self, forCellReuseIdentifier: msgCellID)
         tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.interactive
     }
+    func removeComment(commentID : String , postID : String){
+        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")
+            .collection("post").document(postID).collection("comment").document(commentID)
+        db.delete()
+    }
     
+    func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
+            guard let sself = self else { return }
+            sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!)
+            sself.comment.remove(at: indexPath.row)
+            sself.tableView.reloadData()
+        }
+        action.backgroundColor = .red
+    
+        action.image = UIImage(named: "remove")
+        
+        return action
+    }
 
 
 }
@@ -96,7 +114,84 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
-        return cell
+        cell.selectionStyle = .none
+        if comment[indexPath.row].replies!.count > 0 {
+            cell.comment = comment[indexPath.row]
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+            cell.line.isHidden = false
+            cell.totalRepliedCount.isHidden = false
+            cell.delegate = self
+            cell.contentView.isUserInteractionEnabled = false
+            cell.currentUser  = currentUser
+            return cell
+        }else{
+            cell.comment = comment[indexPath.row]
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+            cell.line.isHidden = true
+            cell.totalRepliedCount.isHidden = true
+            cell.contentView.isUserInteractionEnabled = false
+            cell.currentUser  = currentUser
+
+            cell.delegate = self
+            return cell
+        }
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if comment[indexPath.row].replies!.count > 0 {
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
+            return 35 + h! + 45 + 30
+        }else{
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
+            return 35 + h! + 45
+        }
+       
+    }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        if comment[indexPath.row].senderUid == currentUser.uid {
+            let edit = CommentService.shared.editAction(at: indexPath)
+            let delete = deleteAction(at: indexPath)
+            
+            return UISwipeActionsConfiguration(actions: [delete,edit])
+        }
+        else
+        {
+            let report = CommentService.shared.reportAction(at: indexPath)
+            return UISwipeActionsConfiguration(actions: [report])
+        }
+        
+     
+    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let reply = CommentService.shared.replyAction(at: indexPath, tableView: self.tableView, comment: comment[indexPath.row], currentUser: currentUser, post: post)
+        return UISwipeActionsConfiguration(actions: [reply])
+    }
+    
+    
+}
+//MARK:-CommentDelegate
+extension MainPostCommentVC : CommentDelegate{
+    func likeClik(cell: CommentMsgCell) {
+        guard let comment = cell.comment else { return }
+        
+        CommentService.shared.setLike(comment: comment, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            
+        }
+    }
+    
+    func replyClick(cell: CommentMsgCell) {
+        
+    }
+    
+    func seeAllReplies(cell: CommentMsgCell) {
+        
+    }
+    
+    func goProfile(cell: CommentMsgCell) {
+        
     }
     
     

@@ -445,8 +445,10 @@ class CommentVC: UIViewController {
         action.backgroundColor = .red
     
         action.image = UIImage(named: "remove")
+        
         return action
     }
+    
     func editAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Düzenle") { (action, view, completion) in
             completion(true)
