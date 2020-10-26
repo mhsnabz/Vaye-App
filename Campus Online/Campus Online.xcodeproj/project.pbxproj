@@ -119,6 +119,7 @@
 		6690A68F253F6A7400E88BC0 /* ASMainPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A68E253F6A7400E88BC0 /* ASMainPostCell.swift */; };
 		6690A6952544E8FB00E88BC0 /* MainPostCommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */; };
 		6690A69B2545E00E00E88BC0 /* SellBuyCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */; };
+		6690A6A32547236400E88BC0 /* MainPostCommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A6A22547236300E88BC0 /* MainPostCommentService.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
@@ -308,6 +309,7 @@
 		6690A68E253F6A7400E88BC0 /* ASMainPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASMainPostCell.swift; sourceTree = "<group>"; };
 		6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostCommentVC.swift; sourceTree = "<group>"; };
 		6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellBuyCommentHeader.swift; sourceTree = "<group>"; };
+		6690A6A22547236300E88BC0 /* MainPostCommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostCommentService.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
@@ -933,6 +935,7 @@
 				6690A65F2539BE1E00E88BC0 /* SellBuyService.swift */,
 				6690A664253A223F00E88BC0 /* MainPostModel.swift */,
 				6690A67B253CCF3900E88BC0 /* MainPostService.swift */,
+				6690A6A22547236300E88BC0 /* MainPostCommentService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1540,6 +1543,7 @@
 				6615FC8F250B398800776664 /* DataView.swift in Sources */,
 				66AF724C251321E9007E96BC /* LessonInfoHeaderTwo.swift in Sources */,
 				665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */,
+				6690A6A32547236400E88BC0 /* MainPostCommentService.swift in Sources */,
 				66836A062531D3B400AB73AE /* SearchCell.swift in Sources */,
 				660F5ADC2503DB5800F72558 /* SingleLisans.swift in Sources */,
 				6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */,

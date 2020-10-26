@@ -143,7 +143,12 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         let name = NSMutableAttributedString()
         return name
     }()
-    
+    let timeLbl : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 13)
+        lbl.textColor = .lightGray
+        return lbl
+    }()
     lazy var headerView : UIView = {
         let view = UIView()
         view.addSubview(profileImage)
@@ -154,11 +159,6 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         userName.anchor(top: profileImage.topAnchor, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 5, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 18)
         view.addSubview(lessonName)
         lessonName.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: userName.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 14)
-        
-        view.addSubview(optionsButton)
-        optionsButton.anchor(top: profileImage.topAnchor, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 8, width: 20, heigth: 20)
-        
-      
         return view
     }()
     lazy var bottomBar : UIView = {
@@ -199,7 +199,8 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
 //        configure()
         addSubview(msgText)
         addSubview(priceLbl)
-
+        addSubview(timeLbl)
+        timeLbl.anchor(top: priceLbl.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 0 ,  marginBottom: 0, marginRigth: 0, width: 0, heigth: 15)
         addSubview(bottomBar)
         addSubview(mapBtn)
         mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 28, marginBottom: 10, marginRigth: 0, width: 25, heigth: 25)
@@ -215,11 +216,13 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
 
-        optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
+
         mapBtn.addTarget(self, action: #selector(mapClick), for: .touchUpInside)
         mapBtn.isHidden = false
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
+        addSubview(line)
+        line.anchor(top: bottomBar.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 0.40)
     }
     
     required init?(coder: NSCoder) {
@@ -236,10 +239,7 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
     @objc func dislikeClick(){
 //        delegate?.dislike(for: self)
     }
-   
-    @objc func optionsClick(){
-//        delegate?.options(for: self)
-    }
+
     @objc func linkClick(){
 //        delegate?.linkClick(for : self)
     }
@@ -312,7 +312,16 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         }else{
             mapBtn.isHidden = true
         }
-        
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        let dateFormatterPrint = DateFormatter()
+        dateFormatterPrint.dateFormat = "dd/MM/yy HH:mm"
+        dateFormatterPrint.timeZone = NSTimeZone(name: "UTC + 3") as TimeZone?
+        let date =  Date(timeIntervalSince1970: TimeInterval(post.postTime!.seconds))
+       
+            print(dateFormatterPrint.string(from: date))
+            timeLbl.text = dateFormatterPrint.string(from: date)
 //        if post.link.isEmpty {
 //            linkBtn.isHidden = true
 //

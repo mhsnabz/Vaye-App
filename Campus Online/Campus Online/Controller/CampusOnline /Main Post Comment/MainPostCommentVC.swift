@@ -37,6 +37,7 @@ class MainPostCommentVC: UIViewController {
         super.viewDidLoad()
         configureUI()
         hideKeyboardWhenTappedAround()
+        getComments(currentUser: currentUser, postID: post.postId)
 
     }
     init(currentUser : CurrentUser , post : MainPostModel , target : String) {
@@ -60,6 +61,101 @@ class MainPostCommentVC: UIViewController {
         messagesListener?.remove()
 //        navigationController?.navigationBar.isHidden = true
     }
+    
+    
+    
+    //MARK:- keyboard
+    override var inputAccessoryView: UIView?{
+        if customInputView == nil {
+            customInputView = CustomView()
+            customInputView.backgroundColor = .white
+            textField.placeholder = "Yeni Bir Yorum Yap..."
+            textField.font = UIFont(name: Utilities.font, size: 14)
+            textField.layer.cornerRadius = 5
+            customInputView.autoresizingMask = .flexibleHeight
+        
+            customInputView.addSubview(textField)
+            
+            sendButton = UIButton()
+            sendButton.isEnabled = true
+            sendButton.setImage(UIImage(named: "send")!.withRenderingMode(.alwaysOriginal), for: .normal)
+            sendButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+                               sendButton.addTarget(self, action: #selector(sendMsg), for: .touchUpInside)
+            customInputView?.addSubview(sendButton)
+            addMediaButtom = UIButton()
+            addMediaButtom.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
+            addMediaButtom.isEnabled = true
+            //addMediaButtom.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+            
+            addMediaButtom.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
+           addMediaButtom.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+            customInputView?.addSubview(addMediaButtom)
+            
+            textField.translatesAutoresizingMaskIntoConstraints = false
+            sendButton.translatesAutoresizingMaskIntoConstraints = false
+            addMediaButtom.translatesAutoresizingMaskIntoConstraints = false
+            sendButton.setContentHuggingPriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            sendButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            
+            addMediaButtom.setContentHuggingPriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            addMediaButtom.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            
+            textField.maxHeight = 80
+            
+            addMediaButtom.leadingAnchor.constraint(
+                equalTo: customInputView.leadingAnchor,
+                constant: 8
+            ).isActive = true
+            
+            addMediaButtom.trailingAnchor.constraint(
+                equalTo: textField.leadingAnchor,
+                constant: -8
+            ).isActive = true
+            
+            addMediaButtom.topAnchor.constraint(
+                equalTo: customInputView.topAnchor,
+                constant: 8
+            ).isActive = true
+            
+            addMediaButtom.bottomAnchor.constraint(
+                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+                constant: -8
+            ).isActive = true
+            
+            textField.trailingAnchor.constraint(
+                equalTo: sendButton.leadingAnchor,
+                constant: 0
+            ).isActive = true
+            
+            textField.topAnchor.constraint(
+                equalTo: customInputView.topAnchor,
+                constant: 8
+            ).isActive = true
+            
+            textField.bottomAnchor.constraint(
+                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+                constant: -8
+            ).isActive = true
+            
+            sendButton.leadingAnchor.constraint(
+                equalTo: textField.trailingAnchor,
+                constant: 0
+            ).isActive = true
+            
+            sendButton.trailingAnchor.constraint(
+                equalTo: customInputView.trailingAnchor,
+                constant: -8
+            ).isActive = true
+            
+            sendButton.bottomAnchor.constraint(
+                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+                constant: -8
+            ).isActive = true
+        }
+        return customInputView
+    }
+    override var canBecomeFirstResponder: Bool {  return true  }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         messagesListener?.remove()
@@ -74,6 +170,34 @@ class MainPostCommentVC: UIViewController {
     }
     //MARK: - selectors
     @objc func optionsLauncher(){
+        
+    }
+    @objc func sendMsg(){
+        guard let text = textField.text else { return }
+        
+        if textField.hasText {
+            textField.text = ""
+            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+        
+            MainPostCommentService.shared.setNewComment(currentUser: currentUser, target: target, commentText: text, postId: post.postId, commentId: commentId) { (_val) in
+                
+            }
+            
+//             CommentService.shared.setNewComment(currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (_val) in
+//                guard let sself = self else { return }
+//                 if _val {
+////                    NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+//                    for item in text.findMentionText(){
+////                        NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+//                    }
+//                 }
+//
+//             }
+//        }
+        }
+        
+    }
+    @objc func showMenu(){
         
     }
     //MARK: -functions
@@ -91,7 +215,7 @@ class MainPostCommentVC: UIViewController {
             if post.data.isEmpty{
                 tableView.register(SellBuyCommentHeader.self, forHeaderFooterViewReuseIdentifier: sell_buy_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-                self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 50 + 5
+                self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 50 + 35
                 self.tableView.reloadData()
             }else{
                 
@@ -126,7 +250,30 @@ class MainPostCommentVC: UIViewController {
         
         return action
     }
-
+    func getComments(currentUser : CurrentUser , postID : String ){        
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+        messagesListener = db.addSnapshotListener({ (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documentChanges else {
+                    
+                    return
+                }
+                if !snap.isEmpty {
+                    for item in snap{
+                        if item.type == .added{
+                            self.comment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
+                            self.tableView.reloadData()
+                        }
+                        
+                    }
+                }
+            }
+        })
+    }
 
 }
 //MARK:-  UITableViewDataSource, UITableViewDelegate
@@ -174,14 +321,14 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         if comment[indexPath.row].senderUid == currentUser.uid {
-            let edit = CommentService.shared.editAction(at: indexPath)
+            let edit = MainPostCommentService.shared.editAction(at: indexPath)
             let delete = deleteAction(at: indexPath)
             
             return UISwipeActionsConfiguration(actions: [delete,edit])
         }
         else
         {
-            let report = CommentService.shared.reportAction(at: indexPath)
+            let report = MainPostCommentService.shared.reportAction(at: indexPath)
             return UISwipeActionsConfiguration(actions: [report])
         }
         
@@ -189,7 +336,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let reply = CommentService.shared.replyAction(at: indexPath, tableView: self.tableView, comment: comment[indexPath.row], currentUser: currentUser, post: post)
+        let reply = MainPostCommentService.shared.replyAction(at: indexPath, tableView: self.tableView, comment: comment[indexPath.row], currentUser: currentUser, post: post)
         return UISwipeActionsConfiguration(actions: [reply])
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -230,7 +377,7 @@ extension MainPostCommentVC : CommentDelegate{
     func likeClik(cell: CommentMsgCell) {
         guard let comment = cell.comment else { return }
         
-        CommentService.shared.setLike(comment: comment, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+        MainPostCommentService.shared.setLike(comment: comment, tableView: tableView, currentUser: currentUser, post: post) { (_) in
             
         }
     }
