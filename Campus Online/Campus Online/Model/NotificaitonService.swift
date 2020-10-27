@@ -216,6 +216,56 @@ class NotificaitonService{
         }
     }
     
+    func send_main_post_comment_like(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
+        if post.senderUid == currentUser.uid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(post.senderUid).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.lessonName as Any] as [String : Any]
+                db.setData(dic, merge: true)
+                
+            }
+            }
+    }
+    
+    func send_mainpost_like_comment_notification(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
+        if post.senderUid == currentUser.uid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(post.senderUid).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.lessonName as Any] as [String : Any]
+                db.setData(dic, merge: true) }
+            }
+    }
+    
 }
 struct NotificationGetter {
     let uid : String
