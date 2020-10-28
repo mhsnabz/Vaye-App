@@ -174,21 +174,15 @@ class MainPostCommentVC: UIViewController {
     }
     @objc func sendMsg(){
         guard let text = textField.text else { return }
-        
         if textField.hasText {
             textField.text = ""
             let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
-        
             MainPostCommentService.shared.setNewComment(currentUser: currentUser, target: target, commentText: text, postId: post.postId, commentId: commentId) { (_val) in
-             
             }
             MainPostCommentService.shared.send_comment_notificaiton(post: post, currentUser: currentUser, text: text, type: NotificationType.comment_home.desprition)
             for item in text.findMentionText(){
-                MainPostCommentService.shared.send_comment_mention_user(username: item, currentUser: currentUser, text: text, type: NotificationType.comment_mention.desprition, post: post)
-            }
-
+                MainPostCommentService.shared.send_comment_mention_user(username: item, currentUser: currentUser, text: text, type: NotificationType.comment_mention.desprition, post: post)}
         }
-        
     }
     @objc func showMenu(){
         
