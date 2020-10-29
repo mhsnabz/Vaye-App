@@ -145,9 +145,7 @@ protocol CommentVCHeaderDelegate : class {
 protocol SellBuyCommentHeaderDelegate : class {
     func like (for header : SellBuyCommentHeader)
     func dislike (for header : SellBuyCommentHeader)
-
     func showProfile(for header : SellBuyCommentHeader)
-    func goProfileByMention (userName : String)
     func clickMention(username : String)
     func mapClik(for header : SellBuyCommentHeader)
 }

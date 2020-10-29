@@ -406,10 +406,10 @@ extension CampusOnlineVC :  BuySellVCDelegate{
     
     func linkClick(for cell: BuyAndSellView)
     {
-        guard let url = URL(string: (cell.mainPost?.link)!) else {
-            return
-        }
-        UIApplication.shared.open(url)
+//        guard let url = URL(string: (cell.mainPost?.link)!) else {
+//            return
+//        }
+//        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellView) {

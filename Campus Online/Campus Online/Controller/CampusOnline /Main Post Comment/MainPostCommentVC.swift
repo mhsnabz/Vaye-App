@@ -8,6 +8,8 @@
 
 import UIKit
 import FirebaseFirestore
+import MapKit
+import CoreLocation
 private let msgCellID = "msgCellID"
 private let sell_buy_header = "cell-buy-header"
 private let sell_buy_data_header = "cell-buy-data-header"
@@ -22,7 +24,7 @@ class MainPostCommentVC: UIViewController {
     let textField = FlexibleTextView()
     weak var messagesListener : ListenerRegistration?
     let target : String
-     var tableView : UITableView = {
+    var tableView : UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
@@ -38,7 +40,7 @@ class MainPostCommentVC: UIViewController {
         configureUI()
         hideKeyboardWhenTappedAround()
         getComments(currentUser: currentUser, postID: post.postId)
-
+        
     }
     init(currentUser : CurrentUser , post : MainPostModel , target : String) {
         self.currentUser = currentUser
@@ -52,14 +54,14 @@ class MainPostCommentVC: UIViewController {
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
         navigationItem.title = post.lessonName
-
+        
     }
-  
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
         messagesListener?.remove()
-//        navigationController?.navigationBar.isHidden = true
+        //        navigationController?.navigationBar.isHidden = true
     }
     
     
@@ -73,14 +75,14 @@ class MainPostCommentVC: UIViewController {
             textField.font = UIFont(name: Utilities.font, size: 14)
             textField.layer.cornerRadius = 5
             customInputView.autoresizingMask = .flexibleHeight
-        
+            
             customInputView.addSubview(textField)
             
             sendButton = UIButton()
             sendButton.isEnabled = true
             sendButton.setImage(UIImage(named: "send")!.withRenderingMode(.alwaysOriginal), for: .normal)
             sendButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
-                               sendButton.addTarget(self, action: #selector(sendMsg), for: .touchUpInside)
+            sendButton.addTarget(self, action: #selector(sendMsg), for: .touchUpInside)
             customInputView?.addSubview(sendButton)
             addMediaButtom = UIButton()
             addMediaButtom.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -88,7 +90,7 @@ class MainPostCommentVC: UIViewController {
             //addMediaButtom.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             
             addMediaButtom.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
-           addMediaButtom.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+            addMediaButtom.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
             customInputView?.addSubview(addMediaButtom)
             
             textField.translatesAutoresizingMaskIntoConstraints = false
@@ -159,7 +161,7 @@ class MainPostCommentVC: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         messagesListener?.remove()
-//        navigationController?.navigationBar.isHidden = true
+        //        navigationController?.navigationBar.isHidden = true
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -207,7 +209,7 @@ class MainPostCommentVC: UIViewController {
             }else{
                 
             }
-       
+            
         }else if target == PostType.camping.despription {
             
         }else if target == PostType.foodMe.despription {
@@ -232,7 +234,7 @@ class MainPostCommentVC: UIViewController {
             sself.tableView.reloadData()
         }
         action.backgroundColor = .red
-    
+        
         action.image = UIImage(named: "remove")
         
         return action
@@ -261,7 +263,50 @@ class MainPostCommentVC: UIViewController {
             }
         })
     }
-
+    
+    private func showUserProfile(post : MainPostModel){
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+            
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                
+                
+            }
+        }
+    }
+    func clickUserName(username: String) {
+        if "@\(username)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                
+            }
+        }
+    }
+    private func openInMap(lat  : Double!  , longLat : Double! , locationName : String!){
+        let coordinate = CLLocationCoordinate2DMake(lat, longLat)
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        mapItem.name = locationName
+        
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
 }
 //MARK:-  UITableViewDataSource, UITableViewDelegate
 extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
@@ -290,7 +335,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
             cell.totalRepliedCount.isHidden = true
             cell.contentView.isUserInteractionEnabled = false
             cell.currentUser  = currentUser
-
+            
             cell.delegate = self
             return cell
         }
@@ -303,7 +348,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
             let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
             return 35 + h! + 45
         }
-       
+        
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -319,7 +364,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
             return UISwipeActionsConfiguration(actions: [report])
         }
         
-     
+        
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -329,7 +374,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
-     
+        
         cell.currentUser = currentUser
         cell.delegate = self
         cell.backgroundColor = .white
@@ -340,21 +385,21 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
         cell.post = post
         return cell
         
-//        if target == PostType.buySell.despription {
-//            if post.data.isEmpty{
-//                let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
-//                return header
-//            }else{
-//
-//            }
-//
-//        }else if target == PostType.camping.despription {
-//
-//        }else if target == PostType.foodMe.despription {
-//
-//        }else PostType.party.despription{
-//
-//        }
+        //        if target == PostType.buySell.despription {
+        //            if post.data.isEmpty{
+        //                let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
+        //                return header
+        //            }else{
+        //
+        //            }
+        //
+        //        }else if target == PostType.camping.despription {
+        //
+        //        }else if target == PostType.foodMe.despription {
+        //
+        //        }else PostType.party.despription{
+        //
+        //        }
     }
     
     
@@ -386,27 +431,40 @@ extension MainPostCommentVC : CommentDelegate{
 //MARK:- SellBuyDelegate
 extension MainPostCommentVC : SellBuyCommentHeaderDelegate {
     func like(for header: SellBuyCommentHeader) {
-        print("SellBuyCommentHeaderDelegate like click")
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderLikePost(target: MainPostLikeTarget.buy_sell.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for header: SellBuyCommentHeader) {
-        print("SellBuyCommentHeaderDelegate like click")
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderDislike(target: MainPostLikeTarget.buy_sell.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func showProfile(for header: SellBuyCommentHeader) {
-        print("SellBuyCommentHeaderDelegate shoq profile click")
+        guard  let post = header.post else {
+            return
+        }
+        showUserProfile(post: post)
     }
     
     func goProfileByMention(userName: String) {
-        print("SellBuyCommentHeaderDelegate mention click")
+        
     }
     
     func clickMention(username: String) {
-        print("SellBuyCommentHeaderDelegate link click")
+        clickUserName(username: username)
     }
     
     func mapClik(for header: SellBuyCommentHeader) {
-        print("SellBuyCommentHeaderDelegate map click")
+        guard let post = header.post else { return }
+        guard let locaitonName = post.locationName else { return }
+        guard let lat = post.geoPoint?.latitude else { return }
+        guard let longLat = post.geoPoint?.longitude else { return }
+        openInMap(lat: lat, longLat: longLat, locationName: locaitonName)
     }
     
     
