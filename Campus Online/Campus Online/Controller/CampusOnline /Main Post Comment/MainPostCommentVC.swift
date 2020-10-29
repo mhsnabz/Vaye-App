@@ -331,7 +331,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
         let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
      
         cell.currentUser = currentUser
-        
+        cell.delegate = self
         cell.backgroundColor = .white
         let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -379,6 +379,34 @@ extension MainPostCommentVC : CommentDelegate{
     
     func goProfile(cell: CommentMsgCell) {
         
+    }
+    
+    
+}
+//MARK:- SellBuyDelegate
+extension MainPostCommentVC : SellBuyCommentHeaderDelegate {
+    func like(for header: SellBuyCommentHeader) {
+        print("SellBuyCommentHeaderDelegate like click")
+    }
+    
+    func dislike(for header: SellBuyCommentHeader) {
+        print("SellBuyCommentHeaderDelegate like click")
+    }
+    
+    func showProfile(for header: SellBuyCommentHeader) {
+        print("SellBuyCommentHeaderDelegate shoq profile click")
+    }
+    
+    func goProfileByMention(userName: String) {
+        print("SellBuyCommentHeaderDelegate mention click")
+    }
+    
+    func clickMention(username: String) {
+        print("SellBuyCommentHeaderDelegate link click")
+    }
+    
+    func mapClik(for header: SellBuyCommentHeader) {
+        print("SellBuyCommentHeaderDelegate map click")
     }
     
     

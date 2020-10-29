@@ -11,7 +11,7 @@ import ActiveLabel
 import SDWebImage
 class SellBuyCommentHeader : UITableViewHeaderFooterView{
     
-
+    weak var delegate : SellBuyCommentHeaderDelegate?
     var currentUser : CurrentUser?
    weak var post : MainPostModel?{
     didSet{
@@ -212,7 +212,7 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         mapBtn.layer.shadowRadius = 3.0
         mapBtn.layer.masksToBounds = false
         
-        comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
+
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
 
@@ -230,26 +230,19 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
     }
     
     //MARK:-selectors
-    @objc func commentClick() {
-//        delegate?.comment(for: self)
-    }
+ 
     @objc func likeClick(){
-//        delegate?.like(for: self)
+        delegate?.like(for: self)
     }
     @objc func dislikeClick(){
-//        delegate?.dislike(for: self)
-    }
+        delegate?.dislike(for: self)
+        }
 
-    @objc func linkClick(){
-//        delegate?.linkClick(for : self)
-    }
     @objc func showProfile(){
-        print("click")
-//        delegate?.showProfile(for : self)
+        delegate?.showProfile(for: self)
     }
     @objc func mapClick(){
-        print("map click")
-//        delegate?.mapClick(for: self)
+        delegate?.mapClik(for: self)
     }
     //MARK: -functions
     private func checkIsFav(user : CurrentUser , post : MainPostModel? , completion : @escaping(Bool) ->Void)
@@ -297,7 +290,7 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         like_lbl.text = post.likes.count.description
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
-        mapBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
+
         price = NSMutableAttributedString(string: "Fiyat : ", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
         if post.value.isEmpty {
             price.append(NSAttributedString(string: " Fiyat Belirtilmemiş", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
@@ -333,7 +326,8 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in
             guard let sself = self else { return }
-//            sself.delegate?.goProfileByMention(userName : username)
+            sself.delegate?.clickMention(username: username)
+                
         }
     }
 }

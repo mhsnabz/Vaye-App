@@ -133,15 +133,23 @@ protocol CommentVCDataDelegate : class {
     func goProfileByMention (userName : String)
 }
 protocol CommentVCHeaderDelegate : class {
-
     func like (for header : CommentVCHeader)
     func dislike (for header : CommentVCHeader)
     func fav (for header : CommentVCHeader)
-
     func linkClick(for header : CommentVCHeader)
     func showProfile(for header : CommentVCHeader)
     func goProfileByMention (userName : String)
     func clickMention(username : String)
+}
+
+protocol SellBuyCommentHeaderDelegate : class {
+    func like (for header : SellBuyCommentHeader)
+    func dislike (for header : SellBuyCommentHeader)
+
+    func showProfile(for header : SellBuyCommentHeader)
+    func goProfileByMention (userName : String)
+    func clickMention(username : String)
+    func mapClik(for header : SellBuyCommentHeader)
 }
 
 protocol DataViewClick : class {
