@@ -435,7 +435,9 @@ extension MainPostCommentVC : CommentDelegate{
     
     func seeAllReplies(cell: CommentMsgCell)
     {
-        
+        guard let comment = cell.comment else { return }
+        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func goProfile(cell: CommentMsgCell) {
