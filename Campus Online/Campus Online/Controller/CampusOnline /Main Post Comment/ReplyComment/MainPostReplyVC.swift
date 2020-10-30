@@ -11,7 +11,7 @@ private let msgCellID = "msg_cell_id"
 private let headerID = "header_id"
 import FirebaseFirestore
 class MainPostReplyVC: UIViewController {
-
+    
     //MARK:- variables
     var comment : CommentModel
     var currentUser : CurrentUser
@@ -23,20 +23,20 @@ class MainPostReplyVC: UIViewController {
     var repliedComment = [CommentModel]()
     weak var messagesListener : ListenerRegistration?
     var tableView : UITableView = {
-       let tableView = UITableView()
-       tableView.separatorStyle = .none
-       tableView.backgroundColor = .white
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .white
         
-       return tableView
-   }()
+        return tableView
+    }()
     //MARK:- lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureUI()
         getComments(currentUser: currentUser)
-       
-       
+        
+        
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -47,7 +47,7 @@ class MainPostReplyVC: UIViewController {
         super.viewWillDisappear(animated)
         messagesListener?.remove()
         navigationController?.navigationBar.isHidden = true
-
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -63,7 +63,7 @@ class MainPostReplyVC: UIViewController {
         self.currentUser = currentUser
         self.post = post
         super.init(nibName: nil, bundle: nil)
-       
+        
     }
     
     required init?(coder: NSCoder) {
@@ -78,14 +78,14 @@ class MainPostReplyVC: UIViewController {
             textField.font = UIFont(name: Utilities.font, size: 14)
             textField.layer.cornerRadius = 5
             customInputView.autoresizingMask = .flexibleHeight
-        
+            
             customInputView.addSubview(textField)
             
             sendButton = UIButton()
             sendButton.isEnabled = true
             sendButton.setImage(UIImage(named: "send")!.withRenderingMode(.alwaysOriginal), for: .normal)
             sendButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
-                               sendButton.addTarget(self, action: #selector(sendMsg), for: .touchUpInside)
+            sendButton.addTarget(self, action: #selector(sendMsg), for: .touchUpInside)
             customInputView?.addSubview(sendButton)
             addMediaButtom = UIButton()
             addMediaButtom.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -93,7 +93,7 @@ class MainPostReplyVC: UIViewController {
             //addMediaButtom.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             
             addMediaButtom.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
-           addMediaButtom.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+            addMediaButtom.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
             customInputView?.addSubview(addMediaButtom)
             
             textField.translatesAutoresizingMaskIntoConstraints = false
@@ -173,25 +173,25 @@ class MainPostReplyVC: UIViewController {
                 
             }
             
-//            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
-//                guard let sself = self else { return }
-//                print("comment succeesed ")
-//                NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
-//                for item in text.findMentionText(){
-//                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
-//                }
-//            }
+            //            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
+            //                guard let sself = self else { return }
+            //                print("comment succeesed ")
+            //                NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
+            //                for item in text.findMentionText(){
+            //                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+            //                }
+            //            }
         }
         
-       
+        
     }
-      
+    
     @objc func showMenu(){
         print("menu show")
     }
     
     
-//    MARK: -functions
+    //    MARK: -functions
     fileprivate func configureUI(){
         view.addSubview(tableView)
         tableView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
@@ -250,8 +250,8 @@ class MainPostReplyVC: UIViewController {
                 }
             }
         }
-    
-       
+        
+        
     }
     func replyAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
@@ -259,7 +259,7 @@ class MainPostReplyVC: UIViewController {
             sself.tableView.reloadData()
             self?.textField.becomeFirstResponder()
             sself.textField.text.append(" \(sself.repliedComment[indexPath.row].username!) ")
-          
+            
         }
         action.backgroundColor = .mainColor()
         
@@ -274,7 +274,7 @@ class MainPostReplyVC: UIViewController {
             sself.tableView.reloadData()
         }
         action.backgroundColor = .red
-    
+        
         action.image = UIImage(named: "remove")
         return action
     }
@@ -313,20 +313,20 @@ extension MainPostReplyVC : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let h = repliedComment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 14)!)
         return 35 + h! + 45
-
+        
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
+        
         if repliedComment[indexPath.row].senderUid == currentUser.uid {
-           
+            
             let delete = deleteAction(at: indexPath)
-
+            
             return UISwipeActionsConfiguration(actions: [delete])
         }else{
             return nil
         }
         
-
+        
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -338,21 +338,26 @@ extension MainPostReplyVC : UITableViewDataSource , UITableViewDelegate {
 }
 extension MainPostReplyVC : CommentDelegate {
     func likeClik(cell: CommentMsgCell) {
-       guard let repliedComment = cell.comment else { return }
-       
-//        setLike( repliedComment : repliedComment, commentID: comment.commentId!) { (_) in
-//
-//        }
+        //       guard let repliedComment = cell.comment else { return }
+        
+        //        setLike( repliedComment : repliedComment, commentID: comment.commentId!) { (_) in
+        //
+        //        }
     }
     
-    func replyClick(cell: CommentMsgCell) {
-        
+    func replyClick(cell: CommentMsgCell)
+    {
+        guard let comment = cell.comment else { return }
+        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func seeAllReplies(cell: CommentMsgCell) {
-        
+        guard let comment = cell.comment else { return }
+        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
     }
-     func goProfile(cell: CommentMsgCell) {
+    func goProfile(cell: CommentMsgCell) {
         Utilities.waitProgress(msg: nil)
         guard let comment = cell.comment else { return }
         if comment.senderUid == currentUser.uid {
@@ -366,14 +371,14 @@ extension MainPostReplyVC : CommentDelegate {
             UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in
                 let vc = OtherUserProfile(currentUser: self.currentUser, otherUser: user)
                 vc.modalPresentationStyle = .fullScreen
-
+                
                 self.present(vc, animated: true, completion: {
-                                Utilities.dismissProgress()
+                    Utilities.dismissProgress()
                     
                 })
             }
         }
-
+        
     }
     
 }
