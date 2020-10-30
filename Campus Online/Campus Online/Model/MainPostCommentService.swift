@@ -11,7 +11,7 @@ class MainPostCommentService {
     static var shared = MainPostCommentService()
     func setNewComment(currentUser : CurrentUser ,target : String,commentText : String, postId : String ,commentId : String ,completion : @escaping(Bool)->Void){
         
-    //main-post/sell-buy/post/1603644806086/cmment/Sb4DXq5THBMOcE0J0K5c
+        //main-post/sell-buy/post/1603644806086/cmment/Sb4DXq5THBMOcE0J0K5c
         let db = Firestore.firestore().collection("main-post")
             .document(target)
             .collection("post")
@@ -86,7 +86,7 @@ class MainPostCommentService {
                         comment.append(CommentModel.init(ID : item.documentID , dic: item.data()))
                     }
                     completion(comment)
-                   
+                    
                 }else{
                     completion([])
                 }
@@ -99,8 +99,8 @@ class MainPostCommentService {
     
     func setRepliedComment(currentUser : CurrentUser ,target : String, targetCommentId : String , commentId : String,commentText : String, postId : String , completion : @escaping(Bool) ->Void)
     {
-    
-      //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601035854117/1601037120899
+        
+        //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601035854117/1601037120899
         
         let db = Firestore.firestore().collection("main-post")
             .document(target)
@@ -122,7 +122,7 @@ class MainPostCommentService {
             guard let sself = self else { return }
             if err == nil {
                 sself.setRepliedCommentId(target : target ,targetCommentID: targetCommentId, commentId: commentId, currentUser: currentUser, postId: postId) { (_) in
-                 completion(true)
+                    completion(true)
                 }
             }
         }
@@ -135,7 +135,7 @@ class MainPostCommentService {
             .document(postId)
             .collection("comment")
             .document(targetCommentID)
-    
+        
         db.updateData(["replies":FieldValue.arrayUnion([commentId as Any])]) { (err) in
             if err == nil {
                 completion(true)
@@ -153,8 +153,8 @@ class MainPostCommentService {
         action.image = UIImage(named: "duzenle")
         return action
     }
- 
-  
+    
+    
     func reportAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Şikayet Et") { (action, view, completion) in
             completion(true)
@@ -176,11 +176,11 @@ class MainPostCommentService {
                 .document(post.postId)
                 .collection("comment").document(comment.commentId!)
             db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
-
+                
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-//                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    //                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
             }
         }else{
@@ -192,15 +192,15 @@ class MainPostCommentService {
                 .document(post.postId)
                 .collection("comment").document(comment.commentId!)
             db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {
-            (err) in
-      
+                (err) in
+                
                 if err != nil{
                     
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-//                    NotificaitonService.shared.remove_comment_like(post: post, currentUser: currentUser)
+                    //                    NotificaitonService.shared.remove_comment_like(post: post, currentUser: currentUser)
                 }
-        }}
+            }}
     }
     
     func remove_comment_like(){
@@ -229,7 +229,7 @@ class MainPostCommentService {
                 db.setData(dic, merge: true)
                 
             }
-            }
+        }
     }
     
     func send_comment_mention_user(username : String ,currentUser : CurrentUser, text : String , type : String , post : MainPostModel){
@@ -261,24 +261,46 @@ class MainPostCommentService {
             }
         }  }
     
-    func getRepliedComment(currentUser : CurrentUser ,comment : CommentModel, post : MainPostModel, completion : @escaping([CommentModel]) -> Void){
-        var _comment = [CommentModel]()
+    
+    func setRepliedComment(currentUser : CurrentUser ,post : MainPostModel , comment : CommentModel , targetCommentId : String , commentId : String,commentText : String, postId : String , completion : @escaping(Bool) ->Void)
+    {
+        
+        //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
         let db = Firestore.firestore().collection("main-post")
             .document(post.postType)
             .collection("post")
             .document(post.postId)
             .collection("comment-replied")
-            .document("comment").collection(comment.commentId!)
-        db.getDocuments { (querySnap, err) in
+            .document("comment").collection(targetCommentId).document(commentId)
+        
+        
+        let dic = ["senderName" : currentUser.name as Any, "senderUid" : currentUser.uid as Any,
+                   "username" : currentUser.username as Any,
+                   "time":FieldValue.serverTimestamp() ,
+                   "comment":commentText ,
+                   "commentId":commentId,
+                   "postId":postId,
+                   "likes":[],"replies" : [] , "senderImage" : currentUser.thumb_image as Any] as [String : Any]
+        db.setData(dic, merge: true) {[weak self] (err) in
+            guard let sself = self else { return }
             if err == nil {
-                guard let snap = querySnap else { return }
-                if snap.isEmpty{
-                    completion(_comment)
-                }else{
-                    for item in snap.documents{
-                        _comment.append(CommentModel.init(ID: item.documentID, dic: item.data()))
-                    }
+                sself.setRepliedCommentId(targetCommentID: targetCommentId, commentId: commentId, post : post, currentUser: currentUser, postId: postId) { (_) in
+                    completion(true)
                 }
+            }
+        }
+    }
+    
+    private func setRepliedCommentId(targetCommentID : String , commentId : String, post : MainPostModel, currentUser : CurrentUser , postId : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId).collection("comment").document(targetCommentID)
+        
+        db.updateData(["replies":FieldValue.arrayUnion([commentId as Any])]) { (err) in
+            if err == nil {
+                completion(true)
+                
             }
         }
     }

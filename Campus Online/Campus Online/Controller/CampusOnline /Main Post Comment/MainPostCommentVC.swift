@@ -433,12 +433,29 @@ extension MainPostCommentVC : CommentDelegate{
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    func seeAllReplies(cell: CommentMsgCell) {
+    func seeAllReplies(cell: CommentMsgCell)
+    {
         
     }
     
     func goProfile(cell: CommentMsgCell) {
-        
+        guard let comment = cell.comment else { return }
+        if comment.senderUid == currentUser.uid
+        {
+            let vc = ProfileVC(currentUser: currentUser)
+            navigationController?.pushViewController(vc, animated: true)
+        }else{
+            Utilities.waitProgress(msg: nil)
+            guard let uid = comment.senderUid else {
+                Utilities.dismissProgress()
+                return}
+            UserService.shared.getOtherUser(userId: uid) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+            }
+        }
     }
     
     

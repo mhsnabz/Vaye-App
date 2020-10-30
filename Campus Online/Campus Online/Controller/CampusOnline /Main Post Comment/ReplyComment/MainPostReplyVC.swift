@@ -34,11 +34,8 @@ class MainPostReplyVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureUI()
-        MainPostCommentService.shared.getRepliedComment(currentUser: currentUser, comment: comment, post: post) {[weak self] (comments) in
-            guard let sself = self else { return }
-            sself.repliedComment = comments
-            sself.tableView.reloadData()
-        }
+        getComments(currentUser: currentUser)
+       
        
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -167,12 +164,15 @@ class MainPostReplyVC: UIViewController {
     //MARK:-selectors
     @objc func sendMsg()
     {
-//        guard let text = textField.text else { return }
-//        print(text.findMentionText())
-//       
-//        if textField.hasText {
-//            textField.text = ""
-//            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+        guard let text = textField.text else { return }
+        print(text.findMentionText())
+        if textField.hasText {
+            textField.text = ""
+            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+            MainPostCommentService.shared.setRepliedComment(currentUser: currentUser, post: post, comment: comment, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: post.postId) { (_) in
+                
+            }
+            
 //            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
 //                guard let sself = self else { return }
 //                print("comment succeesed ")
@@ -181,7 +181,7 @@ class MainPostReplyVC: UIViewController {
 //                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
 //                }
 //            }
-//        }
+        }
         
        
     }
@@ -204,6 +204,35 @@ class MainPostReplyVC: UIViewController {
         self.tableView.sectionHeaderHeight = 34 + h! + 10
         
     }
+    
+    
+    func getComments(currentUser : CurrentUser ){
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment-replied")
+            .document("comment").collection(comment.commentId!)
+        messagesListener = db.addSnapshotListener({ (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documentChanges else {
+                    
+                    return
+                }
+                if !snap.isEmpty {
+                    for item in snap{
+                        if item.type == .added{
+                            self.repliedComment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
+                            self.tableView.reloadData()
+                        }
+                        
+                    }
+                }
+            }
+        })
+        
+    }
+    
     func removeComment(commentID : String){
         
         let db = Firestore.firestore().collection(currentUser.short_school)
