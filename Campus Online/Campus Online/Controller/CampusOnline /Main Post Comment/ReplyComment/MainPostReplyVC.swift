@@ -1,8 +1,8 @@
 //
-//  RepliesComment.swift
+//  MainPostReplyVC.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 25.09.2020.
+//  Created by mahsun abuzeyitoğlu on 30.10.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
@@ -10,13 +10,12 @@ import UIKit
 private let msgCellID = "msg_cell_id"
 private let headerID = "header_id"
 import FirebaseFirestore
-class RepliesComment: UIViewController {
+class MainPostReplyVC: UIViewController {
 
-    
     //MARK:- variables
     var comment : CommentModel
     var currentUser : CurrentUser
-    var post : LessonPostModel
+    var post : MainPostModel
     var customInputView: UIView!
     var sendButton: UIButton!
     var addMediaButtom: UIButton!
@@ -35,7 +34,11 @@ class RepliesComment: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureUI()
-        getComments(currentUser: currentUser)
+        MainPostCommentService.shared.getRepliedComment(currentUser: currentUser, comment: comment, post: post) {[weak self] (comments) in
+            guard let sself = self else { return }
+            sself.repliedComment = comments
+            sself.tableView.reloadData()
+        }
        
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -57,13 +60,15 @@ class RepliesComment: UIViewController {
         self.navigationItem.title = "Yanıtlar"
     }
     
-    init(comment : CommentModel , currentUser : CurrentUser , post : LessonPostModel) {
+    
+    init(comment : CommentModel , currentUser : CurrentUser , post : MainPostModel) {
         self.comment = comment
         self.currentUser = currentUser
         self.post = post
         super.init(nibName: nil, bundle: nil)
        
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -158,29 +163,25 @@ class RepliesComment: UIViewController {
         return customInputView
     }
     override var canBecomeFirstResponder: Bool {  return true  }
-
-    
-    //MARK: -functions
-    
     
     //MARK:-selectors
     @objc func sendMsg()
     {
-        guard let text = textField.text else { return }
-        print(text.findMentionText())
-       
-        if textField.hasText {
-            textField.text = ""
-            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
-            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
-                guard let sself = self else { return }
-                print("comment succeesed ")
-                NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
-                for item in text.findMentionText(){
-                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post) 
-                }
-            }
-        }
+//        guard let text = textField.text else { return }
+//        print(text.findMentionText())
+//       
+//        if textField.hasText {
+//            textField.text = ""
+//            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+//            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
+//                guard let sself = self else { return }
+//                print("comment succeesed ")
+//                NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
+//                for item in text.findMentionText(){
+//                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+//                }
+//            }
+//        }
         
        
     }
@@ -189,75 +190,9 @@ class RepliesComment: UIViewController {
         print("menu show")
     }
     
-    //MARK:- functions
-    //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601035854117
-    func getComments(currentUser : CurrentUser ){
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(comment.postId!).collection("comment-replied")
-            .document("comment").collection(comment.commentId!)
-        messagesListener = db.addSnapshotListener({ (querySnap, err) in
-            if err == nil {
-                guard let snap = querySnap?.documentChanges else {
-                    
-                    return
-                }
-                if !snap.isEmpty {
-                    for item in snap{
-                        if item.type == .added{
-                            self.repliedComment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
-                            self.tableView.reloadData()
-                        }
-                        
-                    }
-                }
-            }
-        })
-        
-    }
     
-    private func setLike(repliedComment : CommentModel , commentID : String , completion : @escaping(Bool) ->Void){
-        
-        //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601045739666/1601063909445
-
-        if !(repliedComment.likes?.contains(currentUser.uid))!{
-            
-            repliedComment.likes?.append(currentUser.uid)
-            tableView.reloadData()
-            let db = Firestore.firestore().collection(currentUser.short_school)
-                .document("lesson-post").collection("post").document(repliedComment.postId!).collection("comment-replied")
-                .document("comment").collection(commentID).document(repliedComment.commentId!)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
-                guard let sself = self else { return }
-                if err != nil{
-                    print("like err \(err?.localizedDescription as Any)")
-                }
-                else{
-                    completion(true)
-                    NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
-               
-                }
-            }
-        }else{
-            repliedComment.likes?.remove(element: currentUser.uid)
-            tableView.reloadData()
-            let db = Firestore.firestore().collection(currentUser.short_school)
-                .document("lesson-post").collection("post").document(repliedComment.postId!).collection("comment-replied")
-                .document("comment").collection(commentID).document(repliedComment.commentId!)
-            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
-                guard let sself = self else { return }
-                if err != nil{
-                    print("like err \(err?.localizedDescription as Any)")
-                }else{
-                    completion(true)
-                    NotificaitonService.shared.remove_comment_like(post: sself.post, currentUser:sself.currentUser)
-                    
-                }
-        }
-    }
-    }
-    
+//    MARK: -functions
     fileprivate func configureUI(){
-        
         view.addSubview(tableView)
         tableView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         tableView.dataSource = self
@@ -314,9 +249,10 @@ class RepliesComment: UIViewController {
         action.image = UIImage(named: "remove")
         return action
     }
-    
 }
-extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
+
+//MARK: UITableViewDataSource ,UITableViewDelegate
+extension MainPostReplyVC : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return repliedComment.count
     }
@@ -371,13 +307,13 @@ extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
     
     
 }
-extension RepliesComment : CommentDelegate {
+extension MainPostReplyVC : CommentDelegate {
     func likeClik(cell: CommentMsgCell) {
        guard let repliedComment = cell.comment else { return }
        
-        setLike( repliedComment : repliedComment, commentID: comment.commentId!) { (_) in
-
-        }
+//        setLike( repliedComment : repliedComment, commentID: comment.commentId!) { (_) in
+//
+//        }
     }
     
     func replyClick(cell: CommentMsgCell) {

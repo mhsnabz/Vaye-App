@@ -153,19 +153,7 @@ class MainPostCommentService {
         action.image = UIImage(named: "duzenle")
         return action
     }
-    func replyAction(at indexPath :IndexPath , tableView : UITableView , comment : CommentModel , currentUser : CurrentUser , post : MainPostModel) ->UIContextualAction {
-        let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
-//            guard let sself = self  else { return }
-            tableView.reloadData()
-//            let vc = RepliesComment(comment : comment , currentUser : currentUser , post: post)
-         
-//            sself.navigationController?.pushViewController(vc, animated: true)
-        }
-        action.backgroundColor = .mainColor()
-        
-        action.image = UIImage(named: "reply")
-        return action
-    }
+ 
   
     func reportAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Şikayet Et") { (action, view, completion) in
@@ -272,4 +260,26 @@ class MainPostCommentService {
                 
             }
         }  }
+    
+    func getRepliedComment(currentUser : CurrentUser ,comment : CommentModel, post : MainPostModel, completion : @escaping([CommentModel]) -> Void){
+        var _comment = [CommentModel]()
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment-replied")
+            .document("comment").collection(comment.commentId!)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty{
+                    completion(_comment)
+                }else{
+                    for item in snap.documents{
+                        _comment.append(CommentModel.init(ID: item.documentID, dic: item.data()))
+                    }
+                }
+            }
+        }
+    }
 }

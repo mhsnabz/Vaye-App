@@ -49,8 +49,6 @@ class CampusOnlineVC: UIViewController{
     }()
     lazy var msg_text : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
-        
-        
         return name
     }()
     
@@ -339,6 +337,12 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row], target: mainPost[indexPath.row].postType)
+        navigationController?.pushViewController(vc, animated: true)
+       
     }
     
 }

@@ -70,6 +70,7 @@
 		66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6925277CCA00CB043D /* NotificationLaunher.swift */; };
 		66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6E25277E3500CB043D /* ActionSheetNotification.swift */; };
 		6652F02925176971003462BC /* FirFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6652F02825176971003462BC /* FirFile.swift */; };
+		665BB3FC254C78AF003B4E9E /* MainPostReplyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665BB3FB254C78AF003B4E9E /* MainPostReplyVC.swift */; };
 		665E5CCA24FE5B0C00B5B5E3 /* UploadDataToDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */; };
 		665E5CCE24FE7FD300B5B5E3 /* SelectedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */; };
 		665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */; };
@@ -260,6 +261,7 @@
 		66512F6925277CCA00CB043D /* NotificationLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLaunher.swift; sourceTree = "<group>"; };
 		66512F6E25277E3500CB043D /* ActionSheetNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetNotification.swift; sourceTree = "<group>"; };
 		6652F02825176971003462BC /* FirFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirFile.swift; sourceTree = "<group>"; };
+		665BB3FB254C78AF003B4E9E /* MainPostReplyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostReplyVC.swift; sourceTree = "<group>"; };
 		665E5CC924FE5B0C00B5B5E3 /* UploadDataToDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadDataToDatabase.swift; sourceTree = "<group>"; };
 		665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedData.swift; sourceTree = "<group>"; };
 		665E5CCF24FEEC5D00B5B5E3 /* NewPostPdfCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostPdfCell.swift; sourceTree = "<group>"; };
@@ -607,6 +609,14 @@
 			path = "TabBar Controller";
 			sourceTree = "<group>";
 		};
+		665BB3FA254C7893003B4E9E /* ReplyComment */ = {
+			isa = PBXGroup;
+			children = (
+				665BB3FB254C78AF003B4E9E /* MainPostReplyVC.swift */,
+			);
+			path = ReplyComment;
+			sourceTree = "<group>";
+		};
 		666B2DCF253792E40014C5A7 /* BuySell View */ = {
 			isa = PBXGroup;
 			children = (
@@ -783,6 +793,7 @@
 		6690A6932544E8DF00E88BC0 /* Main Post Comment */ = {
 			isa = PBXGroup;
 			children = (
+				665BB3FA254C7893003B4E9E /* ReplyComment */,
 				6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */,
 			);
 			path = "Main Post Comment";
@@ -1419,6 +1430,7 @@
 				668B6A2E251BAFC200A8902F /* FlexibleTextView.swift in Sources */,
 				66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */,
 				66024C27251D0C77009E8A7E /* CommentModel.swift in Sources */,
+				665BB3FC254C78AF003B4E9E /* MainPostReplyVC.swift in Sources */,
 				660F5ACA2502C98200F72558 /* AddUserLaunher.swift in Sources */,
 				6615FC8D250B38D200776664 /* NewPostHomeVCData.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,

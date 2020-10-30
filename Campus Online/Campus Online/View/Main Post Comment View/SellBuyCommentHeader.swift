@@ -23,7 +23,6 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
                 s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
             }else{
                 s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
-                
             }
         }
         checkIsLiked(user: currentUser, post: post) {[weak self] (_val) in
@@ -33,8 +32,7 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
             }else{
                 s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
             }
-        }
-    }
+        } }
     }
     //MARK: -properties
     
@@ -103,14 +101,11 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 11)
         lbl.textColor = .darkGray
-        
-        
         return lbl
     }()
     let comment : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(named: "comment")?.withRenderingMode(.alwaysOriginal), for: .normal)
-        
         return btn
     }()
     let comment_lbl : UILabel = {

@@ -306,6 +306,19 @@ class MainPostCommentVC: UIViewController {
         
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
+    func replyAction(at indexPath :IndexPath , tableView : UITableView , comment : CommentModel , currentUser : CurrentUser , post : MainPostModel) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
+            guard let sself = self  else { return }
+            tableView.reloadData()
+            let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+            sself.navigationController?.pushViewController(vc, animated: true)
+            
+        }
+        action.backgroundColor = .mainColor()
+        
+        action.image = UIImage(named: "reply")
+        return action
+    }
     
 }
 //MARK:-  UITableViewDataSource, UITableViewDelegate
@@ -368,7 +381,7 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let reply = MainPostCommentService.shared.replyAction(at: indexPath, tableView: self.tableView, comment: comment[indexPath.row], currentUser: currentUser, post: post)
+        let reply = replyAction(at: indexPath, tableView: self.tableView, comment: comment[indexPath.row], currentUser: currentUser, post: post)
         return UISwipeActionsConfiguration(actions: [reply])
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -415,7 +428,9 @@ extension MainPostCommentVC : CommentDelegate{
     }
     
     func replyClick(cell: CommentMsgCell) {
-        
+        guard let comment = cell.comment else { return }
+        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func seeAllReplies(cell: CommentMsgCell) {
