@@ -180,7 +180,7 @@ class MainPostCommentService {
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-                    //                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
             }
         }else{
@@ -198,14 +198,11 @@ class MainPostCommentService {
                     
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-                    //                    NotificaitonService.shared.remove_comment_like(post: post, currentUser: currentUser)
+                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
             }}
     }
     
-    func remove_comment_like(){
-        
-    }
     func send_comment_notificaiton(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
         if post.senderUid == currentUser.uid{
             return
@@ -304,4 +301,45 @@ class MainPostCommentService {
             }
         }
     }
+    func setRepliedCommentLike(repliedComment : CommentModel,likedCommentId : String,currentUser : CurrentUser  , post : MainPostModel, completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(repliedComment.postId!)
+            .collection("comment-replied")
+            .document("comment")
+            .collection(likedCommentId)
+            .document(repliedComment.commentId!)
+        if !(repliedComment.likes?.contains(currentUser.uid))!{
+            
+            repliedComment.likes?.append(currentUser.uid)
+            
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+                if err == nil {
+                    completion(true)
+                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    
+                    
+                }else{
+                    print("err \(err?.localizedDescription as Any)")
+                }
+            }
+        }else{
+            repliedComment.likes?.remove(element: currentUser.uid)
+            
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+                if err == nil {
+                    
+                    completion(true)
+                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, currentUser: currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                }
+                else{
+                    print("err \(err?.localizedDescription as Any)")
+                }
+            }}
+    }
+    
+    
+    
+    
 }

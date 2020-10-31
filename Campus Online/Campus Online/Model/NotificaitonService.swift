@@ -216,7 +216,7 @@ class NotificaitonService{
         }
     }
     
-    func send_main_post_comment_like(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
+    func mainpost_replied_comment_like_notification(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
         if post.senderUid == currentUser.uid{
             return
         }else{
@@ -242,7 +242,7 @@ class NotificaitonService{
             }
     }
     
-    func send_mainpost_like_comment_notification(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
+    func mainpost_remove_replied_comment_like_notificaiton(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
         if post.senderUid == currentUser.uid{
             return
         }else{

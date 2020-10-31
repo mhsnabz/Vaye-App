@@ -213,21 +213,22 @@ class MainPostReplyVC: UIViewController {
             .document(post.postId)
             .collection("comment-replied")
             .document("comment").collection(comment.commentId!)
-        messagesListener = db.addSnapshotListener({ (querySnap, err) in
+        messagesListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            guard let sself = self else { return }
             if err == nil {
                 guard let snap = querySnap?.documentChanges else {
-                    
                     return
                 }
                 if !snap.isEmpty {
                     for item in snap{
                         if item.type == .added{
-                            self.repliedComment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
-                            self.tableView.reloadData()
+                            sself.repliedComment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
+                            sself.tableView.reloadData()
                         }
                         
                     }
                 }
+                sself.tableView.reloadData()
             }
         })
         
@@ -338,11 +339,16 @@ extension MainPostReplyVC : UITableViewDataSource , UITableViewDelegate {
 }
 extension MainPostReplyVC : CommentDelegate {
     func likeClik(cell: CommentMsgCell) {
-        //       guard let repliedComment = cell.comment else { return }
+               guard let repliedComment = cell.comment else { return }
+ 
+        MainPostCommentService.shared.setRepliedCommentLike(repliedComment: repliedComment, likedCommentId: comment.commentId!, currentUser: currentUser, post: post)
+        {[weak self](_val) in
+            guard let sself = self else { return }
+            if _val{
+                sself.tableView.reloadData()
+            }
+        }
         
-        //        setLike( repliedComment : repliedComment, commentID: comment.commentId!) { (_) in
-        //
-        //        }
     }
     
     func replyClick(cell: CommentMsgCell)

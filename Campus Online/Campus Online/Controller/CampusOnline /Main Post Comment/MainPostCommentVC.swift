@@ -422,7 +422,6 @@ extension MainPostCommentVC : CommentDelegate{
         guard let comment = cell.comment else { return }
         
         MainPostCommentService.shared.setLike(comment: comment, tableView: tableView, currentUser: currentUser, post: post) { (_) in
-            
         }
     }
     

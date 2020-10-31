@@ -20,11 +20,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
     var snapShotlistener : ListenerRegistration?
     lazy var totolDataInMB : Float = 0.0
     var currentUserFollowers : [String]
-    var locationName : String?{
-        didSet{
-            print("\(locationName) setted")
-        }
-    }
+    var locationName : String?
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {

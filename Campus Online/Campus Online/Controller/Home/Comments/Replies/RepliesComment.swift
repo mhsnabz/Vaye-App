@@ -252,8 +252,7 @@ class RepliesComment: UIViewController {
                     NotificaitonService.shared.remove_comment_like(post: sself.post, currentUser:sself.currentUser)
                     
                 }
-        }
-    }
+        }}
     }
     
     fileprivate func configureUI(){
