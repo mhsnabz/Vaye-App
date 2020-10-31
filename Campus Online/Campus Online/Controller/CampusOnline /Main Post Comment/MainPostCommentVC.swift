@@ -56,7 +56,6 @@ class MainPostCommentVC: UIViewController {
         navigationItem.title = post.lessonName
         
     }
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
