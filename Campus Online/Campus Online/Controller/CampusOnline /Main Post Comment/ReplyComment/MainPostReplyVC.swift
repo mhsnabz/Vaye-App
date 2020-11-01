@@ -11,7 +11,6 @@ private let msgCellID = "msg_cell_id"
 private let headerID = "header_id"
 import FirebaseFirestore
 class MainPostReplyVC: UIViewController {
-    
     //MARK:- variables
     var comment : CommentModel
     var currentUser : CurrentUser
@@ -26,7 +25,6 @@ class MainPostReplyVC: UIViewController {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
-        
         return tableView
     }()
     //MARK:- lifecycle
@@ -35,8 +33,6 @@ class MainPostReplyVC: UIViewController {
         view.backgroundColor = .white
         configureUI()
         getComments(currentUser: currentUser)
-        
-        
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -56,16 +52,12 @@ class MainPostReplyVC: UIViewController {
         self.setNavigationBar()
         self.navigationItem.title = "Yanıtlar"
     }
-    
-    
     init(comment : CommentModel , currentUser : CurrentUser , post : MainPostModel) {
         self.comment = comment
         self.currentUser = currentUser
         self.post = post
         super.init(nibName: nil, bundle: nil)
-        
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -173,14 +165,10 @@ class MainPostReplyVC: UIViewController {
                 guard let sself = self else { return }
                 MainPostCommentService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
                 for item in text.findMentionText(){
-                    MainPostCommentService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
-                    
+                    MainPostCommentService.shared.send_comment_mention_user(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
                 }
                 
             }
-            
-            
-            
         }
         
         
@@ -339,8 +327,8 @@ extension MainPostReplyVC : UITableViewDataSource , UITableViewDelegate {
 }
 extension MainPostReplyVC : CommentDelegate {
     func likeClik(cell: CommentMsgCell) {
-               guard let repliedComment = cell.comment else { return }
- 
+        guard let repliedComment = cell.comment else { return }
+        
         MainPostCommentService.shared.setRepliedCommentLike(repliedComment: repliedComment, likedCommentId: comment.commentId!, currentUser: currentUser, post: post)
         {[weak self](_val) in
             guard let sself = self else { return }
@@ -353,15 +341,15 @@ extension MainPostReplyVC : CommentDelegate {
     
     func replyClick(cell: CommentMsgCell)
     {
-//        guard let comment = cell.comment else { return }
-//        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
-//        navigationController?.pushViewController(vc, animated: true)
+        //        guard let comment = cell.comment else { return }
+        //        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+        //        navigationController?.pushViewController(vc, animated: true)
     }
     
     func seeAllReplies(cell: CommentMsgCell) {
-//        guard let comment = cell.comment else { return }
-//        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
-//        navigationController?.pushViewController(vc, animated: true)
+        //        guard let comment = cell.comment else { return }
+        //        let vc = MainPostReplyVC(comment: comment, currentUser: currentUser, post: post)
+        //        navigationController?.pushViewController(vc, animated: true)
     }
     func goProfile(cell: CommentMsgCell) {
         Utilities.waitProgress(msg: nil)
