@@ -169,18 +169,18 @@ class MainPostReplyVC: UIViewController {
         if textField.hasText {
             textField.text = ""
             let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
-            MainPostCommentService.shared.setRepliedComment(currentUser: currentUser, post: post, comment: comment, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: post.postId) { (_) in
+            MainPostCommentService.shared.setRepliedComment(currentUser: currentUser, post: post, comment: comment, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: post.postId) {[weak self] (_) in
+                guard let sself = self else { return }
+                MainPostCommentService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                for item in text.findMentionText(){
+                    MainPostCommentService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+                    
+                }
                 
             }
             
-            //            CommentService.shared.setRepliedComment(currentUser: currentUser, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: comment.postId!) {[weak self] (_) in
-            //                guard let sself = self else { return }
-            //                print("comment succeesed ")
-            //                NotificaitonService.shared.send_post_like_comment_notification(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
-            //                for item in text.findMentionText(){
-            //                    NotificaitonService.shared.send_replied_comment_bymention(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
-            //                }
-            //            }
+            
+            
         }
         
         

@@ -242,8 +242,8 @@ class NotificaitonService{
             }
     }
     
-    func mainpost_remove_replied_comment_like_notificaiton(post : MainPostModel , currentUser : CurrentUser, text : String , type : String){
-        if post.senderUid == currentUser.uid{
+    func mainpost_remove_replied_comment_like_notificaiton(post : MainPostModel ,comment : CommentModel, currentUser : CurrentUser, text : String , type : String){
+        if comment.senderUid == currentUser.uid{
             return
         }else{
             if !post.silent.contains(post.senderUid){
