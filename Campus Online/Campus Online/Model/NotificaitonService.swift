@@ -246,10 +246,14 @@ class NotificaitonService{
         
         
         let db = Firestore.firestore().collection("user")
-            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.home_like.desprition)
+            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: comment.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: type)
+       
+        print("type : \(comment.postId)")
+        print("type : \(type)")
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap?.documents else { return }
+                print(snap)
                 for item in snap{
                     let dbc = Firestore.firestore().collection("user")
                         .document(post.senderUid).collection("notification").document(item.documentID)
