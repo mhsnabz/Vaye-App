@@ -237,26 +237,22 @@ class NotificaitonService{
                            "senderName":currentUser.name as Any,
                            "lessonName":post.lessonName as Any] as [String : Any]
                 db.setData(dic, merge: true)
-                
-            }
-            }
+                }
+        }
     }
     
     func mainpost_remove_replied_comment_like_notificaiton(post : MainPostModel ,comment : CommentModel, currentUser : CurrentUser, text : String , type : String){
-        
+        //user/4OaYqfc53gOBwAwVZMdu9XZV6ix2/notification/1604262315411
         
         let db = Firestore.firestore().collection("user")
-            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: comment.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: type)
-       
-        print("type : \(comment.postId)")
-        print("type : \(type)")
+            .document(comment.senderUid!).collection("notification").whereField("postId", isEqualTo: comment.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: type)
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap?.documents else { return }
                 print(snap)
                 for item in snap{
                     let dbc = Firestore.firestore().collection("user")
-                        .document(post.senderUid).collection("notification").document(item.documentID)
+                        .document(comment.senderUid!).collection("notification").document(item.documentID)
                     dbc.delete()
                 }
             }

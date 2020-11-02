@@ -220,9 +220,48 @@ class MainPostCommentVC: UIViewController {
         
     }
     func removeComment(commentID : String , postID : String){
-        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")
-            .collection("post").document(postID).collection("comment").document(commentID)
-        db.delete()
+        //main-post/sell-buy/post/1603888561458/comment/1603986010312
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+            .document(commentID)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                sself.removeRepliedComment(commentID: commentID)
+            }
+        }
+    }
+    func removeRepliedComment(commentID : String){
+        //main-post/sell-buy/post/1603888561458/comment/1603986010312
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+            .document(commentID)
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = docSnap else { return }
+                let repliedComment = snap.get("replies") as! [String]
+                for item in repliedComment{
+                    //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
+                    let dbc = Firestore.firestore().collection("main-post")
+                        .document( sself.post.postType)
+                        .collection("post")
+                        .document(sself.post.postId)
+                        .collection("comment-replied")
+                        .document("comment")
+                        .collection(commentID)
+                        .document(item)
+                    dbc.delete()
+                }
+            }
+        }
+        
     }
     
     func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
