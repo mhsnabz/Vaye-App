@@ -228,7 +228,6 @@ class MainPostCommentService {
             }
         }
     }
-    
     func send_comment_mention_user(username : String ,currentUser : CurrentUser, text : String , type : String , post : MainPostModel){
         UserService.shared.getUserBy_Mention(username: username) { (otherUser) in
             if username == currentUser.username{
@@ -277,6 +276,7 @@ class MainPostCommentService {
                    "comment":commentText ,
                    "commentId":commentId,
                    "postId":postId,
+                   "targetComment": comment.commentId as Any,
                    "likes":[],"replies" : [] , "senderImage" : currentUser.thumb_image as Any] as [String : Any]
         db.setData(dic, merge: true) {[weak self] (err) in
             guard let sself = self else { return }

@@ -21,11 +21,15 @@ class CommentModel {
     var senderImage : String?
     var commentId : String?
     var postId : String?
+    var targetComment : String?
     init(ID : String ,dic : [String : Any]) {
         
         self.commentId = ID
         if let senderName = dic["senderName"] as? String {
             self.senderName = senderName
+        }
+        if let targetComment = dic["targetComment"] as? String {
+            self.targetComment = targetComment
         }
         if let postId = dic["postId"] as? String {
             self.postId = postId

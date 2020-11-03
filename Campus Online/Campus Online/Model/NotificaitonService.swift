@@ -241,9 +241,7 @@ class NotificaitonService{
         }
     }
     
-    func mainpost_remove_replied_comment_like_notificaiton(post : MainPostModel ,comment : CommentModel, currentUser : CurrentUser, text : String , type : String){
-        //user/4OaYqfc53gOBwAwVZMdu9XZV6ix2/notification/1604262315411
-        
+    func mainpost_remove_replied_comment_like_notificaiton(post : MainPostModel ,comment : CommentModel, currentUser : CurrentUser, text : String , type : String){        
         let db = Firestore.firestore().collection("user")
             .document(comment.senderUid!).collection("notification").whereField("postId", isEqualTo: comment.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: type)
         db.getDocuments { (querySnap, err) in

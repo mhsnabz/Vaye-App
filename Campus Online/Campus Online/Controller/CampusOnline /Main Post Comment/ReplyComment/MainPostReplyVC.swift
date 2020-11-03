@@ -222,19 +222,31 @@ class MainPostReplyVC: UIViewController {
         
     }
     
-    func removeComment(commentID : String){
+    func removeComment(commentID : String  , commentModel : CommentModel){
         
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(comment.postId!).collection("comment-replied")
-            .document("comment").collection(comment.commentId!).document(commentID)
+        
+        
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment-replied")
+            .document("comment")
+            .collection(comment.commentId!)
+            .document(commentID)
+    
         db.delete {[weak self] (err) in
             guard let sself = self else { return }
             if err == nil {
-                let db = Firestore.firestore().collection(sself.currentUser.short_school)
-                    .document("lesson-post").collection("post").document(sself.comment.postId!).collection("comment").document(sself.comment.commentId!)
+                let db = Firestore.firestore().collection("main-post")
+                    .document(sself.post.postType)
+                    .collection("post")
+                    .document(sself.post.postId)
+                    .collection("comment")
+                    .document(sself.comment.commentId!)
                 db.updateData(["replies":FieldValue.arrayRemove([commentID as Any])]) { (err) in
                     if err ==  nil {
-                        print("succes")
+                    
                     }
                 }
             }
@@ -258,7 +270,7 @@ class MainPostReplyVC: UIViewController {
     func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
             guard let sself = self else { return }
-            sself.removeComment(commentID: sself.repliedComment[indexPath.row].commentId!)
+            sself.removeComment(commentID: sself.repliedComment[indexPath.row].commentId!, commentModel: sself.comment)
             sself.repliedComment.remove(at: indexPath.row)
             sself.tableView.reloadData()
         }
