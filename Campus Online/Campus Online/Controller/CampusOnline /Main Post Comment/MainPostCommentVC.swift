@@ -523,7 +523,7 @@ extension MainPostCommentVC : SellBuyCommentHeaderDelegate {
     }
     
     func goProfileByMention(userName: String) {
-        
+        clickUserName(username: userName)
     }
     
     func clickMention(username: String) {

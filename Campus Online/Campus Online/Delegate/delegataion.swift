@@ -181,4 +181,5 @@ protocol CommentDelegate : class {
     func replyClick(cell : CommentMsgCell)
     func seeAllReplies(cell :  CommentMsgCell)
     func goProfile(cell : CommentMsgCell)
+    func clickMention(username : String)
 }

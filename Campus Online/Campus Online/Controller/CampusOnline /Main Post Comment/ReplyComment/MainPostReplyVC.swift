@@ -279,6 +279,19 @@ class MainPostReplyVC: UIViewController {
         action.image = UIImage(named: "remove")
         return action
     }
+    func clickUserName(username: String) {
+        if "@\(username)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                
+            }
+        }
+    }
 }
 
 //MARK: UITableViewDataSource ,UITableViewDelegate
@@ -338,6 +351,11 @@ extension MainPostReplyVC : UITableViewDataSource , UITableViewDelegate {
     
 }
 extension MainPostReplyVC : CommentDelegate {
+    
+    func clickMention(username : String)
+    {
+        clickUserName(username: username)
+    }
     func likeClik(cell: CommentMsgCell) {
         guard let repliedComment = cell.comment else { return }
         
@@ -386,5 +404,6 @@ extension MainPostReplyVC : CommentDelegate {
         }
         
     }
+    
     
 }

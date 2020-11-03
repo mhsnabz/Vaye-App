@@ -313,6 +313,19 @@ class RepliesComment: UIViewController {
         action.image = UIImage(named: "remove")
         return action
     }
+    func clickUserName(username: String) {
+        if "@\(username)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                
+            }
+        }
+    }
     
 }
 extension RepliesComment : UITableViewDataSource , UITableViewDelegate {
@@ -408,6 +421,9 @@ extension RepliesComment : CommentDelegate {
             }
         }
 
+    }
+    func clickMention(username : String){
+        clickUserName(username: username)
     }
     
 }
