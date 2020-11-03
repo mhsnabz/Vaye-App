@@ -123,11 +123,9 @@ class NotificaitionCell: UITableViewCell {
             notification =  NSMutableAttributedString(string: "\(post.lessonName.description):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
             notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
             type.attributedText = notification
+        }else if post.type == NotificationType.like_sell_buy.desprition{
+            type.text = Notification_description.like_sell_buy.desprition
         }
-        
-        
-        
-        
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username ?? "")", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
