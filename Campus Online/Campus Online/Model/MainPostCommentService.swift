@@ -228,6 +228,36 @@ class MainPostCommentService {
             }
         }
     }
+    /// Description Yapılan yoruma yanıt bildirimi
+    /// - Parameters:
+    ///   - post: mainPost
+    ///   - currentUser: currentUser
+    ///   - getterUid: getterUid
+    ///   - comment: commentMode
+    func set_main_post_replid_comment(post : MainPostModel , currentUser : CurrentUser , getterUid : String , text : String , type : String ){
+        if currentUser.uid == getterUid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(post.senderUid).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text as Any,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.lessonName as Any] as [String : Any]
+                db.setData(dic, merge: true)
+            }
+        }
+    }
     func send_comment_mention_user(username : String ,currentUser : CurrentUser, text : String , type : String , post : MainPostModel){
         UserService.shared.getUserBy_Mention(username: username) { (otherUser) in
             if username == currentUser.username{

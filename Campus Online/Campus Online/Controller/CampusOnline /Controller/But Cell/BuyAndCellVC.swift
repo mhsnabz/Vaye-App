@@ -656,11 +656,9 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
 extension BuyAndCellVC : ASMainPostLaungerDelgate {
     func didSelect(option: ASCurrentUserMainPostOptions) {
         switch option {
-        
         case .editPost(_):
             print("edit post")
         case .deletePost(_):
-
             Utilities.waitProgress(msg: "Siliniyor")
             guard let index = selectedIndex else { return }
             guard let postId = selectedPostID else {

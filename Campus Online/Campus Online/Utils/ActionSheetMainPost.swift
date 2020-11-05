@@ -209,8 +209,11 @@ extension ActionSheetMainPost : UITableViewDelegate , UITableViewDataSource{
            removeSlient(currentUser: currentUser) {[weak self] (_) in
                self?.dismissTableView(indexPath)
            }
+       }else if cell.titleLabel.text == ASCurrentUserMainPostOptions.deletePost(currentUser).description{
+           print("delete post")
        }else{
-           dismissTableView(indexPath)
+        print("edit post")
+        dismissTableView(indexPath)
        }
         
        

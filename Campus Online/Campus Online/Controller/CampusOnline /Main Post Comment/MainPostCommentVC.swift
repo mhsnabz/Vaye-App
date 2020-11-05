@@ -307,7 +307,6 @@ class MainPostCommentVC: UIViewController {
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
             navigationController?.pushViewController(vc, animated: true)
-            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -319,8 +318,6 @@ class MainPostCommentVC: UIViewController {
                 vc.modalPresentationStyle = .fullScreen
                 sself.navigationController?.pushViewController(vc, animated: true)
                 Utilities.dismissProgress()
-                
-                
             }
         }
     }

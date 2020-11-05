@@ -164,14 +164,12 @@ class MainPostReplyVC: UIViewController {
             MainPostCommentService.shared.setRepliedComment(currentUser: currentUser, post: post, comment: comment, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: post.postId) {[weak self] (_) in
                 guard let sself = self else { return }
                 MainPostCommentService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+//                MainPostCommentService.shared.set_main_post_replid_comment(post: sself.post, currentUser: sself.currentUser, getterUid: sself.comment.senderUid!, text: text, type: NotificationType.reply_comment.desprition)
                 for item in text.findMentionText(){
                     MainPostCommentService.shared.send_comment_mention_user(username: item.trimmingCharacters(in: .whitespaces), currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
                 }
-                
             }
         }
-        
-        
     }
     
     @objc func showMenu(){

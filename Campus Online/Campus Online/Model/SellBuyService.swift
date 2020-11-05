@@ -27,7 +27,7 @@ class SellBuyService {
             "thumbData":[],
             "username": currentUser.username as Any,
             "thumb_image": currentUser.thumb_image as Any,
-            "slient":[],
+            "silent":[],
             "postType":postType,
             "value":value ?? "",
             "geoPoint":location ?? "" ] as [String : Any]

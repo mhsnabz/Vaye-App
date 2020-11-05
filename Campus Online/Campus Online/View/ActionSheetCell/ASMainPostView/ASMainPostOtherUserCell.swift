@@ -1,15 +1,16 @@
 //
-//  ActionOtherUserCell.swift
+//  ASMainPostOtherUserCell.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 14.09.2020.
+//  Created by mahsun abuzeyitoğlu on 6.11.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
 import UIKit
-class ActionOtherUserCell: UITableViewCell {
 
-    var options : ActionSheetOtherUserOptions?{
+class ASMainPostOtherUserCell: UITableViewCell {
+
+    var options : ASMainPostOtherUserOptions?{
         didSet{
             configure()
         }
