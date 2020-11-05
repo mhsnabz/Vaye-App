@@ -110,9 +110,7 @@ class NotificaitionCell: UITableViewCell {
             notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
             type.attributedText = notification
         }else if post.type == NotificationType.following_you.desprition{
-            
             type.text = post.text
-           
             type.textColor = .black
         } else if post.type == NotificationType.home_new_post.desprition{
             notification =  NSMutableAttributedString(string: "\(post.lessonName.description):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
