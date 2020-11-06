@@ -67,7 +67,7 @@ enum ASMainPostOtherUserOptions{
         case .reportUser(_):
             return UIImage(named: "report-user")!
 
-            return UIImage(named: "cancel")!
+//            return UIImage(named: "cancel")!
         }
     }
 }

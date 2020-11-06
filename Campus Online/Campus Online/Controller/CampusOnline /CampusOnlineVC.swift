@@ -38,7 +38,7 @@ class CampusOnlineVC: UIViewController{
     var nativeAdView: GADUnifiedNativeAdView!
     
     private var actionSheetCurrentUser : ActionSheetMainPost
-    
+    private var actionSheetOtherUser : ASMainPostOtherUser
     let adUnitID = Utilities.adUnitID // "ca-app-pub-3940256099942544/3986624511"
     //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     let label : UILabel = {
@@ -60,6 +60,7 @@ class CampusOnlineVC: UIViewController{
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         self.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        self.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -358,21 +359,22 @@ extension CampusOnlineVC :  BuySellVCDelegate{
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }
-//        else{
-//            Utilities.waitProgress(msg: nil)
+        else{
+            Utilities.waitProgress(msg: nil)
 //            actionOtherUserSheet.delegate = self
-//            guard let  index = collectionview.indexPath(for: cell) else { return }
-//            selectedIndex = index
-//            selectedPostID = lessonPost[index.row].postId
-//            getOtherUser(userId: post.senderUid) {[weak self] (user) in
-//                guard let sself = self else { return }
-//                Utilities.dismissProgress()
-//                sself.actionOtherUserSheet.show(post: post, otherUser: user)
-//
-//            }
-//
-//
-//        }
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post : post , otherUser : user)
+                
+
+            }
+
+
+        }
     }
     func mapClick(for cell: BuyAndSellView) {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }

@@ -34,6 +34,15 @@ class ASMainPostOtherUser : NSObject {
     lazy var isFallowingUser : Bool = false
     weak var centrelController : UIViewController!
     
+    private lazy var blackView : UIView = {
+        let view = UIView()
+        view.alpha = 0
+        view.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismiss))
+        view.addGestureRecognizer(tap)
+        return view
+    }()
     lazy var fallowBtn : UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Yükleniyor", for: .normal)
@@ -52,7 +61,27 @@ class ASMainPostOtherUser : NSObject {
         super.init()
     }
     
-    
+    //MARK:- functions
+    func show(post : MainPostModel , otherUser : OtherUser){
+        self.post = post
+        self.otherUser = otherUser
+        self.tableView.reloadData()
+        guard let window = UIApplication.shared.windows.first(where: { ($0.isKeyWindow)}) else { return }
+        self.window = window
+        window.addSubview(blackView)
+        blackView.frame = window.frame
+        
+        window.addSubview(tableView)
+        let heigth = CGFloat( viewModel.imageOptions.count * 50 ) + 60
+        self.tableViewHeight = heigth
+        tableView.frame = CGRect(x: 0, y: window.frame.height,
+                                 width: window.frame.width, height: heigth)
+        UIView.animate(withDuration: 0.5) {
+            self.blackView.alpha = 1
+            self.tableView.frame.origin.y -= heigth
+        }
+        
+    }
     func configureTableView()
     {
         tableView.backgroundColor = .white
@@ -125,6 +154,14 @@ class ASMainPostOtherUser : NSObject {
                   
                 }
             }
+        }
+    }
+    @objc  func handleDismiss(){
+        UIView.animate(withDuration: 0.5) {
+            let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
+            self.blackView.alpha = 0
+            self.tableView.frame.origin.y += heigth
+            
         }
     }
 }
