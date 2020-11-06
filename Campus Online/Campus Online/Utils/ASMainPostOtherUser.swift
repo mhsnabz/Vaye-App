@@ -33,7 +33,26 @@ class ASMainPostOtherUser : NSObject {
     lazy var userIsSlient : Bool = false
     lazy var isFallowingUser : Bool = false
     weak var centrelController : UIViewController!
-    
+    private lazy var cancelButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Vazgeç", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.clipsToBounds = true
+        button.backgroundColor = .cancelColor()
+        button.titleLabel?.font = UIFont(name: Utilities.font, size: 18)
+        
+        button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
+        return button
+    }()
+    private lazy var footerView : UIView = {
+        let view = UIView()
+        view.addSubview(cancelButton)
+        cancelButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        cancelButton.anchor(top: nil, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 0)
+        cancelButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        cancelButton.layer.cornerRadius = 20
+        return view
+    }()
     private lazy var blackView : UIView = {
         let view = UIView()
         view.alpha = 0
@@ -59,6 +78,7 @@ class ASMainPostOtherUser : NSObject {
         self.currentUser = currentUser
         self.target = target
         super.init()
+        configureTableView()
     }
     
     //MARK:- functions
@@ -239,5 +259,10 @@ extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
         return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 60
+    }
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return footerView
+    }
 }
