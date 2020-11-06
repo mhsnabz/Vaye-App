@@ -641,7 +641,9 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             cell.titleLabel.textColor = .red
             cell.titleLabel.font = UIFont(name: Utilities.fontBold, size: 13)
         }
-        else if cell.titleLabel.text == ActionSheetOtherUserOptions.reportPost(currentUser).description { }
+        else if cell.titleLabel.text == ActionSheetOtherUserOptions.reportPost(currentUser).description {
+                
+        }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientLesson(currentUser).description
         {
             if let post = post {

@@ -40,6 +40,9 @@ protocol ASMainPostLaungerDelgate : class {
 protocol ActionSheetOtherUserLauncherDelegate : class {
     func didSelect(option : ActionSheetOtherUserOptions)
 }
+protocol ASMainOtherUserDelegate : class {
+    func didSelect(option : ASMainPostOtherUserOptions)
+}
 protocol NotificationLauncherDelegate : class {
     func didSelect(option : NotificationOptions)
 }

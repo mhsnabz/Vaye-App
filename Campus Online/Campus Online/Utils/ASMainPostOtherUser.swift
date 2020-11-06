@@ -24,10 +24,11 @@ class ASMainPostOtherUser : NSObject {
     }
     private lazy var viewModel = ASMainPostOtherUserVM(currentUser: currentUser, target: target)
     private let tableView = UITableView()
+    weak var delegate : ASMainOtherUserDelegate?
+
     private var window : UIWindow?
     private var tableViewHeight : CGFloat?
     var post : MainPostModel?
-    lazy var isFallowingLesson : Bool = false
     lazy var lessonIsSlient : Bool = true
     lazy var postIsSlient : Bool = false
     lazy var userIsSlient : Bool = false
@@ -40,7 +41,6 @@ class ASMainPostOtherUser : NSObject {
         button.clipsToBounds = true
         button.backgroundColor = .cancelColor()
         button.titleLabel?.font = UIFont(name: Utilities.font, size: 18)
-        
         button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
         return button
     }()
@@ -102,6 +102,7 @@ class ASMainPostOtherUser : NSObject {
         }
         
     }
+   
     func configureTableView()
     {
         tableView.backgroundColor = .white
@@ -114,7 +115,138 @@ class ASMainPostOtherUser : NSObject {
         tableView.register(ASMainPostOtherUserCell.self, forCellReuseIdentifier: "id")
         
     }
+    private func isPostSlient(slientUser : [String], completion: @escaping(Bool) ->Void){
+        if slientUser.contains(currentUser.uid){
+            completion(true)
+        }else{
+            completion(false)
+        }
+    }
+    private func setPostSlient(post : MainPostModel?,completion : @escaping(Bool) ->Void){
+        guard let post = post else { return }
+        ///main-post/sell-buy/post/1604436850197
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+        db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                return}
+            if err == nil {
+                Utilities.dismissProgress()
+                sself.postIsSlient = true
+                sself.post?.silent.append(sself.currentUser.uid)
+                completion(true)
+                sself.tableView.reloadData()
+            }else{
+                Utilities.dismissProgress()
+                sself.postIsSlient = false
+                sself.post?.silent.remove(element : sself.currentUser.uid)
+                completion(false)
+                sself.tableView.reloadData()
+            }
+        }
     
+    }
+    private func setNotPostSlient(post: MainPostModel? ,completion : @escaping(Bool) ->Void){
+        guard let post = post else { return }
+        ///main-post/sell-buy/post/1604436850197
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+        db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])  {[weak self] (err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                return}
+            if err == nil {
+                Utilities.dismissProgress()
+                sself.postIsSlient = false
+                 sself.post?.silent.remove(element : sself.currentUser.uid)
+                completion(false)
+                sself.tableView.reloadData()
+            }else{
+                Utilities.dismissProgress()
+                sself.postIsSlient = true
+                sself.post?.silent.append(sself.currentUser.uid)
+                completion(true)
+                sself.tableView.reloadData()
+            }
+        }
+    
+    }
+    private func setUserSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user").document(otherUserUid)
+        db.updateData(["slient":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+            guard let sself = self else {
+                           Utilities.dismissProgress()
+                           return}
+                       if err == nil {
+                           Utilities.dismissProgress()
+                           sself.userIsSlient = true
+                        sself.otherUser?.slientUser.append(sself.currentUser.uid)
+                           completion(true)
+                           sself.tableView.reloadData()
+                       }else{
+                           Utilities.dismissProgress()
+                           sself.userIsSlient = false
+                           sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
+                           completion(false)
+                           sself.tableView.reloadData()
+                       }
+        }
+    }
+    
+    private func setUserNotSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user").document(otherUserUid)
+        db.updateData(["slient":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
+                   guard let sself = self else {
+                                  Utilities.dismissProgress()
+                                  return}
+                              if err == nil {
+                                  Utilities.dismissProgress()
+                                  sself.userIsSlient = false
+                                    sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
+                                  completion(false)
+                                  sself.tableView.reloadData()
+                              }else{
+                                  Utilities.dismissProgress()
+                                  sself.userIsSlient = true
+                                    sself.otherUser?.slientUser.append(sself.currentUser.uid)
+                                  completion(true)
+                                  sself.tableView.reloadData()
+                              }
+               }
+    }
+    private func checkIamSlient(slientUser : [String] , completion : @escaping(Bool) ->Void){
+        if slientUser.isEmpty{
+            userIsSlient = false
+            completion(false)
+            return
+        }
+        if slientUser.contains(currentUser.uid){
+                  userIsSlient = true
+            completion(true)
+        }else{
+                  userIsSlient = false
+            completion(false)
+        }
+    }
+    fileprivate  func showTableView(_ shouldShow : Bool)
+    {
+        guard let window = window else { return }
+        guard let heigth = tableViewHeight else { return }
+        let y = shouldShow ? window.frame.height - heigth : window.frame.height
+        tableView.frame.origin.y = y
+        
+        if !shouldShow {
+            self.blackView.removeFromSuperview()
+        }
+        
+    }
     //MARK: -selectors
     @objc func fallowUser(){
         Utilities.waitProgress(msg: "")
@@ -228,29 +360,31 @@ extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
      
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.slientPost(currentUser).description{
              
-//            isPostSlient(slientUser: post!.silent) { (val) in
-//                if val {
-//                    cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
-//                    cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
-//                }else{
-//                    cell.titleLabel.text = ActionSheetOtherUserOptions.slientPost(self.currentUser).description
-//                    cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
-//                }
-//            }
+            if let slient = post?.silent {
+            isPostSlient(slientUser: slient) { (val) in
+                if val {
+                    cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
+                    cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
+                }else{
+                    cell.titleLabel.text = ASMainPostOtherUserOptions.slientPost(self.currentUser).description
+                    cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+                }
+             }
+            }
         }
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.slientUser(currentUser).description{
 
-//            if otherUser?.slientUser != nil {
-//                checkIamSlient(slientUser: otherUser!.slientUser) { (val) in
-//                    if val {
-//                        cell.titleLabel.text = "Kullanıcıyı Sessizden Al"
-//                        cell.logo.image = #imageLiteral(resourceName: "mute-user").withRenderingMode(.alwaysOriginal)
-//                    }else{
-//                        cell.titleLabel.text = ActionSheetOtherUserOptions.slientUser(self.currentUser).description
-//                        cell.logo.image = #imageLiteral(resourceName: "loud-user").withRenderingMode(.alwaysOriginal)
-//                    }
-//                }
-//            }
+            if otherUser?.slientUser != nil {
+                checkIamSlient(slientUser: otherUser!.slientUser) { (val) in
+                    if val {
+                        cell.titleLabel.text = "Kullanıcıyı Sessizden Al"
+                        cell.logo.image = #imageLiteral(resourceName: "mute-user").withRenderingMode(.alwaysOriginal)
+                    }else{
+                        cell.titleLabel.text = ActionSheetOtherUserOptions.slientUser(self.currentUser).description
+                        cell.logo.image = #imageLiteral(resourceName: "loud-user").withRenderingMode(.alwaysOriginal)
+                    }
+                }
+            }
             
         }
         
@@ -264,5 +398,52 @@ extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
     }
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         return footerView
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        _ = tableView.cellForRow(at: indexPath) as! ASMainPostOtherUserCell
+        if indexPath.row == 2 {
+           //FIXME: Report Post
+        }else if indexPath.row == 1 {
+          //FIXME: slient post
+            if postIsSlient {
+                setNotPostSlient(post: post) { (_) in
+                    tableView.reloadData()
+                }
+            }
+            else{
+                setPostSlient(post: post) { (_) in
+                    print("slient")
+                    tableView.reloadData()
+                }
+            }
+            
+        }else if indexPath.row == 3 {
+            //FIXME: Slient sender user
+            if userIsSlient {
+                setUserNotSlient(slientUser: otherUser?.slientUser ?? [], otherUserUid: otherUser!.uid) { (_) in
+                    tableView.reloadData()
+                }
+            }else{
+                setUserSlient(slientUser: otherUser?.slientUser ?? [], otherUserUid: otherUser!.uid) { (_) in
+                    tableView.reloadData()
+                }
+            }
+        }
+        else if indexPath.row == 4 {
+            //FIXME: report user
+        }
+    
+        dismissTableView(indexPath)
+    }
+    fileprivate func dismissTableView(_ indexPath: IndexPath) {
+        let option = viewModel.imageOptions[indexPath.row]
+           delegate?.didSelect(option: option)
+        UIView.animate(withDuration: 0.5, animations: {
+            self.blackView.alpha = 0
+            self.showTableView(false)
+        }) { (_) in
+            self.tableView.reloadData()
+//            self.delegate?.didSelect(option: option)
+        }
     }
 }
