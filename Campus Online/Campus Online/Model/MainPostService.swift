@@ -150,7 +150,7 @@ class MainPostService {
                     completion(true)
             }}}}
     
-    func deleteToStorage(data : [String], postId : String , index : IndexPath , completion : @escaping(Bool) -> Void){
+    func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
         if data.count == 0{
             completion(true)
             return

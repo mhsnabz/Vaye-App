@@ -1001,7 +1001,7 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
             db.delete {[weak self] (err) in
                 guard let sself = self else { return }
                 if err == nil {
-                    sself.deleteToStorage(data: sself.lessonPost[index.row].data, postId: postId, index: index) { (_val) in
+                    sself.deleteToStorage(data: sself.lessonPost[index.row].data, postId: postId) { (_val) in
                         if (_val){
                             Utilities.succesProgress(msg: "Silindi")
                         }
@@ -1015,7 +1015,7 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
             print("slient")
         }
     }
-    private func deleteToStorage(data : [String], postId : String , index : IndexPath , completion : @escaping(Bool) -> Void){
+    private func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
         if data.count == 0{
             completion(true)
             return

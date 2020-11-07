@@ -642,7 +642,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             cell.titleLabel.font = UIFont(name: Utilities.fontBold, size: 13)
         }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.reportPost(currentUser).description {
-                
+                //FIXME: report post
         }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientLesson(currentUser).description
         {

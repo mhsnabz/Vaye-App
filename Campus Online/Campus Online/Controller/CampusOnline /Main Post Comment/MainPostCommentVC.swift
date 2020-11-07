@@ -23,6 +23,8 @@ class MainPostCommentVC: UIViewController {
     var addMediaButtom: UIButton!
     let textField = FlexibleTextView()
     weak var messagesListener : ListenerRegistration?
+    private var actionSheetCurrentUser : ActionSheetMainPost
+    private var actionSheetOtherUser : ASMainPostOtherUser
     let target : String
     var tableView : UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -46,6 +48,8 @@ class MainPostCommentVC: UIViewController {
         self.currentUser = currentUser
         self.post = post
         self.target = target
+        self.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        self.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -170,8 +174,19 @@ class MainPostCommentVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     //MARK: - selectors
-    @objc func optionsLauncher(){
-        
+    @objc func optionsLauncher()
+    {
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+        }else{
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                sself.actionSheetOtherUser.show(post: sself.post, otherUser: user)
+                
+            }
+        }
     }
     @objc func sendMsg(){
         guard let text = textField.text else { return }
@@ -246,20 +261,23 @@ class MainPostCommentVC: UIViewController {
             guard let sself = self else { return }
             if err == nil {
                 guard let snap = docSnap else { return }
-                let repliedComment = snap.get("replies") as! [String]
-                for item in repliedComment{
-                    //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
-                    let dbc = Firestore.firestore().collection("main-post")
-                        .document( sself.post.postType)
-                        .collection("post")
-                        .document(sself.post.postId)
-                        .collection("comment-replied")
-                        .document("comment")
-                        .collection(commentID)
-                        .document(item)
-                    dbc.delete()
+                if snap.exists{
+                    let repliedComment = snap.get("replies") as! [String]
+                    for item in repliedComment{
+                        //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
+                        let dbc = Firestore.firestore().collection("main-post")
+                            .document( sself.post.postType)
+                            .collection("post")
+                            .document(sself.post.postId)
+                            .collection("comment-replied")
+                            .document("comment")
+                            .collection(commentID)
+                            .document(item)
+                        dbc.delete()
+                    }
                 }
             }
+            
         }
         
     }
@@ -533,6 +551,43 @@ extension MainPostCommentVC : SellBuyCommentHeaderDelegate {
         guard let lat = post.geoPoint?.latitude else { return }
         guard let longLat = post.geoPoint?.longitude else { return }
         openInMap(lat: lat, longLat: longLat, locationName: locaitonName)
+    }
+    
+    
+}
+//MARK:ASMainPostLaungerDelgate
+extension MainPostCommentVC : ASMainPostLaungerDelgate {
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option {
+        case .editPost(_):
+            print("edit post")
+        case .deletePost(_):
+            
+            Utilities.waitProgress(msg: "Siliniyor")
+            
+            guard let target = post.postType else { return }
+            let db = Firestore.firestore().collection("main-post")
+                .document(target)
+                .collection("post")
+                .document(post.postId)
+            
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    
+                    MainPostService.shared.deleteToStorage(data: sself.post.data, postId: sself.post.postId) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+            break
+        case .slientPost(_):
+            print("slient post")
+        }
     }
     
     

@@ -19,7 +19,6 @@ class ASMainPostOtherUser : NSObject {
                 sself.isFallowingUser = val
                 sself.tableView.reloadData()
             }
-           
         }
     }
     private lazy var viewModel = ASMainPostOtherUserVM(currentUser: currentUser, target: target)

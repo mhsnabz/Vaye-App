@@ -673,7 +673,7 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
             db.delete {[weak self] (err) in
                 guard let sself = self else { return }
                 if err == nil {
-                    MainPostService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId, index: index) { (_val) in
+                    MainPostService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
                         if (_val){
                             Utilities.succesProgress(msg: "Silindi")
                         }
