@@ -234,7 +234,7 @@ class MainPostCommentVC: UIViewController {
         
         
     }
-    func removeComment(commentID : String , postID : String){
+    func removeComment(commentID : String , postID : String , completion : @escaping(Int) -> Void){
         //main-post/sell-buy/post/1603888561458/comment/1603986010312
         let db = Firestore.firestore().collection("main-post")
             .document(post.postType)
@@ -246,6 +246,26 @@ class MainPostCommentVC: UIViewController {
             guard let sself = self else { return }
             if err == nil {
                 sself.removeRepliedComment(commentID: commentID)
+                sself.getTotolCommentCount { (val) in
+                    completion(val)
+                }
+            }
+        }
+    }
+    func getTotolCommentCount(completion : @escaping(Int) -> Void){
+        ///main-post/sell-buy/post/1604436850197/comment/1604773265884
+        let db = Firestore.firestore().collection("main-post")
+            .document(post.postType)
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documents.count else {
+                    completion(0)
+                    return
+                }
+                completion(snap)
             }
         }
     }
@@ -261,7 +281,7 @@ class MainPostCommentVC: UIViewController {
             guard let sself = self else { return }
             if err == nil {
                 guard let snap = docSnap else { return }
-                if snap.exists{
+                if snap.get("replies") != nil{
                     let repliedComment = snap.get("replies") as! [String]
                     for item in repliedComment{
                         //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
@@ -285,7 +305,19 @@ class MainPostCommentVC: UIViewController {
     func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
             guard let sself = self else { return }
-            sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!)
+            //main-post/sell-buy/post/1604436850197
+            sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!) { (val) in
+                sself.post.comment = val
+                let db = Firestore.firestore().collection("main-post")
+                    .document(sself.post.postType)
+                    .collection("post")
+                    .document(sself.post.postId)
+                db.setData(["comment":val], merge: true) { (err) in
+                    if err == nil {
+                        print("succes")
+                    }
+                }
+            }
             sself.comment.remove(at: indexPath.row)
             sself.tableView.reloadData()
         }
