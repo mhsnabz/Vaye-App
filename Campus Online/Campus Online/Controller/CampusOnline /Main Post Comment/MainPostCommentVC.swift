@@ -451,10 +451,9 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         if comment[indexPath.row].senderUid == currentUser.uid {
-            let edit = MainPostCommentService.shared.editAction(at: indexPath)
             let delete = deleteAction(at: indexPath)
             
-            return UISwipeActionsConfiguration(actions: [delete,edit])
+            return UISwipeActionsConfiguration(actions: [delete])
         }
         else
         {
