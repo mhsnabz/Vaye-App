@@ -1,22 +1,30 @@
-# Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+  # Uncomment the next line to define a global platform for your project
+  platform :ios, '10.0'
 
-target 'Campus Online' do
+  target 'Campus Online' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
+  
   pod 'RevealingSplashView'
   
   pod 'TweeTextField'
+  
   pod 'Firebase'
+  
   pod 'Firebase/Auth'
+  
   pod 'Firebase/Firestore'
   
   pod 'Firebase/Storage'
+  
   pod 'Firebase/Analytics'
+  
   pod 'Google-Mobile-Ads-SDK'
+  
   pod 'Firebase/Messaging'
   
   pod 'Firebase/Crashlytics'
+  
   pod 'SDWebImage', '~> 5.0'
   
   pod 'JJFloatingActionButton'
@@ -29,8 +37,6 @@ target 'Campus Online' do
   
   pod 'SwiftyAttributes'
   
-
-  
   pod 'ActiveLabel'
   
   pod 'OEMentions'
@@ -42,13 +48,15 @@ target 'Campus Online' do
   pod 'Lightbox'
   
   pod 'Gallery'
+  
   pod 'SnapKit', '~> 5.0.0'
+  
   pod 'EFImageViewZoom'
+  
   pod 'WMSegmentControl'
+  
   # Pods for Campus Online
   target 'Campus OnlineTests' do
-    
-    
     
     inherit! :search_paths
     # Pods for testing
