@@ -418,10 +418,7 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
                 
                 return cell
             }
-        }
-       
-        
-        
+        } 
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: loadMoreCell, for: indexPath)
@@ -463,7 +460,11 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-    
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 
@@ -658,7 +659,21 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
     func didSelect(option: ASCurrentUserMainPostOptions) {
         switch option {
         case .editPost(_):
-            print("edit post")
+            guard let index = selectedIndex else {
+                return }
+            if let h = collectionview.cellForItem(at: index) as? BuyAndSellDataView {
+                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
+                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            break
         case .deletePost(_):
             Utilities.waitProgress(msg: "Siliniyor")
             guard let index = selectedIndex else { return }

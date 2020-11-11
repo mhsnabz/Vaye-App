@@ -574,9 +574,20 @@ extension CampusOnlineVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegat
 extension CampusOnlineVC : ASMainPostLaungerDelgate {
     func didSelect(option: ASCurrentUserMainPostOptions) {
         switch option {
-        
         case .editPost(_):
-            print("edit post")
+            guard let index = selectedIndex else { return }
+            if let h = collectionview.cellForItem(at: index) as? BuyAndSellDataView {
+                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
+                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            break
         case .deletePost(_):
            
             Utilities.waitProgress(msg: "Siliniyor")

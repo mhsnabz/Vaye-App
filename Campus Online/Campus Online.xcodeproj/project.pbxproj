@@ -109,6 +109,7 @@
 		668F04A2251F6502007BD9C7 /* OtherUserFilterVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F04A1251F6502007BD9C7 /* OtherUserFilterVM.swift */; };
 		668F04AD2520CC94007BD9C7 /* LessonInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F04AC2520CC94007BD9C7 /* LessonInfoModel.swift */; };
 		668F04B22524BF24007BD9C7 /* NotificaitonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F04B12524BF24007BD9C7 /* NotificaitonService.swift */; };
+		668FA998255A32B4007C8150 /* EditMainPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668FA997255A32B4007C8150 /* EditMainPost.swift */; };
 		6690A6602539BE1E00E88BC0 /* SellBuyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A65F2539BE1E00E88BC0 /* SellBuyService.swift */; };
 		6690A665253A223F00E88BC0 /* MainPostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A664253A223F00E88BC0 /* MainPostModel.swift */; };
 		6690A66A253B38A000E88BC0 /* MainPostUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A669253B38A000E88BC0 /* MainPostUploadService.swift */; };
@@ -303,6 +304,7 @@
 		668F04A1251F6502007BD9C7 /* OtherUserFilterVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserFilterVM.swift; sourceTree = "<group>"; };
 		668F04AC2520CC94007BD9C7 /* LessonInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoModel.swift; sourceTree = "<group>"; };
 		668F04B12524BF24007BD9C7 /* NotificaitonService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificaitonService.swift; sourceTree = "<group>"; };
+		668FA997255A32B4007C8150 /* EditMainPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMainPost.swift; sourceTree = "<group>"; };
 		6690A65F2539BE1E00E88BC0 /* SellBuyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellBuyService.swift; sourceTree = "<group>"; };
 		6690A664253A223F00E88BC0 /* MainPostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostModel.swift; sourceTree = "<group>"; };
 		6690A669253B38A000E88BC0 /* MainPostUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostUploadService.swift; sourceTree = "<group>"; };
@@ -654,6 +656,7 @@
 		66775548252D238D00DBF3CD /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				668FA996255A3299007C8150 /* Edit Post */,
 				667755A425309BD900DBF3CD /* Map Kit */,
 				66775555252E9DBB00DBF3CD /* Food Me */,
 				66775554252E9DB100DBF3CD /* But Cell */,
@@ -788,6 +791,14 @@
 				668F0499251F6231007BD9C7 /* OtherUserProfileFilterView.swift */,
 			);
 			path = "OtherUserProfile Filter View";
+			sourceTree = "<group>";
+		};
+		668FA996255A3299007C8150 /* Edit Post */ = {
+			isa = PBXGroup;
+			children = (
+				668FA997255A32B4007C8150 /* EditMainPost.swift */,
+			);
+			path = "Edit Post";
 			sourceTree = "<group>";
 		};
 		6690A68D253F6A5200E88BC0 /* ASMainPostView */ = {
@@ -1554,6 +1565,7 @@
 				660BC4742515AD89005D0EF8 /* Deneme.swift in Sources */,
 				66EF86C92525EACC00282FD4 /* CommentVCHeader.swift in Sources */,
 				6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */,
+				668FA998255A32B4007C8150 /* EditMainPost.swift in Sources */,
 				66D9120924EEAA85002D760A /* ContainerController.swift in Sources */,
 				6690A68F253F6A7400E88BC0 /* ASMainPostCell.swift in Sources */,
 				661333DF24F36C85002677AB /* Setting.swift in Sources */,
