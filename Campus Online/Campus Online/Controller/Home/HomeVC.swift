@@ -129,7 +129,6 @@ class HomeVC: UIViewController {
         
     }
     //MARK: - functions
-   
     private func getNotificationCount(){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
         let db = Firestore.firestore().collection("user")
