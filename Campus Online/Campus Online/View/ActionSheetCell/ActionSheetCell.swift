@@ -9,7 +9,7 @@
 import UIKit
 
 class ActionSheetCell: UITableViewCell {
-
+    
     var options : ActionSheetOptions?{
         didSet{
             configure()
@@ -22,13 +22,13 @@ class ActionSheetCell: UITableViewCell {
     }
     
     private let logo : UIImageView = {
-       let img = UIImageView()
+        let img = UIImageView()
         img.clipsToBounds = true
         img.contentMode = .scaleAspectFit
         return img
     }()
     private let titleLabel : UILabel = {
-       let lbl = UILabel()
+        let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 14)
         return lbl
     }()
@@ -37,7 +37,7 @@ class ActionSheetCell: UITableViewCell {
         super.init(style: .default, reuseIdentifier: "id")
         addSubview(logo)
         logo.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 25, heigth: 25)
-         logo.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        logo.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         addSubview(titleLabel)
         titleLabel.anchor(top: nil, left: logo.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
@@ -49,7 +49,7 @@ class ActionSheetCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-
+        
     }
     
     func configure(){
@@ -60,6 +60,6 @@ class ActionSheetCell: UITableViewCell {
         titleLabel.text = notificationOption?.descriptions
         logo.image = notificationOption?.image
     }
-  
-
+    
+    
 }
