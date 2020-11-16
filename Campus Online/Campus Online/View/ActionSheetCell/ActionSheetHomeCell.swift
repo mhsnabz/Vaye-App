@@ -9,9 +9,6 @@
 import UIKit
 
 class ActionSheetHomeCell: UITableViewCell {
-
-
-    
     var options : ActionSheetHomeOptions?{
           didSet{
               configure()
