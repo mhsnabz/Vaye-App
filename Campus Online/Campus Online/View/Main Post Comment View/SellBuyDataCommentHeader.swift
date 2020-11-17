@@ -311,6 +311,16 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
             filterView.datasUrl = post.data
             filterView.collectionView.reloadData()
         }
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        let dateFormatterPrint = DateFormatter()
+        dateFormatterPrint.dateFormat = "dd/MM/yy HH:mm"
+        dateFormatterPrint.timeZone = NSTimeZone(name: "UTC + 3") as TimeZone?
+        let date =  Date(timeIntervalSince1970: TimeInterval(post.postTime!.seconds))
+       
+            print(dateFormatterPrint.string(from: date))
+            timeLbl.text = dateFormatterPrint.string(from: date)
         
     }
     private func mentionClick(){
