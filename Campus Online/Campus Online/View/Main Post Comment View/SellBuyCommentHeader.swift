@@ -317,6 +317,8 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
 //            linkBtn.isHidden = false
 ////            detectLink(post.link)
 //        }
+        
+        
     }
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in

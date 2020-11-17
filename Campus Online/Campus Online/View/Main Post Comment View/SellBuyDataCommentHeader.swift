@@ -16,7 +16,7 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
     var currentUser : CurrentUser?
     weak var post : MainPostModel?{
         didSet{
-            
+            configure()
         }
     }
     
@@ -184,7 +184,7 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
         addSubview(headerView)
         addSubview(headerView)
         headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
-        configure()
+
         addSubview(msgText)
         addSubview(priceLbl)
         addSubview(bottomBar)
@@ -267,6 +267,21 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
         }else{
             mapBtn.isHidden = true
         }
+        if !post.data.isEmpty{
+            filterView.arrayOfUrl = post.thumbData
+            filterView.datasUrl = post.data
+            filterView.collectionView.reloadData()
+        }
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        let dateFormatterPrint = DateFormatter()
+        dateFormatterPrint.dateFormat = "dd/MM/yy HH:mm"
+        dateFormatterPrint.timeZone = NSTimeZone(name: "UTC + 3") as TimeZone?
+        let date =  Date(timeIntervalSince1970: TimeInterval(post.postTime!.seconds))
+       
+            print(dateFormatterPrint.string(from: date))
+            timeLbl.text = dateFormatterPrint.string(from: date)
     }
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in
