@@ -82,7 +82,7 @@ class NewPostHomeVC: UICollectionViewCell
     }()
     let optionsButton : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "down-arrow")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setImage(#imageLiteral(resourceName: "more").withRenderingMode(.alwaysOriginal), for: .normal)
         return btn
     }()
     
