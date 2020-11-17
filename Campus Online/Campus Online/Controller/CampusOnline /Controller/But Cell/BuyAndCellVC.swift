@@ -92,44 +92,24 @@ class BuyAndCellVC: UIViewController {
             if _val{
                 sself.configureUI()
             }else{
-                sself.animationView()
+               
             }
         }
-        
+        view.backgroundColor = .collectionColor()
         
         
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.title = "Al - Sat"
-        waitAnimation.play()
+  
         checkFollowingTopic(currentUser: currentUser) { [weak self] (_val) in
             guard let sself = self else { return }
             sself.setNavigationBarItems(val: _val)
         }
     }
     //MARK:-functions
-    fileprivate func animationView() {
-        
-        waitAnimation = .init(name : "cell")
-        waitAnimation.animationSpeed = 1
-        waitAnimation.loopMode = .loop
-        waitAnimation.play()
-        view.addSubview(waitAnimation)
-        waitAnimation.anchor(top: view.topAnchor , left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 0, heigth: 0)
-        waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        msg_text =  NSMutableAttributedString(string: "Yakınlarda Yeni Bir İlan Yok\n", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
-        msg_text.append(NSAttributedString(string: "Hemen Bir İlan Ver", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
-        label.attributedText = msg_text
-        
-        view.addSubview(label)
-        label.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        view.addSubview(newPostButton)
-        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
-        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
-        newPostButton.layer.cornerRadius = 25
-        
-    }
+ 
     fileprivate  func setNavigationBarItems(val : Bool) {
         if val {
             let btn1 = UIButton(type: .custom)
@@ -312,7 +292,9 @@ class BuyAndCellVC: UIViewController {
                 completion(false)
             }
         }
+        
     }
+    
     private func followTopic(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: nil)
         checkFollowingTopic(currentUser: currentUser) {[weak self] (_val) in

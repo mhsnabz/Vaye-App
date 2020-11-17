@@ -163,6 +163,31 @@ class MainPostService {
         }
     }
     
+    
+    func checkFollowTopic(currentUser : CurrentUser,topic : String ,completion :  @escaping(Bool) ->Void ){
+        let db = Firestore.firestore().collection("main-post")
+            .document(topic).collection("followers")
+            .document(currentUser.uid)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion(false)
+                    return
+                }
+                if snap.exists{
+                    completion(true)
+                }
+                else{
+                    completion(false)
+                }
+            }else{
+                completion(false)
+            }
+        }
+        
+    }
+    
+    
 }
 enum MainPostLikeTarget {
     case buy_sell
