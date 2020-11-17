@@ -221,7 +221,7 @@ class MainPostCommentVC: UIViewController {
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 50 + 35
                 self.tableView.reloadData()
             }else{
-                tableView.register(SellBuyDataCommentHeader.self, forCellReuseIdentifier: sell_buy_data_header)
+                tableView.register(SellBuyDataCommentHeader.self, forHeaderFooterViewReuseIdentifier: sell_buy_data_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 100 + 50 + 35
                 self.tableView.reloadData()
