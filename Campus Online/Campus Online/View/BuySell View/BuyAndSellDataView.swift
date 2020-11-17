@@ -81,7 +81,7 @@ class BuyAndSellDataView: UICollectionViewCell
     }()
     let optionsButton : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "down-arrow")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setImage(#imageLiteral(resourceName: "more").withRenderingMode(.alwaysOriginal), for: .normal)
         return btn
     }()
     
@@ -154,8 +154,6 @@ class BuyAndSellDataView: UICollectionViewCell
     }()
     lazy var bottomBar : UIView = {
         let view = UIView()
-        
-        
         let stackLike = UIStackView(arrangedSubviews: [like,like_lbl])
         stackLike.axis = .horizontal
         stackLike.spacing = 2
@@ -177,9 +175,6 @@ class BuyAndSellDataView: UICollectionViewCell
         
         toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-      
-        
         return view
     }()
     

@@ -221,7 +221,10 @@ class MainPostCommentVC: UIViewController {
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 50 + 35
                 self.tableView.reloadData()
             }else{
-                
+                tableView.register(SellBuyDataCommentHeader.self, forCellReuseIdentifier: sell_buy_data_header)
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 100 + 50 + 35
+                self.tableView.reloadData()
             }
             
         }else if target == PostType.camping.despription {
@@ -470,33 +473,46 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
-        
-        cell.currentUser = currentUser
-        cell.delegate = self
-        cell.backgroundColor = .white
-        let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-        cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-        cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-        cell.post = post
+        if target == PostType.buySell.despription {
+            if post.data.isEmpty{
+                let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
+                
+                cell.currentUser = currentUser
+                cell.delegate = self
+                cell.backgroundColor = .white
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.post = post
+                return cell
+            }else{
+                let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_data_header) as! SellBuyDataCommentHeader
+                
+                cell.currentUser = currentUser
+                cell.delegate = self
+                cell.backgroundColor = .white
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.post = post
+                return cell
+            }
+            
+        }else if target == PostType.camping.despription {
+            
+        }else if target == PostType.foodMe.despription {
+            
+        }else if target == PostType.party.despription{
+            
+        }
+        let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_data_header) as! SellBuyDataCommentHeader
         return cell
-        
-        //        if target == PostType.buySell.despription {
-        //            if post.data.isEmpty{
-        //                let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: sell_buy_header) as! SellBuyCommentHeader
-        //                return header
-        //            }else{
-        //
-        //            }
-        //
-        //        }else if target == PostType.camping.despription {
-        //
-        //        }else if target == PostType.foodMe.despription {
-        //
-        //        }else PostType.party.despription{
-        //
-        //        }
+ 
     }
     
     
@@ -619,6 +635,26 @@ extension MainPostCommentVC : ASMainPostLaungerDelgate {
         case .slientPost(_):
             print("slient post")
         }
+    }
+    
+    
+}
+//MARK: SellBuyDataCommentHeaderDelegate
+extension MainPostCommentVC : SellBuyDataCommentHeaderDelegate {
+    func like(for header: SellBuyDataCommentHeader) {
+        
+    }
+    
+    func dislike(for header: SellBuyDataCommentHeader) {
+        
+    }
+    
+    func showProfile(for header: SellBuyDataCommentHeader) {
+        
+    }
+    
+    func mapClik(for header: SellBuyDataCommentHeader) {
+        
     }
     
     

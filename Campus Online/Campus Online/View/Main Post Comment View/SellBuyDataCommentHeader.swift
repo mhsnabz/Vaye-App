@@ -1,49 +1,26 @@
 //
-//  BuyAndSellView.swift
+//  SellBuyDataCommentHeader.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 18.10.2020.
+//  Created by mahsun abuzeyitoğlu on 17.11.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
 import UIKit
-import SDWebImage
 import ActiveLabel
-import FirebaseFirestore
+import SDWebImage
+class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
+    weak var delegate : SellBuyDataCommentHeaderDelegate?
+    lazy var filterView = DataView()
 
-class BuyAndSellView: UICollectionViewCell {
-    //MARK: - variables
-    weak var delegate : BuySellVCDelegate?
-    
     var currentUser : CurrentUser?
-    weak var mainPost : MainPostModel?{
+    weak var post : MainPostModel?{
         didSet{
-            configure()
-            guard let currentUser = currentUser else { return }
-            checkIsDisliked(user: currentUser, post: mainPost) {[weak self] (_val) in
-                guard let s = self else { return }
-                if _val {
-                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
-                }else{
-                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
-                    
-                }
-            }
-            checkIsLiked(user: currentUser, post: mainPost) {[weak self] (_val) in
-                   guard let s = self else { return }
-                if _val{
-                    s.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
-                }else{
-                    s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
-                }
-            }
+            
         }
-        
     }
     
-    
-    //MARK: -properties
-    
+    //MARK:-properties
     let profileImage : UIImageView = {
         let imagee = UIImageView()
         imagee.clipsToBounds = true
@@ -146,8 +123,6 @@ class BuyAndSellView: UICollectionViewCell {
     }()
     lazy var bottomBar : UIView = {
         let view = UIView()
-        
-        
         let stackLike = UIStackView(arrangedSubviews: [like,like_lbl])
         stackLike.axis = .horizontal
         stackLike.spacing = 2
@@ -169,9 +144,6 @@ class BuyAndSellView: UICollectionViewCell {
         
         toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
         toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-      
-        
         return view
     }()
     
@@ -198,100 +170,75 @@ class BuyAndSellView: UICollectionViewCell {
         let name = NSMutableAttributedString()
         return name
     }()
+    let timeLbl : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 13)
+        lbl.textColor = .lightGray
+        return lbl
+    }()
     
     
-    //MARK: -lifeCycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    //MARK:- lifeCycle
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        addSubview(headerView)
         addSubview(headerView)
         headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
-//        configure()
+        configure()
         addSubview(msgText)
         addSubview(priceLbl)
-
         addSubview(bottomBar)
+        addSubview(filterView)
+        addSubview(timeLbl)
+        timeLbl.anchor(top: filterView.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 0 ,  marginBottom: 0, marginRigth: 0, width: 0, heigth: 15)
+        //
+        like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
+        dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
+        filterView.isUserInteractionEnabled = true
+        
+        filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
         addSubview(mapBtn)
-        mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 28, marginBottom: 10, marginRigth: 0, width: 25, heigth: 25)
+        mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         
-        
+        mapBtn.layer.cornerRadius = 25
         mapBtn.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.50).cgColor
         mapBtn.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
         mapBtn.layer.shadowOpacity = 1.0
-        mapBtn.layer.shadowRadius = 3.0
+        mapBtn.layer.shadowRadius = 5.0
         mapBtn.layer.masksToBounds = false
+        mapBtn.isHidden = true
         
-        comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
-        like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
-        dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
-
-        optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
-        mapBtn.addTarget(self, action: #selector(mapClick), for: .touchUpInside)
-        mapBtn.isHidden = false
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
+        mapBtn.addTarget(self, action: #selector(mapClick), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     //MARK:-selectors
-    @objc func commentClick() {
-        delegate?.comment(for: self)
+    @objc func showData(){
+        
     }
+   
     @objc func likeClick(){
         delegate?.like(for: self)
     }
     @objc func dislikeClick(){
         delegate?.dislike(for: self)
     }
+    
    
-    @objc func optionsClick(){
-        delegate?.options(for: self)
-    }
-    @objc func linkClick(){
-        delegate?.linkClick(for : self)
-    }
     @objc func showProfile(){
-        print("click")
         delegate?.showProfile(for : self)
     }
     @objc func mapClick(){
-        print("map click")
-        delegate?.mapClick(for: self)
-    }
-    //MARK: -functions
-    private func checkIsFav(user : CurrentUser , post : MainPostModel? , completion : @escaping(Bool) ->Void)
-    {
-        guard let post = post else { return }
-        if post.favori.contains(user.uid){
-            completion(true)
-        }else{
-            completion(false)
-        }
+//        delegate?.mapClick(for: self)
     }
     
-    private func checkIsLiked(user : CurrentUser, post : MainPostModel? , completion : @escaping(Bool) ->Void)
-      {
-      
-          guard let post = post else { return }
-          if post.likes.contains(user.uid){
-              completion(true)
-          }else{
-              completion(false)
-          }
-      }
-      
-    private func checkIsDisliked(user : CurrentUser ,post : MainPostModel? , completion : @escaping(Bool) ->Void)
-    {
-             guard let post = post else { return }
-             if post.dislike.contains(user.uid){
-                 completion(true)
-             }else{
-                 completion(false)
-             }
-         }
     private func configure(){
-        guard let post = mainPost else { return }
+        guard let post = post else { return }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
@@ -305,8 +252,8 @@ class BuyAndSellView: UICollectionViewCell {
         like_lbl.text = post.likes.count.description
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
-        mapBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
         price = NSMutableAttributedString(string: "Fiyat : ", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+
         if post.value.isEmpty {
             price.append(NSAttributedString(string: " Fiyat Belirtilmemiş", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
         }else{
@@ -320,20 +267,11 @@ class BuyAndSellView: UICollectionViewCell {
         }else{
             mapBtn.isHidden = true
         }
-        
-//        if post.link.isEmpty {
-//            linkBtn.isHidden = true
-//            
-//        }else{
-//            linkBtn.isHidden = false
-////            detectLink(post.link)
-//        }
     }
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in
-            guard let sself = self else { return }
-            sself.delegate?.goProfileByMention(userName : username)
+//            guard let sself = self else { return }
+//            sself.delegate?.goProfileByMention(userName : username)
         }
     }
-   
 }
