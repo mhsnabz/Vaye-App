@@ -17,6 +17,23 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
     weak var post : MainPostModel?{
         didSet{
             configure()
+            guard let currentUser = currentUser else { return }
+            checkIsDisliked(user: currentUser, post: post) {[weak self] (_val) in
+                guard let s = self else { return }
+                if _val {
+                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-selected").withRenderingMode(.alwaysOriginal), for: .normal)
+                }else{
+                    s.dislike.setImage(#imageLiteral(resourceName: "dislike-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                }
+            }
+            checkIsLiked(user: currentUser, post: post) {[weak self] (_val) in
+                   guard let s = self else { return }
+                if _val{
+                    s.like.setImage(UIImage(named: "like")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }else{
+                    s.like.setImage(UIImage(named: "like-unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+                }
+            }
         }
     }
     
@@ -115,8 +132,7 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
         view.addSubview(lessonName)
         lessonName.anchor(top: userName.bottomAnchor, left: userName.leftAnchor, bottom: nil, rigth: userName.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 14)
         
-        view.addSubview(optionsButton)
-        optionsButton.anchor(top: profileImage.topAnchor, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 8, width: 20, heigth: 20)
+       
         
       
         return view
@@ -211,6 +227,9 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
         mapBtn.addTarget(self, action: #selector(mapClick), for: .touchUpInside)
+        
+        addSubview(line)
+        line.anchor(top: bottomBar.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 0.40)
     }
     
     required init?(coder: NSCoder) {
@@ -236,13 +255,33 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
     @objc func mapClick(){
 //        delegate?.mapClick(for: self)
     }
-    
+    //MARK:-functions
+    private func checkIsLiked(user : CurrentUser, post : MainPostModel? , completion : @escaping(Bool) ->Void)
+      {
+      
+          guard let post = post else { return }
+          if post.likes.contains(user.uid){
+              completion(true)
+          }else{
+              completion(false)
+          }
+      }
+      
+    private func checkIsDisliked(user : CurrentUser ,post : MainPostModel? , completion : @escaping(Bool) ->Void)
+    {
+             guard let post = post else { return }
+             if post.dislike.contains(user.uid){
+                 completion(true)
+             }else{
+                 completion(false)
+             }
+         }
     private func configure(){
         guard let post = post else { return }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(post.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
-        name.append(NSAttributedString(string: " \(post.postTime!.dateValue().timeAgoDisplay())", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+       
         userName.attributedText = name
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string: post.thumb_image))
@@ -272,21 +311,13 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
             filterView.datasUrl = post.data
             filterView.collectionView.reloadData()
         }
-        let dateFormatterGet = DateFormatter()
-        dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-        let dateFormatterPrint = DateFormatter()
-        dateFormatterPrint.dateFormat = "dd/MM/yy HH:mm"
-        dateFormatterPrint.timeZone = NSTimeZone(name: "UTC + 3") as TimeZone?
-        let date =  Date(timeIntervalSince1970: TimeInterval(post.postTime!.seconds))
-       
-            print(dateFormatterPrint.string(from: date))
-            timeLbl.text = dateFormatterPrint.string(from: date)
+        
     }
     private func mentionClick(){
         msgText.handleMentionTap {[weak self] (username) in
-//            guard let sself = self else { return }
-//            sself.delegate?.goProfileByMention(userName : username)
+            guard let sself = self else { return }
+            sself.delegate?.clickMention(username: username)
+                
         }
     }
 }

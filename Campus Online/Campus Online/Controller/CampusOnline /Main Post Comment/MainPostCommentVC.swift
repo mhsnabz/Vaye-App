@@ -642,20 +642,32 @@ extension MainPostCommentVC : ASMainPostLaungerDelgate {
 //MARK: SellBuyDataCommentHeaderDelegate
 extension MainPostCommentVC : SellBuyDataCommentHeaderDelegate {
     func like(for header: SellBuyDataCommentHeader) {
-        
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderLikePost(target: MainPostLikeTarget.buy_sell.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for header: SellBuyDataCommentHeader) {
-        
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderDislike(target: MainPostLikeTarget.buy_sell.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func showProfile(for header: SellBuyDataCommentHeader) {
-        
+        guard  let post = header.post else {
+            return
+        }
+        showUserProfile(post: post)
     }
     
     func mapClik(for header: SellBuyDataCommentHeader) {
-        
+        guard let post = header.post else { return }
+        guard let locaitonName = post.locationName else { return }
+        guard let lat = post.geoPoint?.latitude else { return }
+        guard let longLat = post.geoPoint?.longitude else { return }
+        openInMap(lat: lat, longLat: longLat, locationName: locaitonName)
     }
-    
     
 }
