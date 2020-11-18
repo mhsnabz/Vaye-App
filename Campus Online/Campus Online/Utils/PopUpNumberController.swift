@@ -65,20 +65,12 @@ class PopUpNumberController : UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
-        
         configure()
-   
-        
     }
   
     private func configure(){
-        
-    
         addSubview(value)
-        
         value.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 40, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 50)
-        
-      
         let stack = UIStackView(arrangedSubviews: [btnCancel,btnAdd])
         stack.axis = .horizontal
         stack.spacing = 5
@@ -86,7 +78,6 @@ class PopUpNumberController : UIView {
         addSubview(stack)
         stack.anchor(top: value.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 10, marginLeft: 20, marginBottom: 0, marginRigth: 20, width: 0, heigth: 35)
         stack.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        
         btnCancel.addTarget(self, action: #selector(handleDismissal), for: .touchUpInside)
         btnAdd.addTarget(self, action: #selector(addValues), for: .touchUpInside)
         

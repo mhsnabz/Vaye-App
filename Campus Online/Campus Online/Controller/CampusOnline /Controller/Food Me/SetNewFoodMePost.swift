@@ -266,7 +266,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
         text.delegate = self
         text.isScrollEnabled = true
         textViewDidChange(text)
-        let stack = UIStackView(arrangedSubviews: [addImage,addTimer,addLocations])
+        let stack = UIStackView(arrangedSubviews: [addImage,addLocations])
         stack.axis = .horizontal
         stack.spacing = (view.frame.width - 40) / (100)
         stack.alignment = .center
@@ -275,14 +275,8 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
         view.addSubview(stack)
         
         stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
-        
-        view.addSubview(valuesView)
-        valuesView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
-        valuesView.isHidden = true
-        
-        
         view.addSubview(pinView)
-        pinView.anchor(top: valuesView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
+        pinView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
         pinView.isHidden = true
         
         
