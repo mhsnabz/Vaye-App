@@ -16,7 +16,7 @@ import Gallery
 
 private let imageCell = "cell"
 
-class SetNewFoodMePost: UIViewController{
+class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, GalleryControllerDelegate{
     
     //MARK:-variables
     var snapShotlistener : ListenerRegistration?
@@ -24,20 +24,20 @@ class SetNewFoodMePost: UIViewController{
     var currentUserFollowers : [String]
     var locationName : String?
     var currentUser : CurrentUser
-
+    
     lazy var heigth : CGFloat = 0.0
     var locationManager : CLLocationManager!
     var postDate : String!
-
+    
     var gallery: GalleryController!
     lazy var dataModel = [FoodMeModel]()
     lazy var data = [SelectedData]()
-
+    
     var collectionview: UICollectionView!
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {
-//                pinView.removeFromSuperview()
+                //                pinView.removeFromSuperview()
                 return }
             Utilities.succesProgress(msg: "Konum Eklendi")
             print("lat : \(loacaiton.latitude)")
@@ -99,10 +99,10 @@ class SetNewFoodMePost: UIViewController{
         btn.addTarget(self, action: #selector(_addImage), for: .touchUpInside)
         return btn
     }()
-    let addPrice : UIButton = {
+    let addTimer : UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(#imageLiteral(resourceName: "price").withRenderingMode(.alwaysOriginal), for: .normal)
-        btn.addTarget(self, action: #selector(_addPrice), for: .touchUpInside)
+        btn.setImage(#imageLiteral(resourceName: "timer").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(_addTimer), for: .touchUpInside)
         return btn
     }()
     let addLocations : UIButton = {
@@ -118,7 +118,7 @@ class SetNewFoodMePost: UIViewController{
     }()
     let value_image : UIImageView = {
         let img = UIImageView()
-        img.image = #imageLiteral(resourceName: "price").withRenderingMode(.alwaysOriginal)
+        img.image = #imageLiteral(resourceName: "timer").withRenderingMode(.alwaysOriginal)
         return img
     }()
     let value_description : UILabel = {
@@ -173,7 +173,7 @@ class SetNewFoodMePost: UIViewController{
         let view = PopUpNumberController()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
-//        view.delegate = self
+        //        view.delegate = self
         return view
     }()
     
@@ -186,7 +186,7 @@ class SetNewFoodMePost: UIViewController{
     //MARK:- lifeCycle
     init(currentUser : CurrentUser , currentUserFollowers : [String]){
         self.currentUser = currentUser
-      
+        
         self.currentUserFollowers = currentUserFollowers
         super.init(nibName: nil, bundle: nil)
         self.postDate = Int64(Date().timeIntervalSince1970 * 1000).description
@@ -197,7 +197,7 @@ class SetNewFoodMePost: UIViewController{
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         super.viewDidLoad()
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
@@ -237,7 +237,7 @@ class SetNewFoodMePost: UIViewController{
         text.delegate = self
         text.isScrollEnabled = true
         textViewDidChange(text)
-        let stack = UIStackView(arrangedSubviews: [addImage,addPrice,addLocations])
+        let stack = UIStackView(arrangedSubviews: [addImage,addTimer,addLocations])
         stack.axis = .horizontal
         stack.spacing = (view.frame.width - 40) / (100)
         stack.alignment = .center
@@ -259,15 +259,13 @@ class SetNewFoodMePost: UIViewController{
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-//        collectionview.dataSource = self
-//        collectionview.delegate = self
+        collectionview.dataSource = self
+        collectionview.delegate = self
         collectionview.backgroundColor = .white
         view.addSubview(collectionview)
         
         collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
-        collectionview.register(BuySellCell.self, forCellWithReuseIdentifier: imageCell)
-        
-        
+        collectionview.register(FoodMeCell.self, forCellWithReuseIdentifier: imageCell)
         view.addSubview(visualEffectView)
         visualEffectView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
@@ -276,10 +274,15 @@ class SetNewFoodMePost: UIViewController{
         
         visualEffectView.alpha = 0
         
-        
-        
-        
     }
+    
+    
+    private func checkDataModelHasValue(data : Data) ->Bool{
+        dataModel.contains { (model) -> Bool in
+            return  model.data == data
+        }
+    }
+    
     func convertHashtags(text:String) -> NSAttributedString {
         let attrString = NSMutableAttributedString(string: text)
         attrString.beginEditing()
@@ -304,42 +307,181 @@ class SetNewFoodMePost: UIViewController{
         return attrString
     }
     
+    private func getSizeOfData(data : [SelectedData]) -> String {
+        var val : Float = 0
+        for item in data {
+            let bcf = ByteCountFormatter()
+            bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
+            bcf.countStyle = .file
+            
+            val += Float(item.data.count)
+            
+        }
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
+        
+        formatter.numberStyle = .decimal
+        
+        return formatter.string(from: val / (1024 * 1024) as NSNumber) ?? "n/a"
+        
+    }
+    
+    private func SizeOfData(data : [SelectedData]) -> Float {
+        
+        for item in data {
+            let bcf = ByteCountFormatter()
+            bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
+            bcf.countStyle = .file
+            
+            totolDataInMB += Float(item.data.count)
+            
+        }
+        return totolDataInMB / (1024 * 1024 )
+        
+    }
+    
+    
     //MARK:-selectors
     
     @objc func setNewPost(){
+        text.endEditing(true)
         
+        if SizeOfData(data: data) > 14.95 {
+            Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
+        }
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
+        Utilities.waitProgress(msg: "Paylaşılıyor")
+        let date =  Int64(Date().timeIntervalSince1970 * 1000).description
+        var val = [Data]()
+        var dataType = [String]()
+        let url = [String]()
+        for number in 0..<(data.count) {
+            val.append(data[number].data)
+            dataType.append(data[number].type)
+        }
     }
     
     @objc func removeValue(){
         
     }
-
+    
     @objc func removeLocation(){
         
     }
-
+    
     @objc func _addLocation(){
-        
+        let vc = MapVC(currentUser: currentUser)
+        vc.locationManager = locationManager
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     @objc func _addImage(){
+        Config.Camera.recordLocation = false
+        Config.tabsToShow = [.imageTab]
+        gallery = GalleryController()
+        gallery.delegate = self
+        gallery.modalPresentationStyle = .fullScreen
+        present(gallery, animated: true, completion: nil)
+    }
+    @objc func _addTimer(){
         
     }
-    @objc func _addPrice(){
+    
+    
+    
+    //MARK: -image picker controller
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        controller.dismiss(animated: true, completion: nil)
         
+    }
+    func showLightbox(images: [UIImage]) {
+        guard images.count > 0 else {
+            return
+        }
+        
+        let lightboxImages = images.map({ LightboxImage(image: $0) })
+        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
+        lightbox.dismissalDelegate = self
+        lightbox.modalPresentationStyle = .fullScreen
+        gallery.present(lightbox, animated: true, completion: nil)
+    }
+    
+    
+    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        controller.dismiss(animated: true) {
+            for image  in images {
+                image.resolve {[weak self] (img) in
+                    guard let sself = self else { return }
+                    if let img_data = img!.jpegData(compressionQuality: 0.8){
+                        if sself.checkDataModelHasValue(data:  img_data){
+                            print("data is exist")
+                        }else{
+                            sself.data.append(SelectedData.init(data: img_data, type: DataTypes.image.description))
+                            sself.dataModel.append(FoodMeModel.init(postDate: sself.postDate, currentUser: sself.currentUser, type: DataTypes.image.description, data: img_data))
+                            
+                            sself.collectionview.reloadData()
+                            sself.navigationItem.title = "\( sself.getSizeOfData(data: sself.data)) mb"
+                        }
+                        
+                    }
+                }
+            }
+        }
+        gallery = nil
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+        
+    }
+    
+    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+        LightboxConfig.DeleteButton.enabled = true
+        
+        Utilities.waitProgress(msg: nil)
+        Image.resolve(images: images, completion: { [weak self] resolvedImages in
+            Utilities.dismissProgress()
+            self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
+        })
+    }
+    
+    func galleryControllerDidCancel(_ controller: GalleryController) {
+        controller.dismiss(animated: true, completion: nil)
+        gallery = nil
     }
 }
 //MARK:- UICollectionViewDataSource, UICollectionViewDelegate
-//extension SetNewFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegate{
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 0
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        
-//    }
-//    
-//    
-//}
+extension SetNewFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegate{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! FoodMeCell
+        if dataModel[indexPath.row].type == DataTypes.image.description
+        {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCell, for: indexPath) as! FoodMeCell
+            cell.backgroundColor = .white
+            cell.delegate = self
+            cell.data = dataModel[indexPath.row]
+            return cell
+            
+        }
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width  = (view.frame.width - 30 ) / 3
+        return CGSize(width: width, height: width)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,                                minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    
+}
 //MARK:-UITextViewDelegate
 extension SetNewFoodMePost : UITextViewDelegate {
     
@@ -384,4 +526,12 @@ extension SetNewFoodMePost : UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         textView.attributedText = convertHashtags(text: textView.text)
     }
+}
+//MARK:-DeleteImageSetNewFoodMeSell
+extension SetNewFoodMePost : DeleteImageSetNewFoodMeSell {
+    func deleteImage(for cell: FoodMeCell) {
+        print("delete")
+    }
+    
+    
 }

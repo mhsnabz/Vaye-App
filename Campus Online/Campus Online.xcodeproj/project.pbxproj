@@ -32,6 +32,7 @@
 		660FB96B2563A8A80014D406 /* SellBuyDataCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB96A2563A8A80014D406 /* SellBuyDataCommentHeader.swift */; };
 		660FB97025646E7D0014D406 /* SetNewFoodMePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB96F25646E7D0014D406 /* SetNewFoodMePost.swift */; };
 		660FB975256470300014D406 /* FoodMeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB974256470300014D406 /* FoodMeModel.swift */; };
+		660FB97B2564B2580014D406 /* FoodMeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB97A2564B2580014D406 /* FoodMeCell.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -230,6 +231,7 @@
 		660FB96A2563A8A80014D406 /* SellBuyDataCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellBuyDataCommentHeader.swift; sourceTree = "<group>"; };
 		660FB96F25646E7D0014D406 /* SetNewFoodMePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNewFoodMePost.swift; sourceTree = "<group>"; };
 		660FB974256470300014D406 /* FoodMeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeModel.swift; sourceTree = "<group>"; };
+		660FB97A2564B2580014D406 /* FoodMeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeCell.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -515,6 +517,14 @@
 				660F5AD92503DB0800F72558 /* LicenceCell.swift */,
 			);
 			path = "License View";
+			sourceTree = "<group>";
+		};
+		660FB9792564B23F0014D406 /* FoodMe View */ = {
+			isa = PBXGroup;
+			children = (
+				660FB97A2564B2580014D406 /* FoodMeCell.swift */,
+			);
+			path = "FoodMe View";
 			sourceTree = "<group>";
 		};
 		661333DB24F36C63002677AB /* Setting */ = {
@@ -1002,6 +1012,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				660FB9792564B23F0014D406 /* FoodMe View */,
 				6690A6992545DFF600E88BC0 /* Main Post Comment View */,
 				666B2DCF253792E40014C5A7 /* BuySell View */,
 				6677553D252CECF000DBF3CD /* CO Menu View */,
@@ -1527,6 +1538,7 @@
 				6615FC812509B9D600776664 /* PostService.swift in Sources */,
 				6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */,
 				66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */,
+				660FB97B2564B2580014D406 /* FoodMeCell.swift in Sources */,
 				66AF72D825134996007E96BC /* GoogleNativeAdsView.swift in Sources */,
 				6628125325171F9D00923F19 /* DatasModel.swift in Sources */,
 				66E326A424F98C28004CB61D /* LessonList.swift in Sources */,

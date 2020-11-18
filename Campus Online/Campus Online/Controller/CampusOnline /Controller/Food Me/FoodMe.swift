@@ -36,6 +36,8 @@ class FoodMe: UIViewController {
     //MARK: -lifeCycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.title = "Food Me"
+
         
     }
     init(currentUser : CurrentUser  ){
