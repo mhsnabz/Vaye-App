@@ -197,8 +197,6 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        super.viewDidLoad()
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationItem.title = "Food Me"
@@ -206,7 +204,38 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
         configureHeader()
         configureCollectionView()
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                self?.pinView.isHidden = true
+                return
+            }
+            if err == nil {
+                guard let snap = docSnap else {
+                    sself.pinView.isHidden = true
+                   
+                    Utilities.dismissProgress()
+                    return
+                }
+                if snap.exists{
+                    sself.pinView.isHidden = false
+                    sself.geoPoing = snap.get("geoPoint") as? GeoPoint
+                    sself.locationName = snap.get("locationName")  as? String
+                    Utilities.succesProgress(msg: "Konum Eklendi")
+                }else{
+                    sself.pinView.isHidden = true
+                    Utilities.dismissProgress()
+                }
+            }
+        }
+        
+    }
     //MARK:-functions
     
     fileprivate func rigtBarButton() {
@@ -371,7 +400,16 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
     }
     
     @objc func removeLocation(){
-        
+        Utilities.waitProgress(msg: "Konum Siliniyor")
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
+        db.delete { (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Konum Silindi")
+                self.pinView.isHidden = true
+            }
+        }
     }
     
     @objc func _addLocation(){
@@ -454,7 +492,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
     }
 }
 //MARK:- UICollectionViewDataSource, UICollectionViewDelegate
-extension SetNewFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegate{
+extension SetNewFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return data.count
     }
@@ -467,6 +505,7 @@ extension SetNewFoodMePost :  UICollectionViewDataSource, UICollectionViewDelega
             cell.backgroundColor = .white
             cell.delegate = self
             cell.data = dataModel[indexPath.row]
+            
             return cell
             
         }
