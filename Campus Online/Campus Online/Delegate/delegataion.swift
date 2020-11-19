@@ -128,6 +128,28 @@ protocol BuySellVCDataDelegate : class {
     func goProfileByMention (userName : String)
 }
 
+protocol FoodMeVCDelegate : class {
+    func options ( for cell : FoodMeView)
+    func like ( for cell : FoodMeView)
+    func dislike ( for cell : FoodMeView)
+    
+    func comment ( for cell : FoodMeView)
+    func linkClick(for cell : FoodMeView)
+    func showProfile(for cell : FoodMeView)
+    func mapClick(for cell : FoodMeView)
+    func goProfileByMention (userName : String)
+}
+protocol FoodMeVCDataDelegate : class {
+    func options ( for cell : FoodMeViewData)
+    func like ( for cell : FoodMeViewData)
+    func dislike ( for cell : FoodMeViewData)
+
+    func comment ( for cell : FoodMeViewData)
+    func linkClick(for cell : FoodMeViewData)
+    func mapClick(for cell : FoodMeViewData)
+    func showProfile(for cell : FoodMeViewData)
+    func goProfileByMention (userName : String)
+}
 protocol CommentVCDataDelegate : class {
 
     func like (for header : CommentVCDataHeader)

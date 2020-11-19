@@ -9,10 +9,39 @@
 import UIKit
 import Lottie
 import FirebaseFirestore
+import GoogleMobileAds
+import SDWebImage
+import FirebaseStorage
+import MapKit
+
+import CoreLocation
+private let cellID = "cellID"
+private let cellData = "cellData"
+private let loadMoreCell = "loadmorecell"
+private let cellAds = "cellAds"
 class FoodMe: UIViewController {
     var topic : String =  "food-me"
     var currentUser : CurrentUser
-    
+    var waitAnimation = AnimationView()
+    lazy var followers = [String]()
+    var collectionview: UICollectionView!
+    var refresher = UIRefreshControl()
+    var page : DocumentSnapshot? = nil
+    var loadMore : Bool = false
+    var lastDocumentSnapshot: DocumentSnapshot!
+    var adLoader: GADAdLoader!
+    var time : Timestamp!
+    var nativeAdView: GADUnifiedNativeAdView!
+    weak var notificaitonListener : ListenerRegistration?
+    weak var delegate : BuySellVCDelegate?
+    var mainPost = [MainPostModel]()
+    var selectedIndex : IndexPath?
+    var selectedPostID : String?
+    private var actionSheetCurrentUser : ActionSheetMainPost
+    private var actionSheetOtherUser : ASMainPostOtherUser
+    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
+    //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
+    var nativeAd: GADUnifiedNativeAd?
     //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
@@ -42,6 +71,8 @@ class FoodMe: UIViewController {
     }
     init(currentUser : CurrentUser  ){
         self.currentUser = currentUser
+        self.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        self.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -64,15 +95,123 @@ class FoodMe: UIViewController {
             sself.setNavigationBarItems(val: _val)
         }
         
+        MainPostService.shared.checkHasPost(target: PostType.foodMe.despription) {[weak self] (_) in
+            guard let sself = self else { return }
+            sself.configureUI()
+        }
     }
     
     
     //MARK:-functions
+    fileprivate func configureUI(){
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
+        view.addSubview(collectionview)
+        collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.register(FoodMeView.self, forCellWithReuseIdentifier: cellID)
+        collectionview.register(FoodMeViewData.self , forCellWithReuseIdentifier: cellData)
+        collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
+        collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
+        collectionview.alwaysBounceVertical = true
+        collectionview.refreshControl = refresher
+        refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
+        refresher.tintColor = .white
+        collectionview.refreshControl?.beginRefreshing()
+        
+        view.addSubview(newPostButton)
+        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
+        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
+        newPostButton.layer.cornerRadius = 25
+        getPost()
+    }
+    
     fileprivate func configure(){
         view.addSubview(newPostButton)
         newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
         newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
         newPostButton.layer.cornerRadius = 25
+    }
+    
+    fileprivate func getPost(){
+        
+        mainPost = [MainPostModel]()
+        loadMore = true
+        collectionview.reloadData()
+        
+        fetchMainPost(currentUser: self.currentUser) {[weak self] (post) in
+            self?.mainPost = post
+            //            self?.fetchAds()
+            if self?.mainPost.count ?? -1 > 0{
+                self?.collectionview.refreshControl?.endRefreshing()
+                if  let time_e = self?.mainPost[(self?.mainPost.count)! - 1].postTime{
+                    self?.time = self?.mainPost[(self?.mainPost.count)! - 1].postTime
+                    self?.mainPost.sort(by: { (post, post1) -> Bool in
+                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    self?.collectionview.reloadData()
+                }
+            }else{
+                self?.fetchAds()
+                self?.collectionview.refreshControl?.endRefreshing()
+                self?.collectionview.reloadData()
+            }
+        }
+    }
+    func fetchMainPost(currentUser : CurrentUser, completion : @escaping([MainPostModel])->Void){
+        collectionview.refreshControl?.beginRefreshing()
+        var post = [MainPostModel]()
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("main-post")
+            .collection("food-me").limit(to: 5)
+            .order(by: "postId",descending: true)
+        db.getDocuments {(querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty {
+                    completion([])
+                }else{
+                    for postId in snap.documents {
+                        let db = Firestore.firestore().collection("main-post")
+                            .document("food-me")
+                            .collection("post")
+                            .document(postId.documentID)
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let snap = docSnap else { return }
+                                if snap.exists
+                                {
+                                    post.append(MainPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                                }else{
+                                    
+                                    let deleteDb = Firestore.firestore().collection(currentUser.short_school)
+                                        .document("main-post")
+                                        .collection("food-me").document(postId.documentID)
+                                    deleteDb.delete()
+                                }
+                                completion(post)
+                            }
+                        }
+                        
+                    }
+                    
+                    self.page = snap.documents.last
+                    self.fetchAds()
+                    self.loadMore = true
+                    
+                }
+                
+            }
+        }
+        
+    }
+    func fetchAds() {
+        adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
+                               adTypes: [ .unifiedNative ], options: nil)
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
     }
     fileprivate  func setNavigationBarItems(val : Bool) {
         if val {
@@ -114,7 +253,7 @@ class FoodMe: UIViewController {
         MainPostService.shared.checkFollowTopic(currentUser: currentUser, topic: topic) { [weak self] (_val) in
             guard let sself = self else { return }
             if _val{
-                ///main-post/sell-buy/post/1603292156873
+                
                 
                 let db = Firestore.firestore().collection("main-post")
                     .document(topic)
@@ -142,9 +281,6 @@ class FoodMe: UIViewController {
         }
         
     }
-    
-    
-    
     //MARK: -selectors
     @objc func enableNotification(){
         followTopic(currentUser: currentUser , topic : topic) { (_) in
@@ -165,5 +301,191 @@ class FoodMe: UIViewController {
         }
         
     }
+    
+    @objc func loadData(){
+        collectionview.refreshControl?.beginRefreshing()
+        getPost()
+    }
+    
+}
+//MARK: UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource
+extension FoodMe : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return mainPost.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if mainPost[indexPath.row].postId == nil {
+            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+            cell.nativeAd = mainPost[indexPath.row].nativeAd
+            return cell
+        }else{
+            if mainPost[indexPath.row].data.isEmpty {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! FoodMeView
+                cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+               
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.mainPost = mainPost[indexPath.row]
+                return cell
+            }else{
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! FoodMeViewData
+                
+                cell.backgroundColor = .white
+                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.mainPost = mainPost[indexPath.row]
+                return cell
+            }
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: loadMoreCell, for: indexPath)
+            as! LoadMoreCell
+        cell.activityView.startAnimating()
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if loadMore{
+            return CGSize(width: view.frame.width, height: 50)
+        }else{
+            return .zero
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if mainPost[indexPath.row].postId == nil {
+            return CGSize(width: view.frame.width, height: 409)
+        }else{
+            
+            if mainPost[indexPath.row].text == nil {
+                return .zero
+            }
+            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+            
+            if mainPost[indexPath.row].data.isEmpty{
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
+            }
+            else{
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+            }
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+}
+//MARK: - GADAdLoaderDelegate
+extension FoodMe : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
+    
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+      
+        print("\(adLoader) failed with error: \(error.localizedDescription)")
+        self.loadMore = false
+        self.collectionview.reloadData()
+    }
+    
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        self.nativeAd = nativeAd
+        if mainPost.count > 0{
+            if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                self.mainPost.sort(by: { (post, post1) -> Bool in
+                    
+                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                })
+                
+                self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
+            }
+        }
+        self.loadMore = false
+        self.collectionview.reloadData()
+    }
+}
+//MARK: FoodMeVCDelegate
+extension FoodMe : FoodMeVCDelegate {
+    func options(for cell: FoodMeView) {
+        
+    }
+    
+    func like(for cell: FoodMeView) {
+        
+    }
+    
+    func dislike(for cell: FoodMeView) {
+        
+    }
+    
+    func comment(for cell: FoodMeView) {
+        
+    }
+    
+    func linkClick(for cell: FoodMeView) {
+        
+    }
+    
+    func showProfile(for cell: FoodMeView) {
+        
+    }
+    
+    func mapClick(for cell: FoodMeView) {
+        
+    }
+    
+    func goProfileByMention(userName: String) {
+        
+    }
+    
+    
+}
+//MARK: FoodMeVCDataDelegate
+extension FoodMe : FoodMeVCDataDelegate {
+    func options(for cell: FoodMeViewData) {
+        
+    }
+    
+    func like(for cell: FoodMeViewData) {
+        
+    }
+    
+    func dislike(for cell: FoodMeViewData) {
+        
+    }
+    
+    func comment(for cell: FoodMeViewData) {
+        
+    }
+    
+    func linkClick(for cell: FoodMeViewData) {
+        
+    }
+    
+    func mapClick(for cell: FoodMeViewData) {
+        
+    }
+    
+    func showProfile(for cell: FoodMeViewData) {
+        
+    }
+    
     
 }

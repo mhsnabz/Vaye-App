@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Lottie
 import FirebaseFirestore
 import GoogleMobileAds
 import SDWebImage
@@ -21,7 +20,7 @@ private let loadMoreCell = "loadmorecell"
 private let cellAds = "cellAds"
 class BuyAndCellVC: UIViewController {
     var currentUser : CurrentUser
-    var waitAnimation = AnimationView()
+
     lazy var followers = [String]()
     var collectionview: UICollectionView!
     var refresher = UIRefreshControl()
@@ -144,7 +143,6 @@ class BuyAndCellVC: UIViewController {
         
     }
     fileprivate func configureUI(){
-        waitAnimation.isHidden = true
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -252,7 +250,6 @@ class BuyAndCellVC: UIViewController {
     }
     
     private func checkHasPost(completion : @escaping(Bool) ->Void){
-       
         let db = Firestore.firestore().collection("main-post")
             .document("sell-buy").collection("post")
         db.getDocuments { (docSnap, err) in
@@ -260,7 +257,6 @@ class BuyAndCellVC: UIViewController {
                 guard let snap = docSnap else {
                     completion(false)
                     return}
-                
                 if snap.isEmpty{
                     completion(false)
                 }else{
@@ -268,7 +264,7 @@ class BuyAndCellVC: UIViewController {
                 }
             }
         }
-        
+     
     }
     
     private func checkFollowingTopic(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){

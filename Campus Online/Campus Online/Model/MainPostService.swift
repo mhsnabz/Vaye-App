@@ -186,6 +186,24 @@ class MainPostService {
         }
         
     }
+    func checkHasPost(target : String,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("main-post")
+            .document(target).collection("post")
+        db.getDocuments { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion(false)
+                    return}
+                if snap.isEmpty{
+                    completion(false)
+                }else{
+                    completion(true)
+                }
+            }
+        }
+     
+    }
+    
     
     
 }
