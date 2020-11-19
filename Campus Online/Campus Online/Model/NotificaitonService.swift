@@ -271,6 +271,9 @@ enum Notification_description {
     case home_new_post
     case new_ad
     case like_sell_buy
+    case new_food_me
+    case like_food_me
+    
     var desprition : String {
         switch self {
        
@@ -293,7 +296,10 @@ enum Notification_description {
         return "Yeni Bir İlan Paylaştı"
         case .like_sell_buy:
             return "Paylaştığın İlanı Beğendi"
-            
+        case .new_food_me:
+        return "Yeni Bir Yemek İlanı Paylaştı"
+        case .like_food_me:
+            return "Paylaştığın Gönderiyi Beğendi"
         }
     }
 }
@@ -307,6 +313,8 @@ enum NotificationType{
     case home_new_post
     case new_ad
     case like_sell_buy
+    case new_food_me
+    case like_food_me
     var desprition : String {
         switch self{
         
@@ -328,6 +336,10 @@ enum NotificationType{
             return "new_ad"
         case .like_sell_buy:
             return "like_sell_buy"
+        case .new_food_me:
+            return "new_food_me"
+        case .like_food_me:
+            return "like_food_me"
         }
     }
 }

@@ -33,6 +33,7 @@
 		660FB97025646E7D0014D406 /* SetNewFoodMePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB96F25646E7D0014D406 /* SetNewFoodMePost.swift */; };
 		660FB975256470300014D406 /* FoodMeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB974256470300014D406 /* FoodMeModel.swift */; };
 		660FB97B2564B2580014D406 /* FoodMeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB97A2564B2580014D406 /* FoodMeCell.swift */; };
+		660FB98325652BEF0014D406 /* FoodMeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB98225652BEF0014D406 /* FoodMeService.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -232,6 +233,7 @@
 		660FB96F25646E7D0014D406 /* SetNewFoodMePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNewFoodMePost.swift; sourceTree = "<group>"; };
 		660FB974256470300014D406 /* FoodMeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeModel.swift; sourceTree = "<group>"; };
 		660FB97A2564B2580014D406 /* FoodMeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeCell.swift; sourceTree = "<group>"; };
+		660FB98225652BEF0014D406 /* FoodMeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeService.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -986,6 +988,7 @@
 				6690A67B253CCF3900E88BC0 /* MainPostService.swift */,
 				6690A6A22547236300E88BC0 /* MainPostCommentService.swift */,
 				660FB974256470300014D406 /* FoodMeModel.swift */,
+				660FB98225652BEF0014D406 /* FoodMeService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1517,6 +1520,7 @@
 				66F25F1924F7A7CD005B0591 /* CompleteRegistration.swift in Sources */,
 				66AF72C025133019007E96BC /* GoogleAdBannerView.swift in Sources */,
 				6690A677253B995A00E88BC0 /* BuyAndSellDataView.swift in Sources */,
+				660FB98325652BEF0014D406 /* FoodMeService.swift in Sources */,
 				660F5ADA2503DB0800F72558 /* LicenceCell.swift in Sources */,
 				665E5CD424FFB5BE00B5B5E3 /* CaptionText.swift in Sources */,
 				667755AB25309FCE00DBF3CD /* MapKitPermissonVC.swift in Sources */,
