@@ -574,6 +574,18 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: BuyAndSellDataView) {

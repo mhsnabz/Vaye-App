@@ -56,15 +56,7 @@ class RegisterVC: UIViewController {
         let size = stackViewLogin.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         print(size.width)
         print(size.height)
-        stackViewLogin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 286 + 12 + 50)
-        
-        
-        
-        //               view.addSubview(reg)
-        
-        //               reg.anchor(top: stackViewLogin.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 50)
-        
-        
+        stackViewLogin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 286 + 12 + 50) 
         return view
     }()
     let labelContrackt : UILabel = {

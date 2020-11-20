@@ -33,7 +33,7 @@ class FoodMe: UIViewController {
     var time : Timestamp!
     var nativeAdView: GADUnifiedNativeAdView!
     weak var notificaitonListener : ListenerRegistration?
-    weak var delegate : BuySellVCDelegate?
+
     var mainPost = [MainPostModel]()
     var selectedIndex : IndexPath?
     var selectedPostID : String?
@@ -424,35 +424,105 @@ extension FoodMe : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUn
 //MARK: FoodMeVCDelegate
 extension FoodMe : FoodMeVCDelegate {
     func options(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func comment(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post , target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: FoodMeView) {
-        
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: FoodMeView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
     func mapClick(for cell: FoodMeView) {
-        
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
     
     func goProfileByMention(userName: String) {
-        
+        if "@\(userName)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                sself.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
     }
     
     
@@ -460,31 +530,141 @@ extension FoodMe : FoodMeVCDelegate {
 //MARK: FoodMeVCDataDelegate
 extension FoodMe : FoodMeVCDataDelegate {
     func options(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func comment(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post , target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: FoodMeViewData) {
-        
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func mapClick(for cell: FoodMeViewData) {
-        
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
     
     func showProfile(for cell: FoodMeViewData) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+            }
+        }
+    }
+    
+    
+}
+//MARK: ASMainPostLaungerDelgate
+extension FoodMe : ASMainPostLaungerDelgate {
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option{
         
+        case .editPost(_):
+            guard let index = selectedIndex else {
+                return }
+            if let h = collectionview.cellForItem(at: index) as? FoodMeViewData {
+                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collectionview.cellForItem(at: index) as? FoodMeView{
+                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            break
+        case .deletePost(_):
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            guard let target = self.mainPost[index.row].postType else { return }
+            let db = Firestore.firestore().collection("main-post")
+                .document(target)
+                .collection("post")
+                .document(postId)
+           
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    MainPostService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        case .slientPost(_):
+           break
+        }
     }
     
     
