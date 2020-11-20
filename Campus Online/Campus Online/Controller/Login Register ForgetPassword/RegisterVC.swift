@@ -461,14 +461,8 @@ class RegisterVC: UIViewController {
                                                                     Utilities.dismissProgress()
                                                                 }
                                                             }
-                                                            
-                                                            
-                                                            
                                                         }
                                                     }
-                                                
-                                                
-                                                
                                             }
                                         
                                     }
