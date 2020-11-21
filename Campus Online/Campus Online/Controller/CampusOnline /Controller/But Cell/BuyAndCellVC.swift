@@ -464,8 +464,6 @@ extension BuyAndCellVC : BuySellVCDelegate{
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
 
             }
-
-
         }
     }
     func mapClick(for cell: BuyAndSellView) {

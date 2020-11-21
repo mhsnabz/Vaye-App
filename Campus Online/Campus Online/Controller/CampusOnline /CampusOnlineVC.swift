@@ -220,8 +220,6 @@ class CampusOnlineVC: UIViewController{
                                             deleteDb.delete()
                                         }
                                     }
-                                    
-                                   
                                 }
                                 completion(post)
                             }
@@ -607,6 +605,17 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
         }
     }
     
@@ -719,9 +728,8 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
             guard let postId = selectedPostID else {
                 Utilities.errorProgress(msg: "Hata Oluştu")
                 return }
-            guard let target = self.mainPost[index.row].postType else { return }
             let db = Firestore.firestore().collection("main-post")
-                .document(target)
+                .document("post")
                 .collection("post")
                 .document(postId)
            
@@ -748,19 +756,47 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
 //MARK: FoodMeVCDelegate
 extension CampusOnlineVC : FoodMeVCDelegate{
     func options(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
     }
     
     func comment(for cell: FoodMeView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: FoodMeView) {
@@ -768,11 +804,41 @@ extension CampusOnlineVC : FoodMeVCDelegate{
     }
     
     func showProfile(for cell: FoodMeView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
     func mapClick(for cell: FoodMeView) {
-        
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
     
     
@@ -780,19 +846,47 @@ extension CampusOnlineVC : FoodMeVCDelegate{
 //MARK:FoodMeVCDataDelegate
 extension CampusOnlineVC : FoodMeVCDataDelegate {
     func options(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
     }
     
     func comment(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: FoodMeViewData) {
@@ -800,11 +894,41 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
     }
     
     func mapClick(for cell: FoodMeViewData) {
-        
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
     }
     
     func showProfile(for cell: FoodMeViewData) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
         
+            }
+        }
     }
     
     
