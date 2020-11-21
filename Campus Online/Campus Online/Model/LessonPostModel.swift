@@ -28,6 +28,7 @@ class LessonPostModel {
     var silent : [String]!
     var favori : [String]!
     var id : String!
+    var empty : String!
     var nativeAd :  GADUnifiedNativeAd!
     init(nativeAd : GADUnifiedNativeAd , postTime : Timestamp) {
         self.nativeAd = nativeAd
@@ -84,5 +85,9 @@ class LessonPostModel {
         if let postTime = dic?["postTime"] as? Timestamp {
             self.postTime = postTime
         }
+    }
+    init(empty : String , postId : String) {
+        self.postId = postId
+        self.empty = empty
     }
 }

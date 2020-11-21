@@ -80,11 +80,7 @@ class CampusOnlineVC: UIViewController{
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menu")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
         checkHasFollowingAnyUser {[weak self] (_val) in
             guard let sself = self else { return }
-            if _val{
-                sself.configureUI()
-            }else{
-//                sself.animationView()
-            }
+            sself.configureUI()
         }
         view.backgroundColor = .collectionColor()
     }
@@ -121,7 +117,6 @@ class CampusOnlineVC: UIViewController{
                 guard let snap = docSnap else {
                     completion(false)
                     return}
-                
                 if snap.isEmpty{
                     completion(false)
                 }else{
@@ -131,25 +126,7 @@ class CampusOnlineVC: UIViewController{
         }
         
     }
-//    fileprivate func animationView() {
-//        waitAnimation = .init(name : "no-one-follow")
-//        waitAnimation.animationSpeed = 1
-//        waitAnimation.loopMode = .loop
-//
-//        view.addSubview(waitAnimation)
-//        waitAnimation.anchor(top: view.topAnchor , left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 20, marginRigth: 0, width: 0, heigth: 0)
-//        waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//
-//
-//
-//        msg_text =  NSMutableAttributedString(string: "Hiç Kimseyi Takip Etmiyorsunuz\n", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
-//        msg_text.append(NSAttributedString(string: "Takip Edebilceğin Kullanıcıları Bul", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
-//        label.attributedText = msg_text
-//
-//        view.addSubview(label)
-//        label.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-//
-//    }
+
     fileprivate func configureUI(){
  
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -246,6 +223,77 @@ class CampusOnlineVC: UIViewController{
         }
         
     }
+    
+    private func loadMorePost(completion: @escaping(Bool) ->Void){
+     
+        
+        guard let pagee = page else {
+            loadMore = false
+            collectionview.reloadData()
+            completion(false)
+            return }
+        let  db =  Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("main-post").order(by: "postId", descending: true).start(afterDocument: pagee)
+        db.getDocuments { [self] (snapshot, err ) in
+            guard let snap = snapshot else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty {
+                self.loadMore = false
+                collectionview.reloadData()
+                completion(false)
+            
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection(currentUser.short_school)
+                        .document("lesson-post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists
+                            {
+                                
+                                self.mainPost.append(MainPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                                    self.time = self.mainPost[(self.mainPost.count) - 1].postTime
+                                    self.mainPost.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    self.loadMore = true
+                                    self.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                               
+                          
+                                
+                            }else{
+                                
+                                let deleteDb = Firestore.firestore().collection("user")
+                                    .document(currentUser.uid).collection("lesson-post").document(snapp.documentID)
+                                deleteDb.delete()
+                                
+                            }
+                        }
+                        
+                    }
+                   
+                    page = snap.documents.last
+                    
+                  
+                    
+                }
+                self.fetchAds()
+//                self.collectionview.reloadData()
+                
+//                loadMore = false
+                
+            }
+        }
+        
+    }
+    
     func fetchAds() {
         adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
                                adTypes: [ .unifiedNative ], options: nil)
@@ -343,6 +391,21 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
         let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row], target: mainPost[indexPath.row].postType)
         navigationController?.pushViewController(vc, animated: true)
        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+      
+          if mainPost.count > 5 {
+             
+              if indexPath.item == mainPost.count - 1 {
+                  loadMorePost { (val) in
+                      
+                  }
+              }else{
+                  self.loadMore = false
+              }
+          }
     }
     
 }
@@ -549,7 +612,7 @@ extension CampusOnlineVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegat
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
       
         print("\(adLoader) failed with error: \(error.localizedDescription)")
-        self.loadMore = false
+        self.loadMore = true
         self.collectionview.reloadData()
     }
     

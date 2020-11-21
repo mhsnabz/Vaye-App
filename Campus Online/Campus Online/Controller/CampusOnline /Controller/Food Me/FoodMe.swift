@@ -401,7 +401,7 @@ extension FoodMe : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUn
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
       
         print("\(adLoader) failed with error: \(error.localizedDescription)")
-        self.loadMore = false
+        self.loadMore = true
         self.collectionview.reloadData()
     }
     

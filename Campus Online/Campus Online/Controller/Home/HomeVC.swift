@@ -13,6 +13,7 @@ private let cellID = "cell_text"
 private let cellData = "cell_data"
 private let cellAds = "cell_ads"
 private let loadMoreCell = "cell_load_more"
+private let emptyCell = "empty_cell"
 import GoogleMobileAds
 import SDWebImage
 import FirebaseStorage
@@ -28,8 +29,10 @@ class HomeVC: UIViewController {
     weak var notificaitonListener : ListenerRegistration?
 
     /// The ad unit ID.
-    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
-//    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
+//    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
+    
+
+    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     
     var centerController : UIViewController!
@@ -332,6 +335,7 @@ class HomeVC: UIViewController {
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
+        collectionview.register(EmptyCell.self, forCellWithReuseIdentifier: emptyCell)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
     
         collectionview.alwaysBounceVertical = true
@@ -615,7 +619,13 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
             cell.nativeAd = lessonPost[indexPath.row].nativeAd
             return cell
-        }else{
+        }
+        else if lessonPost[indexPath.row].empty == "empty"{
+            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: emptyCell, for: indexPath) as! EmptyCell
+          
+            return cell
+        }
+        else{
             if lessonPost[indexPath.row].data.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
                 cell.delegate = self
@@ -673,7 +683,11 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         if lessonPost[indexPath.row].postId == nil {
             return CGSize(width: view.frame.width, height: 409)
             
-        }else{
+        }
+        else if lessonPost[indexPath.row].empty == "empty"{
+            return .zero
+        }
+        else{
             
             if lessonPost[indexPath.row].text == nil {
                 return .zero
@@ -1039,7 +1053,8 @@ extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUn
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
       
         print("\(adLoader) failed with error: \(error.localizedDescription)")
-        self.loadMore = false
+        self.lessonPost.append(LessonPostModel.init(empty: "empty", postId: "empty"))
+        self.loadMore = true
         self.collectionview.reloadData()
     }
     
