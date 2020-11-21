@@ -468,6 +468,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
         controller.dismiss(animated: true) {
             for image  in images {
+               
                 image.resolve {[weak self] (img) in
                     guard let sself = self else { return }
                     if let img_data = img!.jpegData(compressionQuality: 0.8){
@@ -585,8 +586,12 @@ extension SetNewFoodMePost : UITextViewDelegate {
 //MARK:-DeleteImageSetNewFoodMeSell
 extension SetNewFoodMePost : DeleteImageSetNewFoodMeSell {
     func deleteImage(for cell: FoodMeCell) {
-        print("delete")
+        guard let indexPath = self.collectionview.indexPath(for: cell) else { return }
+        data.remove(at: indexPath.row)
+        self.collectionview.reloadData()
+        self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
     }
     
     
 }
+

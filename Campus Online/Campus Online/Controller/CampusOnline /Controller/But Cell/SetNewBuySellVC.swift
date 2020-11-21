@@ -641,10 +641,15 @@ extension SetNewBuySellVC :  UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,                                minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
+    
+    
 }
 extension SetNewBuySellVC : DeleteImageSetNewBuySell {
     func deleteImage(for cell: BuySellCell) {
-        print("deleted")
+        guard let indexPath = self.collectionview.indexPath(for: cell) else { return }
+        data.remove(at: indexPath.row)
+        self.collectionview.reloadData()
+        self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
     }
 }
 //MARK:- PopUpDelegate

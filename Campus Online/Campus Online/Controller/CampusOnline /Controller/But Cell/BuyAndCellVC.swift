@@ -238,6 +238,87 @@ class BuyAndCellVC: UIViewController {
         }
         
     }
+    
+    private func loadMorePost(completion: @escaping(Bool) ->Void){
+     
+        
+        guard let pagee = page else {
+            loadMore = false
+            collectionview.reloadData()
+            completion(false)
+            return }
+        let  db =  Firestore.firestore().collection(currentUser.short_school)
+            .document("main-post")
+            .collection("buy-sell").limit(to: 5)
+            .order(by: "postId",descending: true).start(afterDocument: pagee)
+        db.getDocuments { [self] (snapshot, err ) in
+            guard let snap = snapshot else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty {
+                self.loadMore = false
+                collectionview.reloadData()
+                completion(false)
+            
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection("main-post")
+                        .document("post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists
+                            {
+                                
+                                self.mainPost.append(MainPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                                    self.time = self.mainPost[(self.mainPost.count) - 1].postTime
+                                    self.mainPost.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    self.loadMore = true
+                                    self.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                               
+                          
+                                
+                            }else{
+                                
+                                let db_currentUser = Firestore.firestore().collection("user")
+                                    .document(currentUser.uid)
+                                    .collection("main-post")
+                                    .document(item.documentID)
+                                db_currentUser.delete(){(err) in
+                                    if let postType = item.get("postType") as? String {
+                                        let deleteDb = Firestore.firestore().collection(currentUser.short_school)
+                                            .document("main-post")
+                                            .collection(postType).document(item.documentID)
+                                        deleteDb.delete()
+                                    }
+                                }
+                                
+                            }
+                        }
+                        
+                    }
+                   
+                    page = snap.documents.last
+                    
+                  
+                    
+                }
+                self.fetchAds()
+//                self.collectionview.reloadData()
+                
+//                loadMore = false
+                
+            }
+        }
+        
+    }
+    
     func fetchAds() {
         adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: self,
                                adTypes: [ .unifiedNative ], options: nil)
@@ -438,6 +519,21 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+      
+          if mainPost.count > 5 {
+             
+              if indexPath.item == mainPost.count - 1 {
+                  loadMorePost { (val) in
+                      
+                  }
+              }else{
+                  self.loadMore = false
+              }
+          }
     }
 }
 

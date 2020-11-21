@@ -260,8 +260,8 @@ class CampusOnlineVC: UIViewController{
             
             }else{
                 for item in snap.documents{
-                    let db = Firestore.firestore().collection(currentUser.short_school)
-                        .document("lesson-post").collection("post").document(item.documentID)
+                    let db = Firestore.firestore().collection("main-post")
+                        .document("post").collection("post").document(item.documentID)
                     db.getDocument { (docSnap, err) in
                         if err == nil {
                             guard let snapp = docSnap else { return }
@@ -284,9 +284,18 @@ class CampusOnlineVC: UIViewController{
                                 
                             }else{
                                 
-                                let deleteDb = Firestore.firestore().collection("user")
-                                    .document(currentUser.uid).collection("lesson-post").document(snapp.documentID)
-                                deleteDb.delete()
+                                let db_currentUser = Firestore.firestore().collection("user")
+                                    .document(currentUser.uid)
+                                    .collection("main-post")
+                                    .document(item.documentID)
+                                db_currentUser.delete(){(err) in
+                                    if let postType = item.get("postType") as? String {
+                                        let deleteDb = Firestore.firestore().collection(currentUser.short_school)
+                                            .document("main-post")
+                                            .collection(postType).document(item.documentID)
+                                        deleteDb.delete()
+                                    }
+                                }
                                 
                             }
                         }
