@@ -18,6 +18,10 @@ private let cellID = "cellID"
 private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
 private let cellAds = "cellAds"
+
+private let cell_foodme_id = "cell_food_me_id"
+private let cell_foodme_data_id = "cell_foodme_data_id"
+
 class CampusOnlineVC: UIViewController{
     var currentUser : CurrentUser
     weak var delegate : CoControllerDelegate?
@@ -38,8 +42,8 @@ class CampusOnlineVC: UIViewController{
     
     private var actionSheetCurrentUser : ActionSheetMainPost
     private var actionSheetOtherUser : ASMainPostOtherUser
-    let adUnitID = Utilities.adUnitID // "ca-app-pub-3940256099942544/3986624511"
-    //    let adUnitID = "ca-app-pub-1362663023819993/1801312504"
+    let adUnitID =  "ca-app-pub-3940256099942544/3986624511"
+//        let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     let label : UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .center
@@ -138,6 +142,9 @@ class CampusOnlineVC: UIViewController{
         collectionview.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionview.register(BuyAndSellView.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(BuyAndSellDataView.self , forCellWithReuseIdentifier: cellData)
+        collectionview.register(FoodMeView.self, forCellWithReuseIdentifier: cell_foodme_id)
+        collectionview.register(FoodMeViewData.self, forCellWithReuseIdentifier: cell_foodme_data_id)
+        
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.alwaysBounceVertical = true
@@ -191,7 +198,7 @@ class CampusOnlineVC: UIViewController{
                     for postId in snap.documents {
                         //main-post/sell-buy/post/1603356076781
                         let db = Firestore.firestore().collection("main-post")
-                            .document("sell-buy")
+                            .document("post")
                             .collection("post")
                             .document(postId.documentID)
                         db.getDocument { (docSnap, err) in
@@ -201,11 +208,20 @@ class CampusOnlineVC: UIViewController{
                                 {
                                     post.append(MainPostModel.init(postId: snap.documentID, dic: snap.data()!))
                                 }else{
+                                    let db_currentUser = Firestore.firestore().collection("user")
+                                        .document(currentUser.uid)
+                                        .collection("main-post")
+                                        .document(postId.documentID)
+                                    db_currentUser.delete(){(err) in
+                                        if let postType = postId.get("postType") as? String {
+                                            let deleteDb = Firestore.firestore().collection(currentUser.short_school)
+                                                .document("main-post")
+                                                .collection(postType).document(postId.documentID)
+                                            deleteDb.delete()
+                                        }
+                                    }
                                     
-                                    let deleteDb = Firestore.firestore().collection(currentUser.short_school)
-                                        .document("main-post")
-                                        .collection("sell-buy").document(postId.documentID)
-                                    deleteDb.delete()
+                                   
                                 }
                                 completion(post)
                             }
@@ -313,37 +329,70 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
             cell.nativeAd = mainPost[indexPath.row].nativeAd
             return cell
         }else{
-            if mainPost[indexPath.row].data.isEmpty {
-                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-                cell.delegate = self
-                cell.currentUser = currentUser
-                
-                cell.backgroundColor = .white
-                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-                cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-                cell.mainPost = mainPost[indexPath.row]
-                
-                return cell
-            }else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
-                cell.backgroundColor = .white
-                cell.delegate = self
-                cell.currentUser = currentUser
-                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
-                
-                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-                cell.mainPost = mainPost[indexPath.row]
-                
-                return cell
+            
+            if mainPost[indexPath.row].postType == PostType.buySell.despription{
+                if mainPost[indexPath.row].data.isEmpty {
+                    let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
+                    cell.delegate = self
+                    cell.currentUser = currentUser
+                    
+                    cell.backgroundColor = .white
+                    let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                    cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                    cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                    cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                    cell.mainPost = mainPost[indexPath.row]
+                    
+                    return cell
+                }else {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
+                    cell.backgroundColor = .white
+                    cell.delegate = self
+                    cell.currentUser = currentUser
+                    let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                    cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                    cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                    cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                    
+                    cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                    cell.mainPost = mainPost[indexPath.row]
+                    
+                    return cell
+                }
+            }else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
+                if mainPost[indexPath.row].data.isEmpty {
+                    let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_id, for: indexPath) as! FoodMeView
+                    cell.delegate = self
+                    cell.currentUser = currentUser
+                    cell.backgroundColor = .white
+                    let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                    cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                   
+                    cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                    cell.mainPost = mainPost[indexPath.row]
+                    return cell
+                }else{
+                    let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_data_id, for: indexPath) as! FoodMeViewData
+                    
+                    cell.backgroundColor = .white
+                    cell.delegate = self
+                    cell.currentUser = currentUser
+                    let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                    cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                    
+                    cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                    
+                    cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                    cell.mainPost = mainPost[indexPath.row]
+                    return cell
+                }
             }
+            
+            
         }
        
-        
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: "empty", for: indexPath) as! EmptyCell
+        return cell
         
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -365,17 +414,30 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
         if mainPost[indexPath.row].postId == nil {
             return CGSize(width: view.frame.width, height: 409)
         }else{
-            
             if mainPost[indexPath.row].text == nil {
                 return .zero
             }
-            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
             
-            if mainPost[indexPath.row].data.isEmpty{
-                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
-            }
-            else{
-                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+            if mainPost[indexPath.row].postType == PostType.buySell.despription{
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                
+                if mainPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+                }
+            }else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                
+                if mainPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                }
+            }else{
+                return .zero
             }
         }
     }
@@ -679,6 +741,70 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
         case .slientPost(_):
             print("slient post")
         }
+    }
+    
+    
+}
+//MARK: FoodMeVCDelegate
+extension CampusOnlineVC : FoodMeVCDelegate{
+    func options(for cell: FoodMeView) {
+        
+    }
+    
+    func like(for cell: FoodMeView) {
+        
+    }
+    
+    func dislike(for cell: FoodMeView) {
+        
+    }
+    
+    func comment(for cell: FoodMeView) {
+        
+    }
+    
+    func linkClick(for cell: FoodMeView) {
+        
+    }
+    
+    func showProfile(for cell: FoodMeView) {
+        
+    }
+    
+    func mapClick(for cell: FoodMeView) {
+        
+    }
+    
+    
+}
+//MARK:FoodMeVCDataDelegate
+extension CampusOnlineVC : FoodMeVCDataDelegate {
+    func options(for cell: FoodMeViewData) {
+        
+    }
+    
+    func like(for cell: FoodMeViewData) {
+        
+    }
+    
+    func dislike(for cell: FoodMeViewData) {
+        
+    }
+    
+    func comment(for cell: FoodMeViewData) {
+        
+    }
+    
+    func linkClick(for cell: FoodMeViewData) {
+        
+    }
+    
+    func mapClick(for cell: FoodMeViewData) {
+        
+    }
+    
+    func showProfile(for cell: FoodMeViewData) {
+        
     }
     
     

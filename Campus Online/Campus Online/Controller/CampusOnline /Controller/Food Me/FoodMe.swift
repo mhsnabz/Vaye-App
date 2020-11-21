@@ -175,7 +175,7 @@ class FoodMe: UIViewController {
                 }else{
                     for postId in snap.documents {
                         let db = Firestore.firestore().collection("main-post")
-                            .document("food-me")
+                            .document("post")
                             .collection("post")
                             .document(postId.documentID)
                         db.getDocument { (docSnap, err) in
@@ -190,6 +190,11 @@ class FoodMe: UIViewController {
                                         .document("main-post")
                                         .collection("food-me").document(postId.documentID)
                                     deleteDb.delete()
+                                    let dbc = Firestore.firestore().collection("user")
+                                        .document(currentUser.uid)
+                                        .collection("main-post")
+                                        .document(postId.documentID)
+                                    dbc.delete()
                                 }
                                 completion(post)
                             }

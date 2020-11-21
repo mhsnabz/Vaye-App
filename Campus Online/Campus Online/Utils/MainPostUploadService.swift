@@ -214,7 +214,7 @@ class MainPostUploadService{
     func moveThumbDatas(currentUser : CurrentUser ,array : [String],target : String, postId : String , completion : @escaping(Bool) ->Void){
         ///main-post/sell-buy/post/1603357054085
         let db = Firestore.firestore().collection("main-post")
-            .document(target).collection("post").document(postId)
+            .document("post").collection("post").document(postId)
         db.setData(["thumbData":array] as [String : Any], merge: true) { (err) in
             if err == nil {
                 completion(true)

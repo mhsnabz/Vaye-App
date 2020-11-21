@@ -306,7 +306,11 @@ class BuyAndSellView: UICollectionViewCell {
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
         mapBtn.addTarget(self, action: #selector(linkClick), for: .touchUpInside)
+        
         price = NSMutableAttributedString(string: "Fiyat : ", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+        
+        
+        
         if post.value.isEmpty {
             price.append(NSAttributedString(string: " Fiyat Belirtilmemiş", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
         }else{

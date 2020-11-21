@@ -387,7 +387,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
             dataType.append(data[number].type)
         }
         if self.data.isEmpty{
-            FoodMeService.shared.setNewFoodMe(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
+            FoodMeService.shared.setNewFoodMe(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.foodMe.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)

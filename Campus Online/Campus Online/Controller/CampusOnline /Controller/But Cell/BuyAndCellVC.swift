@@ -86,13 +86,9 @@ class BuyAndCellVC: UIViewController {
             }
         }
         
-        checkHasPost {[weak self] (_val) in
+        checkHasPost {[weak self] (_) in
             guard let sself = self else { return }
-            if _val{
-                sself.configureUI()
-            }else{
-               
-            }
+            sself.configureUI()
         }
         view.backgroundColor = .collectionColor()
         
@@ -210,7 +206,7 @@ class BuyAndCellVC: UIViewController {
                     for postId in snap.documents {
                         //main-post/sell-buy/post/1603356076781
                         let db = Firestore.firestore().collection("main-post")
-                            .document("sell-buy")
+                            .document("post")
                             .collection("post")
                             .document(postId.documentID)
                         db.getDocument { (docSnap, err) in

@@ -44,15 +44,9 @@ class FoodMeService{
     
     func setPostForCurrentUser(postId : String , currentUser : CurrentUser){
         let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("user-main-post").document(postId)
-        db.setData(["postId":postId] as [String : Any], merge: true){ (err) in
-            if err == nil {
-                let db = Firestore.firestore().collection("user")
-                    .document(currentUser.uid)
-                    .collection("main-post").document(postId)
-                db.setData(["postId":postId], merge: true)
-            }
-        }
+            .document(currentUser.uid)
+            .collection("main-post").document(postId)
+        db.setData(["postId":postId], merge: true)
     }
     func add_post_for_universty(uni shortname : String, postId : String ){
     
@@ -75,7 +69,7 @@ class FoodMeService{
     func setPostForFoodMe( dic : [String : Any] , postId : String , completion : @escaping(Bool)->Void){
  
         let db = Firestore.firestore().collection("main-post")
-            .document("food-me").collection("post").document(postId)
+            .document("post").collection("post").document(postId)
 
         db.setData(dic, merge: true) { (err) in
             if err == nil {
