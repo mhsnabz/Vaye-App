@@ -20,7 +20,7 @@ class MainPostService {
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 //main-post/sell-buy/post/1603357054085
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
@@ -38,7 +38,7 @@ class MainPostService {
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
@@ -57,7 +57,7 @@ class MainPostService {
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
@@ -74,7 +74,7 @@ class MainPostService {
             collectionview.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
@@ -89,7 +89,7 @@ class MainPostService {
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 //main-post/sell-buy/post/1603357054085
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
@@ -107,7 +107,7 @@ class MainPostService {
             tableView.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
@@ -126,7 +126,7 @@ class MainPostService {
             tableView.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
@@ -143,7 +143,7 @@ class MainPostService {
             tableView.reloadData()
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
                 let db = Firestore.firestore().collection("main-post")
-                    .document(target)
+                    .document("post")
                     .collection("post")
                     .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
@@ -188,7 +188,7 @@ class MainPostService {
     }
     func checkHasPost(target : String,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("main-post")
-            .document(target).collection("post")
+            .document("post").collection("post")
         db.getDocuments { (docSnap, err) in
             if err == nil {
                 guard let snap = docSnap else {

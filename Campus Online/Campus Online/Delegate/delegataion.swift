@@ -177,12 +177,26 @@ protocol SellBuyCommentHeaderDelegate : class {
     func clickMention(username : String)
     func mapClik(for header : SellBuyCommentHeader)
 }
+protocol FoodMeCommentHeaderDelegate : class {
+    func like (for header : FoodMeCommentHeader)
+    func dislike (for header : FoodMeCommentHeader)
+    func showProfile(for header : FoodMeCommentHeader)
+    func clickMention(username : String)
+    func mapClik(for header : FoodMeCommentHeader)
+}
 protocol SellBuyDataCommentHeaderDelegate : class {
     func like (for header : SellBuyDataCommentHeader)
     func dislike (for header : SellBuyDataCommentHeader)
     func showProfile(for header : SellBuyDataCommentHeader)
     func clickMention(username : String)
     func mapClik(for header : SellBuyDataCommentHeader)
+}
+protocol FoodMeDataCommentHeaderDelegate : class {
+    func like (for header : FoodMeDataCommentHeader)
+    func dislike (for header : FoodMeDataCommentHeader)
+    func showProfile(for header : FoodMeDataCommentHeader)
+    func clickMention(username : String)
+    func mapClik(for header : FoodMeDataCommentHeader)
 }
 
 protocol DataViewClick : class {

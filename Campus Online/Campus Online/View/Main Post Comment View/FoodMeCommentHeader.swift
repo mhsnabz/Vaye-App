@@ -1,17 +1,18 @@
 //
-//  SellBuyCommentHeader.swift
+//  FoodMeCommentHeader.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 25.10.2020.
+//  Created by mahsun abuzeyitoğlu on 22.11.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
+
 
 import UIKit
 import ActiveLabel
 import SDWebImage
-class SellBuyCommentHeader : UITableViewHeaderFooterView{
+class FoodMeCommentHeader: UITableViewHeaderFooterView{
     
-    weak var delegate : SellBuyCommentHeaderDelegate?
+    weak var delegate : FoodMeCommentHeaderDelegate?
     var currentUser : CurrentUser?
    weak var post : MainPostModel?{
     didSet{
@@ -129,15 +130,7 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         btn.setImage(#imageLiteral(resourceName: "location-orange").withRenderingMode(.alwaysOriginal), for: .normal)
         return btn
     }()
-    let priceLbl : UILabel = {
-        let lbl = UILabel()
-        lbl.textAlignment = .left
-        return lbl
-    }()
-    var price : NSMutableAttributedString = {
-        let name = NSMutableAttributedString()
-        return name
-    }()
+    
     let timeLbl : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 13)
@@ -193,8 +186,9 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
 //        configure()
         addSubview(msgText)
+
         addSubview(timeLbl)
-        timeLbl.anchor(top: priceLbl.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 0 ,  marginBottom: 0, marginRigth: 0, width: 0, heigth: 15)
+        timeLbl.anchor(top: msgText.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 8, marginLeft: 0 ,  marginBottom: 0, marginRigth: 0, width: 0, heigth: 15)
         addSubview(bottomBar)
         addSubview(mapBtn)
         mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 28, marginBottom: 10, marginRigth: 0, width: 25, heigth: 25)
@@ -285,15 +279,6 @@ class SellBuyCommentHeader : UITableViewHeaderFooterView{
         dislike_lbl.text = post.dislike.count.description
         comment_lbl.text = post.comment.description
 
-        price = NSMutableAttributedString(string: "Fiyat : ", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
-        if post.value.isEmpty {
-            price.append(NSAttributedString(string: " Fiyat Belirtilmemiş", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
-        }else{
-            price.append(NSAttributedString(string: " \(post.value.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.red ]))
-        }
-       
-        priceLbl.attributedText = price
-        
         if post.geoPoint != nil{
             mapBtn.isHidden = false
         }else{

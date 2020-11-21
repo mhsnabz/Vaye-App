@@ -20,7 +20,7 @@ private let loadMoreCell = "loadmorecell"
 private let cellAds = "cellAds"
 class BuyAndCellVC: UIViewController {
     var currentUser : CurrentUser
-
+    
     lazy var followers = [String]()
     var collectionview: UICollectionView!
     var refresher = UIRefreshControl()
@@ -97,14 +97,14 @@ class BuyAndCellVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.title = "Al - Sat"
-  
+        
         checkFollowingTopic(currentUser: currentUser) { [weak self] (_val) in
             guard let sself = self else { return }
             sself.setNavigationBarItems(val: _val)
         }
     }
     //MARK:-functions
- 
+    
     fileprivate  func setNavigationBarItems(val : Bool) {
         if val {
             let btn1 = UIButton(type: .custom)
@@ -240,7 +240,7 @@ class BuyAndCellVC: UIViewController {
     }
     
     private func loadMorePost(completion: @escaping(Bool) ->Void){
-     
+        
         
         guard let pagee = page else {
             loadMore = false
@@ -259,7 +259,7 @@ class BuyAndCellVC: UIViewController {
                 self.loadMore = false
                 collectionview.reloadData()
                 completion(false)
-            
+                
             }else{
                 for item in snap.documents{
                     let db = Firestore.firestore().collection("main-post")
@@ -281,8 +281,8 @@ class BuyAndCellVC: UIViewController {
                                     completion(true)
                                     
                                 }
-                               
-                          
+                                
+                                
                                 
                             }else{
                                 
@@ -303,16 +303,16 @@ class BuyAndCellVC: UIViewController {
                         }
                         
                     }
-                   
+                    
                     page = snap.documents.last
                     
-                  
+                    
                     
                 }
                 self.fetchAds()
-//                self.collectionview.reloadData()
+                //                self.collectionview.reloadData()
                 
-//                loadMore = false
+                //                loadMore = false
                 
             }
         }
@@ -341,7 +341,7 @@ class BuyAndCellVC: UIViewController {
                 }
             }
         }
-     
+        
     }
     
     private func checkFollowingTopic(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
@@ -387,11 +387,11 @@ class BuyAndCellVC: UIViewController {
                     }
                 }
             }else{
-              
+                
                 let db = Firestore.firestore().collection("main-post")
                     .document("sell-buy")
                     .collection("followers").document(currentUser.uid)
- 
+                
                 db.setData(["userId":currentUser.uid as Any , "school":currentUser.short_school as Any] as [String : Any], merge: true) { (err) in
                     if err == nil {
                         Utilities.succesProgress(msg: "Bildirimler Açıldı")
@@ -416,12 +416,12 @@ class BuyAndCellVC: UIViewController {
     }
     @objc func newPost(){
         Utilities.waitProgress(msg: nil)
-
-            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
-                guard let sself = self else { return }
-                let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+        
+        UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+            guard let sself = self else { return }
+            let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+            sself.navigationController?.pushViewController(vc, animated: true)
+            Utilities.dismissProgress()
             
         }
         
@@ -515,7 +515,7 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
         navigationController?.pushViewController(vc, animated: true)
@@ -523,17 +523,17 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-      
-          if mainPost.count > 5 {
-             
-              if indexPath.item == mainPost.count - 1 {
-                  loadMorePost { (val) in
-                      
-                  }
-              }else{
-                  self.loadMore = false
-              }
-          }
+        
+        if mainPost.count > 5 {
+            
+            if indexPath.item == mainPost.count - 1 {
+                loadMorePost { (val) in
+                    
+                }
+            }else{
+                self.loadMore = false
+            }
+        }
     }
 }
 
@@ -558,7 +558,7 @@ extension BuyAndCellVC : BuySellVCDelegate{
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -566,12 +566,12 @@ extension BuyAndCellVC : BuySellVCDelegate{
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
-
+        
     }
     func like(for cell: BuyAndSellView)
     {
@@ -607,12 +607,12 @@ extension BuyAndCellVC : BuySellVCDelegate{
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
             navigationController?.pushViewController(vc, animated: true)
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -624,8 +624,8 @@ extension BuyAndCellVC : BuySellVCDelegate{
                 vc.modalPresentationStyle = .fullScreen
                 sself.navigationController?.pushViewController(vc, animated: true)
                 Utilities.dismissProgress()
-
-        
+                
+                
             }
         }
     }
@@ -648,7 +648,7 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
@@ -673,7 +673,7 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -708,13 +708,13 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
             navigationController?.pushViewController(vc, animated: true)
-//            vc.modalPresentationStyle = .fullScreen
-//            present(vc, animated: true, completion: nil)
+            //            vc.modalPresentationStyle = .fullScreen
+            //            present(vc, animated: true, completion: nil)
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -726,8 +726,8 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
                 vc.modalPresentationStyle = .fullScreen
                 sself.navigationController?.pushViewController(vc, animated: true)
                 Utilities.dismissProgress()
-
-        
+                
+                
             }
         }
     }
@@ -765,7 +765,7 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
                 .document(target)
                 .collection("post")
                 .document(postId)
-           
+            
             db.delete {[weak self] (err) in
                 guard let sself = self else { return }
                 if err == nil {
@@ -791,7 +791,7 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
 extension BuyAndCellVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-      
+        
         print("\(adLoader) failed with error: \(error.localizedDescription)")
         self.loadMore = true
         self.collectionview.reloadData()
