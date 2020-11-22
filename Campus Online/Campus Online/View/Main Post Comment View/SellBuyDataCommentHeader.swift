@@ -202,7 +202,7 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
         headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
 
         addSubview(msgText)
-
+        addSubview(priceLbl)
         addSubview(bottomBar)
         addSubview(filterView)
         addSubview(timeLbl)
