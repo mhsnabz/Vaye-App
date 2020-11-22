@@ -723,7 +723,7 @@
 				668FA996255A3299007C8150 /* Edit Post */,
 				667755A425309BD900DBF3CD /* Map Kit */,
 				66775555252E9DBB00DBF3CD /* Food Me */,
-				66775554252E9DB100DBF3CD /* But Cell */,
+				66775554252E9DB100DBF3CD /* Buy Sell */,
 				66775553252E9D9600DBF3CD /* Camp */,
 				66775551252E9D8400DBF3CD /* Parties */,
 			);
@@ -747,13 +747,13 @@
 			path = Camp;
 			sourceTree = "<group>";
 		};
-		66775554252E9DB100DBF3CD /* But Cell */ = {
+		66775554252E9DB100DBF3CD /* Buy Sell */ = {
 			isa = PBXGroup;
 			children = (
 				66775564252E9E0100DBF3CD /* BuyAndCellVC.swift */,
 				6677559F252FECA600DBF3CD /* SetNewBuySellVC.swift */,
 			);
-			path = "But Cell";
+			path = "Buy Sell";
 			sourceTree = "<group>";
 		};
 		66775555252E9DBB00DBF3CD /* Food Me */ = {

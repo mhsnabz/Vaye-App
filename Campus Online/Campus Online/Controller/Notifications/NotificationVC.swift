@@ -316,6 +316,23 @@ class NotificationVC: UIViewController {
                     }
                     Utilities.dismissProgress()
                 }
+            }else {
+                MainPostService.shared.getMainPost(postId: sself.model[indexPath.row].postId) {[weak self] (post) in
+              
+                    guard let post = post else{
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                        return
+                    }
+                    let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                    sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                        sself.model[indexPath.row].isRead = true
+                        sself.tableView.reloadData()
+                        
+                    }
+                    Utilities.dismissProgress()
+                    
+                }
             }
             
         
@@ -444,20 +461,41 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
                     model[indexPath.row].type == NotificationType.comment_mention.desprition ||
                     model[indexPath.row].type == NotificationType.home_like.desprition ||
                     model[indexPath.row].type == NotificationType.reply_comment.desprition ||
-                    model[indexPath.row].type == NotificationType.home_new_post.desprition
-        {
-            getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) { (postModel) in
+                    model[indexPath.row].type == NotificationType.home_new_post.desprition{
+            
+            
+                
+            
+            getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) {[weak self] (postModel) in
+                guard let sself = self else { return }
                 guard let post = postModel else {
-                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
                     return }
-                let vc = CommentVC(currentUser: self.currentUser, post: post)
-                self.navigationController?.pushViewController(vc, animated: true)
-                self.makeReadNotificaiton(not_id: self.model[indexPath.row].not_id) { (_) in
-                    self.model[indexPath.row].isRead = true
-                    self.tableView.reloadData()
+                let vc = CommentVC(currentUser: sself.currentUser, post: post)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
                     
                 }
                 Utilities.dismissProgress()
+            }
+        }else {
+            MainPostService.shared.getMainPost(postId: model[indexPath.row].postId) {[weak self] (post) in
+                guard let sself = self else { return }
+                guard let post = post else{
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                    return
+                }
+                let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
+                self?.navigationController?.pushViewController(vc, animated: true)
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
+                }
+                Utilities.dismissProgress()
+                
             }
         }
       

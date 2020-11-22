@@ -84,9 +84,9 @@ class COContainerController : UIViewController{
         
         case .fallowing:
           break
-        case .party:
-            let vc = PartiesVC(currentUser : currentUser)
-            self.navigationController?.pushViewController(vc, animated: true)
+//        case .party:
+//            let vc = PartiesVC(currentUser : currentUser)
+//            self.navigationController?.pushViewController(vc, animated: true)
             
         case .foodme:
             let vc = FoodMe(currentUser : currentUser)

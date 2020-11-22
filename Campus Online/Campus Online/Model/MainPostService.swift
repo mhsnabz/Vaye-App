@@ -204,7 +204,23 @@ class MainPostService {
      
     }
     
-    
+    func getMainPost(postId : String , completion : @escaping(MainPostModel?) ->Void){
+        let db = Firestore.firestore().collection("main-post")
+            .document("post")
+            .collection("post")
+            .document(postId)
+        db.getDocument { (docsnap, err) in
+            if err == nil{
+                guard let post = docsnap else {
+                    completion(nil)
+                    return
+                }
+                completion(MainPostModel.init(postId: postId, dic: post.data()))
+            }else{
+                completion(nil)
+            }
+        }
+    }
     
 }
 enum MainPostLikeTarget {

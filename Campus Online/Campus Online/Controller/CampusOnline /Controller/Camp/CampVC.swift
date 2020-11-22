@@ -55,6 +55,7 @@ class CampVC: UIViewController {
     //MARK: -lifeCycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.title = "Kamp"
     }
     
     required init?(coder: NSCoder) {

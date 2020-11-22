@@ -123,6 +123,14 @@ class NotificaitionCell: UITableViewCell {
             type.attributedText = notification
         }else if post.type == NotificationType.like_sell_buy.desprition{
             type.text = Notification_description.like_sell_buy.desprition
+        }else if post.type == Notification_description.like_camping.desprition {
+            type.text = Notification_description.like_camping.desprition
+        }else if post.type == Notification_description.new_camping.desprition{
+            type.text = Notification_description.new_camping.desprition
+        }else if post.type == Notification_description.new_food_me.desprition{
+            type.text = Notification_description.new_food_me.desprition
+        }else if post.type == Notification_description.like_food_me.desprition{
+            type.text = Notification_description.like_food_me.desprition
         }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
