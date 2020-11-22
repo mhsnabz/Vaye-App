@@ -22,6 +22,10 @@ private let cellAds = "cellAds"
 private let cell_foodme_id = "cell_food_me_id"
 private let cell_foodme_data_id = "cell_foodme_data_id"
 
+private let cell_camp_id = "cell_camp_id"
+private let cell_camp_data_id = "cell_camp_data_id"
+
+
 class CampusOnlineVC: UIViewController{
     var currentUser : CurrentUser
     weak var delegate : CoControllerDelegate?
@@ -144,7 +148,8 @@ class CampusOnlineVC: UIViewController{
         collectionview.register(BuyAndSellDataView.self , forCellWithReuseIdentifier: cellData)
         collectionview.register(FoodMeView.self, forCellWithReuseIdentifier: cell_foodme_id)
         collectionview.register(FoodMeViewData.self, forCellWithReuseIdentifier: cell_foodme_data_id)
-        
+        collectionview.register(CampingView.self, forCellWithReuseIdentifier: cell_camp_id)
+        collectionview.register(CampingDataView.self, forCellWithReuseIdentifier: cell_camp_data_id)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.alwaysBounceVertical = true
@@ -393,6 +398,34 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
                     cell.mainPost = mainPost[indexPath.row]
                     return cell
                 }
+            }else if mainPost[indexPath.row].postType == PostType.camping.despription{
+                if mainPost[indexPath.row].data.isEmpty {
+                   
+                        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_id, for: indexPath) as! CampingView
+                        cell.delegate = self
+                        cell.currentUser = currentUser
+                        cell.backgroundColor = .white
+                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                       
+                        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                        cell.mainPost = mainPost[indexPath.row]
+                        return cell
+                }else{
+                    let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_data_id, for: indexPath) as! CampingDataView
+                    
+                    cell.backgroundColor = .white
+                    cell.delegate = self
+                    cell.currentUser = currentUser
+                    let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                    cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                    
+                    cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                    
+                    cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                    cell.mainPost = mainPost[indexPath.row]
+                    return cell
+                }
             }
             
             
@@ -443,7 +476,18 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
                 else{
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
                 }
-            }else{
+            }
+            else if mainPost[indexPath.row].postType == PostType.camping.despription{
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                
+                if mainPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                }
+            }
+            else{
                 return .zero
             }
         }
@@ -914,6 +958,186 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
     }
     
     func showProfile(for cell: FoodMeViewData) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
+        
+            }
+        }
+    }
+    
+    
+}
+//MARK:-CampingVCDelegate
+extension CampusOnlineVC : CampingVCDelegate {
+    func options(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: CampingView) {
+        
+    }
+    
+    func showProfile(for cell: CampingView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
+                vc.modalPresentationStyle = .fullScreen
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+
+        
+            }
+        }
+    }
+    
+    func mapClick(for cell: CampingView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    
+}
+//MARK:-CampingVCDataDelegate
+extension CampusOnlineVC : CampingVCDataDelegate {
+    func options(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: CampingDataView) {
+        
+    }
+    
+    func mapClick(for cell: CampingDataView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    func showProfile(for cell: CampingDataView) {
         guard  let post = cell.mainPost else {
             return
         }

@@ -11,7 +11,7 @@ import UIKit
 class CampingCell: UICollectionViewCell {
     weak var delegate: DeleteImageCampingCell?
     
-    var data : FoodMeModel?{
+    var data : CampingModel?{
         didSet{
             guard let data = data else { return }
             img.image = UIImage(data: data.data)

@@ -42,6 +42,9 @@
 		660FB9A9256A356E0014D406 /* CampingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9A8256A356E0014D406 /* CampingCell.swift */; };
 		660FB9B1256A357C0014D406 /* CampingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9B0256A357C0014D406 /* CampingView.swift */; };
 		660FB9B6256A358C0014D406 /* CampingDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9B5256A358C0014D406 /* CampingDataView.swift */; };
+		660FB9BB256A54C70014D406 /* SetNewCampingPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9BA256A54C70014D406 /* SetNewCampingPost.swift */; };
+		660FB9C0256A55460014D406 /* CampingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9BF256A55460014D406 /* CampingModel.swift */; };
+		660FB9C5256A56110014D406 /* CampingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9C4256A56110014D406 /* CampingService.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -250,6 +253,9 @@
 		660FB9A8256A356E0014D406 /* CampingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingCell.swift; sourceTree = "<group>"; };
 		660FB9B0256A357C0014D406 /* CampingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingView.swift; sourceTree = "<group>"; };
 		660FB9B5256A358C0014D406 /* CampingDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingDataView.swift; sourceTree = "<group>"; };
+		660FB9BA256A54C70014D406 /* SetNewCampingPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNewCampingPost.swift; sourceTree = "<group>"; };
+		660FB9BF256A55460014D406 /* CampingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingModel.swift; sourceTree = "<group>"; };
+		660FB9C4256A56110014D406 /* CampingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingService.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -732,6 +738,7 @@
 			isa = PBXGroup;
 			children = (
 				6677555E252E9DE800DBF3CD /* CampVC.swift */,
+				660FB9BA256A54C70014D406 /* SetNewCampingPost.swift */,
 			);
 			path = Camp;
 			sourceTree = "<group>";
@@ -1027,6 +1034,8 @@
 				6690A6A22547236300E88BC0 /* MainPostCommentService.swift */,
 				660FB974256470300014D406 /* FoodMeModel.swift */,
 				660FB98225652BEF0014D406 /* FoodMeService.swift */,
+				660FB9BF256A55460014D406 /* CampingModel.swift */,
+				660FB9C4256A56110014D406 /* CampingService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1542,6 +1551,7 @@
 				660FB9A32569D6E00014D406 /* FoodMeDataCommentHeader.swift in Sources */,
 				66024C2D251D4E51009E8A7E /* RepliesComment.swift in Sources */,
 				66775544252CEE1400DBF3CD /* CoMenuHeader.swift in Sources */,
+				660FB9C5256A56110014D406 /* CampingService.swift in Sources */,
 				66C4A6F2250C3CCB00259322 /* DataViewDoc.swift in Sources */,
 				660BC4B225162752005D0EF8 /* OtherUserProfileHeader.swift in Sources */,
 				6690A681253F684900E88BC0 /* ActionSheetMainPost.swift in Sources */,
@@ -1549,6 +1559,8 @@
 				6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */,
 				66D9122524EEAC1B002D760A /* Utilities.swift in Sources */,
 				660FB988256717A50014D406 /* FoodMeView.swift in Sources */,
+				660FB9BB256A54C70014D406 /* SetNewCampingPost.swift in Sources */,
+				660FB9C0256A55460014D406 /* CampingModel.swift in Sources */,
 				66D9122824EEAC6E002D760A /* delegataion.swift in Sources */,
 				660F5ACD2502D06C00F72558 /* AddUserCell.swift in Sources */,
 				661333E824F3B25B002677AB /* ProfileCell.swift in Sources */,

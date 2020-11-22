@@ -69,10 +69,11 @@ class CampVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.topItem?.title = " "
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        
         setNavigationBar()
         navigationController?.navigationBar.isHidden = false
         navigationItem.title = "Kamp"
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         view.backgroundColor = .collectionColor()
         configure()
         MainPostService.shared.checkFollowTopic(currentUser: currentUser, topic: topic) {[weak self] (_val) in
@@ -80,7 +81,7 @@ class CampVC: UIViewController {
             sself.setNavigationBarItems(val: _val)
         }
         
-        MainPostService.shared.checkHasPost(target: PostType.foodMe.despription) {[weak self] (_) in
+        MainPostService.shared.checkHasPost(target: PostType.camping.despription) {[weak self] (_) in
             guard let sself = self else { return }
             sself.configureUI()
         }
@@ -359,7 +360,7 @@ class CampVC: UIViewController {
         Utilities.waitProgress(msg: nil)
         UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
             guard let sself = self else { return }
-            let vc = SetNewFoodMePost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+            let vc = SetNewCampingPost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
             sself.navigationController?.pushViewController(vc, animated: true)
             Utilities.dismissProgress()
             
@@ -544,7 +545,7 @@ extension CampVC : CampingVCDelegate{
     
 }
 //MARK:-GADAdLoaderDelegate
-extension CampVC : GADAdLoaderDelegate {
+extension CampVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate  {
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
       
         print("\(adLoader) failed with error: \(error.localizedDescription)")

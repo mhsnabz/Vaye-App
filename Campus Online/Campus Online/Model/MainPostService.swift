@@ -210,7 +210,7 @@ class MainPostService {
 enum MainPostLikeTarget {
     case buy_sell
     case food_me
-    case camp
+    case camping
     case parties
     var description : String{
         switch self{
@@ -219,8 +219,8 @@ enum MainPostLikeTarget {
             return "sell-buy"
         case .food_me:
             return "food-me"
-        case .camp:
-            return "camp"
+        case .camping:
+            return "camping"
         case .parties:
             return "parties"
         }
