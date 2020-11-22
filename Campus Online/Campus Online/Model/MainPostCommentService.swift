@@ -13,7 +13,7 @@ class MainPostCommentService {
         
         //main-post/sell-buy/post/1603644806086/cmment/Sb4DXq5THBMOcE0J0K5c
         let db = Firestore.firestore().collection("main-post")
-            .document(target)
+            .document("post")
             .collection("post")
             .document(postId)
             .collection("comment")
@@ -32,7 +32,7 @@ class MainPostCommentService {
                 guard let sself = self else { return }
                 sself.getTotolCommentCount(target: target, postId: postId) { (total) in
                     let commentCount = Firestore.firestore().collection("main-post")
-                        .document(target)
+                        .document("post")
                         .collection("post")
                         .document(postId)
                     commentCount.setData(["comment":total] as [String : Any], merge: true) { (err) in
@@ -49,7 +49,7 @@ class MainPostCommentService {
     
     func getTotolCommentCount(target : String, postId : String , completion : @escaping(Int) ->Void){
         let db = Firestore.firestore().collection("main-post")
-            .document(target)
+            .document("post")
             .collection("post")
             .document(postId)
             .collection("comment")
@@ -71,7 +71,7 @@ class MainPostCommentService {
     func getComment(target : String , postId: String , completion: @escaping([CommentModel]) ->Void) {
         var comment = [CommentModel]()
         let db = Firestore.firestore().collection("main-post")
-            .document(target)
+            .document("post")
             .collection("post")
             .document(postId)
             .collection("comment")
@@ -103,7 +103,7 @@ class MainPostCommentService {
         //İSTE/lesson-post/post/1600870068749/comment-replied/comment/1601035854117/1601037120899
         
         let db = Firestore.firestore().collection("main-post")
-            .document(target)
+            .document("post")
             .collection("post")
             .document(postId)
             .collection("comment-replied")
@@ -130,7 +130,7 @@ class MainPostCommentService {
     private func setRepliedCommentId(target :String ,targetCommentID : String , commentId : String, currentUser : CurrentUser , postId : String ,completion : @escaping(Bool) ->Void){
         
         let db = Firestore.firestore().collection("main-post")
-            .document(target)
+            .document("post")
             .collection("post")
             .document(postId)
             .collection("comment")
@@ -171,7 +171,7 @@ class MainPostCommentService {
             tableView.reloadData()
             ///main-post/sell-buy/post/1603580081581
             let db = Firestore.firestore().collection("main-post")
-                .document(post.postType)
+                .document("post")
                 .collection("post")
                 .document(post.postId)
                 .collection("comment").document(comment.commentId!)
@@ -187,7 +187,7 @@ class MainPostCommentService {
             comment.likes?.remove(element: currentUser.uid)
             tableView.reloadData()
             let db = Firestore.firestore().collection("main-post")
-                .document(post.postType)
+                .document("post")
                 .collection("post")
                 .document(post.postId)
                 .collection("comment").document(comment.commentId!)
@@ -293,7 +293,7 @@ class MainPostCommentService {
         
         //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment-replied")
@@ -322,7 +322,7 @@ class MainPostCommentService {
     
     private func setRepliedCommentId(targetCommentID : String , commentId : String, post : MainPostModel, currentUser : CurrentUser , postId : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId).collection("comment").document(targetCommentID)
         
@@ -335,7 +335,7 @@ class MainPostCommentService {
     }
     func setRepliedCommentLike(repliedComment : CommentModel,likedCommentId : String,currentUser : CurrentUser  , post : MainPostModel, completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(repliedComment.postId!)
             .collection("comment-replied")

@@ -194,7 +194,7 @@ class MainPostReplyVC: UIViewController {
     
     func getComments(currentUser : CurrentUser ){
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment-replied")
@@ -225,7 +225,7 @@ class MainPostReplyVC: UIViewController {
         
         
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment-replied")
@@ -237,7 +237,7 @@ class MainPostReplyVC: UIViewController {
             guard let sself = self else { return }
             if err == nil {
                 let db = Firestore.firestore().collection("main-post")
-                    .document(sself.post.postType)
+                    .document("post")
                     .collection("post")
                     .document(sself.post.postId)
                     .collection("comment")

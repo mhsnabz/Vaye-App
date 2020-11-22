@@ -254,7 +254,7 @@ class MainPostCommentVC: UIViewController {
     func removeComment(commentID : String , postID : String , completion : @escaping(Int) -> Void){
         //main-post/sell-buy/post/1603888561458/comment/1603986010312
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment")
@@ -272,7 +272,7 @@ class MainPostCommentVC: UIViewController {
     func getTotolCommentCount(completion : @escaping(Int) -> Void){
         ///main-post/sell-buy/post/1604436850197/comment/1604773265884
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment")
@@ -289,7 +289,7 @@ class MainPostCommentVC: UIViewController {
     func removeRepliedComment(commentID : String){
         //main-post/sell-buy/post/1603888561458/comment/1603986010312
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment")
@@ -303,7 +303,7 @@ class MainPostCommentVC: UIViewController {
                     for item in repliedComment{
                         //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
                         let dbc = Firestore.firestore().collection("main-post")
-                            .document( sself.post.postType)
+                            .document("post")
                             .collection("post")
                             .document(sself.post.postId)
                             .collection("comment-replied")
@@ -326,7 +326,7 @@ class MainPostCommentVC: UIViewController {
             sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!) { (val) in
                 sself.post.comment = val
                 let db = Firestore.firestore().collection("main-post")
-                    .document(sself.post.postType)
+                    .document("post")
                     .collection("post")
                     .document(sself.post.postId)
                 db.setData(["comment":val], merge: true) { (err) in
@@ -346,7 +346,7 @@ class MainPostCommentVC: UIViewController {
     }
     func getComments(currentUser : CurrentUser , postID : String ){        
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
             .collection("comment")
@@ -654,9 +654,9 @@ extension MainPostCommentVC : ASMainPostLaungerDelgate {
             
             Utilities.waitProgress(msg: "Siliniyor")
             
-            guard let target = post.postType else { return }
+           
             let db = Firestore.firestore().collection("main-post")
-                .document(target)
+                .document("post")
                 .collection("post")
                 .document(post.postId)
             
