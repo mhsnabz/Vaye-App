@@ -15,6 +15,8 @@ private let sell_buy_header = "cell-buy-header"
 private let sell_buy_data_header = "cell-buy-data-header"
 private let food_me_header = "food_me_header"
 private let food_me_data_header = "food_me_data_header"
+private let camping_header = "camping_header"
+private let camping_data_header = "camping_data_header"
 class MainPostCommentVC: UIViewController {
     //MARK: - variables
     var currentUser : CurrentUser
@@ -243,8 +245,19 @@ class MainPostCommentVC: UIViewController {
                 self.tableView.reloadData()
             }
         }
-        else if target == PostType.camping.despription {
-            
+        else if target == PostType.camping.despription
+        {
+            if post.data.isEmpty{
+                tableView.register(CampingCommentHeader.self, forHeaderFooterViewReuseIdentifier: camping_header)
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 45 + 5
+                self.tableView.reloadData()
+            }else{
+                tableView.register(CampingDataCommentHeader.self, forHeaderFooterViewReuseIdentifier: camping_data_header)
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 100 + 50 + 5
+                self.tableView.reloadData()
+            }
         }else if target == PostType.party.despription{
             
         }
@@ -548,6 +561,33 @@ extension MainPostCommentVC :  UITableViewDataSource, UITableViewDelegate{
             }
         }
         else if target == PostType.camping.despription {
+            if post.data.isEmpty {
+                
+                let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: camping_header) as! CampingCommentHeader
+                cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+               
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.post = post
+                return cell
+                
+            }else{
+                let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: camping_data_header) as! CampingDataCommentHeader
+                cell.delegate = self
+                cell.backgroundColor = .white
+                cell.currentUser = currentUser
+                let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.post = post
+                return cell
+            }
             
         }else if target == PostType.party.despription{
             
@@ -771,6 +811,72 @@ extension MainPostCommentVC : FoodMeDataCommentHeaderDelegate {
     }
     
     func mapClik(for header: FoodMeDataCommentHeader) {
+        guard let post = header.post else { return }
+        guard let locaitonName = post.locationName else { return }
+        guard let lat = post.geoPoint?.latitude else { return }
+        guard let longLat = post.geoPoint?.longitude else { return }
+        openInMap(lat: lat, longLat: longLat, locationName: locaitonName)
+    }
+    
+    
+}
+//MARK:- CampingCommentHeaderDelegate
+extension MainPostCommentVC :  CampingCommentHeaderDelegate{
+    func like(for header: CampingCommentHeader) {
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderLikePost(target: MainPostLikeTarget.camping.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for header: CampingCommentHeader) {
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderDislike(target: MainPostLikeTarget.camping.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func showProfile(for header: CampingCommentHeader) {
+        guard  let post = header.post else {
+            return
+        }
+        showUserProfile(post: post)
+    }
+    
+    func mapClik(for header: CampingCommentHeader) {
+        guard let post = header.post else { return }
+        guard let locaitonName = post.locationName else { return }
+        guard let lat = post.geoPoint?.latitude else { return }
+        guard let longLat = post.geoPoint?.longitude else { return }
+        openInMap(lat: lat, longLat: longLat, locationName: locaitonName)
+    }
+    
+    
+}
+//MARK:- CampingDataCommentHeaderDelegate
+extension MainPostCommentVC :  CampingDataCommentHeaderDelegate{
+    func like(for header: CampingDataCommentHeader) {
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderLikePost(target: MainPostLikeTarget.camping.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for header: CampingDataCommentHeader) {
+        guard let post = header.post else { return }
+        MainPostService.shared.setHeaderDislike(target: MainPostLikeTarget.camping.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func showProfile(for header: CampingDataCommentHeader) {
+        guard  let post = header.post else {
+            return
+        }
+        showUserProfile(post: post)
+    }
+    
+    func mapClik(for header: CampingDataCommentHeader) {
         guard let post = header.post else { return }
         guard let locaitonName = post.locationName else { return }
         guard let lat = post.geoPoint?.latitude else { return }

@@ -210,6 +210,13 @@ protocol FoodMeCommentHeaderDelegate : class {
     func clickMention(username : String)
     func mapClik(for header : FoodMeCommentHeader)
 }
+protocol CampingCommentHeaderDelegate : class {
+    func like (for header : CampingCommentHeader)
+    func dislike (for header : CampingCommentHeader)
+    func showProfile(for header : CampingCommentHeader)
+    func clickMention(username : String)
+    func mapClik(for header : CampingCommentHeader)
+}
 protocol SellBuyDataCommentHeaderDelegate : class {
     func like (for header : SellBuyDataCommentHeader)
     func dislike (for header : SellBuyDataCommentHeader)
@@ -224,7 +231,13 @@ protocol FoodMeDataCommentHeaderDelegate : class {
     func clickMention(username : String)
     func mapClik(for header : FoodMeDataCommentHeader)
 }
-
+protocol CampingDataCommentHeaderDelegate : class {
+    func like (for header : CampingDataCommentHeader)
+    func dislike (for header : CampingDataCommentHeader)
+    func showProfile(for header : CampingDataCommentHeader)
+    func clickMention(username : String)
+    func mapClik(for header : CampingDataCommentHeader)
+}
 protocol DataViewClick : class {
     
     func imageClik ( for cell : DataViewImageCell)
