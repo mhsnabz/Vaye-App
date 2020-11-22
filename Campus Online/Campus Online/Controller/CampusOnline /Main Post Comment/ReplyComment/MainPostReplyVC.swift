@@ -222,8 +222,6 @@ class MainPostReplyVC: UIViewController {
     
     func removeComment(commentID : String  , commentModel : CommentModel){
         
-        
-        
         let db = Firestore.firestore().collection("main-post")
             .document("post")
             .collection("post")
