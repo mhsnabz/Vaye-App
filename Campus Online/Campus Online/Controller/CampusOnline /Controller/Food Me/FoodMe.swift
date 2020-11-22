@@ -724,11 +724,12 @@ extension FoodMe : ASMainPostLaungerDelgate {
         switch option{
         
         case .editPost(_):
+            //FIXME: fix edit post target
             guard let index = selectedIndex else {
                 return }
             if let h = collectionview.cellForItem(at: index) as? FoodMeViewData {
                 let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
-                
+            
                 let controller = UINavigationController(rootViewController: vc)
                 controller.modalPresentationStyle = .fullScreen
                 self.present(controller, animated: true, completion: nil)

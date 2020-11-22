@@ -74,6 +74,9 @@ protocol DeleteImageSetNewBuySell : class  {
 protocol DeleteImageSetNewFoodMeSell : class  {
     func deleteImage( for cell : FoodMeCell)
 }
+protocol DeleteImageCampingCell : class  {
+    func deleteImage( for cell : CampingCell)
+}
 protocol EditStudentPostDelegate : class {
      func deleteImage( for cell : StudentEditPostImageCell)
     func deleteDoc(for cell : StudentEditPostDocCell)
@@ -150,6 +153,29 @@ protocol FoodMeVCDataDelegate : class {
     func showProfile(for cell : FoodMeViewData)
     func goProfileByMention (userName : String)
 }
+protocol CampingVCDataDelegate : class {
+    func options ( for cell : CampingDataView)
+    func like ( for cell : CampingDataView)
+    func dislike ( for cell : CampingDataView)
+
+    func comment ( for cell : CampingDataView)
+    func linkClick(for cell : CampingDataView)
+    func mapClick(for cell : CampingDataView)
+    func showProfile(for cell : CampingDataView)
+    func goProfileByMention (userName : String)
+}
+protocol CampingVCDelegate : class {
+    func options ( for cell : CampingView)
+    func like ( for cell : CampingView)
+    func dislike ( for cell : CampingView)
+    
+    func comment ( for cell : CampingView)
+    func linkClick(for cell : CampingView)
+    func showProfile(for cell : CampingView)
+    func mapClick(for cell : CampingView)
+    func goProfileByMention (userName : String)
+}
+
 protocol CommentVCDataDelegate : class {
 
     func like (for header : CommentVCDataHeader)

@@ -247,8 +247,6 @@ class MainPostReplyVC: UIViewController {
                 }
             }
         }
-        
-        
     }
     func replyAction(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in

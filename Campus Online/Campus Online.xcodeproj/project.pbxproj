@@ -39,6 +39,9 @@
 		660FB996256903B80014D406 /* EmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB995256903B80014D406 /* EmptyCell.swift */; };
 		660FB99E2569D6D00014D406 /* FoodMeCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB99D2569D6D00014D406 /* FoodMeCommentHeader.swift */; };
 		660FB9A32569D6E00014D406 /* FoodMeDataCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9A22569D6E00014D406 /* FoodMeDataCommentHeader.swift */; };
+		660FB9A9256A356E0014D406 /* CampingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9A8256A356E0014D406 /* CampingCell.swift */; };
+		660FB9B1256A357C0014D406 /* CampingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9B0256A357C0014D406 /* CampingView.swift */; };
+		660FB9B6256A358C0014D406 /* CampingDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FB9B5256A358C0014D406 /* CampingDataView.swift */; };
 		661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DC24F36C76002677AB /* NotificationSetting.swift */; };
 		661333DF24F36C85002677AB /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333DE24F36C85002677AB /* Setting.swift */; };
 		661333E124F370B4002677AB /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661333E024F370B4002677AB /* EditProfile.swift */; };
@@ -244,6 +247,9 @@
 		660FB995256903B80014D406 /* EmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCell.swift; sourceTree = "<group>"; };
 		660FB99D2569D6D00014D406 /* FoodMeCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeCommentHeader.swift; sourceTree = "<group>"; };
 		660FB9A22569D6E00014D406 /* FoodMeDataCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMeDataCommentHeader.swift; sourceTree = "<group>"; };
+		660FB9A8256A356E0014D406 /* CampingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingCell.swift; sourceTree = "<group>"; };
+		660FB9B0256A357C0014D406 /* CampingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingView.swift; sourceTree = "<group>"; };
+		660FB9B5256A358C0014D406 /* CampingDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampingDataView.swift; sourceTree = "<group>"; };
 		661333DC24F36C76002677AB /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
 		661333DE24F36C85002677AB /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		661333E024F370B4002677AB /* EditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
@@ -547,6 +553,16 @@
 				660FB995256903B80014D406 /* EmptyCell.swift */,
 			);
 			path = "Empty Cell";
+			sourceTree = "<group>";
+		};
+		660FB9A7256A35580014D406 /* Camping View */ = {
+			isa = PBXGroup;
+			children = (
+				660FB9A8256A356E0014D406 /* CampingCell.swift */,
+				660FB9B0256A357C0014D406 /* CampingView.swift */,
+				660FB9B5256A358C0014D406 /* CampingDataView.swift */,
+			);
+			path = "Camping View";
 			sourceTree = "<group>";
 		};
 		661333DB24F36C63002677AB /* Setting */ = {
@@ -1037,6 +1053,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				660FB9A7256A35580014D406 /* Camping View */,
 				660FB994256903A90014D406 /* Empty Cell */,
 				660FB9792564B23F0014D406 /* FoodMe View */,
 				6690A6992545DFF600E88BC0 /* Main Post Comment View */,
@@ -1513,6 +1530,7 @@
 				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,
 				6690A69B2545E00E00E88BC0 /* SellBuyCommentHeader.swift in Sources */,
 				6613340B24F51272002677AB /* KullanımKosulları.swift in Sources */,
+				660FB9B1256A357C0014D406 /* CampingView.swift in Sources */,
 				661333E124F370B4002677AB /* EditProfile.swift in Sources */,
 				66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */,
 				669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */,
@@ -1601,6 +1619,7 @@
 				661333EE24F3D356002677AB /* ProfileFilterCell.swift in Sources */,
 				665E5CCE24FE7FD300B5B5E3 /* SelectedData.swift in Sources */,
 				6677556C252E9E1F00DBF3CD /* FoodMe.swift in Sources */,
+				660FB9B6256A358C0014D406 /* CampingDataView.swift in Sources */,
 				66024C33251DEA2C009E8A7E /* RepliedHeader.swift in Sources */,
 				668F04A2251F6502007BD9C7 /* OtherUserFilterVM.swift in Sources */,
 				6652F02925176971003462BC /* FirFile.swift in Sources */,
@@ -1627,6 +1646,7 @@
 				6615FC93250B3AAE00776664 /* DataViewPdfCell.swift in Sources */,
 				660BC46C2515AD0B005D0EF8 /* MenuController.swift in Sources */,
 				6615FC8B250AF67B00776664 /* LottieRefreshControl.swift in Sources */,
+				660FB9A9256A356E0014D406 /* CampingCell.swift in Sources */,
 				6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */,
 				66775565252E9E0100DBF3CD /* BuyAndCellVC.swift in Sources */,
 				660FB996256903B80014D406 /* EmptyCell.swift in Sources */,
