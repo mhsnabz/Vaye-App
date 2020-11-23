@@ -24,15 +24,12 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
     var currentUserFollowers : [String]
     var locationName : String?
     var currentUser : CurrentUser
-    
     lazy var heigth : CGFloat = 0.0
     var locationManager : CLLocationManager!
     var postDate : String!
-    
     var gallery: GalleryController!
     lazy var dataModel = [FoodMeModel]()
     lazy var data = [SelectedData]()
-    
     var collectionview: UICollectionView!
     var geoPoing : GeoPoint?{
         didSet{
@@ -202,6 +199,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
         navigationItem.title = "Food Me"
         rigtBarButton()
         configureHeader()
+        hideKeyboardWhenTappedAround()
         configureCollectionView()
     }
     override func viewWillAppear(_ animated: Bool) {

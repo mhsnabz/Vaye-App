@@ -762,17 +762,47 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
         switch option {
         case .editPost(_):
             guard let index = selectedIndex else { return }
-            if let h = collectionview.cellForItem(at: index) as? BuyAndSellDataView {
-                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
-                let controller = UINavigationController(rootViewController: vc)
-                controller.modalPresentationStyle = .fullScreen
-                self.present(controller, animated: true, completion: nil)
-            }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
-                let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
-                let controller = UINavigationController(rootViewController: vc)
-                controller.modalPresentationStyle = .fullScreen
-                self.present(controller, animated: true, completion: nil)
+            
+            if mainPost[index.row].postType == PostType.buySell.despription {
+                if let h = collectionview.cellForItem(at: index) as? BuyAndSellDataView {
+                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
+                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }else if mainPost[index.row].postType == PostType.foodMe.despription{
+                if let h = collectionview.cellForItem(at: index) as? FoodMeViewData {
+                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? FoodMeView{
+                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+                
+            }else if mainPost[index.row].postType == PostType.camping.despription{
+                if let h = collectionview.cellForItem(at: index) as? CampingDataView {
+                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? CampingView{
+                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
             }
+            
+            
             break
         case .deletePost(_):
            

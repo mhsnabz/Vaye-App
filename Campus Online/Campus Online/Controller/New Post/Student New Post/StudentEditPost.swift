@@ -930,13 +930,10 @@ extension StudentEditPost: PopUpDelegate {
             
         }
     }
-    
     func goDrive(_ target: String?) {
         guard let target = target else { return }
         goToLink(target)
     }
-    
-    
     func handleDismissal() {
         UIView.animate(withDuration: 0.5, animations: {
             self.visualEffectView.alpha = 0
