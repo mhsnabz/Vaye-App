@@ -330,9 +330,9 @@ class StudentEditPost: UIViewController {
         view.addSubview(text)
         
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: h)
-        //        text.delegate = self
+                text.delegate = self
         text.isScrollEnabled = true
-        //        textViewDidChange(text)
+                textViewDidChange(text)
         text.pleaceHolder.text = ""
         let stack = UIStackView(arrangedSubviews: [addImage,addDoc,addPdf,addLink])
         stack.axis = .horizontal
@@ -381,8 +381,6 @@ class StudentEditPost: UIViewController {
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
         text.text = post.text
-        
-        
     }
     
     func convertHashtags(text:String) -> NSAttributedString {
@@ -563,11 +561,6 @@ class StudentEditPost: UIViewController {
             }
         }
     }
-    
-    
- 
-
-    
     private func moveSavedTaskToPost(post : LessonPostModel ,urls : [String], currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         ///İSTE/lesson-post/post/1600774976770
         let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post")

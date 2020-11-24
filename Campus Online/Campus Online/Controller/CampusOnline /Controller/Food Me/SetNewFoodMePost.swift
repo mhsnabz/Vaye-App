@@ -34,7 +34,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
     var geoPoing : GeoPoint?{
         didSet{
             guard let loacaiton = geoPoing else {
-                //                pinView.removeFromSuperview()
+           
                 return }
             Utilities.succesProgress(msg: "Konum Eklendi")
             print("lat : \(loacaiton.latitude)")

@@ -1,32 +1,61 @@
 //
-//  EditMainPost.swift
+//  EditFoodMePost.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 10.11.2020.
+//  Created by mahsun abuzeyitoğlu on 24.11.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
-import UIKit
 import SDWebImage
-private let image_cell = "img"
-import FirebaseStorage
 import FirebaseFirestore
-import MobileCoreServices
-import SVProgressHUD
-class EditMainPost: UIViewController {
-    // MARK:-properties
-    var collectionview: UICollectionView!
-    var totolDataInMB : Float = 0.0
+import CoreLocation
+import ImagePicker
+import Lightbox
+import Gallery
+import FirebaseStorage
+private let imageCell = "cell"
+
+class EditFoodMePost: UIViewController
+{
+    
+    //MARK:-variable
     var currentUser : CurrentUser
     var post : MainPostModel
+    var collectionview: UICollectionView!
+    lazy var heigth : CGFloat = 0.0
     var h : CGFloat
-    var link : String?
-    var heigth : CGFloat = 0.0
-    var data = [SelectedData]()
-    var uploadTask : StorageUploadTask?
-  
+    //MARK:-properties
+    let profileImage : UIImageView = {
+        let imagee = UIImageView()
+        imagee.clipsToBounds = true
+        imagee.contentMode = .scaleAspectFit
+        imagee.layer.borderColor = UIColor.lightGray.cgColor
+        imagee.layer.borderWidth = 0.5
+        
+        return imagee
+        
+    }()
+    let userName : UILabel = {
+        let lbl = UILabel()
+        lbl.textAlignment = .left
+        return lbl
+    }()
+    lazy var name : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
     
-  
+    lazy var headerView : UIView = {
+        let view = UIView()
+        view.addSubview(profileImage)
+        profileImage.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 12, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 40, heigth: 40)
+        profileImage.layer.cornerRadius = 20
+        view.addSubview(userName)
+        userName.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+        userName.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+        
+        return view
+    }()
     
     lazy var text : CaptionText = {
         let text = CaptionText()
@@ -46,7 +75,7 @@ class EditMainPost: UIViewController {
         btn.addTarget(self, action: #selector(_addImage), for: .touchUpInside)
         return btn
     }()
-  
+    
     let addLocations : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "location").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -68,14 +97,6 @@ class EditMainPost: UIViewController {
         lbl.font = UIFont(name: Utilities.font, size: 14)
         return lbl
     }()
-    
-    let addPrice : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(#imageLiteral(resourceName: "price").withRenderingMode(.alwaysOriginal), for: .normal)
-        btn.addTarget(self, action: #selector(_addPrice), for: .touchUpInside)
-        return btn
-    }()
-    
     let pinDespriction : UILabel = {
         let lbl = UILabel()
         lbl.text = "Konum Eklendi"
@@ -108,126 +129,81 @@ class EditMainPost: UIViewController {
         
         return view
     }()
-    lazy var valuesView : UIView = {
-        let view = UIView()
-        let stackPin = UIStackView(arrangedSubviews: [value_image,value_description])
-        stackPin.axis = .horizontal
-        view.addSubview(stackPin)
-        stackPin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 40, width: 0, heigth: 25)
-        view.addSubview(remove_Value)
-        remove_Value.anchor(top: nil, left: nil, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 5, width: 25, heigth: 25)
-        return view
-    }()
-    
-    lazy var popUpWindow: PopUpNumberController = {
-        let view = PopUpNumberController()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 5
-        //        view.delegate = self
-        return view
-    }()
-    
-    let visualEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .dark)
-        let view = UIVisualEffectView(effect: blurEffect)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    //MARK:-header view
-    let profileImage : UIImageView = {
-        let imagee = UIImageView()
-        imagee.clipsToBounds = true
-        imagee.contentMode = .scaleAspectFit
-        imagee.layer.borderColor = UIColor.lightGray.cgColor
-        imagee.layer.borderWidth = 0.5
-        
-        return imagee
-        
-    }()
-    let userName : UILabel = {
-        let lbl = UILabel()
-        lbl.textAlignment = .left
-        return lbl
-    }()
-    lazy var name : NSMutableAttributedString = {
-        let name = NSMutableAttributedString()
-        return name
-    }()
-    lazy var headerView : UIView = {
-        let view = UIView()
-        view.addSubview(profileImage)
-        profileImage.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 12, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 40, heigth: 40)
-        profileImage.layer.cornerRadius = 20
-        view.addSubview(userName)
-        userName.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-        userName.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
-        
-        return view
-    }()
-    
-    var stack : UIStackView!
+   
     
     //MARK:-lifeCycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setNavigationBar()
-        view.backgroundColor = .white
-        navigationItem.title = "Gönderiyi Düzenle"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(dismissVC))
-        configureCollectionView()
-        configureHeader()
-        hideKeyboardWhenTappedAround()
-    }
-    
-    init(currentUser : CurrentUser , post : MainPostModel , heigth : CGFloat ) {
+    init(currentUser : CurrentUser , post : MainPostModel , h : CGFloat) {
+        self.h = h
         self.currentUser = currentUser
         self.post = post
-        self.h = heigth
-        
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    override func viewDidLoad()
+    {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(dismissVC))
+
+        self.navigationController?.navigationBar.topItem?.title = " "
+        setNavigationBar()
+        navigationItem.title = "Gönderiyi Düzenle"
+        configureHeader()
+
+        hideKeyboardWhenTappedAround()
+        configureCollectionView()
+    }
+    
+    
     //MARK:-functions
-    fileprivate func configureCollectionView(){
+    
+    private func configureCollectionView(){
         view.addSubview(headerView)
         headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 64)
         view.addSubview(text)
+        
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: h)
-                text.delegate = self
+        text.delegate = self
         text.isScrollEnabled = true
-                
-        text.pleaceHolder.text = ""
-        loadVariables()
+        textViewDidChange(text)
+        let stack = UIStackView(arrangedSubviews: [addImage,addLocations])
+        stack.axis = .horizontal
+        stack.spacing = (view.frame.width - 40) / (100)
+        stack.alignment = .center
+        stack.distribution = .fillEqually
+        
+        view.addSubview(stack)
+        
+        stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
+        view.addSubview(pinView)
+        pinView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
+        pinView.isHidden = true
         
         
-        if post.postType == PostType.buySell.despription {
-            stack = UIStackView(arrangedSubviews: [addImage,addPrice,addLocations])
-            stack.axis = .horizontal
-            stack.spacing = (view.frame.width - 40) / (100)
-            stack.alignment = .center
-            stack.distribution = .fillEqually
-            
-            view.addSubview(stack)
-            
-            stack.anchor(top: text.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
-            
-        }
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.backgroundColor = .white
+        view.addSubview(collectionview)
         
-        
+        collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        collectionview.register(EditFoodMeCell.self, forCellWithReuseIdentifier: imageCell)
     }
+    
     private func configureHeader(){
-        
         name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
         name.append(NSAttributedString(string: " \(currentUser.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
         userName.attributedText = name
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
-        
+        text.text = post.text
+        text.pleaceHolder.text = ""
     }
+    
     func convertHashtags(text:String) -> NSAttributedString {
         let attrString = NSMutableAttributedString(string: text)
         attrString.beginEditing()
@@ -252,46 +228,26 @@ class EditMainPost: UIViewController {
         return attrString
     }
     
+    //MARK:-selectors
     
-    fileprivate func loadVariables(){
-        
-        name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-        name.append(NSAttributedString(string: " \(currentUser.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
-        userName.attributedText = name
-        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
-        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
-        text.text = post.text
-        textViewDidChange(text)
-        
-    }
-    
-    //MARK:- selectors
-    @objc func dismissVC(){
-        dismiss(animated: true, completion: nil)
-    }
-    @objc func _addImage(){
-        
-    }
-    @objc func _addLocation(){
-        
-    }
-    @objc func _addValue(){
-        
-    }
     @objc func removeValue(){
         
     }
     @objc func removeLocation(){
         
     }
-    @objc func _addPrice(){
+    @objc func _addLocation(){
         
     }
-    
+    @objc func _addImage(){
+        
+    }
+    @objc func dismissVC(){
+        self.dismiss(animated: true, completion: nil)
+    }
 }
-
-//MARK:-UITextViewDelegate
-extension EditMainPost  : UITextViewDelegate {
+//MARK: UITextViewDelegate
+extension EditFoodMePost : UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView)
     {
@@ -334,4 +290,38 @@ extension EditMainPost  : UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         textView.attributedText = convertHashtags(text: textView.text)
     }
+}
+//MARK:-:  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+extension EditFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return post.data.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! EditFoodMeCell
+        cell.delegate = self
+        cell.url = post.data[indexPath.row]
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+          let width  = (view.frame.width - 30 ) / 3
+          return CGSize(width: width, height: width)
+      }
+   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+       return 0.4
+   }
+   
+   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+       return 0.4
+   }
+    
+}
+
+//MARK:- EditFoodMePostDelegate
+extension EditFoodMePost : EditFoodMePostDelegate {
+    func deleteImage(for cell: EditFoodMeCell) {
+        
+    }
+    
+    
 }
