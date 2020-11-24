@@ -24,6 +24,21 @@ class EditFoodMePost: UIViewController
     var collectionview: UICollectionView!
     lazy var heigth : CGFloat = 0.0
     var h : CGFloat
+    var locationManager : CLLocationManager!
+    var locationName : String?
+    var geoPoing : GeoPoint?{
+        didSet{
+            guard let loacaiton = geoPoing else {
+           
+                return }
+            Utilities.succesProgress(msg: "Konum Eklendi")
+            print("lat : \(loacaiton.latitude)")
+            print("lat : \(loacaiton.longitude)")
+            
+            
+        }
+    }
+    
     //MARK:-properties
     let profileImage : UIImageView = {
         let imagee = UIImageView()
@@ -156,7 +171,37 @@ class EditFoodMePost: UIViewController
         hideKeyboardWhenTappedAround()
         configureCollectionView()
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                self?.pinView.isHidden = true
+                return
+            }
+            if err == nil {
+                guard let snap = docSnap else {
+                    sself.pinView.isHidden = true
+                   
+                    Utilities.dismissProgress()
+                    return
+                }
+                if snap.exists{
+                    sself.pinView.isHidden = false
+                    sself.geoPoing = snap.get("geoPoint") as? GeoPoint
+                    sself.locationName = snap.get("locationName")  as? String
+                    Utilities.succesProgress(msg: "Konum Eklendi")
+                }else{
+                    sself.pinView.isHidden = true
+                    Utilities.dismissProgress()
+                }
+            }
+        }
+    }
     
     //MARK:-functions
     
@@ -234,13 +279,30 @@ class EditFoodMePost: UIViewController
         
     }
     @objc func removeLocation(){
-        
+        Utilities.waitProgress(msg: "Konum Siliniyor")
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
+        db.delete { (err) in
+            if err == nil {
+                Utilities.succesProgress(msg: "Konum Silindi")
+                self.pinView.isHidden = true
+            }
+        }
     }
     @objc func _addLocation(){
-        
+        let vc = MapVC(currentUser: currentUser)
+        vc.locationManager = locationManager
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     @objc func _addImage(){
         
+        let vc = UIImagePickerController()
+        vc.sourceType = .photoLibrary
+        vc.delegate = self
+        vc.allowsEditing = true
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true, completion: nil)
     }
     @objc func dismissVC(){
         self.dismiss(animated: true, completion: nil)
@@ -328,4 +390,80 @@ extension EditFoodMePost : EditFoodMePostDelegate {
     }
     
     
+}
+//MARK:-: UIImagePickerControllerDelegate,UINavigationControllerDelegate
+extension EditFoodMePost  : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        Utilities.waitProgress(msg: "Resim Ekleniyor")
+        guard let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return}
+        let metaDataForImage = StorageMetadata()
+        metaDataForImage.contentType = "image/jpeg"
+        guard let uploadData = selectedImage.jpegData(compressionQuality: 0.8) else { return }
+        var dataType : [String] = []
+        var data : [Data] = []
+        data.append(uploadData)
+        dataType.append(DataTypes.image.description )
+        MainPostUploadService.shareed.uploadDataBase(postDate: post.postId, currentUser: currentUser, postType: PostType.foodMe.despription, type: dataType, data: data) {[weak self] (url) in
+            
+            guard let sself = self else { return }
+            sself.dismiss(animated: true) {
+                
+                       let db = Firestore.firestore().collection("main-post")
+                        .document("post").collection("post").document(sself.post.postId)
+                for item in url{
+                    db.updateData(["data": FieldValue.arrayUnion([item])])
+                }
+             
+            }
+            MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.foodMe.despription, postId: sself.post.postId) { (_val) in
+                
+            }
+        }
+//        let storageRef = Storage.storage().reference().child(currentUser.short_school)
+//            .child(currentUser.bolum).child(post.lessonName).child(currentUser.username).child(post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
+//        uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage, completion: {[weak self] (metaData, err) in
+//            guard let sself = self else { return }
+//            if err == nil {
+//                storageRef.downloadURL { (url, err) in
+//                    guard let downloadUrl = url?.absoluteString else { return }
+//                    let db = Firestore.firestore().collection(sself.currentUser.short_school)
+//                        .document("lesson-post").collection("post").document(sself.post.postId)
+//                    db.updateData(["data": FieldValue.arrayUnion([downloadUrl as Any])]) { (err) in
+//                        if err == nil {
+//                            let thumbRef = Storage.storage().reference().child(sself.currentUser.short_school + " thumb")
+//                                .child(sself.currentUser.bolum).child(sself.post.lessonName).child(sself.currentUser.username).child(sself.post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
+//                            let image : UIImage = UIImage(data: uploadData)!
+//                            guard let thumbData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
+//                            thumbRef.putData(thumbData, metadata: metaDataForImage) { (metaData, err) in
+//                                if err == nil {
+//                                    thumbRef.downloadURL { (url, err) in
+//                                        if err == nil {
+//                                            guard let url = url?.absoluteString else { return }
+//                                            let dbc = Firestore.firestore().collection(sself.currentUser.short_school)
+//                                                .document("lesson-post").collection("post").document(sself.post.postId)
+//                                            dbc.updateData(["thumbData":FieldValue.arrayUnion([url as Any])]) { (err) in
+//                                                if err == nil {
+//
+//                                                    sself.dismiss(animated: true, completion: nil)
+//                                                    sself.post.data.append(url)
+//                                                    sself.collectionview.reloadData()
+//                                                    Utilities.succesProgress(msg: "Resim Eklendi")
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            }
+//        })
+//        uploadFiles(uploadTask: uploadTask! , count : 0 , percentTotal: 5 , data: uploadData)
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true, completion: nil)
+        }
+    
+    }
 }

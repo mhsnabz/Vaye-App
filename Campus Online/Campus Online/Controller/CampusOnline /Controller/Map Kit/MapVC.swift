@@ -13,7 +13,7 @@ import FirebaseFirestore
 class MapVC: UIViewController {
 
     //MARK: - properties
-   public  var completion : ((GeoPoint) ->Void)?
+    public  var completion : ((GeoPoint) ->Void)?
     var currentUser : CurrentUser
     var mapView : MKMapView!
     var locationManager : CLLocationManager?

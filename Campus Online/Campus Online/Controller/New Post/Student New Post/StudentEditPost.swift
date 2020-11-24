@@ -803,6 +803,9 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
         let metaDataForImage = StorageMetadata()
         metaDataForImage.contentType = "image/jpeg"
         guard let uploadData = selectedImage.jpegData(compressionQuality: 1) else { return }
+        
+ 
+        
         let storageRef = Storage.storage().reference().child(currentUser.short_school)
             .child(currentUser.bolum).child(post.lessonName).child(currentUser.username).child(post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
         uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage, completion: {[weak self] (metaData, err) in

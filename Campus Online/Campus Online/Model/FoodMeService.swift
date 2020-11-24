@@ -70,7 +70,6 @@ class FoodMeService{
  
         let db = Firestore.firestore().collection("main-post")
             .document("post").collection("post").document(postId)
-
         db.setData(dic, merge: true) { (err) in
             if err == nil {
                 completion(true)

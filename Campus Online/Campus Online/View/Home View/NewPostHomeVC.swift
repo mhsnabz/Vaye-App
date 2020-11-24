@@ -182,7 +182,7 @@ class NewPostHomeVC: UICollectionViewCell
         toolbarStack.distribution = .fillEqually
         view.addSubview(toolbarStack)
         
-        toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 25)
+        toolbarStack.anchor(top: nil, left: view.leftAnchor, bottom: nil , rigth: view.rightAnchor, marginTop: 0 , marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
         toolbarStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
       
