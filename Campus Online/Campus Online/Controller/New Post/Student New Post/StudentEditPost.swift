@@ -493,7 +493,9 @@ class StudentEditPost: UIViewController {
                 return
             }
         }
+       
     }
+    
     private func deleteThumbData(index : IndexPath, post : LessonPostModel ,postId : String, currentUser : CurrentUser){
         let url = post.thumbData[index.row]
         print("thumb url \(url as Any)")

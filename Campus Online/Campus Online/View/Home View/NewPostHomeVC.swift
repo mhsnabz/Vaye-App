@@ -88,7 +88,7 @@ class NewPostHomeVC: UICollectionViewCell
     
      lazy var msgText : ActiveLabel = {
         let lbl = ActiveLabel()
-        lbl.font = UIFont(name: Utilities.font, size: 13)
+        lbl.font = UIFont(name: Utilities.font, size: 11)
         lbl.numberOfLines = 0
         lbl.lineBreakMode = .byWordWrapping
         lbl.mentionColor = .systemBlue

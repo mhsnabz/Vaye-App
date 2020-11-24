@@ -222,6 +222,75 @@ class MainPostService {
         }
     }
     
+    func deleteData(index : IndexPath,post : MainPostModel , currentUser : CurrentUser , collectionview : UICollectionView , url : String ){
+        Utilities.waitProgress(msg: "Siliniyor")
+        
+        let storage = Storage.storage()
+        let r = storage.reference(forURL: url)
+        r.delete { (err) in
+            if err == nil {
+                //db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])
+                let db = Firestore.firestore().collection("main-post")
+                    .document("post")
+                    .collection("post")
+                    .document(post.postId)
+                db.updateData(["data":FieldValue.arrayRemove([url as Any])]) {[weak self] (err) in
+                    if err == nil {
+                        guard  let sself = self else {
+                            return
+                        }
+                        if let index = post.data.firstIndex(of: url) {
+                            
+                           post.data.remove(at: index)
+                            collectionview.reloadData()
+
+                        }
+                        sself.removeThumbData(currentUser: currentUser, post: post, index : index) { (_) in
+                            collectionview.reloadData()
+                        }
+                            
+                        
+                    }
+                }
+            }else{
+                
+                print("err \(err?.localizedDescription as Any)")
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return
+            }
+        }
+    }
+    func removeThumbData(currentUser  : CurrentUser , post : MainPostModel ,  index : IndexPath , completion : @escaping(Bool) ->Void){
+        let url = post.thumbData[index.row]
+        let storage = Storage.storage()
+        let r = storage.reference(forURL: url)
+        r.delete { (err) in
+            if err == nil {
+                
+                let db = Firestore.firestore().collection("main-post")
+                    .document("post")
+                    .collection("post")
+                    .document(post.postId)
+             
+                db.updateData(["thumbData":FieldValue.arrayRemove([url as Any])]) { (err) in
+                    if err == nil {
+                        if let index = post.thumbData.firstIndex(of: url) {
+                            Utilities.succesProgress(msg: "Dosya Silindi")
+                           post.thumbData.remove(at: index)
+                           completion(true)
+
+                        }
+                    }else{
+                        print("err \(err?.localizedDescription as Any)")
+                    }
+                }
+
+            }else{
+                print("err \(err?.localizedDescription as Any)")
+            }
+        }
+    }
+    
 }
 enum MainPostLikeTarget {
     case buy_sell

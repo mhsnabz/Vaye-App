@@ -320,7 +320,11 @@ extension EditFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegate
 //MARK:- EditFoodMePostDelegate
 extension EditFoodMePost : EditFoodMePostDelegate {
     func deleteImage(for cell: EditFoodMeCell) {
-        
+        guard let url = cell.url else { return }
+         guard let index = collectionview.indexPath(for: cell) else {
+             return
+         }
+        MainPostService.shared.deleteData(index: index, post: post, currentUser: currentUser, collectionview: collectionview, url: url)
     }
     
     
