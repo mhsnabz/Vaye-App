@@ -162,14 +162,13 @@ class EditFoodMePost: UIViewController
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(dismissVC))
-
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationItem.title = "Gönderiyi Düzenle"
         configureHeader()
-
         hideKeyboardWhenTappedAround()
         configureCollectionView()
+        rigtBarButton()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -273,7 +272,43 @@ class EditFoodMePost: UIViewController
         return attrString
     }
     
+    fileprivate func rigtBarButton() {
+        //        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
+        
+        let button: UIButton = UIButton(type: .custom)
+        //set image for button
+        button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        //add function for button
+        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
+        //set frame
+        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        
+        let barButton = UIBarButtonItem(customView: button)
+        //assign button to navigationbar
+        self.navigationItem.rightBarButtonItem = barButton
+    }
     //MARK:-selectors
+    
+    @objc func setNewPost(){
+        text.endEditing(true)
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
+        MainPostService.shared.updatePost(post: post, text: text.text, locaitonName: locationName, geoPoint: geoPoing) {[weak self] (val) in
+            guard let sself = self else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return
+            }
+            if val{
+                Utilities.succesProgress(msg: "Gönderiniz Güncellendi")
+                sself.navigationController?.popViewController(animated: true)
+            }else{
+                Utilities.errorProgress(msg: "Hata Oluştu")
+            }
+        }
+    }
     
     @objc func removeValue(){
         
@@ -419,48 +454,7 @@ extension EditFoodMePost  : UIImagePickerControllerDelegate,UINavigationControll
                 
             }
         }
-//        let storageRef = Storage.storage().reference().child(currentUser.short_school)
-//            .child(currentUser.bolum).child(post.lessonName).child(currentUser.username).child(post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
-//        uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage, completion: {[weak self] (metaData, err) in
-//            guard let sself = self else { return }
-//            if err == nil {
-//                storageRef.downloadURL { (url, err) in
-//                    guard let downloadUrl = url?.absoluteString else { return }
-//                    let db = Firestore.firestore().collection(sself.currentUser.short_school)
-//                        .document("lesson-post").collection("post").document(sself.post.postId)
-//                    db.updateData(["data": FieldValue.arrayUnion([downloadUrl as Any])]) { (err) in
-//                        if err == nil {
-//                            let thumbRef = Storage.storage().reference().child(sself.currentUser.short_school + " thumb")
-//                                .child(sself.currentUser.bolum).child(sself.post.lessonName).child(sself.currentUser.username).child(sself.post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
-//                            let image : UIImage = UIImage(data: uploadData)!
-//                            guard let thumbData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
-//                            thumbRef.putData(thumbData, metadata: metaDataForImage) { (metaData, err) in
-//                                if err == nil {
-//                                    thumbRef.downloadURL { (url, err) in
-//                                        if err == nil {
-//                                            guard let url = url?.absoluteString else { return }
-//                                            let dbc = Firestore.firestore().collection(sself.currentUser.short_school)
-//                                                .document("lesson-post").collection("post").document(sself.post.postId)
-//                                            dbc.updateData(["thumbData":FieldValue.arrayUnion([url as Any])]) { (err) in
-//                                                if err == nil {
-//
-//                                                    sself.dismiss(animated: true, completion: nil)
-//                                                    sself.post.data.append(url)
-//                                                    sself.collectionview.reloadData()
-//                                                    Utilities.succesProgress(msg: "Resim Eklendi")
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//            }
-//        })
-//        uploadFiles(uploadTask: uploadTask! , count : 0 , percentTotal: 5 , data: uploadData)
+
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             picker.dismiss(animated: true, completion: nil)
         }

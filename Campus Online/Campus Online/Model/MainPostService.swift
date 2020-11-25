@@ -291,6 +291,33 @@ class MainPostService {
         }
     }
     
+    
+    func updatePost(post : MainPostModel ,text : String , locaitonName : String? , geoPoint : GeoPoint? , completion : @escaping(Bool) ->Void){
+        
+        let db = Firestore.firestore().collection("main-post")
+            .document("post")
+            .collection("post")
+            .document(post.postId)
+        if let geoPoint = geoPoint {
+            let dic = ["geoPoint" : geoPoint, "locationName" : locaitonName ?? "","text" : text] as [String : Any]
+            db.setData(dic, merge: true) { (err) in
+                if err == nil{
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+            }
+        }else{
+            let dic = ["text" : text] as [String : Any]
+            db.setData(dic, merge: true) { (err) in
+                if err == nil{
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+            }
+        }
+    }
 }
 enum MainPostLikeTarget {
     case buy_sell
