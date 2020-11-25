@@ -165,13 +165,14 @@ class EditFoodMePost: UIViewController
         self.navigationController?.navigationBar.topItem?.title = " "
         setNavigationBar()
         navigationItem.title = "Gönderiyi Düzenle"
-        configureHeader()
+//        configureHeader()
         hideKeyboardWhenTappedAround()
         configureCollectionView()
         rigtBarButton()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        configureHeader()
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
@@ -309,10 +310,23 @@ class EditFoodMePost: UIViewController
         db.delete {[weak self] (err) in
             guard let sself = self else { return }
             if err == nil {
-                Utilities.succesProgress(msg: "Konum Silindi")
+   
                 sself.geoPoing = nil
                 sself.locationName = nil
                 sself.pinView.isHidden = true
+                
+                
+                let db = Firestore.firestore().collection("main-post")
+                    .document("post")
+                    .collection("post")
+                    .document(sself.post.postId)
+                let dc = ["geoPoint":"","locationName":"" ] as [String : Any]
+                db.setData(dc, merge: true) { (err) in
+                    if err == nil {
+                        Utilities.succesProgress(msg: "Konum Silindi")
+                    }
+                }
+          
             }
         }
  
