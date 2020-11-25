@@ -765,12 +765,12 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
             
             if mainPost[index.row].postType == PostType.buySell.despription {
                 if let h = collectionview.cellForItem(at: index) as? BuyAndSellDataView {
-                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: nil)
                 }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
-                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: nil)
@@ -790,12 +790,12 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                 
             }else if mainPost[index.row].postType == PostType.camping.despription{
                 if let h = collectionview.cellForItem(at: index) as? CampingDataView {
-                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: nil)
                 }else if let  h = collectionview.cellForItem(at: index) as? CampingView{
-                    let vc = EditMainPost(currentUser: currentUser, post: mainPost[index.row], heigth: h.msgText.frame.height)
+                    let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: nil)

@@ -1,8 +1,8 @@
 //
-//  EditFoodMePost.swift
+//  EditCampingPost.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 24.11.2020.
+//  Created by mahsun abuzeyitoğlu on 25.11.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
@@ -15,9 +15,7 @@ import Gallery
 import FirebaseStorage
 private let imageCell = "cell"
 
-class EditFoodMePost: UIViewController
-{
-    
+class EditCampingPost: UIViewController {
     //MARK:-variable
     var currentUser : CurrentUser
     var post : MainPostModel
@@ -34,6 +32,8 @@ class EditFoodMePost: UIViewController
             print("lat : \(loacaiton.longitude)")
         }
     }
+    
+    
     //MARK:-properties
     let profileImage : UIImageView = {
         let imagee = UIImageView()
@@ -141,6 +141,7 @@ class EditFoodMePost: UIViewController
     }()
    
     
+    
     //MARK:-lifeCycle
     init(currentUser : CurrentUser , post : MainPostModel , h : CGFloat) {
         self.h = h
@@ -152,8 +153,8 @@ class EditFoodMePost: UIViewController
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    override func viewDidLoad()
-    {
+    
+    override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(dismissVC))
@@ -164,7 +165,9 @@ class EditFoodMePost: UIViewController
         hideKeyboardWhenTappedAround()
         configureCollectionView()
         rigtBarButton()
+
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureHeader()
@@ -174,10 +177,25 @@ class EditFoodMePost: UIViewController
             .collection("coordinate").document("locaiton")
         db.delete()
     }
-    
     //MARK:-functions
-    
-    
+    private func configureHeader(){
+        name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+        name.append(NSAttributedString(string: " \(currentUser.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        userName.attributedText = name
+        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
+        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
+        text.text = post.text
+        text.pleaceHolder.text = ""
+        geoPoing = post.geoPoint
+        locationName = post.locationName
+        
+        if  post.geoPoint != nil {
+            pinView.isHidden = false
+        }else{
+            pin.isHidden = true
+        }
+        
+    }
     
     private func configureCollectionView(){
         view.addSubview(headerView)
@@ -210,27 +228,9 @@ class EditFoodMePost: UIViewController
         view.addSubview(collectionview)
         
         collectionview.anchor(top: pinView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth:view.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
-        collectionview.register(EditFoodMeCell.self, forCellWithReuseIdentifier: imageCell)
+        collectionview.register(EditCampingCell.self, forCellWithReuseIdentifier: imageCell)
     }
     
-    private func configureHeader(){
-        name = NSMutableAttributedString(string: (currentUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-        name.append(NSAttributedString(string: " \(currentUser.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
-        userName.attributedText = name
-        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
-        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
-        text.text = post.text
-        text.pleaceHolder.text = ""
-        geoPoing = post.geoPoint
-        locationName = post.locationName
-        
-        if  post.geoPoint != nil {
-            pinView.isHidden = false
-        }else{
-            pin.isHidden = true
-        }
-        
-    }
     
     func convertHashtags(text:String) -> NSAttributedString {
         let attrString = NSMutableAttributedString(string: text)
@@ -271,8 +271,11 @@ class EditFoodMePost: UIViewController
         //assign button to navigationbar
         self.navigationItem.rightBarButtonItem = barButton
     }
-    //MARK:-selectors
     
+  //MARK:-selectors
+    @objc func dismissVC(){
+        self.dismiss(animated: true, completion: nil)
+    }
     @objc func setNewPost(){
         text.endEditing(true)
         guard !text.text.isEmpty else {
@@ -340,12 +343,74 @@ class EditFoodMePost: UIViewController
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true, completion: nil)
     }
-    @objc func dismissVC(){
-        self.dismiss(animated: true, completion: nil)
+}
+
+
+//MARK:-  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+extension EditCampingPost :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return post.data.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! EditCampingCell
+        cell.delegate = self
+        cell.url = post.data[indexPath.row]
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+          let width  = (view.frame.width - 30 ) / 3
+          return CGSize(width: width, height: width)
+      }
+   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+       return 0.4
+   }
+   
+   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+       return 0.4
+   }
+    
+}
+
+//MARK:-UIImagePickerControllerDelegate,UINavigationControllerDelegate
+extension EditCampingPost : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        Utilities.waitProgress(msg: "Resim Ekleniyor")
+        guard let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return}
+        let metaDataForImage = StorageMetadata()
+        metaDataForImage.contentType = "image/jpeg"
+        guard let uploadData = selectedImage.jpegData(compressionQuality: 0.8) else { return }
+        var dataType : [String] = []
+        var data : [Data] = []
+        data.append(uploadData)
+        dataType.append(DataTypes.image.description )
+        MainPostUploadService.shareed.uploadDataBase(postDate: post.postId, currentUser: currentUser, postType: PostType.camping.despription, type: dataType, data: data) {[weak self] (url) in
+
+            guard let sself = self else { return }
+            sself.post.data.append(contentsOf: url)
+            sself.collectionview.reloadData()
+            sself.dismiss(animated: true) {
+                
+                       let db = Firestore.firestore().collection("main-post")
+                        .document("post").collection("post").document(sself.post.postId)
+                for item in url{
+                    db.updateData(["data": FieldValue.arrayUnion([item])])
+                }
+             
+            }
+            MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.camping.despription, postId: sself.post.postId) { (_val) in
+            }
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true, completion: nil)
+        }
+    
     }
 }
-//MARK: UITextViewDelegate
-extension EditFoodMePost : UITextViewDelegate {
+
+//MARK:- UITextViewDelegate
+extension EditCampingPost : UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView)
     {
@@ -389,35 +454,9 @@ extension EditFoodMePost : UITextViewDelegate {
         textView.attributedText = convertHashtags(text: textView.text)
     }
 }
-//MARK:-:  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
-extension EditFoodMePost :  UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return post.data.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! EditFoodMeCell
-        cell.delegate = self
-        cell.url = post.data[indexPath.row]
-        return cell
-    }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-          let width  = (view.frame.width - 30 ) / 3
-          return CGSize(width: width, height: width)
-      }
-   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-       return 0.4
-   }
-   
-   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-       return 0.4
-   }
-    
-}
-
-//MARK:- EditFoodMePostDelegate
-extension EditFoodMePost : EditFoodMePostDelegate {
-    func deleteImage(for cell: EditFoodMeCell) {
+//MARK:-EditCampingPostDelegate
+extension EditCampingPost : EditCampingPostDelegate {
+    func deleteImage(for cell: EditCampingCell) {
         guard let url = cell.url else { return }
          guard let index = collectionview.indexPath(for: cell) else {
              return
@@ -426,40 +465,4 @@ extension EditFoodMePost : EditFoodMePostDelegate {
     }
     
     
-}
-//MARK:-: UIImagePickerControllerDelegate,UINavigationControllerDelegate
-extension EditFoodMePost  : UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        Utilities.waitProgress(msg: "Resim Ekleniyor")
-        guard let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return}
-        let metaDataForImage = StorageMetadata()
-        metaDataForImage.contentType = "image/jpeg"
-        guard let uploadData = selectedImage.jpegData(compressionQuality: 0.8) else { return }
-        var dataType : [String] = []
-        var data : [Data] = []
-        data.append(uploadData)
-        dataType.append(DataTypes.image.description )
-        MainPostUploadService.shareed.uploadDataBase(postDate: post.postId, currentUser: currentUser, postType: PostType.foodMe.despription, type: dataType, data: data) {[weak self] (url) in
-
-            guard let sself = self else { return }
-            sself.post.data.append(contentsOf: url)
-            sself.collectionview.reloadData()
-            sself.dismiss(animated: true) {
-                
-                       let db = Firestore.firestore().collection("main-post")
-                        .document("post").collection("post").document(sself.post.postId)
-                for item in url{
-                    db.updateData(["data": FieldValue.arrayUnion([item])])
-                }
-             
-            }
-            MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.foodMe.despription, postId: sself.post.postId) { (_val) in
-            }
-        }
-
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            picker.dismiss(animated: true, completion: nil)
-        }
-    
-    }
 }

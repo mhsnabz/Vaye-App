@@ -86,7 +86,14 @@ protocol EditFoodMePostDelegate : class {
      func deleteImage( for cell : EditFoodMeCell)
 
 }
+protocol EditCampingPostDelegate : class {
+     func deleteImage( for cell : EditCampingCell)
 
+}
+protocol EditBuySellPostDelegate : class {
+     func deleteImage( for cell : EditSellBuyCell)
+
+}
 protocol NewPostHomeVCDelegate : class {
     func options ( for cell : NewPostHomeVC)
     func like ( for cell : NewPostHomeVC)
