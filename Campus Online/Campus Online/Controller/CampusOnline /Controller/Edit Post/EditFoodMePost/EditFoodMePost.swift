@@ -176,33 +176,12 @@ class EditFoodMePost: UIViewController
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
-        db.getDocument {[weak self] (docSnap, err) in
-            guard let sself = self else {
-                Utilities.dismissProgress()
-                self?.pinView.isHidden = true
-                return
-            }
-            if err == nil {
-                guard let snap = docSnap else {
-                    sself.pinView.isHidden = true
-                   
-                    Utilities.dismissProgress()
-                    return
-                }
-                if snap.exists{
-                    sself.pinView.isHidden = false
-                    sself.geoPoing = snap.get("geoPoint") as? GeoPoint
-                    sself.locationName = snap.get("locationName")  as? String
-                    Utilities.succesProgress(msg: "Konum Eklendi")
-                }else{
-                    sself.pinView.isHidden = true
-                    Utilities.dismissProgress()
-                }
-            }
-        }
+        db.delete()
     }
     
     //MARK:-functions
+    
+    
     
     private func configureCollectionView(){
         view.addSubview(headerView)
@@ -246,6 +225,15 @@ class EditFoodMePost: UIViewController
         profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
         text.text = post.text
         text.pleaceHolder.text = ""
+        geoPoing = post.geoPoint
+        locationName = post.locationName
+        
+        if  post.geoPoint != nil {
+            pinView.isHidden = false
+        }else{
+            pin.isHidden = true
+        }
+        
     }
     
     func convertHashtags(text:String) -> NSAttributedString {
@@ -318,12 +306,16 @@ class EditFoodMePost: UIViewController
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
-        db.delete { (err) in
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
             if err == nil {
                 Utilities.succesProgress(msg: "Konum Silindi")
-                self.pinView.isHidden = true
+                sself.geoPoing = nil
+                sself.locationName = nil
+                sself.pinView.isHidden = true
             }
         }
+ 
     }
     @objc func _addLocation(){
         let vc = MapVC(currentUser: currentUser)
@@ -439,8 +431,10 @@ extension EditFoodMePost  : UIImagePickerControllerDelegate,UINavigationControll
         data.append(uploadData)
         dataType.append(DataTypes.image.description )
         MainPostUploadService.shareed.uploadDataBase(postDate: post.postId, currentUser: currentUser, postType: PostType.foodMe.despription, type: dataType, data: data) {[weak self] (url) in
-            
+
             guard let sself = self else { return }
+            sself.post.data.append(contentsOf: url)
+            sself.collectionview.reloadData()
             sself.dismiss(animated: true) {
                 
                        let db = Firestore.firestore().collection("main-post")
@@ -451,7 +445,6 @@ extension EditFoodMePost  : UIImagePickerControllerDelegate,UINavigationControll
              
             }
             MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.foodMe.despription, postId: sself.post.postId) { (_val) in
-                
             }
         }
 

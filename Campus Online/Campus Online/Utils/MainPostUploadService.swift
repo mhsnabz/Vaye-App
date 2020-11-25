@@ -215,11 +215,16 @@ class MainPostUploadService{
         ///main-post/sell-buy/post/1603357054085
         let db = Firestore.firestore().collection("main-post")
             .document("post").collection("post").document(postId)
-        db.setData(["thumbData":array] as [String : Any], merge: true) { (err) in
-            if err == nil {
-                completion(true)
+ 
+        
+        for item in array{
+            db.updateData(["thumbData":FieldValue.arrayUnion([item as String])]) { (err) in
+                if err == nil {
+             
+                }
             }
         }
+        completion(true)
     }
     
 }
