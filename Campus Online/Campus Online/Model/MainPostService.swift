@@ -318,6 +318,14 @@ class MainPostService {
             }
         }
     }
+    func removeLocation(currentUser : CurrentUser){
+        //user/4OaYqfc53gOBwAwVZMdu9XZV6ix2/coordinate/locaiton
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("coordinate")
+            .document("locaiton")
+        db.delete()
+        
+    }
 }
 enum MainPostLikeTarget {
     case buy_sell

@@ -26,6 +26,7 @@ class MainPostCommentVC: UIViewController {
     var sendButton: UIButton!
     var addMediaButtom: UIButton!
     let textField = FlexibleTextView()
+    var size : CGFloat!
     weak var messagesListener : ListenerRegistration?
     private var actionSheetCurrentUser : ActionSheetMainPost
     private var actionSheetOtherUser : ASMainPostOtherUser
@@ -222,11 +223,13 @@ class MainPostCommentVC: UIViewController {
             if post.data.isEmpty{
                 tableView.register(SellBuyCommentHeader.self, forHeaderFooterViewReuseIdentifier: sell_buy_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                size = h
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 50 + 35
                 self.tableView.reloadData()
             }else{
                 tableView.register(SellBuyDataCommentHeader.self, forHeaderFooterViewReuseIdentifier: sell_buy_data_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                size = h
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 100 + 50 + 35
                 self.tableView.reloadData()
             }
@@ -236,11 +239,13 @@ class MainPostCommentVC: UIViewController {
             if post.data.isEmpty{
                 tableView.register(FoodMeCommentHeader.self, forHeaderFooterViewReuseIdentifier: food_me_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                size = h
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 45 + 5 
                 self.tableView.reloadData()
             }else{
                 tableView.register(FoodMeDataCommentHeader.self, forHeaderFooterViewReuseIdentifier: food_me_data_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                size = h
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 100 + 50 + 5
                 self.tableView.reloadData()
             }
@@ -250,11 +255,13 @@ class MainPostCommentVC: UIViewController {
             if post.data.isEmpty{
                 tableView.register(CampingCommentHeader.self, forHeaderFooterViewReuseIdentifier: camping_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                size = h
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 45 + 5
                 self.tableView.reloadData()
             }else{
                 tableView.register(CampingDataCommentHeader.self, forHeaderFooterViewReuseIdentifier: camping_data_header)
                 let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                size = h
                 self.tableView.sectionHeaderHeight = 40 + 8 + h + 4 + 4 + 100 + 50 + 5
                 self.tableView.reloadData()
             }
@@ -689,7 +696,26 @@ extension MainPostCommentVC : ASMainPostLaungerDelgate {
     func didSelect(option: ASCurrentUserMainPostOptions) {
         switch option {
         case .editPost(_):
-            print("edit post")
+           
+                if post.postType == PostType.foodMe.despription{
+                    let vc = EditFoodMePost(currentUser: currentUser, post: post, h: size)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if post.postType == PostType.buySell.despription{
+                    let vc = EditSellBuyPost(currentUser: currentUser, post: post, h: size)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if post.postType == PostType.camping.despription{
+                    let vc = EditCampingPost(currentUser: currentUser, post: post, h: size)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+          
+           
+            break
         case .deletePost(_):
             
             Utilities.waitProgress(msg: "Siliniyor")

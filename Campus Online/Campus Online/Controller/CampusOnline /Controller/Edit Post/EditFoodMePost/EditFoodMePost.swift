@@ -169,10 +169,31 @@ class EditFoodMePost: UIViewController
         super.viewWillAppear(animated)
         configureHeader()
 
+        Utilities.waitProgress(msg: nil)
+        
+        
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
-        db.delete()
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                self?.pinView.isHidden = true
+                return
+            }
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return
+                }
+                if snap.exists{
+                    sself.pinView.isHidden = false
+                    sself.geoPoing = snap.get("geoPoint") as? GeoPoint
+                    sself.locationName = snap.get("locationName")  as? String
+                    Utilities.succesProgress(msg: "Konum Eklendi")
+                }
+            }
+        }
     }
     
     //MARK:-functions

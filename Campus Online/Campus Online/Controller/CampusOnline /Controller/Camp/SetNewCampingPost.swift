@@ -390,6 +390,8 @@ class SetNewCampingPost: UIViewController , LightboxControllerDismissalDelegate,
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
+                MainPostService.shared.removeLocation(currentUser: sself.currentUser)
+
                 CampingService.shared.getTopicFollowers { (user) in
                     CampingService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_camping.desprition, postId: date)
                 }
@@ -398,6 +400,8 @@ class SetNewCampingPost: UIViewController , LightboxControllerDismissalDelegate,
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.camping.despription, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
                 CampingService.shared.setNewCamping(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.camping.despription, postId: date, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
+                    MainPostService.shared.removeLocation(currentUser: sself.currentUser)
+
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.camping.despription, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)

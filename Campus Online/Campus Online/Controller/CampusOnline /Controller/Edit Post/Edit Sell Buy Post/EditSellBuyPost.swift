@@ -194,10 +194,6 @@ class EditSellBuyPost: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid)
-            .collection("coordinate").document("locaiton")
-        db.delete()
         view.backgroundColor = .white
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(dismissVC))
         self.navigationController?.navigationBar.topItem?.title = " "
@@ -214,6 +210,28 @@ class EditSellBuyPost: UIViewController {
         configureHeader()
 
         
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("coordinate").document("locaiton")
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                self?.pinView.isHidden = true
+                return
+            }
+            if err == nil {
+                guard let snap = docSnap else {
+                    Utilities.dismissProgress()
+                    return
+                }
+                if snap.exists{
+                    sself.pinView.isHidden = false
+                    sself.geoPoing = snap.get("geoPoint") as? GeoPoint
+                    sself.locationName = snap.get("locationName")  as? String
+                    Utilities.succesProgress(msg: "Konum Eklendi")
+                }
+            }
+        }
     }
     //MARK:-functions
     private func configureHeader(){

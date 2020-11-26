@@ -388,6 +388,8 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
             FoodMeService.shared.setNewFoodMe(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.foodMe.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
+                MainPostService.shared.removeLocation(currentUser: sself.currentUser)
+
                 sself.navigationController?.popViewController(animated: true)
                 FoodMeService.shared.getTopicFollowers { (user) in
                     FoodMeService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_food_me.desprition, postId: date)
@@ -399,6 +401,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
                 FoodMeService.shared.setNewFoodMe(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.foodMe.despription, postId: date, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.foodMe.despription, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
+                        MainPostService.shared.removeLocation(currentUser: sself.currentUser)
                         sself.navigationController?.popViewController(animated: true)
                         FoodMeService.shared.getTopicFollowers { (user) in
                             FoodMeService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_food_me.desprition, postId: date)

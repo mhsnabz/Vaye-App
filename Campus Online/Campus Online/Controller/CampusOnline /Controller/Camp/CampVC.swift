@@ -665,7 +665,49 @@ extension CampVC : CampingVCDelegate{
 //MARK-ASMainPostLaungerDelgate
 extension CampVC : ASMainPostLaungerDelgate {
     func didSelect(option: ASCurrentUserMainPostOptions) {
-        
+        switch option{
+
+        case .editPost(_):
+            guard let index = selectedIndex else { return }
+            if let h = collectionview.cellForItem(at: index) as? CampingDataView {
+                let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collectionview.cellForItem(at: index) as? CampingView{
+                let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            break
+        case .deletePost(_):
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            let db = Firestore.firestore().collection("main-post")
+                .document("post")
+                .collection("post")
+                .document(postId)
+           
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    MainPostService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+            break
+        case .slientPost(_):
+            break
+        }
     }
     
     
