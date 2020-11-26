@@ -170,7 +170,7 @@ class EditFoodMePost: UIViewController
         configureHeader()
 
         Utilities.waitProgress(msg: nil)
-        
+        navigationItem.title = "Gönderiyi Düzenle"
         
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)

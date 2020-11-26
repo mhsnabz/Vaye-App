@@ -172,7 +172,7 @@ class EditCampingPost: UIViewController {
         super.viewWillAppear(animated)
         configureHeader()
 
-        
+        navigationItem.title = "Gönderiyi Düzenle"
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
