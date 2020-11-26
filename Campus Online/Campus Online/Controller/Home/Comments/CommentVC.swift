@@ -131,12 +131,12 @@ class CommentVC: UIViewController {
         if post.data.isEmpty{
             tableView.register(CommentVCHeader.self, forHeaderFooterViewReuseIdentifier: headerId)
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-            self.tableView.sectionHeaderHeight = 74 + h + 65
+            self.tableView.sectionHeaderHeight = 60 + 8 + h + 4 + 4 + 45
             self.tableView.reloadData()
         }else{
             tableView.register(CommentVCDataHeader.self, forHeaderFooterViewReuseIdentifier: headerId_data)
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-            self.tableView.sectionHeaderHeight = 74 + h + 8 + 100 + 65
+            self.tableView.sectionHeaderHeight = 60 + 8 + h + 4 + 4 + 100 + 45
             self.tableView.reloadData()
         }
         
@@ -532,7 +532,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
         cell.selectionStyle = .none
         if comment[indexPath.row].replies!.count > 0 {
             cell.comment = comment[indexPath.row]
-            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
             cell.line.isHidden = false
             cell.totalRepliedCount.isHidden = false
@@ -542,7 +542,7 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
             return cell
         }else{
             cell.comment = comment[indexPath.row]
-            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 13)!)
             cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
             cell.line.isHidden = true
             cell.totalRepliedCount.isHidden = true
@@ -591,23 +591,32 @@ extension CommentVC : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 
         if post.data.isEmpty{
-            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
-            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-            header.msgText.frame = CGRect(x: 12, y: 74, width: view.frame.width - 24, height: h)
-//            header.currentUser = currentUser
-            header.delegate = self
-            header.post = post
-            header.contentView.backgroundColor = .white
-            return header
+            let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId) as! CommentVCHeader
+            cell.delegate = self
+            cell.currentUser = currentUser
+            cell.backgroundColor = .white
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+            cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+            cell.post = post
+       
+            return cell
         }else{
-            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId_data) as! CommentVCDataHeader
-            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 14)!)
-            header.msgText.frame = CGRect(x: 12, y: 74, width: view.frame.width - 24, height: h)
-            header.currentUser = currentUser
-            header.delegate = self
-            header.post = post
-            header.contentView.backgroundColor = .white
-            return header
+            let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerId_data) as! CommentVCDataHeader
+            
+            cell.backgroundColor = .white
+            cell.delegate = self
+            cell.currentUser = currentUser
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+            cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+            
+            cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+            
+            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+            cell.post = post
+          
+            cell.contentView.backgroundColor = .white
+            return cell
         }
         
       
