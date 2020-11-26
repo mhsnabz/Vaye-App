@@ -207,9 +207,8 @@ class EditSellBuyPost: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.title = "Gönderiyi Düzenle"
         configureHeader()
-
-        
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("coordinate").document("locaiton")
@@ -274,8 +273,15 @@ class EditSellBuyPost: UIViewController {
         
         view.addSubview(valuesView)
         valuesView.anchor(top: stack.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
-        valuesView.isHidden = true
+ 
         
+        
+        if let value = post.value {
+            valuesView.isHidden = false
+            value_description.text = value
+        }else{
+            valuesView.isHidden = true
+        }
         
         view.addSubview(pinView)
         pinView.anchor(top: valuesView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 8 , marginLeft: 30, marginBottom: 0, marginRigth: 30, width: 0, heigth: 25)
