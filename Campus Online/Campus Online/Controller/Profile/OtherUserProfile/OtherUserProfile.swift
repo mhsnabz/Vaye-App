@@ -22,7 +22,7 @@ class OtherUserProfile: UIViewController  {
     var selectedIndex : IndexPath?
     var selectedPostID : String?
  
-    
+    weak var scroolIndex : HeaderSelectedIndex?
     weak var delegate : OtherUserProfileHeaderDelegate?
     lazy var isFallowing : Bool = false
     var currentUser : CurrentUser
@@ -35,7 +35,7 @@ class OtherUserProfile: UIViewController  {
     lazy var schoolPost : Bool = false
     lazy var schoolPotsDelegate : Bool = false
     lazy var loadMore_schoolPost : Bool = false
-    
+    var scrollPostion : IndexPath?
     lazy var coPost : Bool = false
     lazy var loadMore_coPost : Bool = false
 
@@ -43,10 +43,11 @@ class OtherUserProfile: UIViewController  {
     lazy var page_schoolPost : DocumentSnapshot? = nil
     lazy var page_coPost : DocumentSnapshot? = nil
  
+     var scrollToIndexPath : Int?
     
     lazy var lessonPostModel = [LessonPostModel]()
     
-    
+    var point : CGFloat?
 
     private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     
@@ -54,7 +55,10 @@ class OtherUserProfile: UIViewController  {
     var adUnitID = "ca-app-pub-3940256099942544/4411468910"
 //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
-    
+    lazy var menuBar : MenuBar = {
+       let mb = MenuBar()
+        return mb
+    }()
     let titleLbl : UILabel = {
        let lbl = UILabel()
         lbl.text = "..."
@@ -503,10 +507,10 @@ class OtherUserProfile: UIViewController  {
              collectionview.dataSource = self
              collectionview.delegate = self
              collectionview.backgroundColor = .white
-             collectionview.register(ProfileCell.self, forCellWithReuseIdentifier: cellId)
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
         collectionview.register(Profile_Header.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
+     
              view.addSubview(collectionview)
         collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
          }
@@ -561,14 +565,19 @@ class OtherUserProfile: UIViewController  {
     
 
 extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if homePost
         {
         count = lessonPostModel.count
         }else if schoolPost{
-            
+
         }else if coPost {
-            
+
         }
         
         return count
@@ -578,8 +587,8 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         if homePost
         {
             schoolPotsDelegate = true
-           
-            
+
+
             if lessonPostModel[indexPath.row].data.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! NewPostHomeVC
                 cell.delegate = self
@@ -589,36 +598,39 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = lessonPostModel[indexPath.row]
-                
+
                 return cell
             }
             else{
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NewPostHomeVCData
-                
+
                 cell.backgroundColor = .white
                 cell.delegate = self
                 cell.currentUser = currentUser
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
-                
+
                 cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
-                
+
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = lessonPostModel[indexPath.row]
-                
+
                 return cell
             }
-            
-            
+
+
         }else if schoolPost{
-            
+
         }else if coPost {
-            
+
         }
-        
-        
+
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ProfileCell
         cell.backgroundColor = .red
+        
+   
+        
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -628,7 +640,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 return .zero
             }
             let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-            
+
             if lessonPostModel[indexPath.row].data.isEmpty{
                 return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
             }
@@ -636,20 +648,21 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
             }
         }else if schoolPost{
-            
+
         }else if coPost {
-            
+
         }
-        return CGSize(width: self.view.frame.width, height: 50)
+        return CGSize(width: self.view.frame.width, height: view.frame.height - 225)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 246)
+        return CGSize(width: view.frame.width, height: 285)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+      
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! Profile_Header
         header.user = otherUser
-//        header.delegate = self
+ 
 //        header.controller = self
 ////        header.fallowCount = fallower
 ////        header.falowingCount = fallowing
@@ -670,6 +683,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 }
             }
         }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
     }
     
 }
@@ -923,3 +939,7 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
     
     
 }
+
+
+
+

@@ -153,7 +153,6 @@
 		66A5F0D8250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */; };
 		66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0D9250F02F1005C93B3 /* OtherUser.swift */; };
 		66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */; };
-		66A5F0E0250F4BB8005C93B3 /* OtherUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0DF250F4BB8005C93B3 /* OtherUserProfile.swift */; };
 		66AA9C5725251053008DFB86 /* NotificaitionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AA9C5625251053008DFB86 /* NotificaitionCell.swift */; };
 		66AA9C5F25251175008DFB86 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AA9C5E25251175008DFB86 /* NotificationModel.swift */; };
 		66AF724C251321E9007E96BC /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF724B251321E9007E96BC /* LessonInfoHeaderTwo.swift */; };
@@ -166,6 +165,9 @@
 		66B2B4172554B67A0088262E /* ASMainPostOtherUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B2B4162554B67A0088262E /* ASMainPostOtherUser.swift */; };
 		66B2B41F2554B8290088262E /* ASMainPostOtherUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B2B41E2554B8290088262E /* ASMainPostOtherUserCell.swift */; };
 		66B3A4C7253903E6000D6360 /* PopUpNumberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B3A4C6253903E6000D6360 /* PopUpNumberController.swift */; };
+		66C032852570CE6F004DC40A /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C032842570CE6F004DC40A /* MenuBar.swift */; };
+		66C0328D2570D216004DC40A /* MenuBarFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C0328C2570D216004DC40A /* MenuBarFilter.swift */; };
+		66C0329A25711066004DC40A /* OtherUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C0329925711066004DC40A /* OtherUserProfile.swift */; };
 		66C4A6EB250BFB7500259322 /* DataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EA250BFB7500259322 /* DataVC.swift */; };
 		66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6ED250C1FA200259322 /* DataViewImage.swift */; };
 		66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6EF250C355700259322 /* DataViewPDF.swift */; };
@@ -372,7 +374,6 @@
 		66A5F0D7250EF768005C93B3 /* ActionSheetHomeOtherUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeOtherUserViewModel.swift; sourceTree = "<group>"; };
 		66A5F0D9250F02F1005C93B3 /* OtherUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUser.swift; sourceTree = "<group>"; };
 		66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionOtherUserCell.swift; sourceTree = "<group>"; };
-		66A5F0DF250F4BB8005C93B3 /* OtherUserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfile.swift; sourceTree = "<group>"; };
 		66AA9C5625251053008DFB86 /* NotificaitionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificaitionCell.swift; sourceTree = "<group>"; };
 		66AA9C5E25251175008DFB86 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
 		66AF724B251321E9007E96BC /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
@@ -385,6 +386,9 @@
 		66B2B4162554B67A0088262E /* ASMainPostOtherUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASMainPostOtherUser.swift; sourceTree = "<group>"; };
 		66B2B41E2554B8290088262E /* ASMainPostOtherUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASMainPostOtherUserCell.swift; sourceTree = "<group>"; };
 		66B3A4C6253903E6000D6360 /* PopUpNumberController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpNumberController.swift; sourceTree = "<group>"; };
+		66C032842570CE6F004DC40A /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
+		66C0328C2570D216004DC40A /* MenuBarFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarFilter.swift; sourceTree = "<group>"; };
+		66C0329925711066004DC40A /* OtherUserProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherUserProfile.swift; sourceTree = "<group>"; };
 		66C4A6EA250BFB7500259322 /* DataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataVC.swift; sourceTree = "<group>"; };
 		66C4A6ED250C1FA200259322 /* DataViewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewImage.swift; sourceTree = "<group>"; };
 		66C4A6EF250C355700259322 /* DataViewPDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewPDF.swift; sourceTree = "<group>"; };
@@ -958,7 +962,7 @@
 		66A5F0DE250F4B96005C93B3 /* OtherUserProfile */ = {
 			isa = PBXGroup;
 			children = (
-				66A5F0DF250F4BB8005C93B3 /* OtherUserProfile.swift */,
+				66C0329925711066004DC40A /* OtherUserProfile.swift */,
 			);
 			path = OtherUserProfile;
 			sourceTree = "<group>";
@@ -979,6 +983,15 @@
 				66AF72D725134996007E96BC /* GoogleNativeAdsView.swift */,
 			);
 			path = "Google AdMob View";
+			sourceTree = "<group>";
+		};
+		66C032832570CE5E004DC40A /* Profile Menu Bar */ = {
+			isa = PBXGroup;
+			children = (
+				66C032842570CE6F004DC40A /* MenuBar.swift */,
+				66C0328C2570D216004DC40A /* MenuBarFilter.swift */,
+			);
+			path = "Profile Menu Bar";
 			sourceTree = "<group>";
 		};
 		66C4A6E9250BFB5A00259322 /* DataController */ = {
@@ -1117,6 +1130,7 @@
 		66D9120024EEAA25002D760A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				66C032832570CE5E004DC40A /* Profile Menu Bar */,
 				660FB9DF256CE3A00014D406 /* Main Post Edit View */,
 				660FB9A7256A35580014D406 /* Camping View */,
 				660FB994256903A90014D406 /* Empty Cell */,
@@ -1582,6 +1596,7 @@
 				665BB3FC254C78AF003B4E9E /* MainPostReplyVC.swift in Sources */,
 				66520153256EA00B003BF4C7 /* EditCampingCell.swift in Sources */,
 				660F5ACA2502C98200F72558 /* AddUserLaunher.swift in Sources */,
+				66C032852570CE6F004DC40A /* MenuBar.swift in Sources */,
 				6615FC8D250B38D200776664 /* NewPostHomeVCData.swift in Sources */,
 				660FB97025646E7D0014D406 /* SetNewFoodMePost.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
@@ -1624,7 +1639,6 @@
 				661333E824F3B25B002677AB /* ProfileCell.swift in Sources */,
 				6690A6952544E8FB00E88BC0 /* MainPostCommentVC.swift in Sources */,
 				666B2DCB253791DA0014C5A7 /* BuySellModel.swift in Sources */,
-				66A5F0E0250F4BB8005C93B3 /* OtherUserProfile.swift in Sources */,
 				661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */,
 				66AA9C5725251053008DFB86 /* NotificaitionCell.swift in Sources */,
 				6690A66A253B38A000E88BC0 /* MainPostUploadService.swift in Sources */,
@@ -1710,6 +1724,7 @@
 				66EF86CE25260E3200282FD4 /* CommentVCDataHeader.swift in Sources */,
 				66D9120524EEAA5B002D760A /* Enum.swift in Sources */,
 				661333F124F3F858002677AB /* SplashScreen.swift in Sources */,
+				66C0329A25711066004DC40A /* OtherUserProfile.swift in Sources */,
 				6613341324F68DFF002677AB /* CurrentUser.swift in Sources */,
 				660BC4742515AD89005D0EF8 /* Deneme.swift in Sources */,
 				660FB96B2563A8A80014D406 /* SellBuyDataCommentHeader.swift in Sources */,
@@ -1718,6 +1733,7 @@
 				66D9120924EEAA85002D760A /* ContainerController.swift in Sources */,
 				6690A68F253F6A7400E88BC0 /* ASMainPostCell.swift in Sources */,
 				661333DF24F36C85002677AB /* Setting.swift in Sources */,
+				66C0328D2570D216004DC40A /* MenuBarFilter.swift in Sources */,
 				66F4CD48250E803F0076D12E /* StudentEditPostDocCell.swift in Sources */,
 				6615FC93250B3AAE00776664 /* DataViewPdfCell.swift in Sources */,
 				660BC46C2515AD0B005D0EF8 /* MenuController.swift in Sources */,

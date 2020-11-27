@@ -11,9 +11,28 @@ import UIKit
 import SDWebImage
 import SnapKit
 import FirebaseFirestore
-
-class Profile_Header: UICollectionReusableView
+protocol HeaderSelectedIndex : class {
+    func selectedIndex ( _ index : IndexPath)
+}
+class Profile_Header: UICollectionReusableView, didSelectMenuBarItem
 {
+    weak var delegate : HeaderSelectedIndex?
+    func didSelec(_ index: IndexPath) {
+        delegate?.selectedIndex(index)
+    }
+    var scrollPostion : IndexPath?{
+        didSet{
+            guard let index = scrollPostion else { return }
+            menuBar.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+            }
+    }
+    var point  : CGFloat?{
+        didSet{
+            guard let point = point else { return }
+            menuBar.barLeftAnchor?.constant = point / 3
+        }
+    }
+    
     //MARK:-properties
     
     var user : OtherUser?{
@@ -155,6 +174,13 @@ class Profile_Header: UICollectionReusableView
 
         return lbl
     }()
+    lazy var menuBar  : MenuBar = {
+       let v = MenuBar()
+        v.delegate = self
+        return v
+    }()
+    
+  
     
     //MARK:-lifeCycle
     override init(frame: CGRect) {
@@ -172,6 +198,10 @@ class Profile_Header: UICollectionReusableView
         stackFallow.anchor(top: aboutSection.bottomAnchor, left: aboutSection.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 12, marginBottom: 0, marginRigth: 20, width: 0, heigth: 20)
         addSubview(stackView)
         stackView.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
+    addSubview(menuBar)
+        menuBar.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
+     
+        
     }
     
     required init?(coder: NSCoder) {
