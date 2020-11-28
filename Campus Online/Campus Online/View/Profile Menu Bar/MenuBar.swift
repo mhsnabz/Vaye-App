@@ -12,8 +12,6 @@ import UIKit
 
 class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout , UICollectionViewDelegate {
     
-    
-
     var barLeftAnchor: NSLayoutConstraint?{
         didSet {
             guard let constant = barLeftAnchor?.constant else { return }
@@ -29,10 +27,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
             collectionView.reloadData()
         }
     }
-    
-
-    
-    
+    weak var filterDelagate : UserProfileMenuBarDelegate?
     //MARK:-properites
     
     lazy var collectionView : UICollectionView = {
@@ -116,6 +111,8 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
 
         guard let constant = barLeftAnchor?.constant else { return }
         scrollMenuItem( point: constant)
+        filterDelagate?.didSelectOptions(option: (options?.options[indexPath.row])!)
+
     }
     func scrollMenuItem(point : CGFloat){
 //        let x = CGFloat(indexPath.item ) * frame.width / 3

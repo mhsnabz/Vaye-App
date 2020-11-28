@@ -263,12 +263,21 @@ protocol ProfileHeaderDelegate : class {
     func getCoPost()
     func getFav()
 }
+protocol ProfileHeaderMenuBarDelegate : class {
+    func getMajorPost()
+    func getSchoolPost()
+    func getVayeAppPost()
+    func getFavPost()
+}
 protocol OtherUserProfileHeaderDelegate : class {
   
     func getMajorPost()
     func getSchoolPost()
     func getCoPost()
 
+}
+protocol UserProfileMenuBarDelegate : class {
+    func didSelectOptions(option : ProfileFilterOptions)
 }
 protocol UserProfileFilterDelegate : class {
     func didSelectOption(option : ProfileFilterViewOptions)

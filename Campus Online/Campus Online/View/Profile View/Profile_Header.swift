@@ -33,6 +33,8 @@ class Profile_Header: UICollectionReusableView
         }
     }
     
+    weak var profileHeaderDelegate : ProfileHeaderMenuBarDelegate?
+    
     //MARK:-properties
     var profileModel : ProfileModel?{
         didSet{
@@ -118,7 +120,6 @@ class Profile_Header: UICollectionReusableView
        let view = UIView()
         let stack = UIStackView(arrangedSubviews: [name,number,school,major,number])
         stack.axis = .vertical
-        stack.backgroundColor = .brown
         stack.spacing = 1
         stack.alignment = .leading
         view.addSubview(stack)
@@ -204,6 +205,7 @@ class Profile_Header: UICollectionReusableView
         stackView.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
        addSubview(menuBar)
         menuBar.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
+        menuBar.filterDelagate = self
      
         
     }
@@ -316,5 +318,23 @@ class Profile_Header: UICollectionReusableView
             github.isHidden = true
         }
     }
+    
+}
+
+extension Profile_Header : UserProfileMenuBarDelegate {
+    func didSelectOptions(option: ProfileFilterOptions) {
+        switch option {
+        
+        case .major():
+            profileHeaderDelegate?.getMajorPost()
+        case .shortSchool():
+            profileHeaderDelegate?.getSchoolPost()
+        case .vayeApp():
+            profileHeaderDelegate?.getVayeAppPost()
+        case .fav():
+            profileHeaderDelegate?.getFavPost()
+        }
+    }
+    
     
 }
