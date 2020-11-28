@@ -610,10 +610,12 @@ extension CampusOnlineVC :  BuySellVCDelegate{
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }
@@ -628,8 +630,12 @@ extension CampusOnlineVC :  BuySellVCDelegate{
         }else{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                sself.navigationController?.pushViewController(vc, animated: true)
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
                
             }
         }
@@ -718,10 +724,12 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }
@@ -902,11 +910,12 @@ extension CampusOnlineVC : FoodMeVCDelegate{
                 guard let sself = self else {
                     Utilities.dismissProgress()
                     return }
-                
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }
@@ -1004,10 +1013,12 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }
@@ -1083,10 +1094,12 @@ extension CampusOnlineVC : CampingVCDelegate {
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }
@@ -1184,11 +1197,12 @@ extension CampusOnlineVC : CampingVCDataDelegate {
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
-
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
         
             }
         }

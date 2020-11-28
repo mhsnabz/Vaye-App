@@ -320,8 +320,12 @@ class RepliesComment: UIViewController {
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                sself.navigationController?.pushViewController(vc, animated: true)
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
                 
             }
         }
@@ -410,14 +414,20 @@ extension RepliesComment : CommentDelegate {
             })
             
         }else{
-            UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in
-                let vc = OtherUserProfile(currentUser: self.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
+            UserService.shared.fetchOtherUser(uid: comment.senderUid!) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
 
-                self.present(vc, animated: true, completion: {
-                                Utilities.dismissProgress()
-                    
-                })
+                    sself.present(vc, animated: true, completion: {
+                                    Utilities.dismissProgress()
+                        
+                    })
+                }
+                
+              
+                
             }
         }
 

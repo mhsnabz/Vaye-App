@@ -287,17 +287,17 @@ class ProfileHeader : UICollectionReusableView {
 }
 extension ProfileHeader : UserProfileFilterDelegate {
     func didSelectOption(option: ProfileFilterViewOptions) {
-        switch option {
-       
-        case .bolum():
-            delegate?.getMajorPost()
-        case .shortSchool():
-            delegate?.getSchoolPost()
-        case .onlineCampus():
-            delegate?.getCoPost()
-        case .fav():
-            delegate?.getFav()
-        }
+//        switch option {
+//       
+//        case .bolum():
+//            delegate?.getMajorPost()
+//        case .shortSchool():
+//            delegate?.getSchoolPost()
+//        case .onlineCampus():
+//            delegate?.getCoPost()
+//        case .fav():
+//            delegate?.getFav()
+//        }
     }
     
     

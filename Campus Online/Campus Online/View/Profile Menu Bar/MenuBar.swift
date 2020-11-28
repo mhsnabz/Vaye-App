@@ -8,9 +8,8 @@
 
 import UIKit
 
-protocol didSelectMenuBarItem : class {
-    func didSelec(_ index : IndexPath)
-}
+
+
 class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout , UICollectionViewDelegate {
     
     
@@ -21,9 +20,18 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
             scrollMenuItem( point: constant)
         }
     }
+     var options : ProfileFilterVM?
     
+    var profileModel : ProfileModel?{
+        didSet{
+            guard let model = profileModel else { return }
+            options = ProfileFilterVM(short_school: model.shortSchool, major: model.major, userUid: model.uid, currentUser: model.currentUser)
+            collectionView.reloadData()
+        }
+    }
     
-     weak var delegate : didSelectMenuBarItem?
+
+    
     
     //MARK:-properites
     
@@ -52,7 +60,14 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    private func getShortMajor(major : String) ->String {
+        var shortName  : String = ""
+        let bolumName = major.components(separatedBy: " ")
+        for item in bolumName {
+            shortName += item[0].string
+        }
+        return shortName
+    }
     private func setupHorizantalVar(){
         let horizantalBarView = UIView()
         horizantalBarView.backgroundColor = .black
@@ -66,23 +81,33 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        guard let count = options?.options.count else {
+            return 0
+        }
+        return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "id", for: indexPath) as! ProfileFilterCell
-        cell.option = "Deneme"
-
+        
+        if options?.options[indexPath.row].description == ProfileFilterOptions.major(()).description {
+            cell.option = getShortMajor(major: (profileModel?.major.description)!)
+        }else if options?.options[indexPath.row].description == ProfileFilterOptions.shortSchool(()).description{
+            cell.option = profileModel?.shortSchool.description
+        }else if options?.options[indexPath.row].description == ProfileFilterOptions.vayeApp(()).description{
+            cell.option = "vaye.app"
+        }
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 3, height: 50)
+        let count = options?.options.count ?? 1
+        return CGSize(width: Int(frame.width) / count, height: 50)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.didSelec(indexPath)
+
         let x = CGFloat(indexPath.item ) * frame.width / 3
         barLeftAnchor?.constant = x
         UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {

@@ -559,10 +559,12 @@ extension CampVC : CampingVCDataDelegate {
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }
@@ -638,10 +640,12 @@ extension CampVC : CampingVCDelegate{
                     Utilities.dismissProgress()
                     return }
                 
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                vc.modalPresentationStyle = .fullScreen
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
 
         
             }

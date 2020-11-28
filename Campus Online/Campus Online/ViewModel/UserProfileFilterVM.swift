@@ -35,42 +35,4 @@ class UserProfileFilterVM
         
     }
 }
-enum ProfileFilterViewOptions {
-    case bolum(Void)
-    case shortSchool(Void)
-    case onlineCampus(Void)
-    case fav(Void)
-    
-    var descprition : String {
-        switch self {
-        case .bolum():
-            return "bolum"
-        case .shortSchool():
-            return "school"
-        case .onlineCampus():
-            return "online_campus"
-        case .fav():
-            return "fav"
-        }
-    }
-    
-}
 
-enum TargetFilterView {
-    case currentUser
-    case otherUser
-    case otherUserAnotherSchool
-    
-    var description : String {
-        switch self {
-        
-        case .currentUser:
-            return "currentUser"
-        case .otherUser:
-            return "otherUser"
-        case .otherUserAnotherSchool:
-            return "otherUserAnotherSchool"
-        }
-    }
-    
-}

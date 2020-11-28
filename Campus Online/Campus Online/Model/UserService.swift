@@ -238,4 +238,9 @@ struct UserService {
         }
     }
     
+    func getProfileModel(otherUser : OtherUser,currentUser : CurrentUser , completion : @escaping(ProfileModel) ->Void){
+        completion(ProfileModel(shortSchool: otherUser.short_school, currentUser: currentUser, major: otherUser.bolum, uid: otherUser.uid))
+        
+    }
+    
 }

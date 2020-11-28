@@ -51,6 +51,7 @@ class OtherUserProfile: UIViewController  {
 
     private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     
+    var profileModel : ProfileModel
     
     var adUnitID = "ca-app-pub-3940256099942544/4411468910"
 //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
@@ -136,9 +137,10 @@ class OtherUserProfile: UIViewController  {
         
         
     }
-    init(currentUser : CurrentUser, otherUser : OtherUser) {
+    init(currentUser : CurrentUser, otherUser : OtherUser , profileModel : ProfileModel) {
         self.currentUser = currentUser
         self.otherUser = otherUser
+        self.profileModel = profileModel
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
@@ -662,7 +664,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
       
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! Profile_Header
         header.user = otherUser
- 
+        header.profileModel = profileModel
 //        header.controller = self
 ////        header.fallowCount = fallower
 ////        header.falowingCount = fallowing
@@ -781,8 +783,11 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
         }else{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                sself.navigationController?.pushViewController(vc, animated: true)
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                }
+             
             }
         }
     }
@@ -799,8 +804,11 @@ extension OtherUserProfile : NewPostHomeVCDelegate{
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
-                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user)
-                sself.navigationController?.pushViewController(vc, animated: true)
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                }
+                
             }
         }
     }
@@ -908,10 +916,12 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
                     guard let sself = self else {
                         Utilities.dismissProgress()
                         return}
-                    let vc = OtherUserProfile(currentUser : sself.currentUser,otherUser : user)
-
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                        let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }
+                   
 //
                 }
             }
