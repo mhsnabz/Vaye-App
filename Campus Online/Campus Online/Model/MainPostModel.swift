@@ -33,9 +33,14 @@ class MainPostModel {
     var postType : String!
     var value : String!
     var geoPoint : GeoPoint!
+    var empty : String!
     init(nativeAd : GADUnifiedNativeAd , postTime : Timestamp) {
         self.nativeAd = nativeAd
         self.postTime = postTime
+    }
+    init(empty : String , postId : String) {
+        self.postId = postId
+        self.empty = empty
     }
     init(postId  : String? , dic : [String : Any]?) {
         self.postId = postId

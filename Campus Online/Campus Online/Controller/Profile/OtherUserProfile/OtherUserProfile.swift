@@ -96,8 +96,17 @@ class OtherUserProfile: UIViewController  {
             }
         })
         navigationItem.title = otherUser.username
-        getHomePost()
+       
         view.backgroundColor = .collectionColor()
+        if profileModel.shortSchool == currentUser.short_school {
+            if profileModel.major == currentUser.bolum{
+                getHomePost()
+            }else {
+                //getSchoolPost
+            }
+        }else{
+            getMainPost()
+        }
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -113,6 +122,8 @@ class OtherUserProfile: UIViewController  {
         self.profileModel = profileModel
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
+      
+        
     }
     
     required init?(coder: NSCoder) {
@@ -438,7 +449,7 @@ class OtherUserProfile: UIViewController  {
         }
         let db = Firestore.firestore().collection("user")
             .document(otherUser.uid)
-            .collection("user-main-post").limit(to: 5).start(afterDocument: pagee)
+            .collection("user-main-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
         db.getDocuments { (querySnap, err) in
             guard let snap = querySnap else { return }
             if let err = err {
@@ -617,7 +628,13 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
                 cell.nativeAd = mainPost[indexPath.row].nativeAd
                 return cell
-            }else{
+            }
+            else if mainPost[indexPath.row].empty == "empty"{
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: emptyCell, for: indexPath) as! EmptyCell
+                
+                return cell
+            }
+            else{
                 
                 if mainPost[indexPath.row].postType == PostType.buySell.despription{
                     if mainPost[indexPath.row].data.isEmpty {
@@ -917,6 +934,7 @@ extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelega
             self.collectionview.reloadData()
         }else if isVayeAppPost{
             print("\(adLoader) failed with error: \(error.localizedDescription)")
+            self.mainPost.append(MainPostModel.init(empty: "empty", postId: "empty"))
             self.isVayeAppPost = true
             self.collectionview.reloadData()
         }
