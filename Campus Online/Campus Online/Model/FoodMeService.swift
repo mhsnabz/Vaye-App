@@ -30,6 +30,7 @@ class FoodMeService{
             "postType":postType,
             "geoPoint":location ?? "" ] as [String : Any]
         setPostForCurrentUser(postId: postId, currentUser: currentUser)
+        
         add_post_for_universty(uni: currentUser.short_school, postId: postId)
         setPostForFoodMe(dic: dic, postId: postId) { [weak self ](val) in
             guard let sself = self else { return }
@@ -46,7 +47,12 @@ class FoodMeService{
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("main-post").document(postId)
-        db.setData(["postId":postId], merge: true)
+        db.setData(["postId":postId], merge: true){ err in
+            let db = Firestore.firestore().collection("user")
+                .document(currentUser.uid)
+                .collection("user-main-post").document(postId)
+            db.setData(["postId":postId], merge: true)
+        }
     }
     func add_post_for_universty(uni shortname : String, postId : String ){
     

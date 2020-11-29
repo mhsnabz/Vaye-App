@@ -17,6 +17,16 @@ private let home_post_data_id = "home_post_data_id"
 private let cellAds = "cell_ads"
 private let loadMoreCell = "cell_load_more"
 private let emptyCell = "empty_cell"
+
+private let cellID = "cellID"
+private let cellData = "cellData"
+
+private let cell_foodme_id = "cell_food_me_id"
+private let cell_foodme_data_id = "cell_foodme_data_id"
+
+private let cell_camp_id = "cell_camp_id"
+private let cell_camp_data_id = "cell_camp_data_id"
+
 class OtherUserProfile: UIViewController  {
     var selectedIndex : IndexPath?
     var selectedPostID : String?
@@ -25,6 +35,7 @@ class OtherUserProfile: UIViewController  {
     var otherUser : OtherUser
     var collectionview: UICollectionView!
     lazy var lessonPostModel = [LessonPostModel]()
+    lazy var mainPost = [MainPostModel]()
     var profileModel : ProfileModel
     var adUnitID = "ca-app-pub-3940256099942544/4411468910"
     //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
@@ -34,7 +45,6 @@ class OtherUserProfile: UIViewController  {
     var time : Timestamp!
     var adLoader: GADAdLoader!
     //MARK:-post filter val
-    
     var isHomePost : Bool = false
     var isSchoolPost : Bool = false
     var isVayeAppPost : Bool = false
@@ -47,7 +57,7 @@ class OtherUserProfile: UIViewController  {
     
     //MARK:-DocumentSnapshot
     var home_page : DocumentSnapshot? = nil
-    
+    var vaye_page : DocumentSnapshot? = nil
     //MARK:  ActionSheetOtherUserLaunher
     private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     //MARK:-propeties
@@ -268,6 +278,8 @@ class OtherUserProfile: UIViewController  {
                     self.home_page = snap.documents.last
                     self.fetchAds()
                     self.isLoadMoreHomePost = true
+                    self.isLoadMoreSchoolPost = false
+                    self.isLoadMoreVayeAppPost = false
                 }
             }
         }
@@ -335,6 +347,148 @@ class OtherUserProfile: UIViewController  {
     }
     
     
+    //MARK:- load vaye app post
+    func getMainPost(){
+        mainPost = [MainPostModel]()
+        isHomePost = false
+        isVayeAppPost = true
+        isSchoolPost = false
+        
+        isLoadMoreHomePost = false
+        isLoadMoreSchoolPost = false
+        isLoadMoreVayeAppPost = true
+        collectionview.reloadData()
+        
+        fetchMainPost(otherUser: otherUser) {[weak self] (post) in
+            self?.mainPost = post
+            //            self?.fetchAds()
+            if self?.mainPost.count ?? -1 > 0{
+ 
+                if  let time_e = self?.mainPost[(self?.mainPost.count)! - 1].postTime{
+                    self?.time = self?.mainPost[(self?.mainPost.count)! - 1].postTime
+                    self?.mainPost.sort(by: { (post, post1) -> Bool in
+                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    self?.collectionview.reloadData()
+                }
+            }else{
+                self?.fetchAds()
+                self?.collectionview.refreshControl?.endRefreshing()
+                self?.collectionview.reloadData()
+            }
+        }
+    }
+    func fetchMainPost(otherUser : OtherUser , completion : @escaping([MainPostModel])->Void){
+        var post = [MainPostModel]()
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid)
+            .collection("user-main-post")
+            .limit(to: 5)
+            .order(by: "postId",descending: true)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty{
+                    completion([])
+                }else{
+                    for postId in snap.documents{
+                        let db = Firestore.firestore().collection("main-post")
+                            .document("post")
+                            .collection("post")
+                            .document(postId.documentID)
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let snap = docSnap else { return }
+                                if snap.exists{
+                                    post.append(MainPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                                }else{
+                                    let db_currentUser = Firestore.firestore().collection("user")
+                                        .document(otherUser.uid)
+                                        .collection("user-main-post")
+                                        .document(postId.documentID)
+                                    db_currentUser.delete(){(err) in
+                                        if let postType = postId.get("postType") as? String {
+                                            let deleteDb = Firestore.firestore().collection(otherUser.short_school)
+                                                .document("main-post")
+                                                .collection(postType).document(postId.documentID)
+                                            deleteDb.delete()
+                                        }
+                                    }
+                                }
+                            }
+                            completion(post)
+                        }
+                    }
+                    self.vaye_page = snap.documents.last
+                    self.fetchAds()
+                    self.isLoadMoreVayeAppPost = true
+                }
+            }
+        }
+        
+        
+    }
+    
+    private func loadMoreVayeAppPost(completion: @escaping(Bool) ->Void){
+        guard let pagee = vaye_page else {
+            isLoadMoreVayeAppPost = false
+            collectionview.reloadData()
+            completion(false)
+            return
+        }
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid)
+            .collection("user-main-post").limit(to: 5).start(afterDocument: pagee)
+        db.getDocuments { (querySnap, err) in
+            guard let snap = querySnap else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty{
+                self.isLoadMoreVayeAppPost = false
+                self.collectionview.reloadData()
+                completion(false)
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection("main-post")
+                        .document("post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists {
+                                self.mainPost.append(MainPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                                    self.time = self.mainPost[(self.mainPost.count) - 1].postTime
+                                    self.mainPost.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    self.isLoadMoreVayeAppPost = true
+                                    self.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                            }else{
+                                let db_currentUser = Firestore.firestore().collection("user")
+                                    .document(self.otherUser.uid)
+                                    .collection("user-main-post")
+                                    .document(item.documentID)
+                                db_currentUser.delete(){(err) in
+                                    if let postType = item.get("postType") as? String {
+                                        let deleteDb = Firestore.firestore().collection(self.otherUser.short_school)
+                                            .document("main-post")
+                                            .collection(postType).document(item.documentID)
+                                        deleteDb.delete()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    self.vaye_page = snap.documents.last
+                }
+                self.fetchAds()
+            }
+        }
+    }
+    
     func fetchAds() {
         adLoader = GADAdLoader(adUnitID: native_adUnitID, rootViewController: self,
                                adTypes: [ .unifiedNative ], options: nil)
@@ -342,7 +496,7 @@ class OtherUserProfile: UIViewController  {
         adLoader.load(GADRequest())
     }
     
-    //MARK: - lesson post
+  
     
     
     private func createAd() ->GADInterstitial {
@@ -377,6 +531,15 @@ class OtherUserProfile: UIViewController  {
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.register(EmptyCell.self, forCellWithReuseIdentifier: emptyCell)
         
+        
+        collectionview.register(BuyAndSellView.self, forCellWithReuseIdentifier: cellID)
+        collectionview.register(BuyAndSellDataView.self , forCellWithReuseIdentifier: cellData)
+        collectionview.register(FoodMeView.self, forCellWithReuseIdentifier: cell_foodme_id)
+        collectionview.register(FoodMeViewData.self, forCellWithReuseIdentifier: cell_foodme_data_id)
+        collectionview.register(CampingView.self, forCellWithReuseIdentifier: cell_camp_id)
+        collectionview.register(CampingDataView.self, forCellWithReuseIdentifier: cell_camp_data_id)
+        
+        
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
         
         
@@ -396,6 +559,8 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isHomePost {
             return lessonPostModel.count
+        }else if isVayeAppPost{
+            return mainPost.count
         }
         
         return 0
@@ -447,6 +612,100 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 return cell
             }
         }
+        else if isVayeAppPost {
+            if mainPost[indexPath.row].postId == nil {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+                cell.nativeAd = mainPost[indexPath.row].nativeAd
+                return cell
+            }else{
+                
+                if mainPost[indexPath.row].postType == PostType.buySell.despription{
+                    if mainPost[indexPath.row].data.isEmpty {
+                        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
+//                        cell.delegate = self
+                        cell.currentUser = currentUser
+                        
+                        cell.backgroundColor = .white
+                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                        cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                        cell.bottomBar.anchor(top: nil, left: cell.priceLbl.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                        cell.mainPost = mainPost[indexPath.row]
+                        
+                        return cell
+                    }else {
+                        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
+                        cell.backgroundColor = .white
+//                        cell.delegate = self
+                        cell.currentUser = currentUser
+                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                        cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
+                        cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                        
+                        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                        cell.mainPost = mainPost[indexPath.row]
+                        
+                        return cell
+                    }
+                }else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
+                    if mainPost[indexPath.row].data.isEmpty {
+                        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_id, for: indexPath) as! FoodMeView
+//                        cell.delegate = self
+                        cell.currentUser = currentUser
+                        cell.backgroundColor = .white
+                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                       
+                        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                        cell.mainPost = mainPost[indexPath.row]
+                        return cell
+                    }else{
+                        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_data_id, for: indexPath) as! FoodMeViewData
+                        
+                        cell.backgroundColor = .white
+//                        cell.delegate = self
+                        cell.currentUser = currentUser
+                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                        
+                        cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                        
+                        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                        cell.mainPost = mainPost[indexPath.row]
+                        return cell
+                    }
+                }else if mainPost[indexPath.row].postType == PostType.camping.despription{
+                    if mainPost[indexPath.row].data.isEmpty {
+                       
+                            let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_id, for: indexPath) as! CampingView
+//                            cell.delegate = self
+                            cell.currentUser = currentUser
+                            cell.backgroundColor = .white
+                            let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                            cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                           
+                            cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                            cell.mainPost = mainPost[indexPath.row]
+                            return cell
+                    }else{
+                        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_data_id, for: indexPath) as! CampingDataView
+                        
+                        cell.backgroundColor = .white
+//                        cell.delegate = self
+                        cell.currentUser = currentUser
+                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                        
+                        cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                        
+                        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                        cell.mainPost = mainPost[indexPath.row]
+                        return cell
+                    }
+                }
+            }
+        }
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ProfileCell
         cell.backgroundColor = .red
@@ -474,6 +733,44 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
             }
             
             
+        }else if isVayeAppPost {
+            if mainPost[indexPath.row].text == nil {
+                return .zero
+            }
+            
+            if mainPost[indexPath.row].postType == PostType.buySell.despription{
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                
+                if mainPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+                }
+            }
+            else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                
+                if mainPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                }
+            }
+            else if mainPost[indexPath.row].postType == PostType.camping.despription{
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                
+                if mainPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                }
+            }
+            else{
+                return .zero
+            }
         }
         
         return CGSize(width: self.view.frame.width, height: view.frame.height - 225)
@@ -501,6 +798,20 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     }
                 }else{
                     self.isLoadMoreHomePost = false
+                    self.isLoadMoreSchoolPost = false
+                    self.isLoadMoreVayeAppPost = false
+                }
+            }
+        }else if isVayeAppPost{
+            if mainPost.count > 5 {
+                if indexPath.item == mainPost.count - 1 {
+                    loadMoreVayeAppPost { (val) in
+                        
+                    }
+                }else{
+                    self.isLoadMoreHomePost = false
+                    self.isLoadMoreSchoolPost = false
+                    self.isLoadMoreVayeAppPost = false
                 }
             }
         }
@@ -548,7 +859,7 @@ extension OtherUserProfile : GADInterstitialDelegate {
 extension OtherUserProfile : ProfileHeaderMenuBarDelegate{
     
     func getMajorPost() {
-        print("major post")
+        getHomePost()
     }
     
     func getSchoolPost() {
@@ -556,7 +867,7 @@ extension OtherUserProfile : ProfileHeaderMenuBarDelegate{
     }
     
     func getVayeAppPost() {
-        print("vaye app post")
+        getMainPost()
     }
     
     func getFavPost() {
@@ -582,6 +893,20 @@ extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelega
             }
             self.isLoadMoreHomePost = false
             self.collectionview.reloadData()
+        }else if isVayeAppPost {
+            self.nativeAd = nativeAd
+            if mainPost.count > 0{
+                if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                    self.mainPost.sort(by: { (post, post1) -> Bool in
+                        
+                        return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    
+                    self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
+                }
+            }
+            self.isVayeAppPost = false
+            self.collectionview.reloadData()
         }
     }
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
@@ -589,6 +914,10 @@ extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelega
             print("\(adLoader) failed with error: \(error.localizedDescription)")
             self.lessonPostModel.append(LessonPostModel.init(empty: "empty", postId: "empty"))
             self.isLoadMoreHomePost = true
+            self.collectionview.reloadData()
+        }else if isVayeAppPost{
+            print("\(adLoader) failed with error: \(error.localizedDescription)")
+            self.isVayeAppPost = true
             self.collectionview.reloadData()
         }
     }
@@ -617,32 +946,6 @@ extension OtherUserProfile  : NewPostHomeVCDelegate{
         }
     }
     func showProfile(for cell: NewPostHomeVC) {
-//        guard  let post = cell.lessonPostModel else {
-//            return
-//        }
-//      
-//        if post.senderUid == currentUser.uid{
-//            let vc = ProfileVC(currentUser: currentUser)
-//            vc.currentUser = currentUser
-//            navigationController?.pushViewController(vc, animated: true)
-////            self.navigationController?.pushViewController(vc, animated: true)
-//        }else{
-//            Utilities.waitProgress(msg: nil)
-//            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
-//                guard let sself = self else {
-//                    Utilities.dismissProgress()
-//                return }
-//                
-//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-//                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-//                    sself.navigationController?.pushViewController(vc, animated: true)
-//                    Utilities.dismissProgress()
-//                }
-//                
-//            }
-//        }
-        
-     
     }
     func linkClick(for cell: NewPostHomeVC) {
         guard let url = URL(string: (cell.lessonPostModel?.link)!) else {

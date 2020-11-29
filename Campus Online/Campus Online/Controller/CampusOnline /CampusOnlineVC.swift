@@ -62,6 +62,7 @@ class CampusOnlineVC: UIViewController{
     //MARK: -lifeCycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+       
   
     }
     init(currentUser : CurrentUser){
@@ -253,7 +254,7 @@ class CampusOnlineVC: UIViewController{
             return }
         let  db =  Firestore.firestore().collection("user")
             .document(currentUser.uid)
-            .collection("main-post").order(by: "postId", descending: true).start(afterDocument: pagee)
+            .collection("main-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
         db.getDocuments { [self] (snapshot, err ) in
             guard let snap = snapshot else { return }
             if let err = err {
@@ -467,7 +468,8 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
                 else{
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
                 }
-            }else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
+            }
+            else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 
                 if mainPost[indexPath.row].data.isEmpty{

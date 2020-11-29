@@ -47,7 +47,12 @@ class CampingService{
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("main-post").document(postId)
-        db.setData(["postId":postId], merge: true)
+        db.setData(["postId":postId], merge: true){ err in
+            let db = Firestore.firestore().collection("user")
+                .document(currentUser.uid)
+                .collection("user-main-post").document(postId)
+            db.setData(["postId":postId], merge: true)
+        }
     }
     func add_post_for_universty(uni shortname : String, postId : String ){
     
