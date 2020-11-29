@@ -241,11 +241,9 @@ class FoodMeView: UICollectionViewCell {
         delegate?.linkClick(for : self)
     }
     @objc func showProfile(){
-        print("click")
         delegate?.showProfile(for : self)
     }
     @objc func mapClick(){
-        print("map click")
         delegate?.mapClick(for: self)
     }
     //MARK:-functions

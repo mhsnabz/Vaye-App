@@ -11,28 +11,25 @@ import UIKit
 import SDWebImage
 import SnapKit
 import FirebaseFirestore
+import GoogleMobileAds
+
 protocol HeaderSelectedIndex : class {
     func selectedIndex ( _ index : IndexPath)
 }
 class Profile_Header: UICollectionReusableView
 {
+    var adUnitID = "ca-app-pub-3940256099942544/4411468910"
+    var interstitalGithub : GADInterstitial!
+    var interstitalInsta : GADInterstitial!
+    var interstitalLinked : GADInterstitial!
+    var interstitalTwitter : GADInterstitial!
+    var target : String = ""
+    var controller : OtherUserProfile?
     weak var delegate : HeaderSelectedIndex?
     func didSelec(_ index: IndexPath) {
         delegate?.selectedIndex(index)
     }
-//    var scrollPostion : IndexPath?{
-//        didSet{
-//            guard let index = scrollPostion else { return }
-//            menuBar.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
-//            }
-//    }
-//    var point  : CGFloat?{
-//        didSet{
-//            guard let point = point else { return }
-//            menuBar.barLeftAnchor?.constant = point / 3
-//        }
-//    }
-//    
+  
     weak var profileHeaderDelegate : ProfileHeaderMenuBarDelegate?
     
     //MARK:-properties
@@ -41,6 +38,9 @@ class Profile_Header: UICollectionReusableView
             menuBar.profileModel = profileModel
         }
     }
+    
+    
+
     var user : OtherUser?{
         didSet{
             configure()
@@ -206,43 +206,82 @@ class Profile_Header: UICollectionReusableView
        addSubview(menuBar)
         menuBar.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
         menuBar.filterDelagate = self
-     
+        interstitalTwitter = createAd()
+        interstitalGithub = createAd()
+        interstitalLinked = createAd()
+        interstitalInsta = createAd()
         
     }
-    
+    private func createAd() ->GADInterstitial {
+        let ad = GADInterstitial(adUnitID: adUnitID)
+        ad.delegate = self
+        ad.load(GADRequest())
+        return ad
+    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     //MARK:-selectors
     @objc func goGithub(){
-        
-//        guard let currentUser = currentUser else {
-//            return
-//        }
-//
-//        guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: currentUser.github) ) else { return }
-//        UIApplication.shared.open(url)
+        if interstitalGithub.isReady {
+            guard let vc = controller else {
+                target = "github"
+                print("go github")
+                return
+            }
+            target = "github"
+            interstitalGithub.present(fromRootViewController: vc)
+        }else{
+            guard let otherUser = user else { return }
+            
+             guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+             UIApplication.shared.open(url)
+        }
     }
     @objc func goInstagram(){
-//        guard let currentUser = currentUser else {
-//            return
-//        }
-//        guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: currentUser.instagram) ) else { return }
-//        UIApplication.shared.open(url)
+        if interstitalInsta.isReady {
+            guard let vc = controller else {
+                target = "instagram"
+                print("go github")
+                return
+            }
+            target = "instagram"
+            interstitalInsta.present(fromRootViewController: vc)
+        }else{
+            guard let otherUser = user else { return }
+             guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+             UIApplication.shared.open(url)
+        }
     }
     @objc func goTwitter(){
-//        guard let currentUser = currentUser else {
-//            return
-//        }
-//        guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: currentUser.twitter) ) else { return }
-//        UIApplication.shared.open(url)
+        if interstitalTwitter.isReady {
+            guard let vc = controller else {
+                target = "twitter"
+                print("go github")
+                return
+            }
+            target = "twitter"
+            interstitalTwitter.present(fromRootViewController: vc)
+        }else{
+            guard let otherUser = user else { return }
+             guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+             UIApplication.shared.open(url)
+        }
     }
     @objc func goLinkedIn(){
-//        guard let currentUser = currentUser else {
-//            return
-//        }
-//        guard let url = URL(string: currentUser.linkedin ) else { return }
-//         UIApplication.shared.open(url)
+        if interstitalLinked.isReady {
+            guard let vc = controller else {
+                target = "linkedin"
+                print("go github")
+                return
+            }
+            target = "linkedin"
+            interstitalLinked.present(fromRootViewController: vc)
+        }else{
+            guard let otherUser = user else { return }
+            guard let url = URL(string: otherUser.linkedin ) else { return }
+             UIApplication.shared.open(url)
+        }
     }
     
     //MARK:-functions
@@ -285,7 +324,7 @@ class Profile_Header: UICollectionReusableView
             }
             sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
             sself.followers.append(NSAttributedString(string: "  Takipçi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
-            print(sself.followers)
+
             sself.fallowerLabel.attributedText = sself.followers
             
         })
@@ -318,6 +357,10 @@ class Profile_Header: UICollectionReusableView
             github.isHidden = true
         }
     }
+    private func getUsername(username : String) ->String{
+        
+        return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
+    }
     
 }
 
@@ -337,4 +380,68 @@ extension Profile_Header : UserProfileMenuBarDelegate {
     }
     
     
+}
+extension Profile_Header : GADInterstitialDelegate {
+    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
+        
+        guard let otherUser = user else { return }
+        
+        if target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "linkedin"{
+            guard let url = URL(string:  otherUser.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+    }
+    func interstitialDidFail(toPresentScreen ad: GADInterstitial) {
+        print("fail")
+    }
+
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        guard let otherUser = user else { return }
+        if target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "linkedin"{
+            guard let url = URL(string:  otherUser.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+        
+    }
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        print("reveived")
+    }
+    func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
+        guard let otherUser = user else { return }
+        if target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if target == "linkedin"{
+            guard let url = URL(string:  otherUser.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+        
+    }
 }

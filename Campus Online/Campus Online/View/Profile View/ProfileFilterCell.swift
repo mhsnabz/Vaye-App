@@ -21,7 +21,8 @@ class ProfileFilterCell: UICollectionViewCell {
         view.backgroundColor = .black
         return view
     }()
-    
+   
+  
     let titleLlb : UILabel = {
     let lbl = UILabel()
         lbl.textColor = .lightGray
@@ -29,7 +30,7 @@ class ProfileFilterCell: UICollectionViewCell {
         
         return lbl
     }()
-    
+   
     override var isSelected: Bool {
         didSet {
             

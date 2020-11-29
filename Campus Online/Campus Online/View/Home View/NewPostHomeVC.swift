@@ -262,7 +262,6 @@ class NewPostHomeVC: UICollectionViewCell
         delegate?.linkClick(for : self)
     }
     @objc func showProfile(){
-        print("click")
         delegate?.showProfile(for : self)
     }
     //MARK:- functions
@@ -326,7 +325,7 @@ class NewPostHomeVC: UICollectionViewCell
         let url = NSURL(string: link)
         let domain = url?.host
         guard let link = domain else { return }
-        print(link)
+
         if link == "drive.google.com" || link == "www.drive.google.com" {
             linkBtn.setImage(UIImage(named: "google-drive")?.withRenderingMode(.alwaysOriginal), for: .normal)
             

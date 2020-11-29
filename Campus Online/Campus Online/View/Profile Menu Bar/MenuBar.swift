@@ -19,7 +19,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         }
     }
      var options : ProfileFilterVM?
-    
+   
     var profileModel : ProfileModel?{
         didSet{
             guard let model = profileModel else { return }
@@ -32,7 +32,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     
     lazy var collectionView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let cv = UICollectionView(frame: CGRect(x: 0, y: 0, width: frame.width, height: 50), collectionViewLayout: layout)
         cv.backgroundColor = .white
         cv.dataSource = self
         cv.delegate = self
@@ -42,7 +42,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(collectionView)
-        collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
+        collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: "id")
 //        let index = IndexPath(item: 0, section: 0)
 //
@@ -50,8 +50,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         setupHorizantalVar()
         
     }
-    
-    
+ 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
