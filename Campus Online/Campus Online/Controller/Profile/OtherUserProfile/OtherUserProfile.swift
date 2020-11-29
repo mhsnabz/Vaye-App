@@ -514,7 +514,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if isHomePost {
-            let vc = CommentVC(currentUser: currentUser, post: LessonPostModel[indexPath.row])
+            let vc = CommentVC(currentUser: currentUser, post: lessonPostModel[indexPath.row])
             self.navigationController?.pushViewController(vc, animated: true)
         }
        
@@ -617,30 +617,30 @@ extension OtherUserProfile  : NewPostHomeVCDelegate{
         }
     }
     func showProfile(for cell: NewPostHomeVC) {
-        guard  let post = cell.lessonPostModel else {
-            return
-        }
-      
-        if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
-//            self.navigationController?.pushViewController(vc, animated: true)
-        }else{
-            Utilities.waitProgress(msg: nil)
-            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else {
-                    Utilities.dismissProgress()
-                return }
-                
-                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
-                }
-                
-            }
-        }
+//        guard  let post = cell.lessonPostModel else {
+//            return
+//        }
+//      
+//        if post.senderUid == currentUser.uid{
+//            let vc = ProfileVC(currentUser: currentUser)
+//            vc.currentUser = currentUser
+//            navigationController?.pushViewController(vc, animated: true)
+////            self.navigationController?.pushViewController(vc, animated: true)
+//        }else{
+//            Utilities.waitProgress(msg: nil)
+//            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+//                guard let sself = self else {
+//                    Utilities.dismissProgress()
+//                return }
+//                
+//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+//                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+//                    sself.navigationController?.pushViewController(vc, animated: true)
+//                    Utilities.dismissProgress()
+//                }
+//                
+//            }
+//        }
         
      
     }
@@ -704,31 +704,31 @@ extension OtherUserProfile  : NewPostHomeVCDelegate{
 //MARK:-home post delegate
 extension OtherUserProfile : NewPostHomeVCDataDelegate {
     func showProfile(for cell: NewPostHomeVCData) {
-        guard  let post = cell.lessonPostModel else {
-            return
-        }
-      
-        if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
-
-        }else{
-            Utilities.waitProgress(msg: nil)
-            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else {
-                    Utilities.dismissProgress()
-                    return }
-                
-                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
-                }
-            }
-            
-        }
+//        guard  let post = cell.lessonPostModel else {
+//            return
+//        }
+//
+//        if post.senderUid == currentUser.uid{
+//            let vc = ProfileVC(currentUser: currentUser)
+//            vc.currentUser = currentUser
+//            navigationController?.pushViewController(vc, animated: true)
+//
+//        }else{
+//            Utilities.waitProgress(msg: nil)
+//            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+//                guard let sself = self else {
+//                    Utilities.dismissProgress()
+//                    return }
+//
+//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+//                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+//                    vc.modalPresentationStyle = .fullScreen
+//                    sself.navigationController?.pushViewController(vc, animated: true)
+//                    Utilities.dismissProgress()
+//                }
+//            }
+//
+//        }
     }
     func options(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
