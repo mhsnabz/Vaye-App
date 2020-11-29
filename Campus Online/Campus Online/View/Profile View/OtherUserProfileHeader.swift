@@ -28,58 +28,58 @@ class OtherUserProfileHeader: UICollectionViewCell {
     
     
     
-    var helps : helps?{
-        didSet{
-          
-            guard let user = helps?.otherUser else { return }
-            otherUser = user
-            name.text = user.name
-            number.text = user.number
-            major.text = user.bolum
-            school.text = user.schoolName
-            profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            profileImage.sd_setImage(with: URL(string: user.thumb_image))
-            
-            if user.linkedin == "" {
-                linkedin.isHidden = true
-            }
-            if user.instagram == ""{
-                instagram.isHidden = true
-            }
-            if user.twitter == ""{
-                twitter.isHidden = true
-            }
-            if user.github == ""{
-                github.isHidden = true
-            }
-            filterView.helps = helps
-     
-            getFollowersCount(otherUser: user, completion: {[weak self] (val) in
-                guard let sself = self else {
-                    return
-                }
-                sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-                sself.followers.append(NSAttributedString(string: "  Takipçi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
-                print(sself.followers)
-                sself.fallowerLabel.attributedText = sself.followers
-              
-                
-            })
-            getFollowingCount(otherUser: user, completion: {[weak self] (val) in
-                guard let sself = self else {
-                    return
-                }
-                sself.following = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-                sself.following.append(NSAttributedString(string: "  Takip Edilen  ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
-                sself.fallowingLabel.attributedText = sself.following
-                
-            })
-            
-         
-            
-            
-        }
-    }
+//    var helps : helps?{
+//        didSet{
+//          
+//            guard let user = helps?.otherUser else { return }
+//            otherUser = user
+//            name.text = user.name
+//            number.text = user.number
+//            major.text = user.bolum
+//            school.text = user.schoolName
+//            profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+//            profileImage.sd_setImage(with: URL(string: user.thumb_image))
+//            
+//            if user.linkedin == "" {
+//                linkedin.isHidden = true
+//            }
+//            if user.instagram == ""{
+//                instagram.isHidden = true
+//            }
+//            if user.twitter == ""{
+//                twitter.isHidden = true
+//            }
+//            if user.github == ""{
+//                github.isHidden = true
+//            }
+//            filterView.helps = helps
+//     
+//            getFollowersCount(otherUser: user, completion: {[weak self] (val) in
+//                guard let sself = self else {
+//                    return
+//                }
+//                sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+//                sself.followers.append(NSAttributedString(string: "  Takipçi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+//                print(sself.followers)
+//                sself.fallowerLabel.attributedText = sself.followers
+//              
+//                
+//            })
+//            getFollowingCount(otherUser: user, completion: {[weak self] (val) in
+//                guard let sself = self else {
+//                    return
+//                }
+//                sself.following = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+//                sself.following.append(NSAttributedString(string: "  Takip Edilen  ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+//                sself.fallowingLabel.attributedText = sself.following
+//                
+//            })
+//            
+//         
+//            
+//            
+//        }
+//    }
 
     
     private let filterView = OtherUserProfileFilterView()

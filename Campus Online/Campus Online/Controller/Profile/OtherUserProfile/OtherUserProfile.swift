@@ -29,7 +29,7 @@ class OtherUserProfile: UIViewController  {
     //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
     
-    
+    var time : Timestamp!
     //MARK:-post filter val
     
     var isHomePost : Bool = false
@@ -41,6 +41,9 @@ class OtherUserProfile: UIViewController  {
     var isLoadMoreSchoolPost : Bool = false
     var isLoadMoreVayeAppPost : Bool = false
     
+    
+    //MARK:-DocumentSnapshot
+    var home_page : DocumentSnapshot? = nil
     //MARK:-propeties
     
     let titleLbl : UILabel = {
@@ -78,6 +81,7 @@ class OtherUserProfile: UIViewController  {
             }
         })
         navigationItem.title = otherUser.username
+        getHomePost()
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -112,12 +116,127 @@ class OtherUserProfile: UIViewController  {
         isLoadMoreSchoolPost = false
         isLoadMoreVayeAppPost = false
         collectionview.reloadData()
+        
+        fetchLessonPost(otherUser: otherUser) {[weak self] (post) in
+            guard let sself = self else { return }
+            sself.lessonPostModel = post
+            if sself.lessonPostModel.count > 0{
+                if  let time_e = sself.lessonPostModel[(sself.lessonPostModel.count) - 1].postTime{
+                    sself.time = sself.lessonPostModel[(sself.lessonPostModel.count) - 1].postTime
+                    self?.lessonPostModel.sort(by: { (post, post1) -> Bool in
+                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    self?.collectionview.reloadData()
+                }else{
+                    sself.collectionview.reloadData()
+                }
+            }
+        }
     }
     
     func fetchLessonPost(otherUser : OtherUser, completion : @escaping([LessonPostModel])->Void){
         var post = [LessonPostModel]()
+        
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid)
+            .collection("my-post").limit(to: 5).order(by: "postId", descending: true)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else {
+                    return
+                }
+                if snap.isEmpty {
+                    completion([])
+                }else{
+                    for postId in snap.documents{
+                        let db = Firestore.firestore().collection(otherUser.short_school)
+                            .document("lesson-post").collection("post").document(postId.documentID)
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let snap = docSnap else { return }
+                                if snap.exists
+                                {
+                                    post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
+                                  
+                  
+                                }else{
+                                    
+                                    let deleteDb = Firestore.firestore().collection("user")
+                                        .document(otherUser.uid).collection("lesson-post").document(postId.documentID)
+                                    deleteDb.delete()
+                                }
+                                completion(post)
+                            }
+                        }
+                        
+                    
+                    }
+                    self.home_page = snap.documents.last
+                    self.isLoadMoreHomePost = true
+                }
+            }
+        }
+        
     }
     
+    
+    private func loadMoreHomePost(completion : @escaping(Bool) ->Void){
+        guard let page = home_page else {
+            isLoadMoreHomePost = false
+            collectionview.reloadData()
+            completion(false)
+            return
+        }
+        
+        let  db = Firestore.firestore().collection("user")
+            .document(otherUser.uid).collection("my-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: page)
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else {
+                completion(false)
+                return }
+            if let err = err {
+                print(err.localizedDescription as Any)
+            }else if snap.isEmpty{
+                sself.isHomePost = false
+                sself.collectionview.reloadData()
+                completion(false)
+            }else{
+                for item in snap.documents{
+                    let db = Firestore.firestore().collection(sself.otherUser.short_school)
+                        .document("lesson-post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap , err) in
+                        if err == nil {
+                            guard let snapp = docSnap else {
+                                completion(false)
+                                return
+                            }
+                            if snapp.exists {
+                                
+                                sself.lessonPostModel.append(LessonPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = sself.lessonPostModel[(sself.lessonPostModel.count) - 1].postTime{
+                                    sself.time = sself.lessonPostModel[(sself.lessonPostModel.count) - 1].postTime
+                                    sself.lessonPostModel.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    sself.isLoadMoreHomePost = true
+                                    sself.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                                
+                            }else{
+                                let deleteDb = Firestore.firestore().collection("user")
+                                    .document(sself.otherUser.uid).collection("my-post").document(snapp.documentID)
+                                deleteDb.delete()
+                            }
+                        }
+                    }
+                    sself.home_page = snap.documents.last
+                }
+            }
+        }
+    }
     
     //MARK: - lesson post
     
@@ -167,18 +286,61 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
+        if isHomePost {
+            return lessonPostModel.count
+        }
         
         return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        
+        if isHomePost {
+            if lessonPostModel[indexPath.row].data.isEmpty {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_id, for: indexPath) as! NewPostHomeVC
+//                cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.lessonPostModel = lessonPostModel[indexPath.row]
+                
+                return cell
+            }else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_data_id, for: indexPath) as! NewPostHomeVCData
+                
+                cell.backgroundColor = .white
+//                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                
+                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.lessonPostModel = lessonPostModel[indexPath.row]
+                
+                return cell
+            }
+        }
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ProfileCell
         cell.backgroundColor = .red
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        if isHomePost {
+            let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+            if lessonPostModel[indexPath.row].data.isEmpty{
+               
+                return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
+            }else{
+                return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+            }
+        }
         
         return CGSize(width: self.view.frame.width, height: view.frame.height - 225)
     }
@@ -194,8 +356,20 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         header.profileHeaderDelegate = self
         return header
     }
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
+    {
+        if isHomePost {
+            if lessonPostModel.count > 5 {
+               
+                if indexPath.item == lessonPostModel.count - 1 {
+                    loadMoreHomePost { (val) in
+                        
+                    }
+                }else{
+                    self.isLoadMoreHomePost = false
+                }
+            }
+        }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0

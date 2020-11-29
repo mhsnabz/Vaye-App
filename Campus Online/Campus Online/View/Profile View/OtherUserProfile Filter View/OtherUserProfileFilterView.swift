@@ -17,19 +17,19 @@ class OtherUserProfileFilterView : UIView{
    weak var option : OtherUserFilterVM!
     weak var otherUser : OtherUser!
     weak var currentUser : CurrentUser!
-     var helps : helps? {
-        didSet{
-      
-            guard let option = helps else {return}
-            self.option = option.option
-            self.currentUser = option.currentUser
-            self.otherUser = option.otherUser
-           
-          
-            self.collectionView.reloadData()
-            
-        }
-    }
+//     var helps : helps? {
+//        didSet{
+//      
+//            guard let option = helps else {return}
+//            self.option = option.option
+//            self.currentUser = option.currentUser
+//            self.otherUser = option.otherUser
+//           
+//          
+//            self.collectionView.reloadData()
+//            
+//        }
+//    }
    
    
     

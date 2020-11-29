@@ -85,8 +85,7 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getNotificationCount()
-        
+        getNotificationCount() 
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -300,7 +299,7 @@ class HomeVC: UIViewController {
             newAdded.isHidden = true
             fetchLessonPost(currentUser: self.currentUser) {[weak self] (post) in
             self?.lessonPost = post
-//            self?.fetchAds()
+//            self?.fetch Ads()
                 if self?.lessonPost.count ?? -1 > 0{
                     self?.collectionview.refreshControl?.endRefreshing()
                     if  let time_e = self?.lessonPost[(self?.lessonPost.count)! - 1].postTime{
