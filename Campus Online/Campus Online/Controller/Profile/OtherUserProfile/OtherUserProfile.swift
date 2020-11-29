@@ -16,6 +16,7 @@ private let home_post_id = "home_post_id"
 private let home_post_data_id = "home_post_data_id"
 private let cellAds = "cell_ads"
 private let loadMoreCell = "cell_load_more"
+private let emptyCell = "empty_cell"
 class OtherUserProfile: UIViewController  {
     var selectedIndex : IndexPath?
     var selectedPostID : String?
@@ -28,8 +29,10 @@ class OtherUserProfile: UIViewController  {
     var adUnitID = "ca-app-pub-3940256099942544/4411468910"
     //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
-    
+    let native_adUnitID =  "ca-app-pub-1362663023819993/1801312504"
+    var nativeAd: GADUnifiedNativeAd?
     var time : Timestamp!
+    var adLoader: GADAdLoader!
     //MARK:-post filter val
     
     var isHomePost : Bool = false
@@ -69,7 +72,6 @@ class OtherUserProfile: UIViewController  {
     //MARK:-lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         setNavigationBar()
         configureUI()
         configureCollectionView()
@@ -82,6 +84,7 @@ class OtherUserProfile: UIViewController  {
         })
         navigationItem.title = otherUser.username
         getHomePost()
+        view.backgroundColor = .collectionColor()
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -118,18 +121,22 @@ class OtherUserProfile: UIViewController  {
         collectionview.reloadData()
         
         fetchLessonPost(otherUser: otherUser) {[weak self] (post) in
-            guard let sself = self else { return }
-            sself.lessonPostModel = post
-            if sself.lessonPostModel.count > 0{
-                if  let time_e = sself.lessonPostModel[(sself.lessonPostModel.count) - 1].postTime{
-                    sself.time = sself.lessonPostModel[(sself.lessonPostModel.count) - 1].postTime
+       
+            self?.lessonPostModel = post
+            print(self?.lessonPostModel.count)
+            if self?.lessonPostModel.count ?? -1 > 0{
+                if  let time_e = self?.lessonPostModel[((self?.lessonPostModel.count)!) - 1].postTime{
+                    self?.time = self?.lessonPostModel[((self?.lessonPostModel.count)!) - 1].postTime
                     self?.lessonPostModel.sort(by: { (post, post1) -> Bool in
                         return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
                     })
                     self?.collectionview.reloadData()
-                }else{
-                    sself.collectionview.reloadData()
                 }
+            }
+            else{
+                self?.fetchAds()
+                self?.collectionview.reloadData()
+                
             }
         }
     }
@@ -157,8 +164,8 @@ class OtherUserProfile: UIViewController  {
                                 if snap.exists
                                 {
                                     post.append(LessonPostModel.init(postId: snap.documentID, dic: snap.data()!))
-                                  
-                  
+                                    
+                                    
                                 }else{
                                     
                                     let deleteDb = Firestore.firestore().collection("user")
@@ -169,9 +176,10 @@ class OtherUserProfile: UIViewController  {
                             }
                         }
                         
-                    
+                        
                     }
                     self.home_page = snap.documents.last
+                    self.fetchAds()
                     self.isLoadMoreHomePost = true
                 }
             }
@@ -198,7 +206,7 @@ class OtherUserProfile: UIViewController  {
             if let err = err {
                 print(err.localizedDescription as Any)
             }else if snap.isEmpty{
-                sself.isHomePost = false
+                sself.isLoadMoreHomePost = false
                 sself.collectionview.reloadData()
                 completion(false)
             }else{
@@ -234,8 +242,17 @@ class OtherUserProfile: UIViewController  {
                     }
                     sself.home_page = snap.documents.last
                 }
+                self?.fetchAds()
             }
         }
+    }
+    
+    
+    func fetchAds() {
+        adLoader = GADAdLoader(adUnitID: native_adUnitID, rootViewController: self,
+                               adTypes: [ .unifiedNative ], options: nil)
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
     }
     
     //MARK: - lesson post
@@ -263,14 +280,18 @@ class OtherUserProfile: UIViewController  {
         
         collectionview.dataSource = self
         collectionview.delegate = self
-        collectionview.backgroundColor = .white
+        collectionview.backgroundColor = .collectionColor()
         
         collectionview.register(Profile_Header.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
         
         collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: home_post_id)
         collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: home_post_data_id)
+        
+        collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
+        collectionview.register(EmptyCell.self, forCellWithReuseIdentifier: emptyCell)
+        
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
-
+        
         
         view.addSubview(collectionview)
         collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
@@ -297,9 +318,21 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         
         
         if isHomePost {
-            if lessonPostModel[indexPath.row].data.isEmpty {
+            
+            
+            if lessonPostModel[indexPath.row].postId == nil {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+                cell.nativeAd = lessonPostModel[indexPath.row].nativeAd
+                return cell
+            }
+            else if lessonPostModel[indexPath.row].empty == "empty"{
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: emptyCell, for: indexPath) as! EmptyCell
+                
+                return cell
+            }
+            else if lessonPostModel[indexPath.row].data.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_id, for: indexPath) as! NewPostHomeVC
-//                cell.delegate = self
+                //                cell.delegate = self
                 cell.currentUser = currentUser
                 cell.backgroundColor = .white
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
@@ -308,11 +341,13 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 cell.lessonPostModel = lessonPostModel[indexPath.row]
                 
                 return cell
-            }else {
+            }
+            
+            else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_data_id, for: indexPath) as! NewPostHomeVCData
                 
                 cell.backgroundColor = .white
-//                cell.delegate = self
+                //                cell.delegate = self
                 cell.currentUser = currentUser
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
@@ -333,13 +368,25 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if isHomePost {
-            let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
-            if lessonPostModel[indexPath.row].data.isEmpty{
-               
-                return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
-            }else{
-                return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+            
+            if lessonPostModel[indexPath.row].postId == nil {
+                return CGSize(width: view.frame.width, height: 409)
+                
             }
+            else if lessonPostModel[indexPath.row].empty == "empty"{
+                return .zero
+            }
+            else{
+                let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                if lessonPostModel[indexPath.row].data.isEmpty{
+                    
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
+                }else{
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                }
+            }
+            
+            
         }
         
         return CGSize(width: self.view.frame.width, height: view.frame.height - 225)
@@ -354,16 +401,17 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         header.user = otherUser
         header.profileModel = profileModel
         header.profileHeaderDelegate = self
+        header.backgroundColor = .white
         return header
     }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
     {
         if isHomePost {
             if lessonPostModel.count > 5 {
-               
+                
                 if indexPath.item == lessonPostModel.count - 1 {
                     loadMoreHomePost { (val) in
-                        
+                        print("load more")
                     }
                 }else{
                     self.isLoadMoreHomePost = false
@@ -371,8 +419,12 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
             }
         }
     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 2
     }
     
 }
@@ -417,4 +469,36 @@ extension OtherUserProfile : ProfileHeaderMenuBarDelegate{
     func getFavPost() {
         print("fav post")
     }
+}
+
+
+extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
+    
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        if isHomePost {
+            self.nativeAd = nativeAd
+            if lessonPostModel.count > 0{
+                if  let time_e = self.lessonPostModel[(self.lessonPostModel.count) - 1].postTime{
+                    self.lessonPostModel.sort(by: { (post, post1) -> Bool in
+                        
+                        return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    
+                    self.lessonPostModel.append(LessonPostModel.init(nativeAd: nativeAd , postTime : self.lessonPostModel[(self.lessonPostModel.count) - 1].postTime!))
+                }
+            }
+            self.isLoadMoreHomePost = false
+            self.collectionview.reloadData()
+        }
+    }
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+        if isHomePost {
+            print("\(adLoader) failed with error: \(error.localizedDescription)")
+            self.lessonPostModel.append(LessonPostModel.init(empty: "empty", postId: "empty"))
+            self.isLoadMoreHomePost = true
+            self.collectionview.reloadData()
+        }
+    }
+    
+    
 }
