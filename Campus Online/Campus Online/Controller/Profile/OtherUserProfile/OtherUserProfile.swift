@@ -814,6 +814,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     loadMoreHomePost { (val) in
                     }
                 }else{
+                    isVayeAppPost = true
+                    isHomePost = true
+                    isSchoolPost = false
                     self.isLoadMoreHomePost = false
                     self.isLoadMoreSchoolPost = false
                     self.isLoadMoreVayeAppPost = false
@@ -826,6 +829,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         
                     }
                 }else{
+                    isVayeAppPost = true
+                    isHomePost = false
+                    isSchoolPost = false
                     self.isLoadMoreHomePost = false
                     self.isLoadMoreSchoolPost = false
                     self.isLoadMoreVayeAppPost = false
@@ -922,7 +928,7 @@ extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelega
                     self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
                 }
             }
-            self.isVayeAppPost = false
+            self.isLoadMoreVayeAppPost = false
             self.collectionview.reloadData()
         }
     }

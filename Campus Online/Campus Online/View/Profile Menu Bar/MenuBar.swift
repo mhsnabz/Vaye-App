@@ -44,9 +44,9 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         addSubview(collectionView)
         collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: "id")
-        let index = IndexPath(item: 0, section: 0)
-
-        collectionView.selectItem(at: index, animated: false, scrollPosition: .left)
+//        let index = IndexPath(item: 0, section: 0)
+//
+//        collectionView.selectItem(at: index, animated: false, scrollPosition: .left)
         setupHorizantalVar()
         
     }
@@ -102,9 +102,9 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         return 0
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-        let x = CGFloat(indexPath.item ) * frame.width / 3
-        barLeftAnchor?.constant = x
+        guard let count = options?.options.count else { return }
+        let x = indexPath.item  * Int(frame.width) / count
+        barLeftAnchor?.constant = CGFloat(x)
         UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.layoutIfNeeded()
         }, completion: nil)

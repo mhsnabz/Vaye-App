@@ -20,19 +20,19 @@ class Profile_Header: UICollectionReusableView
     func didSelec(_ index: IndexPath) {
         delegate?.selectedIndex(index)
     }
-    var scrollPostion : IndexPath?{
-        didSet{
-            guard let index = scrollPostion else { return }
-            menuBar.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
-            }
-    }
-    var point  : CGFloat?{
-        didSet{
-            guard let point = point else { return }
-            menuBar.barLeftAnchor?.constant = point / 3
-        }
-    }
-    
+//    var scrollPostion : IndexPath?{
+//        didSet{
+//            guard let index = scrollPostion else { return }
+//            menuBar.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+//            }
+//    }
+//    var point  : CGFloat?{
+//        didSet{
+//            guard let point = point else { return }
+//            menuBar.barLeftAnchor?.constant = point / 3
+//        }
+//    }
+//    
     weak var profileHeaderDelegate : ProfileHeaderMenuBarDelegate?
     
     //MARK:-properties
