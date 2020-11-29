@@ -188,6 +188,96 @@ class PostService{
     func loadMore(compoletion : @escaping(DocumentSnapshot) ->Void)  {
         
     }
+    
+    func setLike(post : LessonPostModel ,collectionView : UICollectionView, currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        if !post.likes.contains(currentUser.uid){
+            post.likes.append(currentUser.uid)
+            post.dislike.remove(element: currentUser.uid)
+            collectionView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                    
+                    completion(true)
+     
+                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
+                }
+            }
+        }else{
+            post.likes.remove(element: currentUser.uid)
+            collectionView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
 
+                NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: currentUser)
+                completion(true)
+            }
+        }
+    }
+    func setDislike(post : LessonPostModel ,collectionView : UICollectionView, currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        if !post.dislike.contains(currentUser.uid){
+            post.likes.remove(element: currentUser.uid)
+            post.dislike.append(currentUser.uid)
+            collectionView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school).document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+                if err == nil {
+                    db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                    completion(true)
+                    }
+                }
+            }
+        }else{
+            post.dislike.remove(element: currentUser.uid)
+            collectionView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                completion(true)
+            }
+        }
+    }
+
+    func setFav(post : LessonPostModel ,collectionView : UICollectionView, currentUser : CurrentUser , completion:@escaping(Bool) ->Void){
+        if !post.favori.contains(currentUser.uid){
+            post.favori.append(currentUser.uid)
+            collectionView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
+ 
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(currentUser.uid).collection("fav-post").document(post.postId)
+                let dic = ["postId":post.postId as Any] as [String:Any]
+                dbc.setData(dic, merge: true) { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+            }
+            
+        }
+        else{
+            post.favori.remove(element: currentUser.uid)
+            collectionView.reloadData()
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post").collection("post").document(post.postId)
+            db.updateData(["favori":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
+                //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                let dbc = Firestore.firestore().collection("user")
+                    .document(currentUser.uid).collection("fav-post").document(post.postId)
+                dbc.delete { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+                
+            }
+            
+        }
+    }
     
 }
