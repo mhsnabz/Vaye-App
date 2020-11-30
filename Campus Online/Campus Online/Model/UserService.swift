@@ -165,9 +165,9 @@ struct UserService {
             
         }
     }
-     func checkFollowers(currentUser : CurrentUser , otherUser : OtherUser, completion : @escaping(Bool) -> Void ){
+     func checkFollowers(currentUser : CurrentUser , otherUser : String, completion : @escaping(Bool) -> Void ){
         let db = Firestore.firestore().collection("user")
-            .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
+            .document(otherUser).collection("fallowers").document(currentUser.uid)
         db.getDocument { (docSnap, err) in
           
             if err == nil {

@@ -15,7 +15,7 @@ class ActionSheetOtherUserLaunher : NSObject{
     private var otherUser : OtherUser?{
         didSet{
             guard let user = otherUser else { return }
-            UserService.shared.checkFollowers(currentUser: currentUser, otherUser: user) {[weak self] (val) in
+            UserService.shared.checkFollowers(currentUser: currentUser, otherUser: user.uid) {[weak self] (val) in
                 guard let sself = self else { return }
                 sself.isFallowingUser = val
                 sself.tableView.reloadData()
@@ -97,7 +97,7 @@ class ActionSheetOtherUserLaunher : NSObject{
                 guard let sself = self else { return }
                 if err == nil {
                     
-                    UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser!) { (val) in
+                    UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser!.uid) { (val) in
                         sself.isFallowingUser = val
                         sself.tableView.reloadData()
                         Utilities.succesProgress(msg: nil)
@@ -123,7 +123,7 @@ class ActionSheetOtherUserLaunher : NSObject{
                 if err == nil {
                     guard let sself = self else { return }
                 
-                    UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser!) { (val) in
+                    UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser!.uid) { (val) in
                         sself.isFallowingUser = val
                         sself.tableView.reloadData()
                         Utilities.succesProgress(msg: nil)

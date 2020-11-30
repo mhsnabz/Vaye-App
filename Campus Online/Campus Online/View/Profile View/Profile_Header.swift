@@ -36,6 +36,37 @@ class Profile_Header: UICollectionReusableView
     var profileModel : ProfileModel?{
         didSet{
             menuBar.profileModel = profileModel
+            guard let currentUser = profileModel?.currentUser else { return }
+            guard let otherUserUid = profileModel?.uid else { return }
+            UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUserUid) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.isFallowingUser = _val
+//                let db = Firestore.firestore().collection("user")
+//                    .document(otherUserUid).collection("fallowers").document(currentUser.uid)
+//                db.delete {[weak self] (err) in
+//                  
+//                    if err == nil {
+//                        
+//                        UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUserUid) { (val) in
+//                           
+//                            
+//                            Utilities.succesProgress(msg: nil)
+//                        }
+//                        let db = Firestore.firestore().collection("user")
+//                            .document(currentUser.uid)
+//                            .collection("following").document(otherUserUid)
+//                        db.delete { (err) in
+//                            if err == nil {
+//                                Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
+//                            }else{
+//                                Utilities.errorProgress(msg: nil)
+//                            }
+//                        }
+//                    
+//                    
+//                    }
+//                }
+            }
         }
     }
     
@@ -43,6 +74,7 @@ class Profile_Header: UICollectionReusableView
 
     var user : OtherUser?{
         didSet{
+            
             configure()
         }
     }
@@ -65,7 +97,7 @@ class Profile_Header: UICollectionReusableView
     lazy var followBtn : UIButton = {
         let btn = UIButton(type: .system)
         btn.clipsToBounds = true
-        btn.setTitle("Takip Ediliyor", for: .normal)
+        btn.setTitle("yükleniyor...", for: .normal)
         btn.titleLabel?.font = UIFont(name: Utilities.font, size: 14)
         btn.setBackgroundColor(color: .mainColor(), forState: .normal)
         btn.setTitleColor(.white, for: .normal)
@@ -85,6 +117,7 @@ class Profile_Header: UICollectionReusableView
         view.addSubview(followBtn)
         followBtn.anchor(top: nil, left: sendMsgButton.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
         followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+        followBtn.addTarget(self, action: #selector(fallowUser), for: .touchUpInside)
         return view
     }()
     
@@ -184,7 +217,25 @@ class Profile_Header: UICollectionReusableView
 
         return v
     }()
-    
+     var isFallowingUser : Bool?{
+        didSet{
+            guard let val = isFallowingUser else { return }
+            if val{
+                followBtn.setTitle("Takibi Bırak", for: .normal)
+                followBtn.setBackgroundColor(color: .red, forState: .normal)
+                followBtn.setTitleColor(.white, for: .normal)
+                followBtn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
+                followBtn.layer.borderColor = UIColor.red.cgColor
+            }else{
+                followBtn.setTitle("Takip Et", for: .normal)
+                followBtn.setBackgroundColor(color: .mainColor(), forState: .normal)
+                followBtn.setTitleColor(.white, for: .normal)
+                followBtn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
+                followBtn.layer.borderColor = UIColor.mainColor().cgColor
+            }
+        }
+    }
+
   
     
     //MARK:-lifeCycle
@@ -222,6 +273,69 @@ class Profile_Header: UICollectionReusableView
         fatalError("init(coder:) has not been implemented")
     }
     //MARK:-selectors
+    @objc func fallowUser(){
+        guard let isFallowingUser = isFallowingUser else {return}
+        Utilities.waitProgress(msg: "")
+        guard let user = user else { return }
+        guard let currentUser = profileModel?.currentUser else { return }
+        if isFallowingUser{
+            let db = Firestore.firestore().collection("user")
+                .document(user.uid).collection("fallowers").document(currentUser.uid)
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    
+                    UserService.shared.checkFollowers(currentUser: currentUser, otherUser: user.uid) { (val) in
+                        sself.isFallowingUser = val
+              
+                        Utilities.succesProgress(msg: nil)
+                    }
+                    let db = Firestore.firestore().collection("user")
+                        .document(currentUser.uid)
+                        .collection("following").document(user.uid)
+                    db.delete { (err) in
+                        if err == nil {
+                            Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
+                        }else{
+                            Utilities.errorProgress(msg: nil)
+                        }
+                    }
+                
+                
+                }
+            }
+        }else{
+            let db = Firestore.firestore().collection("user")
+                .document(user.uid).collection("fallowers").document(currentUser.uid)
+            db.setData(["user":currentUser.uid as Any] as [String:Any], merge: true) {[weak self] (err) in
+                if err == nil {
+                    guard let sself = self else { return }
+                
+                    UserService.shared.checkFollowers(currentUser: currentUser, otherUser: user.uid) { (val) in
+                        sself.isFallowingUser = val
+
+                        Utilities.succesProgress(msg: nil)
+                    }
+                    let db = Firestore.firestore().collection("user")
+                        .document(currentUser.uid)
+                        .collection("following").document(user.uid)
+                  
+                    db.setData(["user":user.uid as Any], merge: true) { (err) in
+                        if err == nil{
+                            Utilities.succesProgress(msg: "Takip Ediliyor")
+                            NotificaitonService.shared.start_following_you(currentUser: currentUser, otherUser: user, text: Notification_description.following_you.desprition, type: NotificationType.following_you.desprition) { (_) in
+                                
+                            }
+                        }else{
+                            Utilities.errorProgress(msg: nil)
+                        }
+                    }
+                  
+                }
+            }
+        }
+    }
+    
     @objc func goGithub(){
         if interstitalGithub.isReady {
             guard let vc = controller else {
@@ -356,11 +470,14 @@ class Profile_Header: UICollectionReusableView
         if user.github == ""{
             github.isHidden = true
         }
+        
+      
     }
     private func getUsername(username : String) ->String{
         
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
     }
+
     
 }
 
