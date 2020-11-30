@@ -17,9 +17,13 @@ private let loadMoreCell = "cell_load_more"
 
 import FirebaseFirestore
 import FirebaseStorage
-class ProfileVC: UIViewController {
+class ProfileVC: UIViewController  , UIScrollViewDelegate{
 
     //MARK: - variables
+    
+    var profileModel : ProfileModel
+
+    
     var controller : UIViewController!
     lazy var count : Int = 0
     lazy var sizeForItemAt : CGSize = .zero
@@ -93,7 +97,7 @@ class ProfileVC: UIViewController {
         self.currentUser = currentUser
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
-
+        self.profileModel = ProfileModel.init(shortSchool: currentUser.short_school, currentUser: currentUser, major: currentUser.bolum, uid: currentUser.uid)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -115,12 +119,70 @@ class ProfileVC: UIViewController {
         configureCollectionView()
         titleLbl.text = currentUser.username
         getPost()
-
+        
     
    
     }
+    lazy var v : UIView = {
+       let v = UIView()
+        v.backgroundColor = .red
+        return v
+    }()
     
     
+    
+    func configureUI(){
+         view.backgroundColor = .white
+       
+//         view.addSubview(headerBar)
+//        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
+//         dissmisButton.addTarget(self, action: #selector(dissmis), for: .touchUpInside)
+     }
+    
+    func configureCollectionView(){
+        view.addSubview(v)
+
+        v.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 175)
+             let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+             collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+            collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
+//        collectionview.contentInsetAdjustmentBehavior = .never
+             collectionview.dataSource = self
+             collectionview.delegate = self
+             collectionview.backgroundColor = .white
+             collectionview.register(ProfileCell.self, forCellWithReuseIdentifier: cellId)
+            collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
+            collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
+        
+        
+        collectionview.register(CurrentUserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
+             view.addSubview(collectionview)
+        collectionview.anchor(top: v.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        
+   
+         }
+  
+
+    
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//    if scrollView.contentOffset.y > 50 {// the value when you want the headerview to hide
+//        view.layoutIfNeeded()
+//        headerViewHeightConstraint = 0
+//        v.isHidden = true
+//        UIView.animate(withDuration: 0.5, delay: 0, options: [.allowUserInteraction], animations: {
+//            self.view.layoutIfNeeded()
+//        }, completion: nil)
+//
+//    }else {
+//        // expand the header
+//        view.layoutIfNeeded()
+//        v.isHidden = false
+//        headerViewHeightConstraint = 285 // Your initial height of header view
+//        UIView.animate(withDuration: 0.5, delay: 0, options: [.allowUserInteraction], animations: {
+//            self.view.layoutIfNeeded()
+//        }, completion: nil)
+//     }
+//    }
     //MARK:-functions
     private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: "Ders Siliniyor")
@@ -592,30 +654,7 @@ class ProfileVC: UIViewController {
     }
     
     
-    func configureUI(){
-         view.backgroundColor = .white
-//         view.addSubview(headerBar)
-//        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
-//         dissmisButton.addTarget(self, action: #selector(dissmis), for: .touchUpInside)
-     }
     
-    func configureCollectionView(){
-             let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-             collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-            collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
-//        collectionview.contentInsetAdjustmentBehavior = .never
-             collectionview.dataSource = self
-             collectionview.delegate = self
-             collectionview.backgroundColor = .white
-             collectionview.register(ProfileCell.self, forCellWithReuseIdentifier: cellId)
-            collectionview.register(NewPostHomeVC.self, forCellWithReuseIdentifier: cellID)
-            collectionview.register(NewPostHomeVCData.self, forCellWithReuseIdentifier: cellData)
-        
-        
-        collectionview.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
-             view.addSubview(collectionview)
-        collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-         }
     
      @objc func dissmis(){
         self.dismiss(animated: true, completion: nil)
@@ -639,6 +678,10 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         }
         
         return count
+    }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -791,59 +834,25 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         return CGSize(width: self.view.frame.width, height: 50)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 246)
+        if currentUser.instagram == "" &&
+            currentUser.github == "" &&
+            currentUser.linkedin == "" &&
+            currentUser.twitter == "" {
+            return CGSize(width: view.frame.width, height: 245)
+        }else{
+            return CGSize(width: view.frame.width, height: 285)
+        }
         
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! ProfileHeader
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! CurrentUserProfileHeader
+//        let cell = CurrentUserProfileHeader(frame:view.frame, passedCollectionElement : 4)
         header.currentUser = currentUser
-        header.delegate = self
+        header.profileModel = profileModel
+        
         return header
     }
-    
-}
-//MARK:- ProfileHeaderDelegate
-extension ProfileVC : ProfileHeaderDelegate {
-    
-    func getMajorPost() {
-        homePost = true
-        schoolPost = false
-        coPost = false
-        favPost = false
-        isFavPost = false
-        isHomePost = true
-        getPost()
-        
-       
-    }
-    
-    func getSchoolPost() {
-        homePost = false
-        schoolPost = true
-        coPost = false
-        favPost = false
-    }
-    
-    func getCoPost() {
-        homePost = false
-        schoolPost = false
-        coPost = true
-        favPost = false
-    }
-    
-    func getFav() {
-        homePost = false
-        schoolPost = false
-        coPost = false
-        favPost = true
-        isFavPost = true
-        isHomePost = false
-        getFavPost()
-
-       
-    }
-    
     
 }
 

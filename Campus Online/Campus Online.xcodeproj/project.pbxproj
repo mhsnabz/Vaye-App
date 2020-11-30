@@ -84,6 +84,7 @@
 		6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */; };
 		6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */; };
 		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
+		6646AFE32574DC1C00B42590 /* CurrentUserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */; };
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
 		6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */; };
@@ -307,6 +308,7 @@
 		6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeaderOne.swift; sourceTree = "<group>"; };
 		6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
+		6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileHeader.swift; sourceTree = "<group>"; };
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
 		6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuFooter.swift; sourceTree = "<group>"; };
@@ -633,6 +635,7 @@
 				661333EB24F3D1D2002677AB /* ProfileFilterView.swift */,
 				661333ED24F3D355002677AB /* ProfileFilterCell.swift */,
 				660BC4B125162751005D0EF8 /* OtherUserProfileHeader.swift */,
+				6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */,
 			);
 			path = "Profile View";
 			sourceTree = "<group>";
@@ -1657,6 +1660,7 @@
 				66AF72C025133019007E96BC /* GoogleAdBannerView.swift in Sources */,
 				6690A677253B995A00E88BC0 /* BuyAndSellDataView.swift in Sources */,
 				660FB98325652BEF0014D406 /* FoodMeService.swift in Sources */,
+				6646AFE32574DC1C00B42590 /* CurrentUserProfileHeader.swift in Sources */,
 				660F5ADA2503DB0800F72558 /* LicenceCell.swift in Sources */,
 				665E5CD424FFB5BE00B5B5E3 /* CaptionText.swift in Sources */,
 				667755AB25309FCE00DBF3CD /* MapKitPermissonVC.swift in Sources */,

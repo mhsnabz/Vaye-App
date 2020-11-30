@@ -36,43 +36,20 @@ class Profile_Header: UICollectionReusableView
     var profileModel : ProfileModel?{
         didSet{
             menuBar.profileModel = profileModel
+
             guard let currentUser = profileModel?.currentUser else { return }
             guard let otherUserUid = profileModel?.uid else { return }
             UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUserUid) {[weak self] (_val) in
                 guard let sself = self else { return }
                 sself.isFallowingUser = _val
-//                let db = Firestore.firestore().collection("user")
-//                    .document(otherUserUid).collection("fallowers").document(currentUser.uid)
-//                db.delete {[weak self] (err) in
-//                  
-//                    if err == nil {
-//                        
-//                        UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUserUid) { (val) in
-//                           
-//                            
-//                            Utilities.succesProgress(msg: nil)
-//                        }
-//                        let db = Firestore.firestore().collection("user")
-//                            .document(currentUser.uid)
-//                            .collection("following").document(otherUserUid)
-//                        db.delete { (err) in
-//                            if err == nil {
-//                                Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
-//                            }else{
-//                                Utilities.errorProgress(msg: nil)
-//                            }
-//                        }
-//                    
-//                    
-//                    }
-//                }
+
             }
         }
     }
     
     
-
-    var user : OtherUser?{
+    var currentUser : CurrentUser!
+    var user : OtherUser!{
         didSet{
             
             configure()
@@ -261,7 +238,8 @@ class Profile_Header: UICollectionReusableView
         interstitalGithub = createAd()
         interstitalLinked = createAd()
         interstitalInsta = createAd()
-        
+        menuBar.setupHorizantalVar(size: 1)
+
     }
     private func createAd() ->GADInterstitial {
         let ad = GADInterstitial(adUnitID: adUnitID)
@@ -471,7 +449,7 @@ class Profile_Header: UICollectionReusableView
             github.isHidden = true
         }
         
-      
+     
     }
     private func getUsername(username : String) ->String{
         

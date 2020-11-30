@@ -18,7 +18,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
             scrollMenuItem( point: constant)
         }
     }
-     var options : ProfileFilterVM?
+    var options : ProfileFilterVM?
    
     var profileModel : ProfileModel?{
         didSet{
@@ -38,7 +38,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         cv.delegate = self
         return cv
     }()
-    
+    lazy var horizantalBarView = UIView()
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(collectionView)
@@ -47,7 +47,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
 //        let index = IndexPath(item: 0, section: 0)
 //
 //        collectionView.selectItem(at: index, animated: false, scrollPosition: .left)
-        setupHorizantalVar()
+//        setupHorizantalVar()
         
     }
  
@@ -62,15 +62,16 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         }
         return shortName
     }
-    private func setupHorizantalVar(){
-        let horizantalBarView = UIView()
+    func setupHorizantalVar(size : CGFloat){
+        print("DEBUG :: size \(size)")
+        
         horizantalBarView.backgroundColor = .black
         horizantalBarView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizantalBarView)
         barLeftAnchor =  horizantalBarView.leftAnchor.constraint(equalTo: self.leftAnchor)
         barLeftAnchor?.isActive = true
         horizantalBarView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        horizantalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/3).isActive = true
+        horizantalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1 / size).isActive = true
         horizantalBarView.heightAnchor.constraint(equalToConstant: 2).isActive = true
     }
     
@@ -90,6 +91,8 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
             cell.option = profileModel?.shortSchool.description
         }else if options?.options[indexPath.row].description == ProfileFilterOptions.vayeApp(()).description{
             cell.option = "vaye.app"
+        }else if options?.options[indexPath.row].description == ProfileFilterOptions.fav(()).description{
+            cell.option = "Favoriler"
         }
         return cell
     }
@@ -102,6 +105,11 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let count = options?.options.count else { return }
+//        let cell = collectionView.cellForItem(at: indexPath) as! ProfileFilterCell
+//        cell.underLine.removeFromSuperview()
+//        cell.addSubview(cell.underLine)
+//        cell.underLine.frame = CGRect(x: 0, y: 0, width: Int(frame.width) / count, height: 1)
+     
         let x = indexPath.item  * Int(frame.width) / count
         barLeftAnchor?.constant = CGFloat(x)
         UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -111,6 +119,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         guard let constant = barLeftAnchor?.constant else { return }
         scrollMenuItem( point: constant)
         filterDelagate?.didSelectOptions(option: (options?.options[indexPath.row])!)
+        setupHorizantalVar(size: CGFloat(count))
 
     }
     func scrollMenuItem(point : CGFloat){

@@ -91,7 +91,14 @@ class OtherUserProfile: UIViewController  {
     //MARK:-lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavigationBar()
+        //setNavigationBar()
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        let v = UIView()
+        v.backgroundColor = .red
+        guard let navigationBar = self.navigationController?.navigationBar else { return }
+        navigationBar.addSubview(v)
+        v.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
+        navigationController?.hidesBarsOnSwipe = true
         configureUI()
         configureCollectionView()
         interstitalAd = createAd()
@@ -532,7 +539,7 @@ class OtherUserProfile: UIViewController  {
         titleLbl.text = otherUser.username
     }
     
-    
+ 
     func configureCollectionView(){
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)

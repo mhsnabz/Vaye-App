@@ -16,7 +16,7 @@ class ProfileFilterCell: UICollectionViewCell {
             titleLlb.text = option
         }
     }
-    private let underLine : UIView = {
+     lazy var underLine : UIView = {
        let view = UIView()
         view.backgroundColor = .black
         return view
@@ -51,6 +51,7 @@ class ProfileFilterCell: UICollectionViewCell {
         titleLlb.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         titleLlb.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         titleLlb.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        addSubview(underLine)
        
     }
     
