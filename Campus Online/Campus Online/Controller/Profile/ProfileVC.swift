@@ -128,21 +128,26 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         v.backgroundColor = .red
         return v
     }()
-    
+    lazy var menuBar  : MenuBar = {
+       let v = MenuBar()
+
+        return v
+    }()
+    lazy var headerView : UIView = {
+       let v = UIView()
+        v.addSubview(menuBar)
+        menuBar.anchor(top: nil, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
+        return v
+    }()
     
     
     func configureUI(){
          view.backgroundColor = .white
-       
-//         view.addSubview(headerBar)
-//        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
-//         dissmisButton.addTarget(self, action: #selector(dissmis), for: .touchUpInside)
+        
      }
     
     func configureCollectionView(){
-        view.addSubview(v)
-
-        v.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 175)
+      
              let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
              collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
             collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
@@ -157,32 +162,22 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         
         collectionview.register(CurrentUserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
              view.addSubview(collectionview)
-        collectionview.anchor(top: v.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        
-   
+        collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.contentInset = UIEdgeInsets(top: 175, left: 0, bottom: 0, right: 0)
+        view.addSubview(headerView)
+
+        headerView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.frame.width, height: 175)
+    
          }
   
 
-    
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//    if scrollView.contentOffset.y > 50 {// the value when you want the headerview to hide
-//        view.layoutIfNeeded()
-//        headerViewHeightConstraint = 0
-//        v.isHidden = true
-//        UIView.animate(withDuration: 0.5, delay: 0, options: [.allowUserInteraction], animations: {
-//            self.view.layoutIfNeeded()
-//        }, completion: nil)
-//
-//    }else {
-//        // expand the header
-//        view.layoutIfNeeded()
-//        v.isHidden = false
-//        headerViewHeightConstraint = 285 // Your initial height of header view
-//        UIView.animate(withDuration: 0.5, delay: 0, options: [.allowUserInteraction], animations: {
-//            self.view.layoutIfNeeded()
-//        }, completion: nil)
-//     }
-//    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+      
+        let y = -scrollView.contentOffset.y
+        print(y)
+        let h = max(y,50)
+        headerView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.frame.width, height: h)
+    }
     //MARK:-functions
     private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: "Ders Siliniyor")
