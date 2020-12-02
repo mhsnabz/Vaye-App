@@ -141,20 +141,20 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.fontBold, size: 16)
         lbl.textColor = .black
-        lbl.text = "Selim Abuzeyitoğlu"
+
         return lbl
     }()
     let major : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 12)
-        lbl.text = "Bilgisayar Mühendisliği"
+
         lbl.textColor = .darkGray
         return lbl
     }()
     let school : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 12)
-        lbl.text = "İskenderun Teknik Üniversitesi"
+   
         lbl.textColor = .darkGray
         return lbl
     }()
@@ -232,7 +232,13 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         return stackSocial
     }()
     
-
+    lazy var stackFallow : UIStackView = {
+        let stackFallow = UIStackView(arrangedSubviews: [fallowingLabel,fallowerLabel])
+        stackFallow.axis = .horizontal
+        stackFallow.spacing = 4
+        stackFallow.alignment = .leading
+        return stackFallow
+    }()
     
     lazy var headerView : UIView = {
        let v = UIView()
@@ -248,11 +254,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         
         v.addSubview(aboutSection)
         aboutSection.anchor(top: profileImage.bottomAnchor, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 75)
-        let stackFallow = UIStackView(arrangedSubviews: [fallowingLabel,fallowerLabel])
-     
-        stackFallow.axis = .horizontal
-        stackFallow.spacing = 4
-        stackFallow.alignment = .leading
+       
         v.addSubview(stackFallow)
         stackFallow.anchor(top: aboutSection.bottomAnchor, left: aboutSection.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 12, marginBottom: 0, marginRigth: 20, width: 0, heigth: 20)
         v.addSubview(stackView)
@@ -274,6 +276,8 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         self.profileModel = ProfileModel.init(shortSchool: currentUser.short_school, currentUser: currentUser, major: currentUser.bolum, uid: currentUser.uid)
         super.init(nibName: nil, bundle: nil)
+     
+        
     }
     
     required init?(coder: NSCoder) {
@@ -303,7 +307,37 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     
     func configureUI(){
          view.backgroundColor = .white
+        name.text = currentUser.name
+        school.text = currentUser.schoolName
+        major.text = currentUser.bolum
+        UserService.shared.getFollowersCount(uid: currentUser.uid) {[weak self] (val) in
+            guard let sself = self else { return }
+            sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+            sself.followers.append(NSAttributedString(string: "  Takipçi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+
+            sself.fallowerLabel.attributedText = sself.followers
+        }
+        UserService.shared.getFollowingCount(uid : currentUser.uid){[weak self]  (val) in
+            guard let sself = self else { return }
+            sself.following = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+            sself.following.append(NSAttributedString(string: "  Takip Edilen  ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+            sself.fallowingLabel.attributedText = sself.following
+        }
         
+        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
+        if currentUser.linkedin == "" {
+            linkedin.isHidden = true
+        }
+        if currentUser.instagram == ""{
+            instagram.isHidden = true
+        }
+        if currentUser.twitter == ""{
+            twitter.isHidden = true
+        }
+        if currentUser.github == ""{
+            github.isHidden = true
+        }
      }
   
     
@@ -327,7 +361,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionview.contentInset = UIEdgeInsets(top: 285, left: 0, bottom: 0, right: 0)
         view.addSubview(headerView)
-        headerView.backgroundColor = .red
+
     
          }
   
@@ -340,7 +374,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         let y = -scrollView.contentOffset.y
 //        print(y)
         let h = max(y,50)
-        print("size \(h)")
+     
         
         if h <= 230 {
             stackView.isHidden = true
@@ -353,10 +387,14 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         }else{
             aboutSection.isHidden = false
         }
-        
+        if h <= 180 {
+            stackFallow.isHidden = true
+        }else{
+            stackFallow.isHidden = false
+        }
         headerView.frame = CGRect(x: 0, y: view.safeAreaInsets.top
                                   , width: view.frame.width, height: h)
-        profileImage.frame = CGRect(x: 12, y: 4, width: (h) * ((65 * 100) / 285) / 100 , height: (h) * ((65 * 100) / 285) / 100)
+        profileImage.frame = CGRect(x: 24, y: 4, width: (h) * ((65 * 100) / 285) / 100 , height: (h) * ((65 * 100) / 285) / 100)
         profileImage.layer.cornerRadius = profileImage.frame.height / 2
         if profileImage.frame.width <= 30 {
             profileImage.isHidden = true
@@ -365,14 +403,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
             profileImage.isHidden = false
             followBtn.isHidden = false
         }
-      
-        
-     
-        
-        
-//        var contentInset:UIEdgeInsets = self.scrollView.contentInset
-//        contentInset.bottom = h + 20
-//        self.scrollView.contentInset = contentInset
+
        
     }
     

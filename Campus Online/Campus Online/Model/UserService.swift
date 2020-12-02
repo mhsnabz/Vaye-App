@@ -243,4 +243,35 @@ struct UserService {
         
     }
     
+     func getFollowersCount(uid : String , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(uid).collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
+     func getFollowingCount(uid : String , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(uid).collection("following")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
+    
+    
+    
 }
