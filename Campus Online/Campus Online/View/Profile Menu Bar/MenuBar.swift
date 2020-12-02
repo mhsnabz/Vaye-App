@@ -42,8 +42,10 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(collectionView)
+  
         collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: "id")
+
 //        let index = IndexPath(item: 0, section: 0)
 //
 //        collectionView.selectItem(at: index, animated: false, scrollPosition: .left)
@@ -77,14 +79,14 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let count = options?.options.count else {
-            return 0
+            return 4
         }
         return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "id", for: indexPath) as! ProfileFilterCell
-        
+        cell.option = "Deneme"
         if options?.options[indexPath.row].description == ProfileFilterOptions.major(()).description {
             cell.option = getShortMajor(major: (profileModel?.major.description)!)
         }else if options?.options[indexPath.row].description == ProfileFilterOptions.shortSchool(()).description{
@@ -119,7 +121,8 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         guard let constant = barLeftAnchor?.constant else { return }
         scrollMenuItem( point: constant)
         filterDelagate?.didSelectOptions(option: (options?.options[indexPath.row])!)
-        setupHorizantalVar(size: CGFloat(count))
+        setupHorizantalVar(size: CGFloat(4))
+       
 
     }
     func scrollMenuItem(point : CGFloat){

@@ -91,14 +91,8 @@ class OtherUserProfile: UIViewController  {
     //MARK:-lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        //setNavigationBar()
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        let v = UIView()
-        v.backgroundColor = .red
-        guard let navigationBar = self.navigationController?.navigationBar else { return }
-        navigationBar.addSubview(v)
-        v.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
-        navigationController?.hidesBarsOnSwipe = true
+        setNavigationBar()
+      
         configureUI()
         configureCollectionView()
         interstitalAd = createAd()

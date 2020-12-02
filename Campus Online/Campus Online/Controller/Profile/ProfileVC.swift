@@ -17,6 +17,7 @@ private let loadMoreCell = "cell_load_more"
 
 import FirebaseFirestore
 import FirebaseStorage
+import SDWebImage
 class ProfileVC: UIViewController  , UIScrollViewDelegate{
 
     //MARK: - variables
@@ -87,7 +88,181 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         return v
     }()
     
+    lazy var v : UIView = {
+       let v = UIView()
+        v.backgroundColor = .red
+        return v
+    }()
+    lazy var menuBar  : MenuBar = {
+       let v = MenuBar()
+
+        return v
+    }()
+    
+    //MARK:- header properites
+    let profileImage : UIImageView = {
+        let image = UIImageView()
+        image.clipsToBounds = true
+        image.layer.borderColor = UIColor.black.cgColor
+        image.layer.borderWidth = 0.6
+        image.contentMode = .scaleAspectFill
+        image.backgroundColor = .darkGray
+        return image
+    }()
+    lazy var followBtn : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.clipsToBounds = true
+        btn.setTitle("Profilini Düzenle", for: .normal)
+        btn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
+        btn.setBackgroundColor(color: .mainColor(), forState: .normal)
+        btn.setTitleColor(.white, for: .normal)
+        btn.layer.cornerRadius = 5
+        return btn
+    }()
+    lazy var imageSections : UIView = {
+        let view = UIView()
+         view.addSubview(profileImage)
+         profileImage.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 65, heigth: 65)
+        
+         profileImage.layer.cornerRadius = 65 / 2
+       
+         
+         view.addSubview(followBtn)
+         followBtn.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 50, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
+         followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+       
+//         followBtn.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
+         return view
+
+    }()
+    
+    
+    let name : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.fontBold, size: 16)
+        lbl.textColor = .black
+        lbl.text = "Selim Abuzeyitoğlu"
+        return lbl
+    }()
+    let major : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 12)
+        lbl.text = "Bilgisayar Mühendisliği"
+        lbl.textColor = .darkGray
+        return lbl
+    }()
+    let school : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 12)
+        lbl.text = "İskenderun Teknik Üniversitesi"
+        lbl.textColor = .darkGray
+        return lbl
+    }()
+    let number : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 12)
+        lbl.text = "121503031"
+        lbl.textColor = .darkGray
+        return lbl
+    }()
+    lazy var aboutSection : UIView = {
+       let v = UIView()
+        let stack = UIStackView(arrangedSubviews: [name,number,school,major,number])
+        stack.axis = .vertical
+        stack.spacing = 1
+        stack.alignment = .leading
+        v.addSubview(stack)
+        stack.anchor(top: nil, left: v.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 75)
+        return v
+    }()
+    
+    
+    var followers : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
+    var following : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
+    let fallowerLabel : UILabel = {
+        let lbl = UILabel()
+       
+        return lbl
+    }()
    
+    let fallowingLabel : UILabel = {
+        let lbl = UILabel()
+
+        return lbl
+    }()
+    
+    
+    let github : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "github")?.withRenderingMode(.alwaysOriginal), for: .normal)
+//        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
+        return btn
+    }()
+    let linkedin : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "linkedin")?.withRenderingMode(.alwaysOriginal), for: .normal)
+//        btn.addTarget(self, action: #selector(goLinkedIn), for: .touchUpInside)
+        return btn
+    }()
+    
+    let twitter : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "twitter")?.withRenderingMode(.alwaysOriginal), for: .normal)
+//        btn.addTarget(self, action: #selector(goTwitter), for: .touchUpInside)
+        return btn
+    }()
+    let instagram : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(UIImage(named: "ig")?.withRenderingMode(.alwaysOriginal), for: .normal)
+//        btn.addTarget(self, action: #selector(goInstagram), for: .touchUpInside)
+        return btn
+    }()
+    
+    lazy var stackView : UIStackView = {
+        let stackSocial = UIStackView(arrangedSubviews: [github,linkedin,twitter,instagram])
+        stackSocial.axis = .horizontal
+        stackSocial.distribution = .fillEqually
+        stackSocial.spacing = 20
+        return stackSocial
+    }()
+    
+
+    
+    lazy var headerView : UIView = {
+       let v = UIView()
+        v.addSubview(profileImage)
+         
+//         profileImage.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 12, marginBottom: 0, marginRigth: 0, width: 65, heigth: 65)
+//
+     
+         
+         v.addSubview(followBtn)
+         followBtn.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: v.rightAnchor, marginTop: 0, marginLeft: 50, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
+        followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+        
+        v.addSubview(aboutSection)
+        aboutSection.anchor(top: profileImage.bottomAnchor, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 75)
+        let stackFallow = UIStackView(arrangedSubviews: [fallowingLabel,fallowerLabel])
+     
+        stackFallow.axis = .horizontal
+        stackFallow.spacing = 4
+        stackFallow.alignment = .leading
+        v.addSubview(stackFallow)
+        stackFallow.anchor(top: aboutSection.bottomAnchor, left: aboutSection.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 12, marginBottom: 0, marginRigth: 20, width: 0, heigth: 20)
+        v.addSubview(stackView)
+        stackView.anchor(top: stackFallow.bottomAnchor, left: stackFallow.leftAnchor, bottom: nil, rigth: nil, marginTop: 6, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 40)
+        v.addSubview(menuBar)
+        menuBar.anchor(top: nil, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
+     
+        
+        return v
+    }()
     
 
 
@@ -115,42 +290,29 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
         configureUI()
-        
+
         configureCollectionView()
         titleLbl.text = currentUser.username
         getPost()
         
-    
+
    
     }
-    lazy var v : UIView = {
-       let v = UIView()
-        v.backgroundColor = .red
-        return v
-    }()
-    lazy var menuBar  : MenuBar = {
-       let v = MenuBar()
-
-        return v
-    }()
-    lazy var headerView : UIView = {
-       let v = UIView()
-        v.addSubview(menuBar)
-        menuBar.anchor(top: nil, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 50)
-        return v
-    }()
+   
     
     
     func configureUI(){
          view.backgroundColor = .white
         
      }
+  
     
     func configureCollectionView(){
-      
+
+        
              let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
              collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-            collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
+        collectionview.backgroundColor = .white
 //        collectionview.contentInsetAdjustmentBehavior = .never
              collectionview.dataSource = self
              collectionview.delegate = self
@@ -163,22 +325,136 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         collectionview.register(CurrentUserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: profileId)
              view.addSubview(collectionview)
         collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        collectionview.contentInset = UIEdgeInsets(top: 175, left: 0, bottom: 0, right: 0)
+        collectionview.contentInset = UIEdgeInsets(top: 285, left: 0, bottom: 0, right: 0)
         view.addSubview(headerView)
-
-        headerView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.frame.width, height: 175)
+        headerView.backgroundColor = .red
     
          }
   
+    
 
+
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
       
         let y = -scrollView.contentOffset.y
-        print(y)
+//        print(y)
         let h = max(y,50)
-        headerView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.frame.width, height: h)
+        print("size \(h)")
+        
+        if h <= 230 {
+            stackView.isHidden = true
+        }else{
+            stackView.isHidden = false
+        }
+        
+        if h <= 110 {
+            aboutSection.isHidden = true
+        }else{
+            aboutSection.isHidden = false
+        }
+        
+        headerView.frame = CGRect(x: 0, y: view.safeAreaInsets.top
+                                  , width: view.frame.width, height: h)
+        profileImage.frame = CGRect(x: 12, y: 4, width: (h) * ((65 * 100) / 285) / 100 , height: (h) * ((65 * 100) / 285) / 100)
+        profileImage.layer.cornerRadius = profileImage.frame.height / 2
+        if profileImage.frame.width <= 30 {
+            profileImage.isHidden = true
+            followBtn.isHidden = true
+        }else{
+            profileImage.isHidden = false
+            followBtn.isHidden = false
+        }
+      
+        
+     
+        
+        
+//        var contentInset:UIEdgeInsets = self.scrollView.contentInset
+//        contentInset.bottom = h + 20
+//        self.scrollView.contentInset = contentInset
+       
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+    }
+  
     //MARK:-functions
+    func configure() {
+        
+        getFollowersCount(currentUser: currentUser, completion: {[weak self] (val) in
+            guard let sself = self else {
+                return
+                
+            }
+            sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+            sself.followers.append(NSAttributedString(string: "  Takipçi", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+            sself.fallowerLabel.attributedText = sself.followers
+            
+        })
+        getFollowingCount(currentUser: currentUser, completion: {[weak self] (val) in
+            guard let sself = self else {
+                return
+            }
+            sself.following = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+            sself.following.append(NSAttributedString(string: "  Takip Edilen  ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+            sself.fallowingLabel.attributedText = sself.following
+        })
+    
+        
+        name.text = currentUser.name
+        number.text = currentUser.number
+        major.text = currentUser.bolum
+        school.text = currentUser.schoolName
+        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+        profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
+        
+        if currentUser.linkedin == "" {
+            linkedin.isHidden = true
+        }
+        if currentUser.instagram == ""{
+            instagram.isHidden = true
+        }
+        if currentUser.twitter == ""{
+            twitter.isHidden = true
+        }
+        if currentUser.github == ""{
+            github.isHidden = true
+        }
+    }
+    
+    private func getFollowersCount(currentUser : CurrentUser , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
+    private func getFollowingCount(currentUser : CurrentUser , completion :@escaping(String) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("following")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard  let snap = querySnap else {
+                    completion("0")
+                    return
+                }
+                    completion(snap.documents.count.description)
+                
+                }
+            }
+        }
+    
+    
     private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: "Ders Siliniyor")
        
@@ -828,26 +1104,26 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         
         return CGSize(width: self.view.frame.width, height: 50)
     }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if currentUser.instagram == "" &&
-            currentUser.github == "" &&
-            currentUser.linkedin == "" &&
-            currentUser.twitter == "" {
-            return CGSize(width: view.frame.width, height: 245)
-        }else{
-            return CGSize(width: view.frame.width, height: 285)
-        }
-        
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//        if currentUser.instagram == "" &&
+//            currentUser.github == "" &&
+//            currentUser.linkedin == "" &&
+//            currentUser.twitter == "" {
+//            return CGSize(width: view.frame.width, height: 245)
+//        }else{
+//            return CGSize(width: view.frame.width, height: 285)
+//        }
+//
+//    }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! CurrentUserProfileHeader
-//        let cell = CurrentUserProfileHeader(frame:view.frame, passedCollectionElement : 4)
-        header.currentUser = currentUser
-        header.profileModel = profileModel
-        
-        return header
-    }
+//    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+//        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: profileId, for: indexPath) as! CurrentUserProfileHeader
+////        let cell = CurrentUserProfileHeader(frame:view.frame, passedCollectionElement : 4)
+//        header.currentUser = currentUser
+//        header.profileModel = profileModel
+//
+//        return header
+//    }
     
 }
 
@@ -1235,3 +1511,4 @@ extension ProfileVC : ActionSheetHomeLauncherDelegate{
         }
     }
 }
+

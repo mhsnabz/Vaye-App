@@ -84,6 +84,10 @@
 		6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */; };
 		6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */; };
 		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
+		663B27332576759900A3CABB /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27322576759900A3CABB /* HeaderView.swift */; };
+		663B27442577851B00A3CABB /* DenemeProfil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27432577851B00A3CABB /* DenemeProfil.swift */; };
+		663B27492577864E00A3CABB /* TableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27482577864E00A3CABB /* TableViewHeader.swift */; };
+		663B27512577870700A3CABB /* DenemeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27502577870700A3CABB /* DenemeCell.swift */; };
 		6646AFE32574DC1C00B42590 /* CurrentUserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */; };
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
@@ -308,6 +312,10 @@
 		6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeaderOne.swift; sourceTree = "<group>"; };
 		6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
+		663B27322576759900A3CABB /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		663B27432577851B00A3CABB /* DenemeProfil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DenemeProfil.swift; sourceTree = "<group>"; };
+		663B27482577864E00A3CABB /* TableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewHeader.swift; sourceTree = "<group>"; };
+		663B27502577870700A3CABB /* DenemeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DenemeCell.swift; sourceTree = "<group>"; };
 		6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileHeader.swift; sourceTree = "<group>"; };
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
@@ -636,6 +644,7 @@
 				661333ED24F3D355002677AB /* ProfileFilterCell.swift */,
 				660BC4B125162751005D0EF8 /* OtherUserProfileHeader.swift */,
 				6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */,
+				663B27322576759900A3CABB /* HeaderView.swift */,
 			);
 			path = "Profile View";
 			sourceTree = "<group>";
@@ -1196,8 +1205,11 @@
 		66D9120D24EEAAF0002D760A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				663B27482577864E00A3CABB /* TableViewHeader.swift */,
 				66A5F0DE250F4B96005C93B3 /* OtherUserProfile */,
 				66D9121F24EEABA3002D760A /* ProfileVC.swift */,
+				663B27432577851B00A3CABB /* DenemeProfil.swift */,
+				663B27502577870700A3CABB /* DenemeCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -1596,6 +1608,7 @@
 				660FB99E2569D6D00014D406 /* FoodMeCommentHeader.swift in Sources */,
 				6677553F252CED1400DBF3CD /* CoMenuCell.swift in Sources */,
 				6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */,
+				663B27332576759900A3CABB /* HeaderView.swift in Sources */,
 				66D9122024EEABA3002D760A /* ProfileVC.swift in Sources */,
 				668B6A37251BBE6900A8902F /* CommentMsgCell.swift in Sources */,
 				6622C23D2505CE2200E3B3F0 /* LessonInfo.swift in Sources */,
@@ -1627,6 +1640,7 @@
 				66B2B4122554B58A0088262E /* ASMainPostOtherUserVM.swift in Sources */,
 				669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */,
 				6690A686253F688C00E88BC0 /* ASCurrentUserMainPostViewModel.swift in Sources */,
+				663B27442577851B00A3CABB /* DenemeProfil.swift in Sources */,
 				66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */,
 				66AA9C5F25251175008DFB86 /* NotificationModel.swift in Sources */,
 				6652016C257010B6003BF4C7 /* Profile_Header.swift in Sources */,
@@ -1682,6 +1696,7 @@
 				66F25F1724F78618005B0591 /* BolumTB.swift in Sources */,
 				6652015C256EC3CF003BF4C7 /* EditSellBuyPost.swift in Sources */,
 				6615FC812509B9D600776664 /* PostService.swift in Sources */,
+				663B27512577870700A3CABB /* DenemeCell.swift in Sources */,
 				6608990B24FD70310023E53B /* NewPostHeader.swift in Sources */,
 				66A5F0DA250F02F1005C93B3 /* OtherUser.swift in Sources */,
 				660FB97B2564B2580014D406 /* FoodMeCell.swift in Sources */,
@@ -1726,6 +1741,7 @@
 				660FB9D8256CE2820014D406 /* EditFoodMePost.swift in Sources */,
 				6652F02925176971003462BC /* FirFile.swift in Sources */,
 				66F25F1524F6E8E9005B0591 /* FakulteCell.swift in Sources */,
+				663B27492577864E00A3CABB /* TableViewHeader.swift in Sources */,
 				660FB9CA256A6FF70014D406 /* CampingCommentHeader.swift in Sources */,
 				6613340624F43CD5002677AB /* ChooseSchoolCell.swift in Sources */,
 				6618F6A825003840005E5873 /* PopUpWindow.swift in Sources */,
