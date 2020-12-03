@@ -278,14 +278,16 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setNavigationBar()
-
+        
+        
         navigationItem.title = currentUser.username
         
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
+        setNavigationBar()
+       navigationController?.navigationBar.isHidden = false
         configureUI()
         configureCollectionView()
         titleLbl.text = currentUser.username

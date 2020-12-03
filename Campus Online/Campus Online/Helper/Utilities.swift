@@ -383,6 +383,7 @@ extension Double {
 }
 extension UIViewController {
     func setNavigationBar(){
+       
         self.navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationController?.navigationBar.barTintColor = .white
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont(name: Utilities.fontBold, size: 14)!]
