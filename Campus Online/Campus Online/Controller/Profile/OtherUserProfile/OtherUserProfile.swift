@@ -536,6 +536,7 @@ class OtherUserProfile: UIViewController  {
  
     func configureCollectionView(){
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionHeadersPinToVisibleBounds = true
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         
         collectionview.dataSource = self
