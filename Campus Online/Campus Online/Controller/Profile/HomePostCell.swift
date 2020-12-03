@@ -16,7 +16,7 @@ class HomePostCell: UICollectionViewCell {
     weak var delegate : didScroolDelegate?
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .green
+    
         configureCollecitionView()
         
     }

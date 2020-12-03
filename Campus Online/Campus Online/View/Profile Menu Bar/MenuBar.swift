@@ -8,6 +8,11 @@
 
 import UIKit
 
+struct MenuFilter {
+    var model : ProfileModel!
+    var options : ProfileFilterVM!
+    
+}
 
 
 class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout , UICollectionViewDelegate {
@@ -18,8 +23,22 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
             scrollMenuItem( point: constant)
         }
     }
-    var options : ProfileFilterVM?
-   
+    var options : ProfileFilterVM?{
+        didSet{
+            collectionView.reloadData()
+        }
+    }
+    var menuFilter : MenuFilter?{
+        didSet{
+            guard let model = menuFilter?.model else { return }
+            guard let option = menuFilter?.options else { return }
+            let index = IndexPath(item: 0, section: 0)
+
+            collectionView.selectItem(at: index, animated: false, scrollPosition: .left)
+            setupHorizantalVar(size: CGFloat(option.options.count))
+            collectionView.reloadData()
+        }
+    }
     var profileModel : ProfileModel?{
         didSet{
             guard let model = profileModel else { return }
@@ -46,10 +65,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
         collectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: "id")
 
-//        let index = IndexPath(item: 0, section: 0)
-//
-//        collectionView.selectItem(at: index, animated: false, scrollPosition: .left)
-//        setupHorizantalVar()
+       
         
     }
  
@@ -78,7 +94,7 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let count = options?.options.count else {
+        guard let count = menuFilter?.options.options.count  else {
             return 4
         }
         return count
@@ -86,27 +102,31 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "id", for: indexPath) as! ProfileFilterCell
-        cell.option = "Deneme"
-        if options?.options[indexPath.row].description == ProfileFilterOptions.major(()).description {
-            cell.option = getShortMajor(major: (profileModel?.major.description)!)
-        }else if options?.options[indexPath.row].description == ProfileFilterOptions.shortSchool(()).description{
-            cell.option = profileModel?.shortSchool.description
-        }else if options?.options[indexPath.row].description == ProfileFilterOptions.vayeApp(()).description{
-            cell.option = "vaye.app"
-        }else if options?.options[indexPath.row].description == ProfileFilterOptions.fav(()).description{
-            cell.option = "Favoriler"
+        
+        if let filter = menuFilter {
+            if  filter.options?.options[indexPath.row].description == ProfileFilterOptions.major(()).description {
+                cell.option = getShortMajor(major: filter.model.major.description)
+            }else if filter.options?.options[indexPath.row].description == ProfileFilterOptions.shortSchool(()).description{
+                cell.option = filter.model.shortSchool.description
+            }else if  filter.options?.options[indexPath.row].description == ProfileFilterOptions.vayeApp(()).description{
+                cell.option = "vaye.app"
+            }else if  filter.options?.options[indexPath.row].description == ProfileFilterOptions.fav(()).description{
+                cell.option = "Favoriler"
+            }
         }
+        
+       
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let count = options?.options.count ?? 1
+        let count =  menuFilter?.options?.options.count ?? 1
         return CGSize(width: Int(frame.width) / count, height: 50)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let count = options?.options.count else { return }
+        guard let count = menuFilter?.options?.options.count else { return }
 //        let cell = collectionView.cellForItem(at: indexPath) as! ProfileFilterCell
 //        cell.underLine.removeFromSuperview()
 //        cell.addSubview(cell.underLine)
@@ -120,8 +140,8 @@ class MenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelegateFl
 
         guard let constant = barLeftAnchor?.constant else { return }
         scrollMenuItem( point: constant)
-        filterDelagate?.didSelectOptions(option: (options?.options[indexPath.row])!)
-        setupHorizantalVar(size: CGFloat(4))
+        filterDelagate?.didSelectOptions(option: (menuFilter?.options?.options[indexPath.row])!)
+      
        
 
     }
