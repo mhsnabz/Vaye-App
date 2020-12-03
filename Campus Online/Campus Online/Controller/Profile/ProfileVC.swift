@@ -42,6 +42,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     //MARK:-DocumentSnapshot
     var home_page : DocumentSnapshot? = nil
     var vaye_page : DocumentSnapshot? = nil
+    var fav_page : DocumentSnapshot? = nil
     //MARK: - variables
     var width : CGFloat
     var profileModel : ProfileModel
@@ -423,7 +424,9 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         isHomePost = true
         isVayeAppPost = false
         isSchoolPost = false
+        isFavPost = false
         
+        isLoadMoreFavPost = false
         isLoadMoreHomePost = true
         isLoadMoreSchoolPost = false
         isLoadMoreVayeAppPost = false
@@ -560,7 +563,9 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         isHomePost = false
         isVayeAppPost = true
         isSchoolPost = false
+        isFavPost = false
         
+        isLoadMoreFavPost = false
         isLoadMoreHomePost = false
         isLoadMoreSchoolPost = false
         isLoadMoreVayeAppPost = true
@@ -712,14 +717,34 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         isLoadMoreVayeAppPost = false
         collectionview.reloadData()
         
+        fetchFavPost(currentUser: currentUser) {[weak self] (post) in
+       
+            self?.favPost = post
+           
+            if self?.favPost.count ?? -1 > 0{
+                if  let time_e = self?.favPost[((self?.favPost.count)!) - 1].postTime{
+                    self?.time = self?.favPost[((self?.favPost.count)!) - 1].postTime
+                    self?.lessonPostModel.sort(by: { (post, post1) -> Bool in
+                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    self?.collectionview.reloadData()
+                }
+            }
+            else{
+                self?.fetchAds()
+                self?.collectionview.reloadData()
+                
+            }
+        }
     }
     
     
     func fetchFavPost(currentUser : CurrentUser, completion : @escaping([LessonPostModel])->Void){
         var post = [LessonPostModel]()
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/fav-post/1600284816337
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
-            .collection("my-post").limit(to: 5).order(by: "postId", descending: true)
+            .collection("fav-post").limit(to: 5).order(by: "postId", descending: true)
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else {
@@ -727,7 +752,9 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                 }
                 if snap.isEmpty {
                     completion([])
+                    print("mpty")
                 }else{
+                    print(snap.count)
                     for postId in snap.documents{
                         let db = Firestore.firestore().collection(currentUser.short_school)
                             .document("lesson-post").collection("post").document(postId.documentID)
@@ -742,7 +769,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                                 }else{
                                     
                                     let deleteDb = Firestore.firestore().collection("user")
-                                        .document(currentUser.uid).collection("lesson-post").document(postId.documentID)
+                                        .document(currentUser.uid).collection("fav-post").document(postId.documentID)
                                     deleteDb.delete()
                                 }
                                 completion(post)
@@ -751,9 +778,10 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                         
                         
                     }
-                    self.home_page = snap.documents.last
+                    self.fav_page = snap.documents.last
                     self.fetchAds()
-                    self.isLoadMoreHomePost = true
+                    self.isLoadMoreFavPost = true
+                    self.isLoadMoreHomePost = false
                     self.isLoadMoreSchoolPost = false
                     self.isLoadMoreVayeAppPost = false
                 }
@@ -775,6 +803,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
             return lessonPostModel.count
         }else if isVayeAppPost{
             return mainPost.count
+        }else if isFavPost{
+            return favPost.count
         }
         
         return 0
@@ -930,7 +960,44 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 }
             }
         }else if isFavPost{
-            
+            if favPost[indexPath.row].postId == nil {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+                cell.nativeAd = favPost[indexPath.row].nativeAd
+                return cell
+            }
+            else if favPost[indexPath.row].empty == "empty"{
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: emptyCell, for: indexPath) as! EmptyCell
+                
+                return cell
+            }
+            else if favPost[indexPath.row].data.isEmpty {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_id, for: indexPath) as! NewPostHomeVC
+                  cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = favPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.lessonPostModel = favPost[indexPath.row]
+                
+                return cell
+                
+            }else{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_data_id, for: indexPath) as! NewPostHomeVCData
+                
+                cell.backgroundColor = .white
+                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = favPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                
+                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.lessonPostModel = favPost[indexPath.row]
+                
+                return cell
+            }
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ProfileCell
         cell.backgroundColor = .red
@@ -1018,6 +1085,24 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 return .zero
             }
         }
+        else if isFavPost{
+            if favPost[indexPath.row].postId == nil {
+                return CGSize(width: view.frame.width, height: 409)
+                
+            }
+            else if favPost[indexPath.row].empty == "empty"{
+                return .zero
+            }
+            else{
+                let h = favPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                if favPost[indexPath.row].data.isEmpty{
+                    
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
+                }else{
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                }
+            }
+        }
         
         return CGSize(width: self.view.frame.width, height: view.frame.height - 225)
     }
@@ -1033,6 +1118,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     isVayeAppPost = true
                     isHomePost = true
                     isSchoolPost = false
+                    isFavPost = false
+                    self.isLoadMoreFavPost = false
                     self.isLoadMoreHomePost = false
                     self.isLoadMoreSchoolPost = false
                     self.isLoadMoreVayeAppPost = false
@@ -1048,6 +1135,9 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     isVayeAppPost = true
                     isHomePost = false
                     isSchoolPost = false
+                    isFavPost = false
+                    
+                    self.isLoadMoreFavPost = false
                     self.isLoadMoreHomePost = false
                     self.isLoadMoreSchoolPost = false
                     self.isLoadMoreVayeAppPost = false
@@ -1090,6 +1180,21 @@ extension ProfileVC: GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GAD
             self.isLoadMoreVayeAppPost = false
             self.collectionview.reloadData()
         }
+        else if isFavPost {
+            self.nativeAd = nativeAd
+            if favPost.count > 0{
+                if  let time_e = self.favPost[(self.favPost.count) - 1].postTime{
+                    self.favPost.sort(by: { (post, post1) -> Bool in
+                        
+                        return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    
+                    self.favPost.append(LessonPostModel.init(nativeAd: nativeAd , postTime : self.lessonPostModel[(self.favPost.count) - 1].postTime!))
+                }
+            }
+            self.isLoadMoreFavPost = false
+            self.collectionview.reloadData()
+        }
     }
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
         if isHomePost {
@@ -1127,7 +1232,8 @@ extension ProfileVC : UserProfileMenuBarDelegate {
             getMainPost()
             break
         case .fav():
-            profileHeaderDelegate?.getFavPost()
+            getFavPost()
+            break
         }
     }
     
