@@ -39,6 +39,7 @@ class HomeVC: UIViewController {
     weak var delegate : HomeControllerDelegate?
     var currentUser : CurrentUser
     var isMenuOpen : Bool = false
+  
     var otherUser : OtherUser?
     var barTitle : String?
     var menu = UIButton()
@@ -136,18 +137,21 @@ class HomeVC: UIViewController {
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(hole(_:)))
         swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
         self.view.addGestureRecognizer(swipeLeft)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        backView.addGestureRecognizer(tap)
         
     }
-    
+    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        self.menuClick()
+    }
     @objc  func hole(_ recognizer: UISwipeGestureRecognizer) {
         if (recognizer.direction == UISwipeGestureRecognizer.Direction.left)
         {
-            
-                self.menuClick()
-            
-            
+            self.menuClick()
+        
         }else if recognizer.direction == .right {
             self.menuClick()
+            
         }else {
             print("other")
         }
@@ -414,14 +418,24 @@ class HomeVC: UIViewController {
     @objc func menuClick(){
         self.delegate?.handleMenuToggle(forMenuOption: nil)
         if !isMenuOpen {
-            self.isMenuOpen = false
+            self.isMenuOpen = true
+            view.addSubview(backView)
+            backView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         }
         else{
-            self.isMenuOpen = true
+            self.isMenuOpen = false
+            backView.removeFromSuperview()
             
         }    
     }
 
+    lazy var backView : UIView = {
+       let v = UIView()
+        v.backgroundColor = UIColor.init(white: 0.95, alpha: 0.5)
+       
+        return v
+    }()
+  
     
     private func getBolumName(fakulteName : String){
         
