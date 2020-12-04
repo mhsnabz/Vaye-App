@@ -11,6 +11,7 @@ import UIKit
 import FirebaseFirestore
 class ActionSheetOtherUserLaunher : NSObject{
     //MARK: -properties
+    weak var dismisDelgate : DismisDelegate?
     private let currentUser : CurrentUser
     private var otherUser : OtherUser?{
         didSet{
@@ -206,7 +207,7 @@ class ActionSheetOtherUserLaunher : NSObject{
             let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
             self.blackView.alpha = 0
             self.tableView.frame.origin.y += heigth
-            
+            self.dismisDelgate?.dismisMenu()
         }
     }
     private func addSlient(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){

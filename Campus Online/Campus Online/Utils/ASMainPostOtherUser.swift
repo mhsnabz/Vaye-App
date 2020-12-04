@@ -11,6 +11,7 @@ class ASMainPostOtherUser : NSObject {
     //MARK: -properties
     private let currentUser : CurrentUser
     private let target : String
+    weak var dismisDelegate : DismisDelegate?
     private var otherUser : OtherUser?{
         didSet{
             guard let user = otherUser else { return }
@@ -312,6 +313,7 @@ class ASMainPostOtherUser : NSObject {
             let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
             self.blackView.alpha = 0
             self.tableView.frame.origin.y += heigth
+            self.dismisDelegate?.dismisMenu()
             
         }
     }

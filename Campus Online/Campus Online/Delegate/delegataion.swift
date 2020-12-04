@@ -34,6 +34,9 @@ protocol ActionSheetLauncherDelegate : class {
 protocol ActionSheetHomeLauncherDelegate : class {
     func didSelect(option : ActionSheetHomeOptions)
 }
+protocol DismisDelegate : class {
+    func dismisMenu()
+}
 protocol ASMainPostLaungerDelgate : class {
     func didSelect(option : ASCurrentUserMainPostOptions)
 }

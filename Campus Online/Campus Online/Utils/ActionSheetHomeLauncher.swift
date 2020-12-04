@@ -17,6 +17,7 @@ class ActionSheetHomeLauncher : NSObject {
         private var window : UIWindow?
         private lazy var viewModel = ActionSheetHomeCurrentUserViewModel(currentUser: currentUser, target: target)
         weak var delegate : ActionSheetHomeLauncherDelegate?
+       weak var dismisDelgate : DismisDelegate?
         private var tableViewHeight : CGFloat?
         var post : LessonPostModel?
         private lazy var cancelButton : UIButton = {
@@ -107,6 +108,7 @@ class ActionSheetHomeLauncher : NSObject {
                 let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
                 self.blackView.alpha = 0
                 self.tableView.frame.origin.y += heigth
+                self.dismisDelgate?.dismisMenu()
               
             }
         }

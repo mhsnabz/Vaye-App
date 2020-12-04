@@ -14,6 +14,7 @@ class ActionSheetMainPost : NSObject{
     private let tableView = UITableView()
     private var window : UIWindow?
     weak var delegate : ASMainPostLaungerDelgate?
+    weak var dismisDelgate : DismisDelegate?
     private lazy var viewModel = ASCurrentUserMainPostViewModel(currentUser: currentUser, target: target)
     
     private var tableViewHeight : CGFloat?
@@ -106,6 +107,7 @@ class ActionSheetMainPost : NSObject{
             let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
             self.blackView.alpha = 0
             self.tableView.frame.origin.y += heigth
+            self.dismisDelgate?.dismisMenu()
             
         }
     }

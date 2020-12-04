@@ -22,6 +22,7 @@ class ActionSheetHomeOtherUserViewModel{
             result.append(.slientUser(currentUser))
              result.append(.deleteLesson(currentUser))
             result.append(.reportUser(currentUser))
+          
            }
            return result
        }
@@ -40,6 +41,7 @@ enum ActionSheetOtherUserOptions{
     case slientPost(CurrentUser)
     case reportPost(CurrentUser)
     case reportUser(CurrentUser)
+
     var description : String {
         switch self {
             
@@ -58,6 +60,7 @@ enum ActionSheetOtherUserOptions{
             return "Bu Gönderiyi Sessize Al"
         case .deleteLesson(_):
             return "Dersi Takip Etmeyi Bırak"
+       
         }}
     var image : UIImage {
         switch self {
@@ -76,6 +79,7 @@ enum ActionSheetOtherUserOptions{
             return UIImage(named: "report-user")!
         case .deleteLesson(_):
             return UIImage(named: "cancel")!
+       
         }
     }
 }

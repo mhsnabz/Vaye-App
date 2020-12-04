@@ -14,7 +14,11 @@ private let reuseIdentifier = "Cell"
 private let msgCellID = "msg_cell_id"
 private let headerId = "header_id"
 private let headerId_data = "header_id_data"
-class CommentVC: UIViewController {
+class CommentVC: UIViewController, DismisDelegate {
+    func dismisMenu() {
+        inputAccessoryView?.isHidden = false
+    }
+    
     
     
     //MARK:- variables
@@ -66,6 +70,7 @@ class CommentVC: UIViewController {
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
         navigationItem.title = post.lessonName
+        print("appaer")
 
     }
   
@@ -368,7 +373,13 @@ class CommentVC: UIViewController {
         }
         return customInputView
     }
-    override var canBecomeFirstResponder: Bool {  return true  }
+    
+    var shouldBecomeFirstResponder:Bool = true
+
+    override var canBecomeFirstResponder: Bool {
+    return shouldBecomeFirstResponder
+    }
+    
 
     
     //MARK:-selectorsü
@@ -379,12 +390,16 @@ class CommentVC: UIViewController {
         {
             actionSheet.delegate = self
             actionSheet.show(post: post)
+            actionSheet.dismisDelgate = self
+            inputAccessoryView?.isHidden = true
 //            guard let  index = collectionview.indexPath(for: cell) else { return }
 //            selectedIndex = index
 //            selectedPostID = lessonPost[index.row].postId
         }else{
             Utilities.waitProgress(msg: nil)
             actionOtherUserSheet.delegate = self
+            actionOtherUserSheet.dismisDelgate = self
+            inputAccessoryView?.isHidden = true
 //            guard let  index = collectionview.indexPath(for: cell) else { return }
 //            selectedIndex = index
 //            selectedPostID = lessonPost[index.row].postId
@@ -900,7 +915,9 @@ extension CommentVC : ActionSheetOtherUserLauncherDelegate {
         case .reportPost(_):
             break
         case .reportUser(_):
+            print("report user")
             break
+      
         }
     }
     

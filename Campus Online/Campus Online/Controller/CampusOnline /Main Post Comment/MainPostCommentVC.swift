@@ -17,7 +17,11 @@ private let food_me_header = "food_me_header"
 private let food_me_data_header = "food_me_data_header"
 private let camping_header = "camping_header"
 private let camping_data_header = "camping_data_header"
-class MainPostCommentVC: UIViewController {
+class MainPostCommentVC: UIViewController , DismisDelegate {
+    func dismisMenu() {
+        inputAccessoryView?.isHidden = false
+    }
+    
     //MARK: - variables
     var currentUser : CurrentUser
     var post : MainPostModel
@@ -184,11 +188,15 @@ class MainPostCommentVC: UIViewController {
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.dismisDelgate = self
             actionSheetCurrentUser.show(post: post)
+            inputAccessoryView?.isHidden = true
         }else{
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 sself.actionSheetOtherUser.show(post: sself.post, otherUser: user)
+                sself.actionSheetOtherUser.dismisDelegate = self
+                sself.inputAccessoryView?.isHidden = true
                 
             }
         }

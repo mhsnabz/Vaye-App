@@ -1191,6 +1191,7 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate{
             break
         case .reportUser(_):
             break
+  
         }
     }
 }
