@@ -129,6 +129,28 @@ class HomeVC: UIViewController {
         view.backgroundColor = .collectionColor()
         getPost()
         
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(hole(_:)))
+        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+        self.view.addGestureRecognizer(swipeRight)
+
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(hole(_:)))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
+        self.view.addGestureRecognizer(swipeLeft)
+        
+    }
+    
+    @objc  func hole(_ recognizer: UISwipeGestureRecognizer) {
+        if (recognizer.direction == UISwipeGestureRecognizer.Direction.left)
+        {
+            
+                self.menuClick()
+            
+            
+        }else if recognizer.direction == .right {
+            self.menuClick()
+        }else {
+            print("other")
+        }
     }
     //MARK: - functions
     private func getNotificationCount(){

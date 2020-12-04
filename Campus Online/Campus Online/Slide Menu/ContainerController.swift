@@ -95,8 +95,8 @@ class ContainerController: UIViewController {
             
             break
         case .school_notices:
-            let vc = NoticesVC()
-            vc.barTitle = "İSTE Duyuru"
+            let vc = NoticesVC(currentUser: currentUser)
+            vc.barTitle = currentUser.short_school
             navigationController?.pushViewController(vc, animated: true)
             
             break
