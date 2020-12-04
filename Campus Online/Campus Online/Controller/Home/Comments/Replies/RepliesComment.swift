@@ -322,7 +322,6 @@ class RepliesComment: UIViewController {
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
                     let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
                     sself.navigationController?.pushViewController(vc, animated: true)
                     Utilities.dismissProgress()
                 }
@@ -407,20 +406,19 @@ extension RepliesComment : CommentDelegate {
         Utilities.waitProgress(msg: nil)
         guard let comment = cell.comment else { return }
         if comment.senderUid == currentUser.uid {
-            let vc = ProfileVC(currentUser: currentUser)
-            navigationController?.pushViewController(vc, animated: true)
+//            let vc = ProfileVC(currentUser: currentUser)
+//            var centerController : UIViewController!
+//            centerController = UINavigationController(rootViewController: vc)
+//            centerController.modalPresentationStyle = .fullScreen
+//            self.present(centerController, animated: false, completion: nil)
             
         }else{
-            UserService.shared.fetchOtherUser(uid: comment.senderUid!) {[weak self] (user) in
-                guard let sself = self else { return }
-                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-
-                    sself.present(vc, animated: true, completion: {
-                                    Utilities.dismissProgress()
-                        
-                    })
+            UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: self.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: self.currentUser, otherUser: user , profileModel: model)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
                 }
                 
               

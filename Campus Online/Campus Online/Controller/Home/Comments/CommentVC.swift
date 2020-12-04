@@ -657,8 +657,8 @@ extension CommentVC : CommentDelegate {
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
                     let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
                     sself.navigationController?.pushViewController(vc, animated: true)
+                    
                     Utilities.dismissProgress()
                 }
             }
@@ -730,8 +730,7 @@ extension CommentVC : CommentVCDataDelegate {
             let vc = ProfileVC(currentUser: currentUser)
             vc.currentUser = currentUser
             navigationController?.pushViewController(vc, animated: true)
-//            vc.modalPresentationStyle = .fullScreen
-//            present(vc, animated: true, completion: nil)
+
         }else{
             Utilities.waitProgress(msg: nil)
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -741,7 +740,7 @@ extension CommentVC : CommentVCDataDelegate {
                 
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
                     let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
+               
                     sself.navigationController?.pushViewController(vc, animated: true)
                     Utilities.dismissProgress()
                 }
@@ -760,7 +759,7 @@ extension CommentVC : CommentVCDataDelegate {
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
                     let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
+                    
                     sself.navigationController?.pushViewController(vc, animated: true)
                     Utilities.dismissProgress()
                 }
@@ -783,7 +782,7 @@ extension CommentVC : CommentVCHeaderDelegate {
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
                     let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
+                  
                     sself.navigationController?.pushViewController(vc, animated: true)
                     Utilities.dismissProgress()
                 }
@@ -832,8 +831,7 @@ extension CommentVC : CommentVCHeaderDelegate {
                
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
                     let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
+                   sself.navigationController?.pushViewController(vc, animated: true)
                     Utilities.dismissProgress()
                 }
                 
