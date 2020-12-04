@@ -408,10 +408,7 @@ extension RepliesComment : CommentDelegate {
         guard let comment = cell.comment else { return }
         if comment.senderUid == currentUser.uid {
             let vc = ProfileVC(currentUser: currentUser)
-            vc.modalPresentationStyle = .fullScreen
-            self.present(vc, animated: true, completion: {
-                Utilities.dismissProgress()
-            })
+            navigationController?.pushViewController(vc, animated: true)
             
         }else{
             UserService.shared.fetchOtherUser(uid: comment.senderUid!) {[weak self] (user) in
