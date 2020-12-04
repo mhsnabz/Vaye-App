@@ -41,12 +41,12 @@ class RepliesComment: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         messagesListener?.remove()
-        navigationController?.navigationBar.isHidden = true
+       
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         messagesListener?.remove()
-        navigationController?.navigationBar.isHidden = true
+      
 
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -406,11 +406,9 @@ extension RepliesComment : CommentDelegate {
         Utilities.waitProgress(msg: nil)
         guard let comment = cell.comment else { return }
         if comment.senderUid == currentUser.uid {
-//            let vc = ProfileVC(currentUser: currentUser)
-//            var centerController : UIViewController!
-//            centerController = UINavigationController(rootViewController: vc)
-//            centerController.modalPresentationStyle = .fullScreen
-//            self.present(centerController, animated: false, completion: nil)
+            let vc = ProfileVC(currentUser: currentUser)
+            navigationController?.pushViewController(vc, animated: true)
+            Utilities.dismissProgress()
             
         }else{
             UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in

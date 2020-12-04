@@ -91,8 +91,8 @@ class OtherUserProfile: UIViewController  {
     //MARK:-lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavigationBar()
-      
+        
+
         configureUI()
         configureCollectionView()
         interstitalAd = createAd()
@@ -119,6 +119,7 @@ class OtherUserProfile: UIViewController  {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNavigationBar()
+        navigationItem.title = otherUser.username
         navigationController?.navigationBar.isHidden = false
         
         
@@ -138,7 +139,9 @@ class OtherUserProfile: UIViewController  {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
+    @objc func dissmis(){
+       self.dismiss(animated: true, completion: nil)
+    }
     //MARK: -functions
     private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: "Ders Siliniyor")
@@ -526,11 +529,11 @@ class OtherUserProfile: UIViewController  {
     }
     
     func configureUI(){
-        view.backgroundColor = .white
-        view.addSubview(headerBar)
-        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
-        
-        titleLbl.text = otherUser.username
+//        view.backgroundColor = .white
+//        view.addSubview(headerBar)
+//        headerBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 60)
+//
+//        titleLbl.text = otherUser.username
     }
     
  

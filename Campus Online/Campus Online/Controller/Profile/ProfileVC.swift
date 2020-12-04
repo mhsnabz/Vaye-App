@@ -282,16 +282,17 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
-        navigationItem.title = currentUser.username
+       
         
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
         setNavigationBar()
-       navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.isHidden = false
+        navigationItem.title = currentUser.username
+      
+
         configureUI()
         configureCollectionView()
         titleLbl.text = currentUser.username
@@ -302,9 +303,9 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                 //getSchoolPost
             }
         }else{
-//            getMainPost()
+            getMainPost()
         }
-   
+       
     }
    
  //MARK: configure functions
