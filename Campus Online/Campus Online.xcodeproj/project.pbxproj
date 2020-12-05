@@ -156,6 +156,8 @@
 		6690A6952544E8FB00E88BC0 /* MainPostCommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */; };
 		6690A69B2545E00E00E88BC0 /* SellBuyCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */; };
 		6690A6A32547236400E88BC0 /* MainPostCommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A6A22547236300E88BC0 /* MainPostCommentService.swift */; };
+		669839E7257BC84C00100F28 /* NoticesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839E6257BC84C00100F28 /* NoticesModel.swift */; };
+		669839EC257BC98100100F28 /* NoticesNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839EB257BC98100100F28 /* NoticesNewCell.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
@@ -387,6 +389,8 @@
 		6690A6942544E8FB00E88BC0 /* MainPostCommentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostCommentVC.swift; sourceTree = "<group>"; };
 		6690A69A2545E00E00E88BC0 /* SellBuyCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellBuyCommentHeader.swift; sourceTree = "<group>"; };
 		6690A6A22547236300E88BC0 /* MainPostCommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostCommentService.swift; sourceTree = "<group>"; };
+		669839E6257BC84C00100F28 /* NoticesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesModel.swift; sourceTree = "<group>"; };
+		669839EB257BC98100100F28 /* NoticesNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesNewCell.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
@@ -855,6 +859,7 @@
 				66864458257B06B5003483D8 /* NoticesCell.swift */,
 				66864460257B06C7003483D8 /* NoticesDataCell.swift */,
 				6686447B257B0A05003483D8 /* ChooseHastagCell.swift */,
+				669839EB257BC98100100F28 /* NoticesNewCell.swift */,
 			);
 			path = "Notices View";
 			sourceTree = "<group>";
@@ -1139,6 +1144,7 @@
 				660FB9C4256A56110014D406 /* CampingService.swift */,
 				6687DF432572631B00E7789C /* ProfileModel.swift */,
 				6686446B257B07FE003483D8 /* NoticesService.swift */,
+				669839E6257BC84C00100F28 /* NoticesModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1671,8 +1677,10 @@
 				660BC4B225162752005D0EF8 /* OtherUserProfileHeader.swift in Sources */,
 				6690A681253F684900E88BC0 /* ActionSheetMainPost.swift in Sources */,
 				6615FC91250B39F500776664 /* DataViewImageCell.swift in Sources */,
+				669839E7257BC84C00100F28 /* NoticesModel.swift in Sources */,
 				6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */,
 				66D9122524EEAC1B002D760A /* Utilities.swift in Sources */,
+				669839EC257BC98100100F28 /* NoticesNewCell.swift in Sources */,
 				660FB988256717A50014D406 /* FoodMeView.swift in Sources */,
 				660FB9BB256A54C70014D406 /* SetNewCampingPost.swift in Sources */,
 				660FB9C0256A55460014D406 /* CampingModel.swift in Sources */,

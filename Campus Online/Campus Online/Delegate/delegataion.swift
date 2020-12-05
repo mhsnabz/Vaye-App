@@ -77,6 +77,9 @@ protocol DeleteImageSetNewBuySell : class  {
 protocol DeleteImageSetNewFoodMeSell : class  {
     func deleteImage( for cell : FoodMeCell)
 }
+protocol DeleteImageNewNoticesSell : class  {
+    func deleteImage( for cell : NoticesNewCell)
+}
 protocol DeleteImageCampingCell : class  {
     func deleteImage( for cell : CampingCell)
 }
