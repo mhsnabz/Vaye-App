@@ -80,11 +80,20 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeMenuCell.reuseIdentifier, for: indexPath) as! HomeMenuCell
         cell.backgroundColor = .white
-        let menuOption = MenuOption(rawValue: indexPath.row)
-        cell.homeBtn.setImage(menuOption?.image, for: .normal)
-        cell.homeTitle.setTitle(menuOption?.description, for: .normal)
-        cell.delegate = self
-        cell.selectionStyle = .none
+        if indexPath.item == 1 {
+            let menuOption = MenuOption(rawValue: indexPath.row)
+            cell.homeBtn.setImage(menuOption?.image, for: .normal)
+            cell.homeTitle.setTitle(currentUser.short_school, for: .normal)
+            cell.delegate = self
+            cell.selectionStyle = .none
+        }else{
+            let menuOption = MenuOption(rawValue: indexPath.row)
+            cell.homeBtn.setImage(menuOption?.image, for: .normal)
+            cell.homeTitle.setTitle(menuOption?.description, for: .normal)
+            cell.delegate = self
+            cell.selectionStyle = .none
+        }
+      
         if indexPath.row == 2 {
             cell.line.isHidden = false
         }

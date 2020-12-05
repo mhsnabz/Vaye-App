@@ -86,7 +86,8 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getNotificationCount() 
+        getNotificationCount()
+        backView.removeFromSuperview()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

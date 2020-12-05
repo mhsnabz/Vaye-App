@@ -21,7 +21,7 @@ enum MenuOption : Int ,CustomStringConvertible {
         case .major:
            return "Bilgisayar Mühendisliği"
         case.school_notices:
-          return  "İSTE Duyuru"
+          return  ""
         case .rate :
             return "Bizi Değerlendir"
         case .set:
