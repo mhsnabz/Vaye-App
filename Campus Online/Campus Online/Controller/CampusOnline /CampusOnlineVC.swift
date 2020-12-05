@@ -62,8 +62,7 @@ class CampusOnlineVC: UIViewController{
     //MARK: -lifeCycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-       
-  
+        backView.removeFromSuperview()
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
