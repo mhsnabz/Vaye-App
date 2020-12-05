@@ -17,6 +17,7 @@ class NoticesVC: UIViewController {
     var isMenuOpen : Bool = false
 
 
+
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
         btn.clipsToBounds = true
