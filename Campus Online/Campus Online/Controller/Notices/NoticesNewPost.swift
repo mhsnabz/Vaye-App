@@ -124,7 +124,7 @@ class NoticesNewPost: UIViewController , LightboxControllerDismissalDelegate, Ga
     fileprivate func rigtBarButton() {
         let button: UIButton = UIButton(type: .custom)
         button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
+        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
         button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         let barButton = UIBarButtonItem(customView: button)
         self.navigationItem.rightBarButtonItem = barButton
@@ -290,6 +290,44 @@ class NoticesNewPost: UIViewController , LightboxControllerDismissalDelegate, Ga
         gallery.delegate = self
         gallery.modalPresentationStyle = .fullScreen
         present(gallery, animated: true, completion: nil)
+    }
+    @objc func setNewPost(){
+        text.endEditing(true)
+        if SizeOfData(data: data) > 14.95 {
+            Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
+        }
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
+        Utilities.waitProgress(msg: "Paylaşılıyor")
+        let date =  Int64(Date().timeIntervalSince1970 * 1000).description
+        var val = [Data]()
+        var dataType = [String]()
+        let url = [String]()
+        for number in 0..<(data.count) {
+            val.append(data[number].data)
+            dataType.append(data[number].type)
+        }
+        if self.data.isEmpty {
+            NoticesService.shared.setNewNotice(currentUser: currentUser, postType: PostType.notice.despription, clupName: clup, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
+                guard let sself = self else { return }
+                Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
+                sself.navigationController?.popViewController(animated: true)
+            }
+        }else{
+            NoticesService.shared.uploadToDataBase(postDate: date, clupName: clup, currentUser: currentUser, postType: clup, type: dataType, data: val) {[weak self] (url) in
+                guard let sself = self else { return }
+                NoticesService.shared.setNewNotice(currentUser: sself.currentUser, postType: PostType.notice.despription, clupName: sself.clup, postId: sself.postDate, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
+                    NoticesService.shared.setThumbDatas(currentUser: sself.currentUser, postId: sself.postDate) { (_) in
+                        Utilities.succesProgress(msg: "Paylaşıldı")
+                        sself.navigationController?.popViewController(animated: true)
+                    }
+                   
+                }
+            }
+        }
     }
     
 }

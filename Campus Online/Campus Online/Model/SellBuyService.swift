@@ -145,6 +145,7 @@ enum PostType {
     case foodMe
     case party
     case camping
+    case notice
     var despription : String {
         switch self{
         case .buySell:
@@ -155,6 +156,8 @@ enum PostType {
             return "party"
         case .camping:
             return "camping"
+        case .notice:
+            return "notice"
         }
     }
 }
