@@ -7,7 +7,9 @@
 //
 
 import UIKit
-
+import SDWebImage
+import ActiveLabel
+import FirebaseFirestore
 class NoticesDataCell: UICollectionViewCell {
-    
+   
 }

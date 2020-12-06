@@ -212,7 +212,7 @@ class NewPostHomeVC: UICollectionViewCell
         
         addSubview(headerView)
         headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 60)
-        configure()
+        
         addSubview(msgText)
         addSubview(bottomBar)
         addSubview(linkBtn)

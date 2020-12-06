@@ -747,9 +747,7 @@ extension HomeVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
         return 2
     }
     
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        cell.removeFromSuperview()
-    }
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
       
     
