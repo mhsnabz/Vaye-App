@@ -1,39 +1,38 @@
 //
-//  ASMainPostOtherUser.swift
+//  ASNoticesPostLaunher.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 6.11.2020.
+//  Created by mahsun abuzeyitoğlu on 6.12.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
+
 import UIKit
 import FirebaseFirestore
-class ASMainPostOtherUser : NSObject {
+class ASNoticesPostLaunher : NSObject {
     //MARK: -properties
     private let currentUser : CurrentUser
     private let target : String
     weak var dismisDelegate : DismisDelegate?
-    private var otherUser : OtherUser?{
+    private var otherUser : OtherUser? {
         didSet{
-            guard let user = otherUser else { return }
-            UserService.shared.checkFollowers(currentUser: currentUser, otherUser: user.uid) {[weak self] (val) in
-                guard let sself = self else { return }
-                sself.isFallowingUser = val
-                sself.tableView.reloadData()
-            }
+            
         }
     }
+    
     private lazy var viewModel = ASMainPostOtherUserVM(currentUser: currentUser, target: target)
     private let tableView = UITableView()
     weak var delegate : ASMainOtherUserDelegate?
-
     private var window : UIWindow?
     private var tableViewHeight : CGFloat?
-    var post : MainPostModel?
+    var post : NoticesMainModel?
     lazy var lessonIsSlient : Bool = true
     lazy var postIsSlient : Bool = false
     lazy var userIsSlient : Bool = false
     lazy var isFallowingUser : Bool = false
     weak var centrelController : UIViewController!
+    
+    
+    
     private lazy var cancelButton : UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Vazgeç", for: .normal)
@@ -74,15 +73,17 @@ class ASMainPostOtherUser : NSObject {
         btn.addTarget(self, action: #selector(fallowUser), for: .touchUpInside)
         return btn
     }()
+    //MARK:-lifeCycle
+    
+    
     init(currentUser : CurrentUser , target : String) {
         self.currentUser = currentUser
         self.target = target
         super.init()
-        configureTableView()
+//        configureTableView()
     }
-    
-    //MARK:- functions
-    func show(post : MainPostModel , otherUser : OtherUser){
+    //MARK:-functions
+    func show(post : NoticesMainModel , otherUser : OtherUser){
         self.post = post
         self.otherUser = otherUser
         self.tableView.reloadData()
@@ -122,12 +123,16 @@ class ASMainPostOtherUser : NSObject {
             completion(false)
         }
     }
-    private func setPostSlient(post : MainPostModel?,completion : @escaping(Bool) ->Void){
+    //İSTE/notices/post/1607273427082
+    private func setPostSlient(post : NoticesMainModel?,completion : @escaping(Bool) ->Void){
         guard let post = post else { return }
+        guard  let user = otherUser else {
+            return
+        }
         ///main-post/sell-buy/post/1604436850197
         Utilities.waitProgress(msg: nil)
-        let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+        let db = Firestore.firestore().collection(user.short_school)
+            .document("notices")
             .collection("post")
             .document(post.postId)
         db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
@@ -150,12 +155,15 @@ class ASMainPostOtherUser : NSObject {
         }
     
     }
-    private func setNotPostSlient(post: MainPostModel? ,completion : @escaping(Bool) ->Void){
+    private func setNotPostSlient(post: NoticesMainModel? ,completion : @escaping(Bool) ->Void){
         guard let post = post else { return }
+        guard  let user = otherUser else {
+            return
+        }
         ///main-post/sell-buy/post/1604436850197
         Utilities.waitProgress(msg: nil)
-        let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+        let db = Firestore.firestore().collection(user.short_school)
+            .document("notices")
             .collection("post")
             .document(post.postId)
         db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])  {[weak self] (err) in
@@ -163,13 +171,13 @@ class ASMainPostOtherUser : NSObject {
                 Utilities.dismissProgress()
                 return}
             if err == nil {
-                Utilities.dismissProgress()
+      
                 sself.postIsSlient = false
                  sself.post?.silent.remove(element : sself.currentUser.uid)
                 completion(false)
                 sself.tableView.reloadData()
             }else{
-                Utilities.dismissProgress()
+           
                 sself.postIsSlient = true
                 sself.post?.silent.append(sself.currentUser.uid)
                 completion(true)
@@ -185,13 +193,11 @@ class ASMainPostOtherUser : NSObject {
                            Utilities.dismissProgress()
                            return}
                        if err == nil {
-                   
                            sself.userIsSlient = true
                         sself.otherUser?.slientUser.append(sself.currentUser.uid)
                            completion(true)
                            sself.tableView.reloadData()
                        }else{
-                        
                            sself.userIsSlient = false
                            sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
                            completion(false)
@@ -199,7 +205,6 @@ class ASMainPostOtherUser : NSObject {
                        }
         }
     }
-    
     private func setUserNotSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user").document(otherUserUid)
         db.updateData(["slient":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
@@ -213,6 +218,7 @@ class ASMainPostOtherUser : NSObject {
                                   completion(false)
                                   sself.tableView.reloadData()
                               }else{
+                                
                                   sself.userIsSlient = true
                                     sself.otherUser?.slientUser.append(sself.currentUser.uid)
                                   completion(true)
@@ -246,7 +252,16 @@ class ASMainPostOtherUser : NSObject {
         }
         
     }
-    //MARK: -selectors
+    //MARK:-seletor
+    @objc func handleDismiss(){
+        UIView.animate(withDuration: 0.5) {
+            let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
+            self.blackView.alpha = 0
+            self.tableView.frame.origin.y += heigth
+            self.dismisDelegate?.dismisMenu()
+            
+        }
+    }
     @objc func fallowUser(){
         Utilities.waitProgress(msg: "")
         guard let user = otherUser else { return }
@@ -306,18 +321,10 @@ class ASMainPostOtherUser : NSObject {
                 }
             }
         }
-    }
-    @objc  func handleDismiss(){
-        UIView.animate(withDuration: 0.5) {
-            let heigth = CGFloat( self.viewModel.imageOptions.count * 50 ) + 60
-            self.blackView.alpha = 0
-            self.tableView.frame.origin.y += heigth
-            self.dismisDelegate?.dismisMenu()
-            
-        }
+
     }
 }
-extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
+extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.imageOptions.count
     }
@@ -387,12 +394,8 @@ extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
             }
             
         }
-        
-        
-        
         return cell
     }
-    
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 60
     }

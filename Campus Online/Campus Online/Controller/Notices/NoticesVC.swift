@@ -37,6 +37,9 @@ class NoticesVC: UIViewController {
     var selectedPostID : String?
     var mainPost = [NoticesMainModel]()
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"
+    
+    private var actionSheetOtherUser : ASNoticesPostLaunher
+    
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
         btn.clipsToBounds = true
@@ -59,6 +62,7 @@ class NoticesVC: UIViewController {
     
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
+        self.actionSheetOtherUser = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -387,7 +391,27 @@ extension NoticesVC  : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , G
  //MARK:-NewPostNoticesVCDelegate
 extension NoticesVC : NewPostNoticesVCDelegate {
     func options(for cell: NoticesCell) {
-     
+        guard let post = cell.noticesPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+//            actionSheetCurrentUser.delegate = self
+//            actionSheetCurrentUser.show(post: post)
+//            guard let  index = collectionview.indexPath(for: cell) else { return }
+//            selectedIndex = index
+//            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: NoticesCell) {
@@ -475,7 +499,27 @@ extension NoticesVC : NewPostNoticesVCDelegate {
 }
 extension NoticesVC : NewPostNoticesDataVCDelegate{
     func options(for cell: NoticesDataCell) {
-        
+        guard let post = cell.noticesPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+//            actionSheetCurrentUser.delegate = self
+//            actionSheetCurrentUser.show(post: post)
+//            guard let  index = collectionview.indexPath(for: cell) else { return }
+//            selectedIndex = index
+//            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: NoticesDataCell) {
