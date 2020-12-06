@@ -283,16 +283,16 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
             }else{
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! NoticesDataCell
                 
-//                cell.backgroundColor = .white
-//                cell.delegate = self
-//                cell.currentUser = currentUser
-//                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-//                cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-//
-//                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
-//
-//                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-//                cell.mainPost = mainPost[indexPath.row]
+                cell.backgroundColor = .white
+                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 12 , width: cell.msgText.frame.width, height: 100)
+
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.noticesPost = mainPost[indexPath.row]
                 return cell
             }
         }
@@ -387,15 +387,21 @@ extension NoticesVC  : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , G
  //MARK:-NewPostNoticesVCDelegate
 extension NoticesVC : NewPostNoticesVCDelegate {
     func options(for cell: NoticesCell) {
-        
+     
     }
     
     func like(for cell: NoticesCell) {
-        
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setPostLike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("liked")
+        }
     }
     
     func dislike(for cell: NoticesCell) {
-        
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setDislike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("disliked")
+        }
     }
     
     func comment(for cell: NoticesCell) {
@@ -403,15 +409,120 @@ extension NoticesVC : NewPostNoticesVCDelegate {
     }
     
     func showProfile(for cell: NoticesCell) {
+        guard  let post = cell.noticesPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+
         
+            }
+        }
     }
     
     func goProfileByMention(userName: String) {
-        
+        if "@\(userName)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                 
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+            }
+        }
     }
     
     func clickMention(username: String) {
+        if "@\(username)" == currentUser.username {
+            let vc = ProfileVC(currentUser: currentUser)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+            }
+        }
+    }
     
+    
+}
+extension NoticesVC : NewPostNoticesDataVCDelegate{
+    func options(for cell: NoticesDataCell) {
+        
+    }
+    
+    func like(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setPostLike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("liked")
+        }
+    }
+    
+    func dislike(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setDislike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("disliked")
+        }
+    }
+    
+    func comment(for cell: NoticesDataCell) {
+        
+    }
+    
+    func showProfile(for cell: NoticesDataCell) {
+        guard  let post = cell.noticesPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+
+        
+            }
+        }
     }
     
     

@@ -332,6 +332,7 @@ enum MainPostLikeTarget {
     case food_me
     case camping
     case parties
+    case notices
     var description : String{
         switch self{
         
@@ -343,6 +344,8 @@ enum MainPostLikeTarget {
             return "camping"
         case .parties:
             return "parties"
+        case .notices:
+            return "notices"
         }
     }
 }

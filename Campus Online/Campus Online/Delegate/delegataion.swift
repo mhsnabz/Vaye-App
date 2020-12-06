@@ -112,17 +112,6 @@ protocol NewPostHomeVCDelegate : class {
     func clickMention(username : String)
     
 }
-protocol NewPostNoticesVCDelegate : class {
-    func options ( for cell : NoticesCell)
-    func like ( for cell : NoticesCell)
-    func dislike ( for cell : NoticesCell)
-    func comment ( for cell : NoticesCell)
-    func showProfile(for cell : NoticesCell)
-    func goProfileByMention (userName : String)
-    func clickMention(username : String)
-    
-}
-
 protocol NewPostHomeVCDataDelegate : class {
     func options ( for cell : NewPostHomeVCData)
     func like ( for cell : NewPostHomeVCData)
@@ -133,6 +122,27 @@ protocol NewPostHomeVCDataDelegate : class {
     func showProfile(for cell : NewPostHomeVCData)
     func goProfileByMention (userName : String)
 }
+
+protocol NewPostNoticesVCDelegate : class {
+    func options ( for cell : NoticesCell)
+    func like ( for cell : NoticesCell)
+    func dislike ( for cell : NoticesCell)
+    func comment ( for cell : NoticesCell)
+    func showProfile(for cell : NoticesCell)
+    func goProfileByMention (userName : String)
+    func clickMention(username : String)
+    
+}
+protocol NewPostNoticesDataVCDelegate : class {
+    func options ( for cell : NoticesDataCell)
+    func like ( for cell : NoticesDataCell)
+    func dislike ( for cell : NoticesDataCell)
+    func comment ( for cell : NoticesDataCell)
+
+    func showProfile(for cell : NoticesDataCell)
+    func goProfileByMention (userName : String)
+}
+
 
 
 protocol BuySellVCDelegate : class {

@@ -13,10 +13,12 @@ import FirebaseFirestore
 import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
   lazy var filterView = DataView()
+    
     weak var delegate : NewPostHomeVCDataDelegate?
     weak var currentUser : CurrentUser?
    weak var lessonPostModel : LessonPostModel?{
         didSet {
+            
             configure()
             guard let post = lessonPostModel else { return }
             if !post.data.isEmpty{
