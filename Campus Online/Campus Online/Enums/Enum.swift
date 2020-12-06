@@ -52,9 +52,11 @@ enum COMenuOption : Int ,CustomStringConvertible
    
     case fallowing
 //    case party
-    case camp
     case al_sat
     case foodme
+    case camp
+    
+   
   
     var description: String{
         switch self{
@@ -63,21 +65,23 @@ enum COMenuOption : Int ,CustomStringConvertible
             return "Takip Ettiklerin"
 //        case.party:
 //        return "Etkinlikler"
-        case .camp:
-            return "Kamp"
         case.al_sat:
         return "Al-Sat"
         case .foodme :
         return "FoodMe"
+        case .camp:
+            return "Kamp"
+        
+       
         }
     }
     var image : UIImage{
         switch self{
-        case .fallowing:  return UIImage(named: "home")!.withRenderingMode(.alwaysOriginal)
+        case .fallowing:  return UIImage(named: "menu-home")!.withRenderingMode(.alwaysOriginal)
 //        case .party: return #imageLiteral(resourceName: "party").withRenderingMode(.alwaysOriginal)
-        case .al_sat: return #imageLiteral(resourceName: "al-sat").withRenderingMode(.alwaysOriginal)
-        case .foodme: return #imageLiteral(resourceName: "foodme").withRenderingMode(.alwaysOriginal)
-        case .camp: return #imageLiteral(resourceName: "camp").withRenderingMode(.alwaysOriginal)
+        case .al_sat: return UIImage(named: "menu-bag")!.withRenderingMode(.alwaysOriginal)
+        case .foodme: return UIImage(named: "menu-food")!.withRenderingMode(.alwaysOriginal)
+        case .camp: return UIImage(named: "menu-camp")!.withRenderingMode(.alwaysOriginal)
             
         }
     }

@@ -27,7 +27,7 @@ class COMenuController : UIViewController{
     //MARK:- functions
     private func configureTableView(){
         view.addSubview(tableView)
-        tableView.frame = CGRect(x: 0, y: 10, width: view.frame.width, height: view.frame.height)
+        tableView.frame = CGRect(x: 0, y: view.safeAreaInsets.top + 15, width: 180, height: view.frame.height - view.safeAreaInsets.top + 15)
         tableView.backgroundColor = .white
         tableView.delegate = self
         tableView.dataSource = self
@@ -35,15 +35,16 @@ class COMenuController : UIViewController{
         tableView.separatorColor = .none
         tableView.separatorStyle = .none
         tableView.register(CoMenuCell.self, forCellReuseIdentifier: CoMenuCell.reuseIdentifier)
-        tableView.register(CoMenuHeader.self, forHeaderFooterViewReuseIdentifier: CoMenuHeader.reuseIdentifier )
-        tableView.rowHeight = 70
+//        tableView.register(CoMenuHeader.self, forHeaderFooterViewReuseIdentifier: CoMenuHeader.reuseIdentifier )
+        
+        tableView.rowHeight = 145
     }
     
 }
 extension COMenuController : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 6
+        return 4
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -54,19 +55,19 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
         cell.homeTitle.setTitle(menuOption?.description, for: .normal)
         cell.delegate = self
         cell.selectionStyle = .blue
-        cell.line.isHidden = true
+//        cell.line.isHidden = true
 
         return cell
     }
-     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: CoMenuHeader.reuseIdentifier) as! CoMenuHeader
-        header.delegate = self
-        return header
-    }
-     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
-        return 175
-    }
+//     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+////        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: CoMenuHeader.reuseIdentifier) as! CoMenuHeader
+////        header.delegate = self
+////        return header
+//    }
+//     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+//    {
+////        return 175
+//    }
     
      func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {

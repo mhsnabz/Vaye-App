@@ -59,7 +59,7 @@ class COContainerController : UIViewController{
     func showMenuController(shouldExpand : Bool ,  menuOption  : COMenuOption?){
         if shouldExpand {
             UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                self.centrelController.view.frame.origin.x = self.centrelController.view.frame.width - 80
+                self.centrelController.view.frame.origin.x = 180
                 self.centrelController.view.layer.shadowColor = UIColor.darkGray.cgColor
                 self.centrelController.view.layer.shadowOffset = CGSize(width: 0, height: 2)
                 self.centrelController.view.layer.shadowRadius = 2

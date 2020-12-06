@@ -13,6 +13,7 @@ class CoMenuCell: UITableViewCell {
     weak var delegate : CoSlideMenuDelegate?
     let homeBtn : UIButton = {
            let btn = UIButton(type: .system)
+        btn.imageView?.contentMode = .scaleAspectFit
            return btn
        }()
        
@@ -25,7 +26,7 @@ class CoMenuCell: UITableViewCell {
        }()
       let line : UIView = {
            let v = UIView()
-            v.backgroundColor = .darkGray
+            v.backgroundColor = .collectionColor()
             return v
         }()
      
@@ -39,20 +40,20 @@ class CoMenuCell: UITableViewCell {
         super.init(style: .default, reuseIdentifier: CoMenuCell.reuseIdentifier)
         
         addSubview(homeBtn)
-        homeBtn.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 35, heigth: 35)
-        homeBtn.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        homeBtn.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 80, heigth: 80)
+        homeBtn.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
         
         addSubview(homeTitle)
-        homeTitle.anchor(top: nil, left: homeBtn.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        
-        homeTitle.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        
+        homeTitle.anchor(top: homeBtn.bottomAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 5, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 0, heigth: 20)
+//
+        homeTitle.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+//
         addSubview(line)
-        line.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 32, marginBottom: 1, marginRigth: 112, width: 0, heigth: 0.5)
-        line.isHidden = true
+        line.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 10, marginBottom: 1, marginRigth: 10, width: 0, heigth: 1)
         
         homeBtn.addTarget(self, action: #selector(homeBtnClick), for: .touchUpInside)
-        homeTitle.addTarget(self, action: #selector(homeBtnClick), for: .touchUpInside)
+//        homeTitle.addTarget(self, action: #selector(homeBtnClick), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {

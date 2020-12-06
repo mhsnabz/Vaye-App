@@ -228,11 +228,11 @@ class Utilities  {
     
     //    static func sendNotification( currentUser : CurrentUser ,  getterUid : String ,  msg : String ,  time : Int64,  type : String)
     //    {
-    //        
+    //
     //        notificaitonSetting(uid: getterUid, type: type) { (setting) in
     //            if setting {
-    //                
-    //                
+    //
+    //
     //                let db = Firestore.firestore().collection("notification")
     //                    .document(getterUid).collection("notification")
     //                let oUser = Firestore.firestore().collection("user").document(getterUid)
@@ -245,11 +245,11 @@ class Utilities  {
     //                    }
     //                }
     //            }
-    //            
+    //
     //        }
-    //        
-    //        
-    //        
+    //
+    //
+    //
     //    }
 }
 extension UIView{
