@@ -11,7 +11,7 @@ import ActiveLabel
 import SDWebImage
 class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
     weak var delegate : SellBuyDataCommentHeaderDelegate?
-    lazy var filterView = DataView()
+    lazy var filterView = ImageDataView()
 
     var currentUser : CurrentUser?
     weak var post : MainPostModel?{

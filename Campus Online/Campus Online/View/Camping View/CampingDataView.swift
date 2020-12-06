@@ -12,7 +12,7 @@ import ActiveLabel
 import FirebaseFirestore
 class CampingDataView: UICollectionViewCell {
     weak var delegate : CampingVCDataDelegate?
-    lazy var filterView = DataView()
+    lazy var filterView = ImageDataView()
     var currentUser : CurrentUser?
     weak var mainPost : MainPostModel?{
         didSet{
@@ -24,6 +24,7 @@ class CampingDataView: UICollectionViewCell {
                 filterView.arrayOfUrl = post.thumbData
                 filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
+                
             }
             checkIsDisliked(user: currentUser, post: mainPost) {[weak self] (_val) in
                 guard let s = self else { return }

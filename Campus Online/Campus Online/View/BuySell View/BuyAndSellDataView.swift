@@ -14,7 +14,7 @@ class BuyAndSellDataView: UICollectionViewCell
 {
     //MARK: - variables
     weak var delegate : BuySellVCDataDelegate?
-    lazy var filterView = DataView()
+    lazy var filterView = ImageDataView()
     var currentUser : CurrentUser?
     weak var mainPost : MainPostModel?{
         didSet{

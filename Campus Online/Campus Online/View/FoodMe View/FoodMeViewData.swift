@@ -14,7 +14,7 @@ import FirebaseFirestore
 class FoodMeViewData: UICollectionViewCell {
     //MARK: - variables
     weak var delegate : FoodMeVCDataDelegate?
-    lazy var filterView = DataView()
+    lazy var filterView = ImageDataView()
     var currentUser : CurrentUser?
     weak var mainPost : MainPostModel?{
         didSet{
@@ -23,6 +23,7 @@ class FoodMeViewData: UICollectionViewCell {
             guard let currentUser = currentUser else { return }
             guard let post = mainPost else { return }
             if !post.data.isEmpty{
+              
                 filterView.arrayOfUrl = post.thumbData
                 filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
@@ -207,9 +208,7 @@ class FoodMeViewData: UICollectionViewCell {
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
-        filterView.isUserInteractionEnabled = true
-        
-        filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
+    
         addSubview(mapBtn)
         mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         

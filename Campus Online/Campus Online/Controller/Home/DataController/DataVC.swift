@@ -62,9 +62,22 @@ class DataVC: UIViewController {
         view.backgroundColor = .white
         configureCollectionView()
         dissmisButton.addTarget(self, action: #selector(dismisVC), for: .touchUpInside)
-        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(hole(_:)))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.down
+        self.view.addGestureRecognizer(swipeLeft)
     }
-   
+    @objc  func hole(_ recognizer: UISwipeGestureRecognizer) {
+        if (recognizer.direction == UISwipeGestureRecognizer.Direction.left)
+        {
+          
+        
+        }else if recognizer.direction == .right {
+           
+            
+        }else if recognizer.direction == .down  {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
     
     init(dataUrl : [String]){
         self.DataUrl = dataUrl
@@ -270,7 +283,7 @@ extension DataVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        return CGSize(width: view.frame.width, height: view.frame.height)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0

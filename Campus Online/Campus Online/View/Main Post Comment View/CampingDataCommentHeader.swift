@@ -12,7 +12,7 @@ import ActiveLabel
 import SDWebImage
 class CampingDataCommentHeader : UITableViewHeaderFooterView {
     weak var delegate : CampingDataCommentHeaderDelegate?
-    lazy var filterView = DataView()
+    lazy var filterView = ImageDataView()
 
     var currentUser : CurrentUser?
     weak var post : MainPostModel?{

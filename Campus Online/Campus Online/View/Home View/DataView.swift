@@ -10,10 +10,27 @@ import Foundation
 import UIKit
 import SDWebImage
 import MobileCoreServices
-import Lightbox
 private let pdf = "pdf_cell"
 private let doc = "doc_cell"
 private let img = "img_cell"
+
+
+
+enum DataViewEnum{
+    case homePost
+    case mainPost
+   
+    var description : String {
+        switch self {
+    
+        case .homePost:
+            return "homePost"
+        case .mainPost:
+            return "mainPost"
+        }}
+   
+}
+
 class DataView : UIView {
     
     var datasUrl : [String]?
@@ -146,18 +163,7 @@ extension URL {
     }
 
 }
-extension DataView: LightboxControllerDismissalDelegate {
 
-  func lightboxControllerWillDismiss(_ controller: LightboxController) {
-    // ...
-  }
-}
-extension DataView: LightboxControllerPageDelegate {
-
-  func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
-    print(page)
-  }
-}
 extension DataView : DataViewClick {
     func pdfClick(for cell: DataViewPdfCell) {
         print("click 2")
