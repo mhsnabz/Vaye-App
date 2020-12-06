@@ -15,7 +15,12 @@ class ASNoticesPostLaunher : NSObject {
     weak var dismisDelegate : DismisDelegate?
     private var otherUser : OtherUser? {
         didSet{
-            
+            guard let user = otherUser else { return }
+            UserService.shared.checkFollowers(currentUser: currentUser, otherUser: user.uid) {[weak self] (val) in
+                guard let sself = self else { return }
+                sself.isFallowingUser = val
+                sself.tableView.reloadData()
+            }
         }
     }
     
@@ -80,7 +85,7 @@ class ASNoticesPostLaunher : NSObject {
         self.currentUser = currentUser
         self.target = target
         super.init()
-//        configureTableView()
+        configureTableView()
     }
     //MARK:-functions
     func show(post : NoticesMainModel , otherUser : OtherUser){
@@ -103,7 +108,7 @@ class ASNoticesPostLaunher : NSObject {
         }
         
     }
-   
+    
     func configureTableView()
     {
         tableView.backgroundColor = .white
@@ -140,20 +145,20 @@ class ASNoticesPostLaunher : NSObject {
                 Utilities.dismissProgress()
                 return}
             if err == nil {
-          
+                
                 sself.postIsSlient = true
                 sself.post?.silent.append(sself.currentUser.uid)
                 completion(true)
                 sself.tableView.reloadData()
             }else{
-           
+                
                 sself.postIsSlient = false
                 sself.post?.silent.remove(element : sself.currentUser.uid)
                 completion(false)
                 sself.tableView.reloadData()
             }
         }
-    
+        
     }
     private func setNotPostSlient(post: NoticesMainModel? ,completion : @escaping(Bool) ->Void){
         guard let post = post else { return }
@@ -171,60 +176,60 @@ class ASNoticesPostLaunher : NSObject {
                 Utilities.dismissProgress()
                 return}
             if err == nil {
-      
+                
                 sself.postIsSlient = false
-                 sself.post?.silent.remove(element : sself.currentUser.uid)
+                sself.post?.silent.remove(element : sself.currentUser.uid)
                 completion(false)
                 sself.tableView.reloadData()
             }else{
-           
+                
                 sself.postIsSlient = true
                 sself.post?.silent.append(sself.currentUser.uid)
                 completion(true)
                 sself.tableView.reloadData()
             }
         }
-    
+        
     }
     private func setUserSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user").document(otherUserUid)
         db.updateData(["slient":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
             guard let sself = self else {
-                           Utilities.dismissProgress()
-                           return}
-                       if err == nil {
-                           sself.userIsSlient = true
-                        sself.otherUser?.slientUser.append(sself.currentUser.uid)
-                           completion(true)
-                           sself.tableView.reloadData()
-                       }else{
-                           sself.userIsSlient = false
-                           sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
-                           completion(false)
-                           sself.tableView.reloadData()
-                       }
+                Utilities.dismissProgress()
+                return}
+            if err == nil {
+                sself.userIsSlient = true
+                sself.otherUser?.slientUser.append(sself.currentUser.uid)
+                completion(true)
+                sself.tableView.reloadData()
+            }else{
+                sself.userIsSlient = false
+                sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
+                completion(false)
+                sself.tableView.reloadData()
+            }
         }
     }
     private func setUserNotSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user").document(otherUserUid)
         db.updateData(["slient":FieldValue.arrayRemove([currentUser.uid as Any])]) {[weak self] (err) in
-                   guard let sself = self else {
-                                  Utilities.dismissProgress()
-                                  return}
-                              if err == nil {
-                                  
-                                  sself.userIsSlient = false
-                                    sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
-                                  completion(false)
-                                  sself.tableView.reloadData()
-                              }else{
-                                
-                                  sself.userIsSlient = true
-                                    sself.otherUser?.slientUser.append(sself.currentUser.uid)
-                                  completion(true)
-                                  sself.tableView.reloadData()
-                              }
-               }
+            guard let sself = self else {
+                Utilities.dismissProgress()
+                return}
+            if err == nil {
+                
+                sself.userIsSlient = false
+                sself.otherUser?.slientUser.remove(element : sself.currentUser.uid)
+                completion(false)
+                sself.tableView.reloadData()
+            }else{
+                
+                sself.userIsSlient = true
+                sself.otherUser?.slientUser.append(sself.currentUser.uid)
+                completion(true)
+                sself.tableView.reloadData()
+            }
+        }
     }
     private func checkIamSlient(slientUser : [String] , completion : @escaping(Bool) ->Void){
         if slientUser.isEmpty{
@@ -233,10 +238,10 @@ class ASNoticesPostLaunher : NSObject {
             return
         }
         if slientUser.contains(currentUser.uid){
-                  userIsSlient = true
+            userIsSlient = true
             completion(true)
         }else{
-                  userIsSlient = false
+            userIsSlient = false
             completion(false)
         }
     }
@@ -287,8 +292,8 @@ class ASNoticesPostLaunher : NSObject {
                             Utilities.errorProgress(msg: nil)
                         }
                     }
-                
-                
+                    
+                    
                 }
             }
         }else{
@@ -297,7 +302,7 @@ class ASNoticesPostLaunher : NSObject {
             db.setData(["user":currentUser.uid as Any] as [String:Any], merge: true) {[weak self] (err) in
                 if err == nil {
                     guard let sself = self else { return }
-                
+                    
                     UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser!.uid) { (val) in
                         sself.isFallowingUser = val
                         sself.tableView.reloadData()
@@ -306,7 +311,7 @@ class ASNoticesPostLaunher : NSObject {
                     let db = Firestore.firestore().collection("user")
                         .document(sself.currentUser.uid)
                         .collection("following").document(sself.otherUser!.uid)
-                  
+                    
                     db.setData(["user":sself.otherUser!.uid as Any], merge: true) { (err) in
                         if err == nil{
                             Utilities.succesProgress(msg: "Takip Ediliyor")
@@ -317,11 +322,11 @@ class ASNoticesPostLaunher : NSObject {
                             Utilities.errorProgress(msg: nil)
                         }
                     }
-                  
+                    
                 }
             }
         }
-
+        
     }
 }
 extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
@@ -334,7 +339,7 @@ extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
         cell.options = viewModel.imageOptions[indexPath.row]
         
         if cell.titleLabel.text == ASMainPostOtherUserOptions.fallowUser(currentUser).description{
-           
+            
             cell.titleLabel.text = otherUser!.username
             cell.logo.layer.cornerRadius = 25 / 2
             cell.logo.sd_setImage(with: URL(string: otherUser!.thumb_image))
@@ -342,7 +347,7 @@ extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
             cell.logo.layer.borderWidth = 0.75
             cell.addSubview(fallowBtn)
             fallowBtn.anchor(top: nil, left: nil
-                , bottom: nil, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 125, heigth: 25)
+                             , bottom: nil, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 125, heigth: 25)
             fallowBtn.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
             if isFallowingUser{
                 fallowBtn.setTitle("Takibi Bırak", for: .normal)
@@ -364,23 +369,23 @@ extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
             cell.titleLabel.font = UIFont(name: Utilities.fontBold, size: 13)
         }
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.reportPost(currentUser).description { }
-     
+        
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.slientPost(currentUser).description{
-             
+            
             if let slient = post?.silent {
-            isPostSlient(slientUser: slient) { (val) in
-                if val {
-                    cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
-                    cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
-                }else{
-                    cell.titleLabel.text = ASMainPostOtherUserOptions.slientPost(self.currentUser).description
-                    cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+                isPostSlient(slientUser: slient) { (val) in
+                    if val {
+                        cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
+                        cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
+                    }else{
+                        cell.titleLabel.text = ASMainPostOtherUserOptions.slientPost(self.currentUser).description
+                        cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+                    }
                 }
-             }
             }
         }
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.slientUser(currentUser).description{
-
+            
             if otherUser?.slientUser != nil {
                 checkIamSlient(slientUser: otherUser!.slientUser) { (val) in
                     if val {
@@ -405,9 +410,9 @@ extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         _ = tableView.cellForRow(at: indexPath) as! ASMainPostOtherUserCell
         if indexPath.row == 2 {
-           //FIXME: Report Post
+            //FIXME: Report Post
         }else if indexPath.row == 1 {
-          //FIXME: slient post
+            //FIXME: slient post
             if postIsSlient {
                 setNotPostSlient(post: post) { (_) in
                     Utilities.dismissProgress()
@@ -438,18 +443,18 @@ extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
         else if indexPath.row == 4 {
             //FIXME: report user
         }
-    
+        
         dismissTableView(indexPath)
     }
     fileprivate func dismissTableView(_ indexPath: IndexPath) {
         let option = viewModel.imageOptions[indexPath.row]
-           delegate?.didSelect(option: option)
+        delegate?.didSelect(option: option)
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
             self.showTableView(false)
         }) { (_) in
             self.tableView.reloadData()
-//            self.delegate?.didSelect(option: option)
+            //            self.delegate?.didSelect(option: option)
         }
     }
 }

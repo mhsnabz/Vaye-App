@@ -338,4 +338,17 @@ class NoticesService {
             }}}
     }
     
+    func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
+    if data.count == 0{
+        completion(true)
+        return
+    }
+    for item in data{
+        let ref = Storage.storage().reference(forURL: item)
+        ref.delete { (err) in
+            completion(true)
+        }
+    }
+}
+    
 }

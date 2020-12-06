@@ -162,6 +162,7 @@
 		669839F7257CE77400100F28 /* ImageSliderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839F6257CE77400100F28 /* ImageSliderVC.swift */; };
 		669839FF257CE9FB00100F28 /* ImageDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839FE257CE9FB00100F28 /* ImageDataView.swift */; };
 		66983A04257D5FB600100F28 /* ASNoticesPostLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66983A03257D5FB600100F28 /* ASNoticesPostLaunher.swift */; };
+		66983A19257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
@@ -399,6 +400,7 @@
 		669839F6257CE77400100F28 /* ImageSliderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSliderVC.swift; sourceTree = "<group>"; };
 		669839FE257CE9FB00100F28 /* ImageDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataView.swift; sourceTree = "<group>"; };
 		66983A03257D5FB600100F28 /* ASNoticesPostLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASNoticesPostLaunher.swift; sourceTree = "<group>"; };
+		66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASNoticesPostCurrentUserLaunher.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
@@ -890,6 +892,7 @@
 				66B3A4C6253903E6000D6360 /* PopUpNumberController.swift */,
 				66B2B4162554B67A0088262E /* ASMainPostOtherUser.swift */,
 				66983A03257D5FB600100F28 /* ASNoticesPostLaunher.swift */,
+				66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1658,6 +1661,7 @@
 				668B6A2E251BAFC200A8902F /* FlexibleTextView.swift in Sources */,
 				66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */,
 				66024C27251D0C77009E8A7E /* CommentModel.swift in Sources */,
+				66983A19257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift in Sources */,
 				665BB3FC254C78AF003B4E9E /* MainPostReplyVC.swift in Sources */,
 				66520153256EA00B003BF4C7 /* EditCampingCell.swift in Sources */,
 				660F5ACA2502C98200F72558 /* AddUserLaunher.swift in Sources */,

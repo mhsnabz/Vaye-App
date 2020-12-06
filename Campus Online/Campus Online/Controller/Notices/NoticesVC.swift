@@ -39,7 +39,7 @@ class NoticesVC: UIViewController {
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"
     
     private var actionSheetOtherUser : ASNoticesPostLaunher
-    
+   private var actionSheetCurrentUser : ASNoticesPostCurrentUserLaunher
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
         btn.clipsToBounds = true
@@ -63,6 +63,7 @@ class NoticesVC: UIViewController {
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
         self.actionSheetOtherUser = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        self.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -394,11 +395,11 @@ extension NoticesVC : NewPostNoticesVCDelegate {
         guard let post = cell.noticesPost else { return }
         if post.senderUid == currentUser.uid
         {
-//            actionSheetCurrentUser.delegate = self
-//            actionSheetCurrentUser.show(post: post)
-//            guard let  index = collectionview.indexPath(for: cell) else { return }
-//            selectedIndex = index
-//            selectedPostID = mainPost[index.row].postId
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
         }
         else{
             Utilities.waitProgress(msg: nil)
@@ -502,11 +503,11 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
         guard let post = cell.noticesPost else { return }
         if post.senderUid == currentUser.uid
         {
-//            actionSheetCurrentUser.delegate = self
-//            actionSheetCurrentUser.show(post: post)
-//            guard let  index = collectionview.indexPath(for: cell) else { return }
-//            selectedIndex = index
-//            selectedPostID = mainPost[index.row].postId
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
         }
         else{
             Utilities.waitProgress(msg: nil)
@@ -566,6 +567,45 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
 
         
             }
+        }
+    }
+    
+    
+}
+//MARK:-ASMainPostLaungerDelgate
+extension NoticesVC : ASMainPostLaungerDelgate{
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option {
+        
+        case .editPost(_):
+            break
+        case .deletePost(_):
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
+                .collection("post")
+                .document(postId)
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil{
+                    NoticesService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
+                        if _val{
+                            Utilities.succesProgress(msg: "Silindi")
+                        }else{
+                            Utilities.errorProgress(msg: "Hata Oluştu")
+
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        case .slientPost(_):
+            break
         }
     }
     
