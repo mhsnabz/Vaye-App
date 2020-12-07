@@ -493,4 +493,115 @@ class NoticesService {
         }
     }
     
+    func setNewComment(currentUser : CurrentUser , target : String , commentText : String , postId : String , commentId : String , completion : @escaping(Bool) ->Void){
+        let dic = ["senderName" : currentUser.name as Any,
+                   "senderUid" : currentUser.uid as Any,
+                   "username" : currentUser.username as Any,
+                   "time":FieldValue.serverTimestamp() ,
+                   "comment":commentText ,
+                   "commentId":commentId,
+                   "postId":postId,
+                   "likes":[],"replies" : [] ,
+                   "senderImage" : currentUser.thumb_image as Any] as [String : Any]
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(postId)
+            .collection("comment")
+            .document(commentId)
+        db.setData(dic, merge: true) {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                sself.getTotolCommentCount(short_school: currentUser.short_school, target: target, postId: postId) { (total) in
+                    let commentCount = Firestore.firestore().collection(currentUser.short_school)
+                        .document("notices")
+                        .collection("post")
+                        .document(postId)
+                    commentCount.setData(["comment":total] as [String : Any], merge: true) { (err) in
+                        if err != nil {
+                            print("comment err \(err?.localizedDescription as Any)")
+                        }else{
+                            completion(true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    func getTotolCommentCount(short_school : String,target : String, postId : String , completion : @escaping(Int) ->Void){
+        let db = Firestore.firestore().collection(short_school)
+            .document("notices")
+            .collection("post")
+            .document(postId)
+            .collection("comment")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                if err == nil {
+                    guard let snap = querySnap else {
+                        completion(0)
+                        return}
+                    if snap.isEmpty {
+                        completion(0)
+                    }else{
+                        completion(snap.documents.count)
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    func send_comment_notificaiton(post : NoticesMainModel , currentUser : CurrentUser, text : String , type : String){
+        if post.senderUid == currentUser.uid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(post.senderUid).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.clupName as Any] as [String : Any]
+                db.setData(dic, merge: true)
+                
+            }
+        }
+    }
+    func send_comment_mention_user(username : String ,currentUser : CurrentUser, text : String , type : String , post : NoticesMainModel){
+        UserService.shared.getUserBy_Mention(username: username) { (otherUser) in
+            if username == currentUser.username{
+                return
+            }else{
+                if !post.silent.contains(post.senderUid){
+                    if !currentUser.slientUser.contains(otherUser.uid){
+                        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                        
+                        let db = Firestore.firestore().collection("user")
+                            .document(otherUser.uid).collection("notification").document(notificaitonId)
+                        let dic = ["type":type ,
+                                   "text" : text,
+                                   "senderUid" : currentUser.uid as Any,
+                                   "time":FieldValue.serverTimestamp(),
+                                   "senderImage":currentUser.thumb_image as Any ,
+                                   "not_id":notificaitonId,
+                                   "isRead":false ,
+                                   "username":currentUser.username as Any,
+                                   "postId":post.postId as Any,
+                                   "senderName":currentUser.name as Any,
+                                   "lessonName":post.clupName as Any] as [String : Any]
+                        db.setData(dic, merge: true)
+                    }
+                }
+                
+            }
+        }  }
 }

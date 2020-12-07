@@ -44,6 +44,7 @@ class NoticeVCComment: UIViewController ,DismisDelegate {
         super.viewDidLoad()
         configureUI()
         hideKeyboardWhenTappedAround()
+        getComment(currentUser: currentUser, postID: post.postId)
 
     }
     init(currentUser : CurrentUser , post :  NoticesMainModel) {
@@ -235,9 +236,47 @@ class NoticeVCComment: UIViewController ,DismisDelegate {
     }
     
     
+    func getComment(currentUser : CurrentUser , postID : String){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(postID)
+            .collection("comment")
+        messagesListener = db.addSnapshotListener({ (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documentChanges else {
+                    
+                    return
+                }
+                if !snap.isEmpty {
+                    for item in snap{
+                        if item.type == .added{
+                            self.comment.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
+                            self.tableView.reloadData()
+                        }
+                        
+                    }
+                }
+            }
+        })
+    }
+    
+    
     //MARK:-seletors
     @objc func sendMsg(){
-        
+        guard let text = textField.text else { return }
+        if textField.hasText {
+            textField.text = ""
+            let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
+            NoticesService.shared.setNewComment(currentUser: currentUser, target: PostType.notice.despription, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (val) in
+                guard let sself = self else { return }
+                NoticesService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                for item in text.findMentionText(){
+                    NoticesService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+                }
+                
+            }
+        }
     }
     @objc func optionsLauncher(){
         if post.senderUid == currentUser.uid
