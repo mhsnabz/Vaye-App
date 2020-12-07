@@ -12,14 +12,14 @@ import SVProgressHUD
 class NoticesService {
     
     static let shared  = NoticesService()
-
+    
     let hastag_iste =  [
         "Atatürkçü Düşünce Öğrenci Topluluğu","Bağımlılıkla Mücadele Öğrenci Topluluğu","Bilim Kadınları Öğrenci Topluluğu",
         "Bilim Ve Çocuk Öğrenci Topluluğu","Bilimsel Araştırmalar Öğrenci Topluluğu","Bireysel Sporlar Öğrenci Topluluğu"
         ,"Bisiklet Öğrenci Topluluğu","Çevre Öğrenci Topluluğu","Doğa Sporları Öğrenci Topluluğu","Edebiyat Öğrenci Topluluğu","Ekonomi Öğrenci Topluluğu","Fotoğrafçılık Öğrenci Topluluğu","Gezi Öğrenci Topluluğu","Gönüllü Genç Sağlık Liderleri Öğrenci Topluluğu","Güzel Sanatlar Öğrenci Topluluğu","Halk Dansları Öğrenci Topluluğu",
         "Havacılık Öğrenci Topluluğu","Hayvanları Koruma Öğrenci Topluluğu","Hidrojen Teknolojileri Öğrenci Topluluğu","İSTE-IEEE Öğrenci Topluluğu","İSTE Endüstri Öğrenci Topluluğu","İSTE E-Spor Öğrenci Topluluğu",
         "İSTE Genç Tema Öğrenci Topluluğu","İSTE İzcilik Öğrenci Topluluğu","İSTE-Spe Öğrenci Topluluğu","İSTE-Engelsiz Öğrenci Topluluğu","Karikatür Ve Mizah Öğrenci Topluluğu","Kültür Ve Sanat Öğrenci Topluluğu","Matematik Öğrenci Topluluğu","Mekatronik Öğrenci Topluluğu","Metalurji Öğrenci Topluluğu","Müzik Öğrenci Topluluğu","Ombudsmanlık Öğrenci Topluluğu","Radyo Ve Televizyon Öğrenci Topluluğu","Resim Öğrenci Topluluğu", "Robotik Öğrenci Topluluğu","Satranç Öğrenci Topluluğu","Savunma SanayiTeknolojileri Öğrenci Topluluğu","Sinema Öğrenci Topluluğu","Sosyal Sorumluluk Öğrenci Topluluğu","Sualtı Öğrenci Topluluğ","Takım Sporları Öğrenci Topluluğu"," Tasarım Öğrenci Topluluğu" ,"Teknoloji Öğrenci Topluluğu","Tiyatro Öğrenci Topluluğu","Turizm Öğrenci Topluluğu","Türk Tarihi Araştırma Öğrenci Topluluğu","Uluslararası İlişkiler Öğrenci Topluluğu","Uluslararası İlişkiler Öğrenci Topluluğu","Üniversite-Sanayi İşbirliği Öğrenci Topluluğu","Üniversite-Sanayi İşbirliği Öğrenci Topluluğu","Yelken Öğrenci Topluluğu","Yenilikçilik Ve Girişimcilik Öğrenci Topluluğu" ] as [String]
-
+    
     
     func getHastag(currentUser : CurrentUser) -> [String]{
         if currentUser.short_school == "İSTE" {
@@ -49,7 +49,7 @@ class NoticesService {
             "thumb_image": currentUser.thumb_image as Any,
             "silent":[],
             "postType":postType,
-             ] as [String : Any]
+        ] as [String : Any]
         setNewNotices(dic: dic, currentUser: currentUser, postId: postId) { (_) in
             completion(true)
         }
@@ -131,7 +131,7 @@ class NoticesService {
                 .child(date)
                 .child(dataName + DataTypes.image.mimeType)
             
-  
+            
             
             uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
                 if err != nil
@@ -209,15 +209,15 @@ class NoticesService {
                 {  print("err \(err as Any)") }
                 else {
                     Storage.storage().reference().child("\(currentUser.short_school!) + thumb").child(clupName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
-                            guard let dataUrl = url?.absoluteString else {
-                                print("DEBUG :  Image url is null")
-                                return
-                            }
-                            setDataToSavedTask(currentUser: currentUser, url: dataUrl) { (_) in
-                                completion(true)
-                            }
-                            
+                        guard let dataUrl = url?.absoluteString else {
+                            print("DEBUG :  Image url is null")
+                            return
                         }
+                        setDataToSavedTask(currentUser: currentUser, url: dataUrl) { (_) in
+                            completion(true)
+                        }
+                        
+                    }
                 }
                 
             }
@@ -256,12 +256,12 @@ class NoticesService {
             .document("notices")
             .collection("post")
             .document(postId)
- 
+        
         
         for item in array{
             db.updateData(["thumbData":FieldValue.arrayUnion([item as String])]) { (err) in
                 if err == nil {
-             
+                    
                 }
             }
         }
@@ -284,12 +284,12 @@ class NoticesService {
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                             completion(true)
-//                            NotificaitonService.shared.send_mainpost_like_notification(post: post, currentUser: currentUser, text: Notification_description.like_sell_buy.desprition, type: NotificationType.like_sell_buy.desprition)
+                            //                            NotificaitonService.shared.send_mainpost_like_notification(post: post, currentUser: currentUser, text: Notification_description.like_sell_buy.desprition, type: NotificationType.like_sell_buy.desprition)
                         }
+                    }
                 }
             }
         }
-    }
         else{
             post.likes.remove(element: currentUser.uid)
             collectionview.reloadData()
@@ -300,7 +300,7 @@ class NoticesService {
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
                     completion(true)
-//                    NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
+                    //                    NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
                 }
             }
         }
@@ -319,8 +319,8 @@ class NoticesService {
                 db.updateData(["dislike":FieldValue.arrayUnion([currentUser.uid as String])]) { (err) in
                     if err == nil {
                         db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
-                        
-                        completion(true)
+                            
+                            completion(true)
                         }
                     }
                 }
@@ -335,20 +335,93 @@ class NoticesService {
                     .document(post.postId)
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                     completion(true)
-            }}}
+                }}}
     }
     
     func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
-    if data.count == 0{
-        completion(true)
-        return
-    }
-    for item in data{
-        let ref = Storage.storage().reference(forURL: item)
-        ref.delete { (err) in
+        if data.count == 0{
             completion(true)
+            return
+        }
+        for item in data{
+            let ref = Storage.storage().reference(forURL: item)
+            ref.delete { (err) in
+                completion(true)
+            }
         }
     }
-}
+    
+    func deleteData(index : IndexPath,post : NoticesMainModel , currentUser : CurrentUser , collectionview : UICollectionView , url : String){
+        Utilities.waitProgress(msg: "Siliniyor")
+        let storage = Storage.storage()
+        let r = storage.reference(forURL: url)
+        r.delete { (err) in
+            if err == nil {
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("notices")
+                    .collection("post")
+                    .document(post.postId)
+                db.updateData(["data":FieldValue.arrayRemove([url as Any])]) {[weak self] (err) in
+                    if err == nil {
+                        guard let sself = self else { return }
+                        if let index = post.data.firstIndex(of: url){
+                            post.data.remove(at: index)
+                            collectionview.reloadData()
+                        }
+                        sself.removeThumbData(currentUser: currentUser, post: post, index: index) { (_) in
+                            collectionview.reloadData()
+                        }
+                    }
+                    
+                }
+            }else{
+                print("err \(err?.localizedDescription as Any)")
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return
+            }
+        }
+    }
+    func removeThumbData(currentUser  : CurrentUser , post : NoticesMainModel ,  index : IndexPath , completion : @escaping(Bool) ->Void){
+        let url = post.thumbData[index.row]
+        let storage = Storage.storage()
+        let r = storage.reference(forURL: url)
+        r.delete { (err) in
+            if err == nil {
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("notices")
+                    .collection("post")
+                    .document(post.postId)
+                db.updateData(["thumbData":FieldValue.arrayRemove([url as Any])]) { (err) in
+                    if err == nil {
+                        if let index = post.thumbData.firstIndex(of: url) {
+                            Utilities.succesProgress(msg: "Dosya Silindi")
+                           post.thumbData.remove(at: index)
+                           completion(true)
+
+                        }
+                    }else{
+                        print("err \(err?.localizedDescription as Any)")
+                    }
+                }
+            }else{
+                print("err \(err?.localizedDescription as Any)")
+            }
+        }
+    }
+    
+    func updatePost(post : NoticesMainModel ,text : String  ,currentUser : CurrentUser, completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(post.postId)
+        let dic = ["text" : text] as [String : Any]
+        db.setData(dic, merge: true) { (err) in
+            if err == nil{
+                completion(true)
+            }else{
+                completion(false)
+            }
+        }
+    }
     
 }

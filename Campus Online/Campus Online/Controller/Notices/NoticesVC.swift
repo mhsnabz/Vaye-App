@@ -291,7 +291,7 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
                 cell.backgroundColor = .white
                 cell.delegate = self
                 cell.currentUser = currentUser
-                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
 
                 cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 12 , width: cell.msgText.frame.width, height: 100)
@@ -578,6 +578,18 @@ extension NoticesVC : ASMainPostLaungerDelgate{
         switch option {
         
         case .editPost(_):
+            guard let index = selectedIndex else { return }
+            if let h = collectionview.cellForItem(at: index) as? NoticesCell{
+                let vc = EditNoticesPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let h = collectionview.cellForItem(at: index) as? NoticesDataCell{
+                let vc = EditNoticesPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
             break
         case .deletePost(_):
             Utilities.waitProgress(msg: "Siliniyor")
