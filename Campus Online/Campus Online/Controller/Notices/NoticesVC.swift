@@ -435,7 +435,9 @@ extension NoticesVC : NewPostNoticesVCDelegate {
     }
     
     func comment(for cell: NoticesCell) {
-        
+        guard let post = cell.noticesPost else { return }
+        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func showProfile(for cell: NoticesCell) {
@@ -543,7 +545,9 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
     }
     
     func comment(for cell: NoticesDataCell) {
-        
+        guard let post = cell.noticesPost else { return }
+        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func showProfile(for cell: NoticesDataCell) {

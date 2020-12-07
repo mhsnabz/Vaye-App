@@ -261,7 +261,111 @@ class NoticeVCComment: UIViewController ,DismisDelegate {
         })
     }
     
-    
+    func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
+            guard let sself = self else { return }
+            //main-post/sell-buy/post/1604436850197
+            sself.removeComment(commentID: sself.comment[indexPath.row].commentId!, postID: sself.comment[indexPath.row].postId!) { (val) in
+                sself.post.comment = val
+                let db = Firestore.firestore().collection("main-post")
+                    .document("post")
+                    .collection("post")
+                    .document(sself.post.postId)
+                db.setData(["comment":val], merge: true) { (err) in
+                    if err == nil {
+                        print("succes")
+                    }
+                }
+            }
+            sself.comment.remove(at: indexPath.row)
+            sself.tableView.reloadData()
+        }
+        action.backgroundColor = .red
+        
+        action.image = UIImage(named: "remove")
+        
+        return action
+    }
+    func removeComment(commentID : String , postID : String , completion : @escaping(Int) -> Void){
+        //main-post/sell-buy/post/1603888561458/comment/1603986010312
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+            .document(commentID)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                sself.removeRepliedComment(commentID: commentID)
+                sself.getTotolCommentCount { (val) in
+                    completion(val)
+                }
+            }
+        }
+    }
+    func removeRepliedComment(commentID : String){
+        //main-post/sell-buy/post/1603888561458/comment/1603986010312
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+            .document(commentID)
+        db.getDocument {[weak self] (docSnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.get("replies") != nil{
+                    let repliedComment = snap.get("replies") as! [String]
+                    for item in repliedComment{
+                        //main-post/sell-buy/post/1603888561458/comment-replied/comment/1603986010312/1604077583715
+                        let dbc = Firestore.firestore().collection(sself.currentUser.short_school)
+                            .document("notices")
+                            .collection("post")
+                            .document(sself.post.postId)
+                            .collection("comment-replied")
+                            .document("comment")
+                            .collection(commentID)
+                            .document(item)
+                        dbc.delete()
+                    }
+                }
+            }
+            
+        }
+        
+    }
+    func getTotolCommentCount(completion : @escaping(Int) -> Void){
+        ///main-post/sell-buy/post/1604436850197/comment/1604773265884
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(post.postId)
+            .collection("comment")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documents.count else {
+                    completion(0)
+                    return
+                }
+                completion(snap)
+            }
+        }
+    }
+    func replyAction(at indexPath :IndexPath , tableView : UITableView , comment : CommentModel , currentUser : CurrentUser , post : NoticesMainModel) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Cevapla") {[weak self] (action, view, completion) in
+            guard let sself = self  else { return }
+            tableView.reloadData()
+            let vc = NoticesReplyCommentVC(comment: comment, currentUser: currentUser, post: post)
+            sself.navigationController?.pushViewController(vc, animated: true)
+            
+        }
+        action.backgroundColor = .mainColor()
+        
+        action.image = UIImage(named: "reply")
+        return action
+    }
     //MARK:-seletors
     @objc func sendMsg(){
         guard let text = textField.text else { return }
@@ -303,7 +407,29 @@ extension NoticeVCComment :  UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: msgCellID, for: indexPath) as! CommentMsgCell
-        return cell
+        cell.selectionStyle = .none
+        if comment[indexPath.row].replies!.count > 0 {
+            cell.comment = comment[indexPath.row]
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+            cell.line.isHidden = false
+            cell.totalRepliedCount.isHidden = false
+            cell.delegate = self
+            cell.contentView.isUserInteractionEnabled = false
+            cell.currentUser  = currentUser
+            return cell
+        }else{
+            cell.comment = comment[indexPath.row]
+            let h = comment[indexPath.row].comment?.height(withConstrainedWidth: view.frame.width - 83, font: UIFont(name: Utilities.font, size: 14)!)
+            cell.msgText.frame = CGRect(x: 43, y: 35, width: view.frame.width - 83, height: h! + 4)
+            cell.line.isHidden = true
+            cell.totalRepliedCount.isHidden = true
+            cell.contentView.isUserInteractionEnabled = false
+            cell.currentUser  = currentUser
+            
+            cell.delegate = self
+            return cell
+        }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if comment[indexPath.row].replies!.count > 0 {
@@ -345,6 +471,26 @@ extension NoticeVCComment :  UITableViewDataSource, UITableViewDelegate{
             
            
         }
+    }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        if comment[indexPath.row].senderUid == currentUser.uid {
+            let delete = deleteAction(at: indexPath)
+            
+            return UISwipeActionsConfiguration(actions: [delete])
+        }
+        else
+        {
+            let report = MainPostCommentService.shared.reportAction(at: indexPath)
+            return UISwipeActionsConfiguration(actions: [report])
+        }
+        
+        
+    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let reply = replyAction(at: indexPath, tableView: self.tableView, comment: comment[indexPath.row], currentUser: currentUser, post: post)
+        return UISwipeActionsConfiguration(actions: [reply])
     }
 }
 //MARK:-NoticesCommenHeaderDelegate
@@ -438,6 +584,52 @@ extension NoticeVCComment : ASMainPostLaungerDelgate  {
             }
         case .slientPost(_):
             break
+        }
+    }
+    
+    
+}
+//MARK:-CommentDelegate
+extension NoticeVCComment : CommentDelegate {
+    func likeClik(cell: CommentMsgCell) {
+        guard let comment = cell.comment else { return }
+        
+        NoticesService.shared.setLike(comment: comment, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+        }
+        
+    }
+    
+    func replyClick(cell: CommentMsgCell) {
+        guard let comment = cell.comment else { return }
+        let vc = NoticesReplyCommentVC(comment: comment, currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func seeAllReplies(cell: CommentMsgCell) {
+        guard let comment = cell.comment else { return }
+        let vc = NoticesReplyCommentVC(comment: comment, currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func goProfile(cell: CommentMsgCell) {
+        guard let comment = cell.comment else { return }
+        if comment.senderUid == currentUser.uid
+        {
+            let vc = ProfileVC(currentUser: currentUser)
+            navigationController?.pushViewController(vc, animated: true)
+        }else{
+            Utilities.waitProgress(msg: nil)
+            guard let uid = comment.senderUid else {
+                Utilities.dismissProgress()
+                return}
+            UserService.shared.getOtherUser(userId: uid) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+            }
         }
     }
     
