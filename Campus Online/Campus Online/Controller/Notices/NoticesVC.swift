@@ -359,6 +359,11 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
               }
           }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = NoticeVCComment(currentUser: currentUser, post: mainPost[indexPath.row])
+        navigationController?.pushViewController(vc, animated: true)
+    }
 
 }
 

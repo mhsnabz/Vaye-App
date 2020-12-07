@@ -203,9 +203,9 @@ class FoodMeDataCommentHeader: UITableViewHeaderFooterView {
         //
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
-        filterView.isUserInteractionEnabled = true
-        
-        filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
+//        filterView.isUserInteractionEnabled = true
+//
+//        filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
         addSubview(mapBtn)
         mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         

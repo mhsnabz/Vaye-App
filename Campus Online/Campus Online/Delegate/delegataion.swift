@@ -247,6 +247,20 @@ protocol FoodMeCommentHeaderDelegate : class {
     func clickMention(username : String)
     func mapClik(for header : FoodMeCommentHeader)
 }
+
+protocol NoticesCommenHeaderDelegate : class {
+    func like (for header : NoticesCommentHeader)
+    func dislike (for header : NoticesCommentHeader)
+    func showProfile(for header : NoticesCommentHeader)
+    func clickMention(username : String)
+   
+}
+protocol NoticesCommenDataHeaderDelegate : class {
+    func like (for header : NoticesCommentDataHeader)
+    func dislike (for header : NoticesCommentDataHeader)
+    func showProfile(for header : NoticesCommentDataHeader)
+    func clickMention(username : String)
+}
 protocol CampingCommentHeaderDelegate : class {
     func like (for header : CampingCommentHeader)
     func dislike (for header : CampingCommentHeader)

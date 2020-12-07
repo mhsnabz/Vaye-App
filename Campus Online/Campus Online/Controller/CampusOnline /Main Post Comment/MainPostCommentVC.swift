@@ -67,6 +67,7 @@ class MainPostCommentVC: UIViewController , DismisDelegate {
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
         navigationItem.title = post.lessonName
+        inputAccessoryView?.isHidden = false
         
     }
     override func viewWillDisappear(_ animated: Bool) {
