@@ -24,6 +24,9 @@ private let cell_foodme_data_id = "cell_foodme_data_id"
 
 private let cell_camp_id = "cell_camp_id"
 private let cell_camp_data_id = "cell_camp_data_id"
+
+private let cell_notices_id = "cell_notices_id"
+private let cell_notices_data_id = "cell_notices_data_id"
 import FirebaseFirestore
 import FirebaseStorage
 import SDWebImage
@@ -34,6 +37,8 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     lazy var lessonPostModel = [LessonPostModel]()
     lazy var mainPost = [MainPostModel]()
     lazy var favPost = [LessonPostModel]()
+    lazy var schoolPost = [NoticesMainModel]()
+    
     var selectedIndex : IndexPath?
     var selectedPostID : String?
     var time : Timestamp!
@@ -43,6 +48,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     var home_page : DocumentSnapshot? = nil
     var vaye_page : DocumentSnapshot? = nil
     var fav_page : DocumentSnapshot? = nil
+    var schoolPost_page : DocumentSnapshot? = nil
     //MARK: - variables
     var width : CGFloat
     var profileModel : ProfileModel
@@ -53,6 +59,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     weak var profileHeaderDelegate : ProfileHeaderMenuBarDelegate?
     private  var actionSheet : ActionSheetHomeLauncher
     private var actionOtherUserSheet : ActionSheetOtherUserLaunher
+    private var actionSheetCurrentUser : ASNoticesPostCurrentUserLaunher
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
     //MARK:-post filter val
     var isHomePost : Bool = false
@@ -271,6 +278,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         self.profileModel = ProfileModel.init(shortSchool: currentUser.short_school, currentUser: currentUser, major: currentUser.bolum, uid: currentUser.uid)
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        self.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
         self.width = 285
         super.init(nibName: nil, bundle: nil)
      
@@ -300,7 +308,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
             if profileModel.major == currentUser.bolum{
                 getHomePost()
             }else {
-                //getSchoolPost
+               getSchoolPost()
             }
         }else{
             getMainPost()
@@ -366,8 +374,12 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         collectionview.register(CampingView.self, forCellWithReuseIdentifier: cell_camp_id)
         collectionview.register(CampingDataView.self, forCellWithReuseIdentifier: cell_camp_data_id)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
+        
+        collectionview.register(NoticesCell.self, forCellWithReuseIdentifier: cell_notices_id)
+        collectionview.register(NoticesDataCell.self, forCellWithReuseIdentifier: cell_notices_data_id)
+        
         view.addSubview(collectionview)
-        collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collectionview.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         view.addSubview(headerView)
         
 //        collectionview.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: view.frame.height)
@@ -878,6 +890,84 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
             }
         }
     }
+    
+    //MARK:-load school post
+    func getSchoolPost(){
+        schoolPost = [NoticesMainModel]()
+        isHomePost = false
+        isVayeAppPost = false
+        isSchoolPost = true
+        isFavPost = false
+        
+        isLoadMoreFavPost = false
+        isLoadMoreHomePost = false
+        isLoadMoreSchoolPost = true
+        isLoadMoreVayeAppPost = false
+        collectionview.reloadData()
+        
+        fetchScholPost(currentUser: currentUser) {[weak self] (post) in
+            self?.schoolPost = post
+            if self?.schoolPost.count ?? -1 > 0{
+                if  let time_e = self?.schoolPost[((self?.schoolPost.count)!) - 1].postTime{
+                    self?.time = self?.schoolPost[((self?.schoolPost.count)!) - 1].postTime
+                    self?.schoolPost.sort(by: { (post, post1) -> Bool in
+                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    self?.collectionview.reloadData()
+                }
+            }else{
+                self?.fetchAds()
+                self?.collectionview.reloadData()
+            }
+        }
+    }
+    //user/2YZzIIAdcUfMFHnreosXZOTLZat1/İSTE/1607288767989
+    func fetchScholPost(currentUser : CurrentUser , completion:@escaping([NoticesMainModel]) ->Void){
+        
+        var post = [NoticesMainModel]()
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/fav-post/1600284816337
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection(currentUser.short_school).limit(to: 5).order(by: "postId", descending: true)
+        
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty{
+                    completion([])
+                }else{
+                    for postId in  snap.documents {
+                        let db = Firestore.firestore().collection(currentUser.short_school)
+                            .document("notices")
+                            .collection("post")
+                            .document(postId.documentID)
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let snap = docSnap else { return }
+                                if snap.exists{
+                                    post.append(NoticesMainModel.init(postId: snap.documentID, dic: snap.data()))
+                                }else{
+                                    let deleteDb = Firestore.firestore().collection("user")
+                                        .document(currentUser.uid)
+                                        .collection(currentUser.short_school)
+                                        .document(postId.documentID)
+                                    deleteDb.delete()
+                                }
+                                completion(post)
+                            }
+                        }
+                    }
+                    self.schoolPost_page = snap.documents.last
+                    self.fetchAds()
+                    self.isLoadMoreFavPost = false
+                    self.isLoadMoreHomePost = false
+                    self.isLoadMoreSchoolPost = true
+                    self.isLoadMoreVayeAppPost = false
+                }
+            }
+        }
+        
+    }
    //MARK:-selectors
      @objc func dissmis(){
         self.dismiss(animated: true, completion: nil)
@@ -895,6 +985,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
             return mainPost.count
         }else if isFavPost{
             return favPost.count
+        }else if isSchoolPost{
+            return schoolPost.count
         }
         
         return 0
@@ -948,8 +1040,42 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 
                 return cell
             }
-        }else if isSchoolPost{
-            
+        }
+        else if isSchoolPost{
+            if schoolPost[indexPath.row].postId == nil {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
+                cell.nativeAd = lessonPostModel[indexPath.row].nativeAd
+                return cell
+            }
+            else if schoolPost[indexPath.row].empty == "empty"{
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: emptyCell, for: indexPath) as! EmptyCell
+                
+                return cell
+            }
+           else if schoolPost[indexPath.row].data.isEmpty {
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_notices_id, for: indexPath) as! NoticesCell
+                cell.delegate = self
+                cell.currentUser = currentUser
+                cell.backgroundColor = .white
+                let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.noticesPost = schoolPost[indexPath.row]
+                return cell
+            }else{
+                let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_notices_data_id, for: indexPath) as! NoticesDataCell
+                cell.backgroundColor = .white
+//                cell.delegate = self
+                cell.currentUser = currentUser
+                let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
+
+                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 12 , width: cell.msgText.frame.width, height: 100)
+
+                cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                cell.noticesPost = schoolPost[indexPath.row]
+                return cell
+            }
         }else if isVayeAppPost {
             if mainPost[indexPath.row].postId == nil {
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
@@ -1049,7 +1175,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     }
                 }
             }
-        }else if isFavPost{
+        }
+        else if isFavPost{
             if favPost[indexPath.row].postId == nil {
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
                 cell.nativeAd = favPost[indexPath.row].nativeAd
@@ -1089,6 +1216,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 return cell
             }
         }
+    
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ProfileCell
         cell.backgroundColor = .red
         return cell
@@ -1192,6 +1320,26 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
                 }
             }
+        }else if isSchoolPost{
+            if schoolPost[indexPath.row].postId == nil {
+                return CGSize(width: view.frame.width, height: 409)
+                
+            }
+            else if schoolPost[indexPath.row].empty == "empty"{
+                return .zero
+            }else{
+                if schoolPost[indexPath.row].text == nil {
+                    return .zero
+                }
+                let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+                
+                if schoolPost[indexPath.row].data.isEmpty{
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30 )
+                }
+                else{
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                }
+            }
         }
         
         return CGSize(width: self.view.frame.width, height: view.frame.height - 225)
@@ -1284,6 +1432,20 @@ extension ProfileVC: GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GAD
             }
             self.isLoadMoreFavPost = false
             self.collectionview.reloadData()
+        }else if isSchoolPost{
+            self.nativeAd = nativeAd
+            if schoolPost.count > 0{
+                if  let time_e = self.schoolPost[(self.schoolPost.count) - 1].postTime{
+                    self.schoolPost.sort(by: { (post, post1) -> Bool in
+                        
+                        return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                    })
+                    
+                    self.schoolPost.append(NoticesMainModel.init(nativeAd: nativeAd , postTime : self.schoolPost[(self.schoolPost.count) - 1].postTime!))
+                }
+            }
+            self.isLoadMoreSchoolPost = false
+            self.collectionview.reloadData()
         }
     }
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
@@ -1296,6 +1458,11 @@ extension ProfileVC: GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GAD
             print("\(adLoader) failed with error: \(error.localizedDescription)")
             self.mainPost.append(MainPostModel.init(empty: "empty", postId: "empty"))
             self.isVayeAppPost = true
+            self.collectionview.reloadData()
+        }else if isSchoolPost{
+            print("\(adLoader) failed with error: \(error.localizedDescription)")
+            self.schoolPost.append(NoticesMainModel.init(empty: "empty", postId: "empty"))
+            self.isSchoolPost = true
             self.collectionview.reloadData()
         }
     }
@@ -1312,9 +1479,8 @@ extension ProfileVC : UserProfileMenuBarDelegate {
         getHomePost()
             break
         case .shortSchool():
-            profileHeaderDelegate?.getSchoolPost()
-            self.collectionview.reloadData()
-            print("school post")
+           getSchoolPost()
+  
         case .vayeApp():
             getMainPost()
             break
@@ -1568,6 +1734,73 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
     
     
 }
+
+//MARK:-NewPostNoticesVCDelegate
+extension ProfileVC : NewPostNoticesVCDelegate {
+    func options(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+    }
+    
+    func like(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setPostLike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("liked")
+        }
+    }
+    
+    func dislike(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setDislike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("disliked")
+            
+        }
+    }
+    
+    func comment(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showProfile(for cell: NoticesCell) {
+        guard  let post = cell.noticesPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            let vc = ProfileVC(currentUser: currentUser)
+            vc.currentUser = currentUser
+            navigationController?.pushViewController(vc, animated: true)
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
+                    vc.modalPresentationStyle = .fullScreen
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+
+        
+            }
+        }
+    }
+    
+    
+}
 extension ProfileVC : ActionSheetOtherUserLauncherDelegate{
     func didSelect(option: ActionSheetOtherUserOptions) {
         switch option {
@@ -1612,4 +1845,54 @@ extension ProfileVC : ActionSheetOtherUserLauncherDelegate{
      
         }
     }
+}
+//MARK:-ASMainPostLaungerDelgate
+extension ProfileVC : ASMainPostLaungerDelgate {
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option{
+        
+        case .editPost(_):
+            guard let index = selectedIndex else { return }
+            if let h = collectionview.cellForItem(at: index) as? NoticesCell{
+                let vc = EditNoticesPost(currentUser: currentUser, post: schoolPost[index.row], h: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let h = collectionview.cellForItem(at: index) as? NoticesDataCell{
+                let vc = EditNoticesPost(currentUser: currentUser, post: schoolPost[index.row], h: h.msgText.frame.height)
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+        case .deletePost(_):
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
+                .collection("post")
+                .document(postId)
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil{
+                    NoticesService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
+                        if _val{
+                            Utilities.succesProgress(msg: "Silindi")
+                        }else{
+                            Utilities.errorProgress(msg: "Hata Oluştu")
+
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        case .slientPost(_):
+            break
+        }
+    }
+    
+    
 }
