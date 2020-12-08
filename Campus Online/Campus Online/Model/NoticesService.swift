@@ -32,7 +32,7 @@ class NoticesService {
                     completion(nil)
                     return
                 }
-            completion(NoticesMainModel.init(postId: snap.documentID, dic: snap.data()))
+                completion(NoticesMainModel.init(postId: snap.documentID, dic: snap.data()))
                 
             }
         }
@@ -285,7 +285,7 @@ class NoticesService {
         completion(true)
     }
     
- 
+    
     
     /// Description : Header liked
     func like(tableView : UITableView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
@@ -374,7 +374,7 @@ class NoticesService {
                             completion(true)
                             
                             NotificaitonService.shared.notice_post_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
-                          
+                            
                         }
                     }
                 }
@@ -397,7 +397,7 @@ class NoticesService {
         }
     }
     /// Description : collection view dislike
-
+    
     func setDislike(collectionview : UICollectionView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
         if !post.dislike.contains(currentUser.uid){
             post.likes.remove(element: currentUser.uid)
@@ -432,14 +432,45 @@ class NoticesService {
     
     
     /// Description : comment like
-    func setCommentLike(){
-        
+    func setCommentLike(comment : CommentModel,tableView : UITableView , currentUser : CurrentUser, post : NoticesMainModel,  completion : @escaping(Bool) ->Void){
+        if !(comment.likes?.contains(currentUser.uid))!{
+            comment.likes?.append(currentUser.uid)
+            tableView.reloadData()
+            
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
+                .collection("post")
+                .document(post.postId)
+                .collection("comment").document(comment.commentId!)
+            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+                
+                if err != nil{
+                    print("like err \(err?.localizedDescription as Any)")
+                }else{
+                    NotificaitonService.shared.notice_comment_like_notification(post: post, comment: comment, currentUser: currentUser, text: comment.comment!, type: Notification_description.notices_comment_like.desprition)
+                }
+            }
+        }else{
+            comment.likes?.remove(element: currentUser.uid)
+            tableView.reloadData()
+            let db = Firestore.firestore().collection("main-post")
+                .document("post")
+                .collection("post")
+                .document(post.postId)
+                .collection("comment").document(comment.commentId!)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {
+                (err) in
+                
+                if err != nil{
+                    
+                    print("like err \(err?.localizedDescription as Any)")
+                }else{
+                   
+                }
+            }}
     }
-    /// Description : replied comment like
-    func setRepliedCommentLike(){
-        
-    }
-
+  
+    
     
     
     func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
@@ -499,9 +530,9 @@ class NoticesService {
                     if err == nil {
                         if let index = post.thumbData.firstIndex(of: url) {
                             Utilities.succesProgress(msg: "Dosya Silindi")
-                           post.thumbData.remove(at: index)
-                           completion(true)
-
+                            post.thumbData.remove(at: index)
+                            completion(true)
+                            
                         }
                     }else{
                         print("err \(err?.localizedDescription as Any)")
@@ -694,7 +725,7 @@ class NoticesService {
             db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
                 if err == nil {
                     completion(true)
-                    NotificaitonService.shared.school_replied_comment_like_notification(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.notices_replied_comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.school_replied_comment_like_notification(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.notices_replied_comment_like.desprition, type: NotificationType.notices_replied_comment_like.desprition)
                 }else{
                     print("err \(err?.localizedDescription as Any)")
                 }
@@ -706,7 +737,7 @@ class NoticesService {
                 if err == nil {
                     
                     completion(true)
-                    NotificaitonService.shared.school_remove_replied_comment_like_notificaiton(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.notices_replied_comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.school_remove_replied_comment_like_notificaiton(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.notices_replied_comment_like.desprition, type: NotificationType.notices_replied_comment_like.desprition)
                 }
                 else{
                     print("err \(err?.localizedDescription as Any)")

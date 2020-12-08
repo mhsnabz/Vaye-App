@@ -140,6 +140,10 @@ class NotificaitionCell: UITableViewCell {
         }else if post.type == NotificationType.notices_new_comment.desprition{
             type.text = Notification_description.notices_new_comment.desprition
 
+        }else if post.type == NotificationType.notice_mention_comment.desprition{
+            notification =  NSMutableAttributedString(string: "\(Notification_description.notice_mention_comment.desprition):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
+            type.attributedText = notification
         }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])

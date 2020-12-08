@@ -135,7 +135,7 @@ class NoticesReplyCommentVC: UIViewController {
             guard let sself = self  else { return }
             sself.tableView.reloadData()
             self?.textField.becomeFirstResponder()
-            sself.textField.text.append(" \(sself.repliedComment[indexPath.row].username!) ")
+            sself.textField.text.append("\(sself.repliedComment[indexPath.row].username!) ")
             
         }
         action.backgroundColor = .mainColor()
@@ -274,7 +274,7 @@ class NoticesReplyCommentVC: UIViewController {
             NoticesService.shared.setRepliedComment(currentUser: currentUser, post: post, comment: comment, targetCommentId: comment.commentId!, commentId: commentId, commentText: text, postId: post.postId) { [weak self](_) in
                 for item in text.findMentionText(){
                     guard let sself = self else { return }
-                    NoticesService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+                    NoticesService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.notice_mention_comment.desprition, post: sself.post)
                 }
             }
         }

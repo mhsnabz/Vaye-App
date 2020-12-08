@@ -487,7 +487,8 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         }
         else if
             model[indexPath.row].type == NotificationType.notices_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_post_like.desprition
-                || model[indexPath.row].type == NotificationType.notices_replied_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_new_comment.desprition {
+                || model[indexPath.row].type == NotificationType.notices_replied_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_new_comment.desprition ||
+                model[indexPath.row].type == NotificationType.notice_mention_comment.desprition{
             NoticesService.shared.getNoticesPost(postId: model[indexPath.row].postId, currentUser: currentUser) {[weak self] (post) in
                 guard let sself = self else { return }
                 guard let post = post else {

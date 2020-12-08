@@ -401,6 +401,7 @@ enum Notification_description {
     case notices_new_comment
     case notices_post_like
     case notices_replied_comment_like
+    case notice_mention_comment
     var desprition : String {
         switch self {
        
@@ -440,6 +441,8 @@ enum Notification_description {
             return "Yorumunuzu Beğendi"
         case .notices_new_comment:
             return "Gönderinize Yorum Yaptı"
+        case.notice_mention_comment:
+            return "Bir Yorumda Sizden Bahsetti"
         }
     }
 }
@@ -461,6 +464,7 @@ enum NotificationType{
     case notices_replied_comment_like
     case notices_post_like
     case notices_new_comment
+    case notice_mention_comment
     var desprition : String {
         switch self{
         
@@ -499,6 +503,8 @@ enum NotificationType{
             return "notices_replied_comment_like"
         case .notices_new_comment:
             return "notices_new_comment"
+        case .notice_mention_comment:
+        return "notice_mention_comment"
         }
     }
 }

@@ -376,7 +376,7 @@ class NoticeVCComment: UIViewController ,DismisDelegate {
                 guard let sself = self else { return }
                 NoticesService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.notices_new_comment.desprition)
                 for item in text.findMentionText(){
-                    NoticesService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
+                    NoticesService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.notice_mention_comment.desprition, post: sself.post)
                 }
                 
             }
