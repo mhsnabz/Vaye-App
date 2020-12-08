@@ -16,7 +16,7 @@ class NotificationVC: UIViewController {
     var isLoadMore : Bool = false
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
-     var page : DocumentSnapshot? = nil
+    var page : DocumentSnapshot? = nil
     private var notificationLauncher : NotificationLaunher
     var refreshControl = UIRefreshControl()
     //MARK: -properties
@@ -61,7 +61,7 @@ class NotificationVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-
+        
         getNotificationCount()
         
     }
@@ -101,7 +101,7 @@ class NotificationVC: UIViewController {
                 return
             }
             if err == nil {
-               
+                
                 for item in snap.documents {
                     if item.exists{
                         sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
@@ -116,16 +116,16 @@ class NotificationVC: UIViewController {
                 sself.tableView.reloadData()
                 sself.refreshControl.endRefreshing()
                 sself.tableView.contentOffset = .zero
-               
+                
             })
         }
         
-  
+        
         
     }
     private func loadMoreNotification(completion : @escaping(Bool) ->Void){
         guard let pagee = page else {
-
+            
             tableView.reloadData()
             completion(false)
             tableView.tableFooterView = nil
@@ -143,7 +143,7 @@ class NotificationVC: UIViewController {
                         sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
                         sself.tableView.reloadData()
                         completion(true)
-
+                        
                     }
                 }
                 sself.page = snap.documents.last
@@ -240,7 +240,7 @@ class NotificationVC: UIViewController {
                     sself.model.remove(at: index)
                     sself.tableView.reloadData()
                 }
-              
+                
                 completion(true)
             }
         }
@@ -260,7 +260,7 @@ class NotificationVC: UIViewController {
         tableView.alwaysBounceVertical = true
         tableView.isUserInteractionEnabled = true
     }
-
+    
     func markAsRead(at indexPath :IndexPath) ->UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Okundu") {[weak self] (action, view, completion) in
             guard let sself = self else { return }
@@ -277,7 +277,7 @@ class NotificationVC: UIViewController {
         return action
     }
     func showPost(at indexPath :IndexPath) ->UIContextualAction {
-       
+        
         let action = UIContextualAction(style: .normal, title: "Görüntüle") {[weak self] (action, view, completion) in
             guard let sself = self  else { return }
             
@@ -320,7 +320,7 @@ class NotificationVC: UIViewController {
                 }
             }else {
                 MainPostService.shared.getMainPost(postId: sself.model[indexPath.row].postId) {[weak self] (post) in
-              
+                    
                     guard let post = post else{
                         Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
                         return
@@ -337,7 +337,7 @@ class NotificationVC: UIViewController {
                 }
             }
             
-        
+            
         }
         action.backgroundColor = .mainColor()
         action.title = "Görüntüle"
@@ -353,9 +353,9 @@ class NotificationVC: UIViewController {
             sself.model.remove(at: indexPath.row)
             sself.tableView.reloadData()
             sself.deleteNotification(not_id: notId!) { (_) in
-          
+                
             }
-    
+            
         }
         action.backgroundColor = .red
         
@@ -419,7 +419,7 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         return UISwipeActionsConfiguration(actions: [reply])
     }
     
-   
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NotificaitionCell
@@ -432,7 +432,7 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
         guard let text = model[indexPath.row].text else { return 0}
         let totalText = text + getTypeText(type: model[indexPath.row].type)
         let h = totalText.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-            
+        
         if h < 25 {
             return 62
         }else{
@@ -458,7 +458,7 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
                     sself.tableView.reloadData()
                     
                 }
-               
+                
             }
         }else if model[indexPath.row].type == NotificationType.comment_home.desprition ||
                     model[indexPath.row].type == NotificationType.comment_like.desprition ||
@@ -468,7 +468,7 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
                     model[indexPath.row].type == NotificationType.home_new_post.desprition{
             
             
-                
+            
             
             getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) {[weak self] (postModel) in
                 guard let sself = self else { return }
@@ -484,7 +484,26 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
                 }
                 Utilities.dismissProgress()
             }
-        }else {
+        }
+        else if
+            model[indexPath.row].type == NotificationType.notices_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_post_like.desprition
+                || model[indexPath.row].type == NotificationType.notices_replied_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_new_comment.desprition {
+            NoticesService.shared.getNoticesPost(postId: model[indexPath.row].postId, currentUser: currentUser) {[weak self] (post) in
+                guard let sself = self else { return }
+                guard let post = post else {
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                    return }
+                sself.navigationController?.pushViewController(NoticeVCComment(currentUser: sself.currentUser, post: post), animated: true)
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
+                }
+                Utilities.dismissProgress()
+            }
+            
+        }
+        else {
             MainPostService.shared.getMainPost(postId: model[indexPath.row].postId) {[weak self] (post) in
                 guard let sself = self else { return }
                 guard let post = post else{
@@ -502,11 +521,11 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
                 
             }
         }
-      
+        
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if model.count > 9 {
-           
+            
             if indexPath.item == model.count - 1 {
                 self.loadMoreNotification {(val) in
                 }
@@ -544,7 +563,7 @@ extension NotificationVC : NotificationLauncherDelegate{
 }
 
 extension UITableView{
-
+    
     func indicatorView() -> UIActivityIndicatorView{
         var activityIndicatorView = UIActivityIndicatorView()
         if self.tableFooterView == nil{
@@ -559,7 +578,7 @@ extension UITableView{
             return activityIndicatorView
         }
     }
-
+    
     func addLoading(_ indexPath:IndexPath, closure: @escaping (() -> Void)){
         indicatorView().startAnimating()
         if let lastVisibleIndexPath = self.indexPathsForVisibleRows?.last {
@@ -571,10 +590,10 @@ extension UITableView{
         }
         indicatorView().isHidden = false
     }
-
+    
     func stopLoading(){
         indicatorView().stopAnimating()
         indicatorView().isHidden = true
-       
+        
     }
 }

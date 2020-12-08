@@ -256,6 +256,88 @@ class NotificaitonService{
             }
         }
     }
+    
+    func notice_post_like_notification(post : NoticesMainModel, currentUser : CurrentUser, text : String , type : String){
+        if post.senderUid == currentUser.uid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(post.senderUid!).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.clupName as Any] as [String : Any]
+                db.setData(dic, merge: true)
+                }
+        }
+    }
+    
+    func notice_post_remove_like_notification(post : NoticesMainModel, currentUser : CurrentUser, text : String , type : String){
+        let db = Firestore.firestore().collection("user")
+            .document(post.senderUid!).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: type)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documents else { return }
+                print(snap)
+                for item in snap{
+                    let dbc = Firestore.firestore().collection("user")
+                        .document(post.senderUid!).collection("notification").document(item.documentID)
+                    dbc.delete()
+                }
+            }
+        }
+    }
+    
+    func notice_comment_like_notification(post : NoticesMainModel,comment : CommentModel , currentUser : CurrentUser, text : String , type : String){
+        if comment.senderUid == currentUser.uid{
+            return
+        }else{
+            if !post.silent.contains(post.senderUid){
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                
+                let db = Firestore.firestore().collection("user")
+                    .document(comment.senderUid!).collection("notification").document(notificaitonId)
+                let dic = ["type":type ,
+                           "text" : text,
+                           "senderUid" : currentUser.uid as Any,
+                           "time":FieldValue.serverTimestamp(),
+                           "senderImage":currentUser.thumb_image as Any ,
+                           "not_id":notificaitonId,
+                           "isRead":false ,
+                           "username":currentUser.username as Any,
+                           "postId":post.postId as Any,
+                           "senderName":currentUser.name as Any,
+                           "lessonName":post.clupName as Any] as [String : Any]
+                db.setData(dic, merge: true)
+                }
+        }
+    }
+    func notice_comment_remove_like_notification(post : NoticesMainModel ,comment : CommentModel, currentUser : CurrentUser, text : String , type : String){
+        let db = Firestore.firestore().collection("user")
+            .document(comment.senderUid!).collection("notification").whereField("postId", isEqualTo: comment.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: type)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap?.documents else { return }
+                print(snap)
+                for item in snap{
+                    let dbc = Firestore.firestore().collection("user")
+                        .document(comment.senderUid!).collection("notification").document(item.documentID)
+                    dbc.delete()
+                }
+            }
+        }
+    }
+    
     func school_replied_comment_like_notification(post : NoticesMainModel,comment : CommentModel , currentUser : CurrentUser, text : String , type : String){
         if comment.senderUid == currentUser.uid{
             return
@@ -315,8 +397,10 @@ enum Notification_description {
     case like_food_me
     case new_camping
     case like_camping
-    case notices_comment
-    case notices_like
+    case notices_comment_like
+    case notices_new_comment
+    case notices_post_like
+    case notices_replied_comment_like
     var desprition : String {
         switch self {
        
@@ -347,10 +431,15 @@ enum Notification_description {
             return "Yeni Bir Kamp Gönderisi Paylaştı"
         case .like_camping:
             return "Gönderini Beğendi"
-        case .notices_comment:
-            return "Gönderinize Yorum Yaptı"
-        case .notices_like:
+      
+        case .notices_comment_like:
             return "Yorumunuzu Beğendi"
+        case.notices_post_like:
+            return "Gönderinizi Beğendi"
+        case .notices_replied_comment_like:
+            return "Yorumunuzu Beğendi"
+        case .notices_new_comment:
+            return "Gönderinize Yorum Yaptı"
         }
     }
 }
@@ -368,9 +457,10 @@ enum NotificationType{
     case like_food_me
     case new_camping
     case like_camping
-    case notices_comment
-    case notices_like
-    
+    case notices_comment_like
+    case notices_replied_comment_like
+    case notices_post_like
+    case notices_new_comment
     var desprition : String {
         switch self{
         
@@ -400,10 +490,15 @@ enum NotificationType{
             return "like_camping"
         case .new_camping:
             return "new_camping"
-        case .notices_comment:
+        case .notices_comment_like:
             return "notices_comment"
-        case .notices_like:
-            return  "notices_like"
+      
+        case .notices_post_like:
+            return "notices_post_like"
+        case .notices_replied_comment_like:
+            return "notices_replied_comment_like"
+        case .notices_new_comment:
+            return "notices_new_comment"
         }
     }
 }

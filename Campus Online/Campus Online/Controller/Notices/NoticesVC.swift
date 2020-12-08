@@ -422,14 +422,14 @@ extension NoticesVC : NewPostNoticesVCDelegate {
     
     func like(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
-        NoticesService.shared.setPostLike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.setPostLike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
             print("liked")
         }
     }
     
     func dislike(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
-        NoticesService.shared.setDislike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.setDislike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
             print("disliked")
         }
     }
@@ -532,14 +532,15 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
     
     func like(for cell: NoticesDataCell) {
         guard let post = cell.noticesPost else { return }
-        NoticesService.shared.setPostLike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.setPostLike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
             print("liked")
+            
         }
     }
     
     func dislike(for cell: NoticesDataCell) {
         guard let post = cell.noticesPost else { return }
-        NoticesService.shared.setDislike(target: MainPostLikeTarget.notices.description, collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.setDislike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
             print("disliked")
         }
     }

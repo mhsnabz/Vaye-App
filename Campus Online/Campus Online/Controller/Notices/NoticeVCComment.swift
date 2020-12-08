@@ -374,7 +374,7 @@ class NoticeVCComment: UIViewController ,DismisDelegate {
             let commentId  = Int64(Date().timeIntervalSince1970 * 1000).description
             NoticesService.shared.setNewComment(currentUser: currentUser, target: PostType.notice.despription, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (val) in
                 guard let sself = self else { return }
-                NoticesService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                NoticesService.shared.send_comment_notificaiton(post: sself.post, currentUser: sself.currentUser, text: text, type: NotificationType.notices_new_comment.desprition)
                 for item in text.findMentionText(){
                     NoticesService.shared.send_comment_mention_user(username: item, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition, post: sself.post)
                 }
@@ -497,14 +497,14 @@ extension NoticeVCComment :  UITableViewDataSource, UITableViewDelegate{
 extension NoticeVCComment : NoticesCommenHeaderDelegate {
     func like(for header: NoticesCommentHeader) {
         guard let post = header.post else { return }
-        NoticesService.shared.like(target: MainPostLikeTarget.notices.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.like( tableView: tableView, currentUser: currentUser, post: post) { (_) in
             print("liked")
         }
     }
     
     func dislike(for header: NoticesCommentHeader) {
         guard let post = header.post else { return }
-        NoticesService.shared.dislike(target: MainPostLikeTarget.notices.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.dislike( tableView: tableView, currentUser: currentUser, post: post) { (_) in
             print("disliked")
         }
     }
@@ -526,14 +526,14 @@ extension NoticeVCComment : NoticesCommenHeaderDelegate {
 extension NoticeVCComment : NoticesCommenDataHeaderDelegate {
     func like(for header: NoticesCommentDataHeader) {
         guard let post = header.post else { return }
-        NoticesService.shared.like(target: MainPostLikeTarget.notices.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.like( tableView: tableView, currentUser: currentUser, post: post) { (_) in
             print("liked")
         }
     }
     
     func dislike(for header: NoticesCommentDataHeader) {
         guard let post = header.post else { return }
-        NoticesService.shared.dislike(target: MainPostLikeTarget.notices.description, tableView: tableView, currentUser: currentUser, post: post) { (_) in
+        NoticesService.shared.dislike( tableView: tableView, currentUser: currentUser, post: post) { (_) in
             print("disliked")
         }
     }

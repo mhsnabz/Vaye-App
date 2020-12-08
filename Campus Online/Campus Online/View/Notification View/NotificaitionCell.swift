@@ -131,6 +131,15 @@ class NotificaitionCell: UITableViewCell {
             type.text = Notification_description.new_food_me.desprition
         }else if post.type == Notification_description.like_food_me.desprition{
             type.text = Notification_description.like_food_me.desprition
+        }else if post.type == NotificationType.notices_post_like.desprition{
+            type.text = Notification_description.notices_post_like.desprition
+        }else if post.type == NotificationType.notices_comment_like.desprition{
+            type.text = Notification_description.notices_comment_like.desprition
+        }else if post.type == NotificationType.notices_replied_comment_like.desprition{
+            type.text = Notification_description.notices_replied_comment_like.desprition
+        }else if post.type == NotificationType.notices_new_comment.desprition{
+            type.text = Notification_description.notices_new_comment.desprition
+
         }
         
         name = NSMutableAttributedString(string: "\(post.senderName!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])

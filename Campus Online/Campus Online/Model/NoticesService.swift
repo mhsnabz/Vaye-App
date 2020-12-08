@@ -21,6 +21,23 @@ class NoticesService {
         "İSTE Genç Tema Öğrenci Topluluğu","İSTE İzcilik Öğrenci Topluluğu","İSTE-Spe Öğrenci Topluluğu","İSTE-Engelsiz Öğrenci Topluluğu","Karikatür Ve Mizah Öğrenci Topluluğu","Kültür Ve Sanat Öğrenci Topluluğu","Matematik Öğrenci Topluluğu","Mekatronik Öğrenci Topluluğu","Metalurji Öğrenci Topluluğu","Müzik Öğrenci Topluluğu","Ombudsmanlık Öğrenci Topluluğu","Radyo Ve Televizyon Öğrenci Topluluğu","Resim Öğrenci Topluluğu", "Robotik Öğrenci Topluluğu","Satranç Öğrenci Topluluğu","Savunma SanayiTeknolojileri Öğrenci Topluluğu","Sinema Öğrenci Topluluğu","Sosyal Sorumluluk Öğrenci Topluluğu","Sualtı Öğrenci Topluluğ","Takım Sporları Öğrenci Topluluğu"," Tasarım Öğrenci Topluluğu" ,"Teknoloji Öğrenci Topluluğu","Tiyatro Öğrenci Topluluğu","Turizm Öğrenci Topluluğu","Türk Tarihi Araştırma Öğrenci Topluluğu","Uluslararası İlişkiler Öğrenci Topluluğu","Uluslararası İlişkiler Öğrenci Topluluğu","Üniversite-Sanayi İşbirliği Öğrenci Topluluğu","Üniversite-Sanayi İşbirliği Öğrenci Topluluğu","Yelken Öğrenci Topluluğu","Yenilikçilik Ve Girişimcilik Öğrenci Topluluğu" ] as [String]
     
     
+    func getNoticesPost(postId : String , currentUser : CurrentUser , completion:@escaping(NoticesMainModel?) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .document(postId)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion(nil)
+                    return
+                }
+            completion(NoticesMainModel.init(postId: snap.documentID, dic: snap.data()))
+                
+            }
+        }
+    }
+    
     func getHastag(currentUser : CurrentUser) -> [String]{
         if currentUser.short_school == "İSTE" {
             return hastag_iste
@@ -268,9 +285,10 @@ class NoticesService {
         completion(true)
     }
     
-    //İSTE/notices/post/1607178880372
+ 
     
-    func like(target : String ,tableView : UITableView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
+    /// Description : Header liked
+    func like(tableView : UITableView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
         if !post.likes.contains(currentUser.uid){
             post.likes.append(currentUser.uid)
             post.dislike.remove(element: currentUser.uid)
@@ -285,7 +303,7 @@ class NoticesService {
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                             completion(true)
-                            //                            NotificaitonService.shared.send_mainpost_like_notification(post: post, currentUser: currentUser, text: Notification_description.like_sell_buy.desprition, type: NotificationType.like_sell_buy.desprition)
+                            NotificaitonService.shared.notice_post_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
                         }
                     }
                 }
@@ -301,12 +319,13 @@ class NoticesService {
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
                     completion(true)
-                    //                    NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
+                    NotificaitonService.shared.notice_post_remove_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
                 }
             }
         }
     }
-    func dislike(target : String ,tableView : UITableView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
+    /// Description:- Header disliked
+    func dislike(tableView : UITableView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
         if !post.dislike.contains(currentUser.uid){
             post.likes.remove(element: currentUser.uid)
             post.dislike.append(currentUser.uid)
@@ -337,8 +356,8 @@ class NoticesService {
                     completion(true)
                 }}}
     }
-    
-    func setPostLike(target : String ,collectionview : UICollectionView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
+    /// Description : collection view like
+    func setPostLike(collectionview : UICollectionView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
         if !post.likes.contains(currentUser.uid){
             post.likes.append(currentUser.uid)
             post.dislike.remove(element: currentUser.uid)
@@ -353,7 +372,9 @@ class NoticesService {
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                             completion(true)
-                            //                            NotificaitonService.shared.send_mainpost_like_notification(post: post, currentUser: currentUser, text: Notification_description.like_sell_buy.desprition, type: NotificationType.like_sell_buy.desprition)
+                            
+                            NotificaitonService.shared.notice_post_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
+                          
                         }
                     }
                 }
@@ -369,13 +390,15 @@ class NoticesService {
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
                     completion(true)
-                    //                    NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
+                    
+                    NotificaitonService.shared.notice_post_remove_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
                 }
             }
         }
     }
-    
-    func setDislike(target : String ,collectionview : UICollectionView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
+    /// Description : collection view dislike
+
+    func setDislike(collectionview : UICollectionView!,currentUser : CurrentUser, post : NoticesMainModel! , completion : @escaping(Bool) ->Void){
         if !post.dislike.contains(currentUser.uid){
             post.likes.remove(element: currentUser.uid)
             post.dislike.append(currentUser.uid)
@@ -406,6 +429,18 @@ class NoticesService {
                     completion(true)
                 }}}
     }
+    
+    
+    /// Description : comment like
+    func setCommentLike(){
+        
+    }
+    /// Description : replied comment like
+    func setRepliedCommentLike(){
+        
+    }
+
+    
     
     func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
         if data.count == 0{
@@ -659,7 +694,7 @@ class NoticesService {
             db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
                 if err == nil {
                     completion(true)
-//                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.school_replied_comment_like_notification(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.notices_replied_comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }else{
                     print("err \(err?.localizedDescription as Any)")
                 }
@@ -671,7 +706,7 @@ class NoticesService {
                 if err == nil {
                     
                     completion(true)
-//                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, comment: repliedComment, currentUser: currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.school_remove_replied_comment_like_notificaiton(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.notices_replied_comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
                 else{
                     print("err \(err?.localizedDescription as Any)")
@@ -695,7 +730,7 @@ class NoticesService {
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-                    NotificaitonService.shared.school_replied_comment_like_notification(post: post, comment: comment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.school_replied_comment_like_notification(post: post, comment: comment, currentUser: currentUser, text: Notification_description.notices_comment_like.desprition, type: NotificationType.notices_comment_like.desprition)
                 }
             }
         }else{
@@ -713,7 +748,7 @@ class NoticesService {
                     
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-                    NotificaitonService.shared.school_remove_replied_comment_like_notificaiton(post: post, comment: comment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                    NotificaitonService.shared.school_remove_replied_comment_like_notificaiton(post: post, comment: comment, currentUser: currentUser, text: Notification_description.notices_comment_like.desprition, type: NotificationType.notices_comment_like.desprition)
                 }
             }}
     }
