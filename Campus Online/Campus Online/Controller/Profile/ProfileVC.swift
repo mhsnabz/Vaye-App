@@ -893,6 +893,65 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
             }
         }
     }
+    func loadMoreFavPost(completion : @escaping(Bool) ->Void){
+        guard let pagee = fav_page else{
+            isLoadMoreFavPost = false
+            collectionview.reloadData()
+            completion(false)
+            return
+        }
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("fav-post").limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else {
+                completion(false)
+                
+                return}
+            if let err = err {
+                print(err.localizedDescription as Any)
+            }else if snap.isEmpty{
+                sself.isLoadMoreFavPost = false
+                sself.collectionview.reloadData()
+                completion(false)
+            }else{
+                for item in snap.documents{
+                    
+                    let db = Firestore.firestore().collection(sself.currentUser.short_school)
+                        .document("lesson-post").collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else { return }
+                            if snapp.exists {
+                                sself.favPost.append(LessonPostModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = sself.favPost[(sself.favPost.count) - 1].postTime{
+                                    sself.time = sself.favPost[(sself.favPost.count) - 1].postTime
+                                    sself.favPost.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    sself.isLoadMoreFavPost = true
+                                    sself.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                            }else{
+                                let deleteDb = Firestore.firestore().collection("user")
+                                    .document(sself.currentUser.uid)
+                                    .collection("fav-post").document(snapp.documentID)
+                                deleteDb.delete()
+                            }
+                        }
+                        
+                        
+                    }
+                    sself.fav_page = snap.documents.last
+                }
+                sself.fetchAds()
+            }
+        }
+        
+    }
     
     //MARK:-load school post
     func getSchoolPost(){
@@ -940,7 +999,6 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                     completion([])
                 }else{
                     for postId in  snap.documents {
-                        print("snapss :\(postId.documentID) ")
                         let db = Firestore.firestore().collection(currentUser.short_school)
                             .document("notices")
                             .collection("post")
@@ -1462,6 +1520,40 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 self.isLoadMoreSchoolPost = false
                 self.isLoadMoreVayeAppPost = false
             }
+        }else if isFavPost{
+            if favPost.count > 5 {
+                if indexPath.item == favPost.count - 1 {
+                    loadMoreFavPost { (_) in
+                        
+                    }
+                }else{
+                    isVayeAppPost = false
+                    isHomePost = false
+                    isSchoolPost = false
+                    isFavPost = true
+                    
+                    self.isLoadMoreFavPost = false
+                    self.isLoadMoreHomePost = false
+                    self.isLoadMoreSchoolPost = false
+                    self.isLoadMoreVayeAppPost = false
+                }
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if isHomePost{
+            let vc = CommentVC(currentUser: currentUser, post: lessonPostModel[indexPath.row])
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else if isVayeAppPost{
+            let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row], target: mainPost[indexPath.row].postType)
+            navigationController?.pushViewController(vc, animated: true)
+        }else if isFavPost{
+            let vc = CommentVC(currentUser: currentUser, post: favPost[indexPath.row])
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else if isSchoolPost{
+            let vc = NoticeVCComment(currentUser: currentUser, post: schoolPost[indexPath.row])
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -1508,7 +1600,7 @@ extension ProfileVC: GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GAD
                         return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
                     })
                     
-                    self.favPost.append(LessonPostModel.init(nativeAd: nativeAd , postTime : self.lessonPostModel[(self.favPost.count) - 1].postTime!))
+                    self.favPost.append(LessonPostModel.init(nativeAd: nativeAd , postTime : self.favPost[(self.favPost.count) - 1].postTime!))
                 }
             }
             self.isLoadMoreFavPost = false
