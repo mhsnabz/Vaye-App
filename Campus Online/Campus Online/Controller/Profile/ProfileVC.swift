@@ -968,6 +968,62 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         }
         
     }
+    func loadMoreSchoolPost(completion: @escaping(Bool) ->Void){
+        guard let pagee = schoolPost_page else {
+            isLoadMoreSchoolPost = false
+            collectionview.reloadData()
+            completion(false)
+            return }
+        
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection(currentUser.short_school).limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
+        db.getDocuments { (querySnap, err) in
+            guard let snap = querySnap else { return }
+            if let err = err {
+                print("\(err.localizedDescription)")
+            }else if snap.isEmpty{
+                self.isLoadMoreSchoolPost = false
+                self.collectionview.reloadData()
+                completion(false)
+            }else{
+                for item in snap.documents {
+                    let db = Firestore.firestore().collection(self.currentUser.short_school)
+                        .document("notices")
+                        .collection("post").document(item.documentID)
+                    db.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snapp = docSnap else{ return }
+                            if snapp.exists {
+                                self.schoolPost.append(NoticesMainModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = self.schoolPost[(self.schoolPost.count) - 1].postTime{
+                                    self.time = self.schoolPost[(self.schoolPost.count) - 1].postTime
+                                    self.schoolPost.sort(by: { (post, post1) -> Bool in
+                                        return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
+                                    })
+                                    self.isLoadMoreSchoolPost = true
+                                    self.collectionview.reloadData()
+                                    completion(true)
+                                    
+                                }
+                            }else{
+                                let db = Firestore.firestore().collection("user")
+                                    .document(self.currentUser.uid)
+                                    .collection(self.currentUser.short_school)
+                                    .document(item.documentID)
+                                db.delete()
+                            }
+                        }
+                    }
+                    self.schoolPost_page = snap.documents.last
+                }
+                self.fetchAds()
+            }
+        }
+
+        
+    }
+    
    //MARK:-selectors
      @objc func dissmis(){
         self.dismiss(animated: true, completion: nil)
@@ -1044,7 +1100,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
         else if isSchoolPost{
             if schoolPost[indexPath.row].postId == nil {
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
-                cell.nativeAd = lessonPostModel[indexPath.row].nativeAd
+                cell.nativeAd = schoolPost[indexPath.row].nativeAd
                 return cell
             }
             else if schoolPost[indexPath.row].empty == "empty"{
@@ -1380,6 +1436,22 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     self.isLoadMoreSchoolPost = false
                     self.isLoadMoreVayeAppPost = false
                 }
+            }
+        }else if isSchoolPost{
+            if schoolPost.count > 5 {
+                loadMoreSchoolPost { (va) in
+                    
+                }
+            }else{
+                isVayeAppPost = false
+                isHomePost = false
+                isSchoolPost = true
+                isFavPost = false
+                
+                self.isLoadMoreFavPost = false
+                self.isLoadMoreHomePost = false
+                self.isLoadMoreSchoolPost = false
+                self.isLoadMoreVayeAppPost = false
             }
         }
     }
