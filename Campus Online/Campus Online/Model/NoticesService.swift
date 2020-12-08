@@ -751,8 +751,8 @@ class NoticesService {
             comment.likes?.append(currentUser.uid)
             tableView.reloadData()
             ///main-post/sell-buy/post/1603580081581
-            let db = Firestore.firestore().collection("main-post")
-                .document("post")
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
                 .collection("post")
                 .document(post.postId)
                 .collection("comment").document(comment.commentId!)
@@ -767,8 +767,8 @@ class NoticesService {
         }else{
             comment.likes?.remove(element: currentUser.uid)
             tableView.reloadData()
-            let db = Firestore.firestore().collection("main-post")
-                .document("post")
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
                 .collection("post")
                 .document(post.postId)
                 .collection("comment").document(comment.commentId!)
