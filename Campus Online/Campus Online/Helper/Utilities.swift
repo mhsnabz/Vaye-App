@@ -37,7 +37,6 @@ class Utilities  {
         if msg != nil{
             SVProgressHUD.setBackgroundColor(.black)
             SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
-            SVProgressHUD.setDefaultStyle(.dark)
             SVProgressHUD.setBorderColor(.white)
             SVProgressHUD.showSuccess(withStatus: msg)
             SVProgressHUD.setForegroundColor(.white)
@@ -45,7 +44,6 @@ class Utilities  {
         }else{
             SVProgressHUD.setBackgroundColor(.black)
             SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
-            SVProgressHUD.setDefaultStyle(.dark)
             SVProgressHUD.setBorderColor(.white)
             SVProgressHUD.showSuccess(withStatus: nil)
             SVProgressHUD.setForegroundColor(.white)

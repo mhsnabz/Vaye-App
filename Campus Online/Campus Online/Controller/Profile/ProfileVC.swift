@@ -735,6 +735,9 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                     self.vaye_page = snap.documents.last
                     self.fetchAds()
                     self.isLoadMoreVayeAppPost = true
+                    self.isLoadMoreFavPost = false
+                    self.isLoadMoreHomePost = false
+                    self.isLoadMoreSchoolPost = false
                 }
             }
         }
@@ -937,6 +940,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
                     completion([])
                 }else{
                     for postId in  snap.documents {
+                        print("snapss :\(postId.documentID) ")
                         let db = Firestore.firestore().collection(currentUser.short_school)
                             .document("notices")
                             .collection("post")
@@ -974,50 +978,52 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
             collectionview.reloadData()
             completion(false)
             return }
-        
-        let db = Firestore.firestore().collection("user")
+       //user/4OaYqfc53gOBwAwVZMdu9XZV6ix2/İSTE/1607178986322
+            let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection(currentUser.short_school).limit(to: 5).order(by: "postId", descending: true).start(afterDocument: pagee)
-        db.getDocuments { (querySnap, err) in
+        db.getDocuments {[weak self] (querySnap, err) in
             guard let snap = querySnap else { return }
+            guard let sself = self else { return }
             if let err = err {
                 print("\(err.localizedDescription)")
             }else if snap.isEmpty{
-                self.isLoadMoreSchoolPost = false
-                self.collectionview.reloadData()
+                sself.isLoadMoreSchoolPost = false
+                sself.collectionview.reloadData()
                 completion(false)
             }else{
                 for item in snap.documents {
-                    let db = Firestore.firestore().collection(self.currentUser.short_school)
+                    print("snapss : \(item.documentID)")
+                    let db = Firestore.firestore().collection(sself.currentUser.short_school)
                         .document("notices")
                         .collection("post").document(item.documentID)
                     db.getDocument { (docSnap, err) in
                         if err == nil {
                             guard let snapp = docSnap else{ return }
                             if snapp.exists {
-                                self.schoolPost.append(NoticesMainModel.init(postId: snapp.documentID, dic: snapp.data()))
-                                if  let time_e = self.schoolPost[(self.schoolPost.count) - 1].postTime{
-                                    self.time = self.schoolPost[(self.schoolPost.count) - 1].postTime
-                                    self.schoolPost.sort(by: { (post, post1) -> Bool in
+                                sself.schoolPost.append(NoticesMainModel.init(postId: snapp.documentID, dic: snapp.data()))
+                                if  let time_e = sself.schoolPost[(sself.schoolPost.count) - 1].postTime{
+                                    sself.time = sself.schoolPost[(sself.schoolPost.count) - 1].postTime
+                                    sself.schoolPost.sort(by: { (post, post1) -> Bool in
                                         return post.postTime?.dateValue() ?? time_e.dateValue()  > post1.postTime?.dateValue() ??  time_e.dateValue()
                                     })
-                                    self.isLoadMoreSchoolPost = true
-                                    self.collectionview.reloadData()
+                                    sself.isLoadMoreSchoolPost = true
+                                    sself.collectionview.reloadData()
                                     completion(true)
                                     
                                 }
                             }else{
                                 let db = Firestore.firestore().collection("user")
-                                    .document(self.currentUser.uid)
-                                    .collection(self.currentUser.short_school)
+                                    .document(sself.currentUser.uid)
+                                    .collection(sself.currentUser.short_school)
                                     .document(item.documentID)
                                 db.delete()
                             }
                         }
                     }
-                    self.schoolPost_page = snap.documents.last
+                    sself.schoolPost_page = snap.documents.last
                 }
-                self.fetchAds()
+                sself.fetchAds()
             }
         }
 
@@ -1439,9 +1445,12 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
             }
         }else if isSchoolPost{
             if schoolPost.count > 5 {
-                loadMoreSchoolPost { (va) in
-                    
+                if indexPath.item == schoolPost.count - 1 {
+                    loadMoreSchoolPost { (va) in
+                        
+                    }
                 }
+               
             }else{
                 isVayeAppPost = false
                 isHomePost = false
@@ -1817,7 +1826,7 @@ extension ProfileVC : NewPostNoticesVCDelegate {
             actionSheetCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
-            selectedPostID = mainPost[index.row].postId
+            selectedPostID = schoolPost[index.row].postId
         }
     }
     
@@ -1949,7 +1958,7 @@ extension ProfileVC : ASMainPostLaungerDelgate {
             db.delete {[weak self] (err) in
                 guard let sself = self else { return }
                 if err == nil{
-                    NoticesService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
+                    NoticesService.shared.deleteToStorage(data: sself.schoolPost[index.row].data, postId: postId) { (_val) in
                         if _val{
                             Utilities.succesProgress(msg: "Silindi")
                         }else{
