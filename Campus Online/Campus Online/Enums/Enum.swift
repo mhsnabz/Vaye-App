@@ -19,7 +19,7 @@ enum MenuOption : Int ,CustomStringConvertible {
     var description: String{
         switch self {
         case .major:
-           return "Bilgisayar Mühendisliği"
+           return ""
         case.school_notices:
           return  ""
         case .rate :

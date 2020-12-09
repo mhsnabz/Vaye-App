@@ -82,9 +82,16 @@ class HomeMenuController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! HomeMenuCell
         cell.backgroundColor = .white
+        
         let menuOption = MenuOption(rawValue: indexPath.row)
-        cell.homeBtn.setImage(menuOption?.image, for: .normal)
-        cell.homeTitle.setTitle(menuOption?.description, for: .normal)
+        if indexPath.row == 1 {
+            cell.homeBtn.setImage(menuOption?.image, for: .normal)
+            cell.homeTitle.setTitle(currentUser.bolum, for: .normal)
+        }else{
+            cell.homeBtn.setImage(menuOption?.image, for: .normal)
+            cell.homeTitle.setTitle(menuOption?.description, for: .normal)
+        }
+       
         cell.delegate = self
         cell.selectionStyle = .none
         if indexPath.row == 2 {

@@ -86,7 +86,15 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
             cell.homeTitle.setTitle(currentUser.short_school, for: .normal)
             cell.delegate = self
             cell.selectionStyle = .none
-        }else{
+        }
+        else if indexPath.item == 0{
+            let menuOption = MenuOption(rawValue: indexPath.row)
+            cell.homeBtn.setImage(menuOption?.image, for: .normal)
+            cell.homeTitle.setTitle(currentUser.bolum, for: .normal)
+            cell.delegate = self
+            cell.selectionStyle = .none
+        }
+        else{
             let menuOption = MenuOption(rawValue: indexPath.row)
             cell.homeBtn.setImage(menuOption?.image, for: .normal)
             cell.homeTitle.setTitle(menuOption?.description, for: .normal)
