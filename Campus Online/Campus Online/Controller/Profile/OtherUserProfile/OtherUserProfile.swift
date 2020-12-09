@@ -34,10 +34,10 @@ private let cell_camp_data_id = "cell_camp_data_id"
 
 
 
-class OtherUserProfile: UIViewController   {
+class OtherUserProfile: UIViewController     {
     lazy var lessonPostModel = [LessonPostModel]()
     lazy var mainPost = [MainPostModel]()
-    lazy var favPost = [LessonPostModel]()
+   
     lazy var schoolPost = [NoticesMainModel]()
     
     var selectedIndex : IndexPath?
@@ -61,6 +61,8 @@ class OtherUserProfile: UIViewController   {
     private  var actionSheet : ActionSheetHomeLauncher
     private var actionOtherUserSheet : ActionSheetOtherUserLaunher
     private var actionSheetCurrentUser : ASNoticesPostCurrentUserLaunher
+    private var actionSheetMainCurrentUser : ActionSheetMainPost
+    private var actionSheetOtherUser : ASMainPostOtherUser
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
     //MARK:-post filter val
     var isHomePost : Bool = false
@@ -77,7 +79,6 @@ class OtherUserProfile: UIViewController   {
     //    var adUnitID =   "ca-app-pub-1362663023819993/4203883052"
     var interstitalAd : GADInterstitial!
  
-    private var actionSheetOtherUser : ASMainPostOtherUser
 
     var otherUser : OtherUser
     
@@ -316,6 +317,8 @@ class OtherUserProfile: UIViewController   {
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         self.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        self.actionSheetMainCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        
         super.init(nibName: nil, bundle: nil)
       
         
@@ -1046,7 +1049,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
             }
            else if schoolPost[indexPath.row].data.isEmpty {
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_notices_id, for: indexPath) as! NoticesCell
-//                cell.delegate = self
+                cell.delegate = self
                 cell.currentUser = currentUser
                 cell.backgroundColor = .white
                 let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
@@ -1057,7 +1060,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
             }else{
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_notices_data_id, for: indexPath) as! NoticesDataCell
                 cell.backgroundColor = .white
-//                cell.delegate = self
+                cell.delegate = self
                 cell.currentUser = currentUser
                 let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
@@ -1099,7 +1102,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     }else {
                         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
                         cell.backgroundColor = .white
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -1114,7 +1117,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 }else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
                     if mainPost[indexPath.row].data.isEmpty {
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_id, for: indexPath) as! FoodMeView
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         cell.backgroundColor = .white
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
@@ -1127,7 +1130,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_data_id, for: indexPath) as! FoodMeViewData
                         
                         cell.backgroundColor = .white
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -1142,7 +1145,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     if mainPost[indexPath.row].data.isEmpty {
                        
                             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_id, for: indexPath) as! CampingView
-//                            cell.delegate = self
+                            cell.delegate = self
                             cell.currentUser = currentUser
                             cell.backgroundColor = .white
                             let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
@@ -1155,7 +1158,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_data_id, for: indexPath) as! CampingDataView
                         
                         cell.backgroundColor = .white
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -1540,7 +1543,7 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
             guard let index = selectedIndex else {
                 Utilities.dismissProgress()
                 return }
-            UserService.shared.fetchOtherUser(uid: favPost[index.row].senderUid) {[weak self] (user) in
+            UserService.shared.fetchOtherUser(uid: mainPost[index.row].senderUid) {[weak self] (user) in
                 guard let sself = self else {
                     Utilities.dismissProgress()
                     return}
@@ -1572,7 +1575,7 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
             guard let index = selectedIndex else {
             Utilities.dismissProgress()
             return }
-            removeLesson(lessonName: favPost[index.row].lessonName) { (_) in
+            removeLesson(lessonName: mainPost[index.row].lessonName) { (_) in
               
             }
             break
@@ -1659,66 +1662,66 @@ extension OtherUserProfile : NewPostHomeVCDelegate {
         
     }
     
-    func goProfileByMention(userName: String) {
-        if "@\(userName)" == currentUser.username {
-        }else{
-            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
-                guard let sself = self else { return }
-                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
-                        if val {
-                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                       
-                            sself.navigationController?.pushViewController(vc, animated: true)
-                            Utilities.dismissProgress()
-                        }else{
-                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                     
-                            sself.navigationController?.pushViewController(vc, animated: true)
-                            Utilities.dismissProgress()
-                        }
-                        
-                    }
-                }
-               
-            }
-        }
-    }
+//    func goProfileByMention(userName: String) {
+//        if "@\(userName)" == currentUser.username {
+//        }else{
+//            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+//                guard let sself = self else { return }
+//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+//                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+//                        if val {
+//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+//
+//                            sself.navigationController?.pushViewController(vc, animated: true)
+//                            Utilities.dismissProgress()
+//                        }else{
+//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+//
+//                            sself.navigationController?.pushViewController(vc, animated: true)
+//                            Utilities.dismissProgress()
+//                        }
+//
+//                    }
+//                }
+//
+//            }
+//        }
+//    }
     
-    func clickMention(username: String) {
-        if "@\(username)" == currentUser.username {
-            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
-                guard let self = self else { return }
-                if val{
-                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }else{
-                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-            }
-        }else{
-            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
-                guard let sself = self else { return }
-                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
-                        if val {
-                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
-                            sself.navigationController?.pushViewController(vc, animated: true)
-                            Utilities.dismissProgress()
-                        }else{
-                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
-                            sself.navigationController?.pushViewController(vc, animated: true)
-                            Utilities.dismissProgress()
-                        }
-                        
-                    }
-                }
-            }
-        }
-    }
+//    func clickMention(username: String) {
+//        if "@\(username)" == currentUser.username {
+//            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+//                guard let self = self else { return }
+//                if val{
+//                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }else{
+//                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//            }
+//        }else{
+//            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+//                guard let sself = self else { return }
+//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+//                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+//                        if val {
+//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+//
+//                            sself.navigationController?.pushViewController(vc, animated: true)
+//                            Utilities.dismissProgress()
+//                        }else{
+//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+//
+//                            sself.navigationController?.pushViewController(vc, animated: true)
+//                            Utilities.dismissProgress()
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     
 }
@@ -1800,32 +1803,990 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
 
 extension OtherUserProfile : BuySellVCDelegate {
     func options(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetMainCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+//            actionOtherUserSheet.delegate = self
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post : post , otherUser : user)
+                
+
+            }
+
+
+        }
     }
-    
-    func like(for cell: BuyAndSellView) {
-        
+    func mapClick(for cell: BuyAndSellView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+
+    }
+    func like(for cell: BuyAndSellView)
+    {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
+    
+    
     
     func comment(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
-    func linkClick(for cell: BuyAndSellView) {
-        
+    func linkClick(for cell: BuyAndSellView)
+    {
+//        guard let url = URL(string: (cell.mainPost?.link)!) else {
+//            return
+//        }
+//        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+        
+            }
+        }
+    }
+    
+//    func goProfileByMention(userName: String)
+//    {
+//        if "@\(userName)" == currentUser.username {
+//            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+//                guard let self = self else { return }
+//                if val{
+//                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }else{
+//                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//            }
+//        }else{
+//            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+//                guard let sself = self else { return }
+//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+//                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+//                        if val {
+//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+//
+//                            sself.navigationController?.pushViewController(vc, animated: true)
+//                            Utilities.dismissProgress()
+//                        }else{
+//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+//
+//                            sself.navigationController?.pushViewController(vc, animated: true)
+//                            Utilities.dismissProgress()
+//                        }
+//
+//                    }                }
+//
+//            }
+//        }
+//    }
+    
+    
+    
+}
+extension OtherUserProfile : ASMainPostLaungerDelgate {
+    func didSelect(option: ASCurrentUserMainPostOptions) {
+        switch option {
+        case .editPost(_):
+            guard let index = selectedIndex else { return }
+            
+            if mainPost[index.row].postType == PostType.buySell.despription {
+                if let h = collectionview.cellForItem(at: index) as? BuyAndSellDataView {
+                    let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
+                    let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }else if mainPost[index.row].postType == PostType.foodMe.despription{
+                if let h = collectionview.cellForItem(at: index) as? FoodMeViewData {
+                    let vc = EditFoodMePost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? FoodMeView{
+                    let vc = EditFoodMePost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+                
+            }else if mainPost[index.row].postType == PostType.camping.despription{
+                if let h = collectionview.cellForItem(at: index) as? CampingDataView {
+                    let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let  h = collectionview.cellForItem(at: index) as? CampingView{
+                    let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }
+            
+            
+            break
+        case .deletePost(_):
+           
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            let db = Firestore.firestore().collection("main-post")
+                .document("post")
+                .collection("post")
+                .document(postId)
+           
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    MainPostService.shared.deleteToStorage(data: sself.mainPost[index.row].data, postId: postId) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+            break
+        case .slientPost(_):
+            print("slient post")
+        }
+    }
+     
+}
+extension OtherUserProfile : BuySellVCDataDelegate {
+    func mapClick(for cell: BuyAndSellDataView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    func options(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetMainCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+   
+    
+    func comment(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: BuyAndSellDataView) {
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+    
+    func showProfile(for cell: BuyAndSellDataView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+        
+            }
+        }
+    }
+    
+    
+}
+extension OtherUserProfile : FoodMeVCDelegate {
+    func options(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetMainCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: FoodMeView) {
         
     }
     
-    func mapClick(for cell: BuyAndSellView) {
+    func showProfile(for cell: FoodMeView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+        
+            }
+        }
+    }
+    
+    func mapClick(for cell: FoodMeView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+}
+extension OtherUserProfile :FoodMeVCDataDelegate{
+    func options(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetMainCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: FoodMeViewData) {
         
     }
     
+    func mapClick(for cell: FoodMeViewData) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    func showProfile(for cell: FoodMeViewData) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+        
+            }
+        }
+    }
+    
+}
+extension OtherUserProfile :CampingVCDataDelegate{
+    func options(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetMainCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: CampingDataView) {
+        
+    }
+    
+    func mapClick(for cell: CampingDataView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    func showProfile(for cell: CampingDataView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+        
+            }
+        }
+    }
+    
+}
+
+extension OtherUserProfile :CampingVCDelegate{
+    func options(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetMainCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: CampingView) {
+        
+    }
+    
+    func showProfile(for cell: CampingView) {
+        guard  let post = cell.mainPost else {
+            return
+        }
+      
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+        
+            }
+        }
+    }
+    
+    func mapClick(for cell: CampingView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+}
+extension OtherUserProfile :NewPostNoticesVCDelegate{
+    func options(for cell: NoticesCell) {
+       
+    }
+    
+    func like(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setPostLike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("liked")
+        }
+    }
+    
+    func dislike(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setDislike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("disliked")
+        }
+    }
+    
+    func comment(for cell: NoticesCell) {
+        guard let post = cell.noticesPost else { return }
+        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showProfile(for cell: NoticesCell) {
+        guard  let post = cell.noticesPost else {
+            return
+        }
+        
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+                
+                
+            }
+        }
+    }
+    
+    func goProfileByMention(userName: String) {
+        if "@\(userName)" == currentUser.username {
+            
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    func clickMention(username: String) {
+        if "@\(username)" == currentUser.username {
+            
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+}
+extension OtherUserProfile :NewPostNoticesDataVCDelegate{
+    func options(for cell: NoticesDataCell) {
+        
+    }
+    
+    func like(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setPostLike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("liked")
+            
+        }
+    }
+    
+    func dislike(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setDislike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("disliked")
+        }
+    }
+    
+    func comment(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showProfile(for cell: NoticesDataCell) {
+        guard  let post = cell.noticesPost else {
+            return
+        }
+        
+        if post.senderUid == currentUser.uid{
+            
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+                
+                
+            }
+        }
+    }
     
 }
