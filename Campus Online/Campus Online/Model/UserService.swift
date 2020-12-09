@@ -272,6 +272,24 @@ struct UserService {
             }
         }
     
+    func checkCurrentUserSocialMedia(currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        if currentUser.instagram == "" && currentUser.twitter == "" && currentUser.linkedin == "" && currentUser.github == "" {
+            completion(false)
+
+        }else{
+            completion(true)
+
+        }
+    }
+    func checkOtherUserSocialMedia(otherUser : OtherUser , completion : @escaping(Bool) ->Void){
+        if otherUser.instagram == "" && otherUser.twitter == "" && otherUser.linkedin == "" && otherUser.github == "" {
+            completion(false)
+
+        }else{
+            completion(true)
+
+        }
+    }
     
     
 }

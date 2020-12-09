@@ -144,12 +144,19 @@ extension MenuController : MenuHeaderDelegate {
     }
     
     func showProfile() {
-        let vc = ProfileVC(currentUser: currentUser)
-        vc.currentUser = currentUser
-        navigationController?.pushViewController(vc, animated: true)
-        dismisMenu()
-        //        controller.modalPresentationStyle = .fullScreen
-        //        self.present(controller, animated: true, completion: nil)
+        UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+            guard let self = self else { return }
+            if val{
+                let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                self.navigationController?.pushViewController(vc, animated: true)
+                self.dismisMenu()
+            }else{
+                let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                self.navigationController?.pushViewController(vc, animated: true)
+                self.dismisMenu()
+            }
+        }
+     
     }
     
     func editProfile() {

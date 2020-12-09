@@ -288,10 +288,20 @@ class NotificationVC: UIViewController {
             {
                 UserService.shared.fetchOtherUser(uid: sself.model[indexPath.row].senderUid) {(user) in
                     UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                        let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                        vc.modalPresentationStyle = .fullScreen
-                        sself.navigationController?.pushViewController(vc, animated: true)
-                        Utilities.dismissProgress()
+                        UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                            if val {
+                                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                               
+                                sself.navigationController?.pushViewController(vc, animated: true)
+                                Utilities.dismissProgress()
+                            }else{
+                                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                    
+                                sself.navigationController?.pushViewController(vc, animated: true)
+                                Utilities.dismissProgress()
+                            }
+                            
+                        }
                     }
                     sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                         sself.model[indexPath.row].isRead = true
@@ -449,9 +459,20 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
             UserService.shared.fetchOtherUser(uid: model[indexPath.row].senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
                 sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                     sself.model[indexPath.row].isRead = true

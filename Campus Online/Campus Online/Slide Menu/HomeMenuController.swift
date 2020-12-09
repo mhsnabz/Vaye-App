@@ -134,11 +134,23 @@ extension HomeMenuController : MenuHeaderDelegate {
     }
     
     func showProfile() {
-        let vc = ProfileVC(currentUser : currentUser)
         
-        vc.modalPresentationStyle = .fullScreen
-        vc.currentUser = currentUser
-        self.present(vc, animated: true, completion: nil)
+        UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+            guard let sself = self else { return }
+            if val{
+                let vc = ProfileVC(currentUser: sself.currentUser, width: 285)
+                vc.currentUser = sself.currentUser
+                vc.modalPresentationStyle = .fullScreen
+                sself.present(vc, animated: true, completion: nil)
+            }else{
+                let vc = ProfileVC(currentUser: sself.currentUser, width: 235)
+                vc.currentUser = sself.currentUser
+                vc.modalPresentationStyle = .fullScreen
+                sself.present(vc, animated: true, completion: nil)
+            }
+        }
+        
+        
     }
     
     func editProfile() {

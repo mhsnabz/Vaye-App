@@ -662,19 +662,38 @@ extension CommentVC : CommentDelegate {
         Utilities.waitProgress(msg: nil)
         guard let comment = cell.comment else { return }
         if comment.senderUid == currentUser.uid {
-            let vc = ProfileVC(currentUser: currentUser)
-            navigationController?.pushViewController(vc, animated: true)
-            Utilities.dismissProgress()
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+            }
            
             
         }else{
             UserService.shared.fetchOtherUser(uid: comment.senderUid!) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
             }
         }
@@ -742,9 +761,16 @@ extension CommentVC : CommentVCDataDelegate {
         }
       
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
 
         }else{
             Utilities.waitProgress(msg: nil)
@@ -754,10 +780,20 @@ extension CommentVC : CommentVCDataDelegate {
                     return }
                 
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-               
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
 
         
@@ -767,16 +803,34 @@ extension CommentVC : CommentVCDataDelegate {
     
     func goProfileByMention(userName: String) {
         if "@\(userName)" == currentUser.username {
-            let vc = ProfileVC(currentUser: currentUser)
-            self.navigationController?.pushViewController(vc, animated: true)
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }else{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
                
             }
@@ -790,16 +844,34 @@ extension CommentVC : CommentVCDataDelegate {
 extension CommentVC : CommentVCHeaderDelegate {
     func clickMention(username: String) {
         if "@\(username)" == currentUser.username {
-            let vc = ProfileVC(currentUser: currentUser)
-            self.navigationController?.pushViewController(vc, animated: true)
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                  
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
                
             }
@@ -835,19 +907,36 @@ extension CommentVC : CommentVCHeaderDelegate {
         }
       
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
-//            self.navigationController?.pushViewController(vc, animated: true)
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }else{
             Utilities.waitProgress(msg: nil)
             getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                   sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
                 
             }

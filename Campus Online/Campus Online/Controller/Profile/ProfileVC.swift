@@ -272,14 +272,16 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     
     //MARK: - lifeCycle
     
-    init(currentUser : CurrentUser) {
+    init(currentUser : CurrentUser , width : CGFloat ) {
         self.currentUser = currentUser
      
         self.profileModel = ProfileModel.init(shortSchool: currentUser.short_school, currentUser: currentUser, major: currentUser.bolum, uid: currentUser.uid)
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         self.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
-        self.width = 285
+        
+        self.width = width
+        print("width : \(width)")
         super.init(nibName: nil, bundle: nil)
      
         
@@ -383,7 +385,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         view.addSubview(headerView)
         
 //        collectionview.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: view.frame.height)
-        collectionview.contentInset = UIEdgeInsets(top: 285, left: 0, bottom: 0, right: 0)
+        collectionview.contentInset = UIEdgeInsets(top: width, left: 0, bottom: 0, right: 0)
     
          }
     
@@ -1733,10 +1735,20 @@ extension ProfileVC : NewPostHomeVCDelegate{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                       
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                     
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
                
             }
@@ -1749,16 +1761,34 @@ extension ProfileVC : NewPostHomeVCDelegate{
     
     func clickMention(username: String) {
         if "@\(username)" == currentUser.username {
-            let vc = ProfileVC(currentUser: currentUser)
-            self.navigationController?.pushViewController(vc, animated: true)
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
             }
         }
@@ -1949,9 +1979,16 @@ extension ProfileVC : NewPostNoticesVCDelegate {
         }
       
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
 
         }else{
             Utilities.waitProgress(msg: nil)
@@ -1961,10 +1998,20 @@ extension ProfileVC : NewPostNoticesVCDelegate {
                     return }
                 
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
 
         
@@ -1987,9 +2034,20 @@ extension ProfileVC : ActionSheetOtherUserLauncherDelegate{
                     Utilities.dismissProgress()
                     return}
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
 
                

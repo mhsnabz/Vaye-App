@@ -39,7 +39,7 @@ class NoticesVC: UIViewController {
     let adUnitID = "ca-app-pub-3940256099942544/2521693316"
     
     private var actionSheetOtherUser : ASNoticesPostLaunher
-   private var actionSheetCurrentUser : ASNoticesPostCurrentUserLaunher
+    private var actionSheetCurrentUser : ASNoticesPostCurrentUserLaunher
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
         btn.clipsToBounds = true
@@ -52,8 +52,8 @@ class NoticesVC: UIViewController {
     var currentUser : CurrentUser
     override func viewDidLoad() {
         super.viewDidLoad()
-         view.backgroundColor = .white
-       
+        view.backgroundColor = .white
+        
         setNavigationBar()
         navigationItem.title = currentUser.short_school + " Kulüp"
         
@@ -92,7 +92,7 @@ class NoticesVC: UIViewController {
         collectionview.register(FieldListLiteAdCell.self,forCellWithReuseIdentifier : cellAds)
         collectionview.register(LoadMoreCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: loadMoreCell)
         collectionview.register(EmptyCell.self, forCellWithReuseIdentifier: emptyCell)
-
+        
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -111,7 +111,7 @@ class NoticesVC: UIViewController {
         loadMore = true
         collectionview.reloadData()
         fetchMainPost(currentUser: currentUser) {[weak self] (post) in
-    
+            
             self?.mainPost = post
             if self?.mainPost.count ?? -1 > 0{
                 self?.collectionview.refreshControl?.endRefreshing()
@@ -159,7 +159,7 @@ class NoticesVC: UIViewController {
                                 completion(post)
                             }
                         }
-                    
+                        
                     }
                     
                     self.page = snap.documents.last
@@ -189,7 +189,7 @@ class NoticesVC: UIViewController {
                 sself.loadMore = false
                 sself.collectionview.reloadData()
                 completion(false)
-            
+                
             }else{
                 for item in snap.documents{
                     let db = Firestore.firestore().collection(sself.currentUser.short_school)
@@ -208,18 +208,18 @@ class NoticesVC: UIViewController {
                                     sself.loadMore = true
                                     sself.collectionview.reloadData()
                                     completion(true)
-                            }else{
-                                
+                                }else{
+                                    
+                                }
                             }
                         }
+                        sself.page = snap.documents.last
                     }
-                    sself.page = snap.documents.last
-                }
                 }
                 sself.fetchAds()
             }
         }
-
+        
     }
     
     
@@ -232,7 +232,7 @@ class NoticesVC: UIViewController {
     }
     //MARK:-selector
     @objc func newPost(){
-       
+        
         let vc = ChooseClub(currentUser: currentUser, dataSource: NoticesService.shared.getHastag(currentUser: currentUser))
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -242,28 +242,28 @@ class NoticesVC: UIViewController {
         getPost()
     }
     
-     @objc func menuClick(){
+    @objc func menuClick(){
         print("deneme")
-//        dismiss(animated: true, completion: nil)
-            self.delegate?.handleMenuToggle(forMenuOption: nil)
-            if !isMenuOpen {
-                self.isMenuOpen = false
-            }
-            else{
-             self.isMenuOpen = true
-
-         }
+        //        dismiss(animated: true, completion: nil)
+        self.delegate?.handleMenuToggle(forMenuOption: nil)
+        if !isMenuOpen {
+            self.isMenuOpen = false
         }
-
+        else{
+            self.isMenuOpen = true
+            
+        }
+    }
+    
 }
 
 extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return mainPost.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
+        
         if mainPost[indexPath.row].postId == nil {
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellAds, for: indexPath) as! FieldListLiteAdCell
             cell.nativeAd = mainPost[indexPath.row].nativeAd
@@ -271,7 +271,7 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
         }
         else if mainPost[indexPath.row].empty == "empty"{
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: emptyCell, for: indexPath) as! EmptyCell
-          
+            
             return cell
         }
         else{
@@ -293,9 +293,9 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
                 cell.currentUser = currentUser
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
-
+                
                 cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 12 , width: cell.msgText.frame.width, height: 100)
-
+                
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.noticesPost = mainPost[indexPath.row]
                 return cell
@@ -347,31 +347,31 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
     }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-      
-          if mainPost.count > 5 {
-             
-              if indexPath.item == mainPost.count - 1 {
-                  loadMorePost { (val) in
-                      
-                  }
-              }else{
-                  self.loadMore = false
-              }
-          }
+        
+        if mainPost.count > 5 {
+            
+            if indexPath.item == mainPost.count - 1 {
+                loadMorePost { (val) in
+                    
+                }
+            }else{
+                self.loadMore = false
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = NoticeVCComment(currentUser: currentUser, post: mainPost[indexPath.row])
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
 }
 
 //MARK:- google ads
 extension NoticesVC  : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-      
+        
         print("\(adLoader) failed with error: \(error.localizedDescription)")
         self.mainPost.append(NoticesMainModel.init(empty: "empty", postId: "empty"))
         self.loadMore = true
@@ -394,7 +394,7 @@ extension NoticesVC  : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , G
         self.collectionview.reloadData()
     }
 }
- //MARK:-NewPostNoticesVCDelegate
+//MARK:-NewPostNoticesVCDelegate
 extension NoticesVC : NewPostNoticesVCDelegate {
     func options(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
@@ -415,7 +415,7 @@ extension NoticesVC : NewPostNoticesVCDelegate {
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -444,12 +444,19 @@ extension NoticesVC : NewPostNoticesVCDelegate {
         guard  let post = cell.noticesPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
-
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -458,29 +465,58 @@ extension NoticesVC : NewPostNoticesVCDelegate {
                     return }
                 
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
-
-        
+                
+                
             }
         }
     }
     
     func goProfileByMention(userName: String) {
         if "@\(userName)" == currentUser.username {
-            let vc = ProfileVC(currentUser: currentUser)
-            self.navigationController?.pushViewController(vc, animated: true)
+            
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }else{
             UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                 
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
             }
         }
@@ -488,16 +524,35 @@ extension NoticesVC : NewPostNoticesVCDelegate {
     
     func clickMention(username: String) {
         if "@\(username)" == currentUser.username {
-            let vc = ProfileVC(currentUser: currentUser)
-            self.navigationController?.pushViewController(vc, animated: true)
+            
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }else{
             UserService.shared.getUserByMention(username: username) {[weak self] (user) in
                 guard let sself = self else { return }
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
             }
         }
@@ -525,7 +580,7 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -555,12 +610,20 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
         guard  let post = cell.noticesPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
-            let vc = ProfileVC(currentUser: currentUser)
-            vc.currentUser = currentUser
-            navigationController?.pushViewController(vc, animated: true)
-
+            
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -569,13 +632,23 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
                     return }
                 
                 UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model)
-                    vc.modalPresentationStyle = .fullScreen
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
                 }
-
-        
+                
+                
             }
         }
     }
@@ -619,7 +692,7 @@ extension NoticesVC : ASMainPostLaungerDelgate{
                             Utilities.succesProgress(msg: "Silindi")
                         }else{
                             Utilities.errorProgress(msg: "Hata Oluştu")
-
+                            
                         }
                     }
                 }else{
