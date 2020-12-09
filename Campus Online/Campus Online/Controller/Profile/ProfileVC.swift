@@ -1639,6 +1639,11 @@ extension ProfileVC: GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GAD
             self.schoolPost.append(NoticesMainModel.init(empty: "empty", postId: "empty"))
             self.isSchoolPost = true
             self.collectionview.reloadData()
+        }else if isFavPost{
+            print("\(adLoader) failed with error: \(error.localizedDescription)")
+            self.favPost.append(LessonPostModel.init(empty: "empty", postId: "empty"))
+            self.isLoadMoreFavPost = true
+            self.collectionview.reloadData()
         }
     }
     
