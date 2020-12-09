@@ -32,7 +32,9 @@ private let cell_foodme_data_id = "cell_foodme_data_id"
 private let cell_camp_id = "cell_camp_id"
 private let cell_camp_data_id = "cell_camp_data_id"
 
-class OtherUserProfile: UIViewController  {
+
+
+class OtherUserProfile: UIViewController   {
     lazy var lessonPostModel = [LessonPostModel]()
     lazy var mainPost = [MainPostModel]()
     lazy var favPost = [LessonPostModel]()
@@ -78,6 +80,26 @@ class OtherUserProfile: UIViewController  {
     private var actionSheetOtherUser : ASMainPostOtherUser
 
     var otherUser : OtherUser
+    
+    var isFallowingUser : Bool?{
+       didSet{
+           guard let val = isFallowingUser else { return }
+           if val{
+               followBtn.setTitle("Takibi Bırak", for: .normal)
+               followBtn.setBackgroundColor(color: .red, forState: .normal)
+               followBtn.setTitleColor(.white, for: .normal)
+               followBtn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
+               followBtn.layer.borderColor = UIColor.red.cgColor
+           }else{
+               followBtn.setTitle("Takip Et", for: .normal)
+               followBtn.setBackgroundColor(color: .mainColor(), forState: .normal)
+               followBtn.setTitleColor(.white, for: .normal)
+               followBtn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
+               followBtn.layer.borderColor = UIColor.mainColor().cgColor
+           }
+       }
+   }
+    
     //MARK:-propeties
     let profileImage : UIImageView = {
         let image = UIImageView()
@@ -91,7 +113,7 @@ class OtherUserProfile: UIViewController  {
     lazy var followBtn : UIButton = {
         let btn = UIButton(type: .system)
         btn.clipsToBounds = true
-        btn.setTitle("Profilini Düzenle", for: .normal)
+        btn.setTitle("yükleniyor...", for: .normal)
         btn.titleLabel?.font = UIFont(name: Utilities.font, size: 12)
         btn.setBackgroundColor(color: .mainColor(), forState: .normal)
         btn.setTitleColor(.white, for: .normal)
@@ -173,7 +195,12 @@ class OtherUserProfile: UIViewController  {
 
         return lbl
     }()
-    
+    let sendMsg : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.setImage(#imageLiteral(resourceName: "msg").withRenderingMode(.alwaysOriginal), for: .normal)
+//        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
+        return btn
+    }()
     
     let github : UIButton = {
         let btn  = UIButton(type: .system)
@@ -227,8 +254,10 @@ class OtherUserProfile: UIViewController  {
         v.addSubview(profileImage)
      
          v.addSubview(followBtn)
-         followBtn.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: v.rightAnchor, marginTop: 0, marginLeft: 50, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
-        followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+        followBtn.anchor(top: v.topAnchor, left: nil, bottom: nil, rigth: v.rightAnchor, marginTop: 20, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 170, heigth: 30)
+        v.addSubview(sendMsg)
+        sendMsg.anchor(top: nil, left: nil, bottom: nil, rigth: followBtn.leftAnchor, marginTop: 0, marginLeft: 10, marginBottom: 0, marginRigth: 20, width: 30, heigth: 30)
+        sendMsg.centerYAnchor.constraint(equalTo: followBtn.centerYAnchor).isActive = true
         
         v.addSubview(aboutSection)
         aboutSection.anchor(top: profileImage.bottomAnchor, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 75)
@@ -255,6 +284,20 @@ class OtherUserProfile: UIViewController  {
         navigationItem.title = otherUser.username
         configureUI()
         configureCollectionView()
+        UserService.shared.checkFollowers(currentUser: currentUser, otherUser: otherUser.uid) {[weak self] (_val) in
+            guard let sself = self else { return }
+            sself.isFallowingUser = _val
+
+        }
+        if profileModel.shortSchool == currentUser.short_school {
+            if profileModel.major == currentUser.bolum{
+                getHomePost()
+            }else {
+               getSchoolPost()
+            }
+        }else{
+            getMainPost()
+        }
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -285,7 +328,104 @@ class OtherUserProfile: UIViewController  {
     @objc func dissmis(){
        self.dismiss(animated: true, completion: nil)
     }
-   
+   //MARK:-functions
+    private func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
+        if data.count == 0{
+            completion(true)
+            return
+        }
+        for item in data{
+            let ref = Storage.storage().reference(forURL: item)
+            ref.delete { (err) in
+                completion(true)
+            }
+        }
+    }
+    //MARK: -functions
+    private func removeLesson (lessonName : String! ,completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: "Ders Siliniyor")
+       
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson")
+            .document(lessonName!)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                let abc = Firestore.firestore().collection(sself.currentUser.short_school)
+                    .document("lesson").collection(sself.currentUser.bolum)
+                    .document(lessonName!).collection("fallowers").document(sself.currentUser.username)
+                abc.delete { (err) in
+                    if err == nil {
+                        sself.getAllPost(currentUser: sself.currentUser, lessonName: lessonName) { (val) in
+                            sself.removeAllPost(postId: val, currentUser: sself.currentUser) { (_val) in
+                                if _val{
+                                    completion(true)
+                                    Utilities.succesProgress(msg : "Ders Silindi")
+                                    sself.collectionview.reloadData()
+                                }else{
+                                    completion(false)
+                                  Utilities.errorProgress(msg: "Ders Silinemedi")
+                                }
+                            }
+                        }
+                        
+                    }else{
+                        completion(false)
+                        Utilities.errorProgress(msg: "Ders Silinemedi")
+                    }
+                }
+            }else{
+                completion(false)
+                Utilities.errorProgress(msg: "Ders Silinemedi")
+            }
+        }
+    }
+    private func removeAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
+        for item in postId {
+           let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("lesson-post").document(item)
+            db.delete { (err) in
+                if err == nil {
+                    completion(true)
+                    let dbFav = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("fav-post").document(item)
+                    dbFav.getDocument { (docSnap, err) in
+                        if err == nil {
+                            guard let snap = docSnap else {
+                                completion(true)
+                                return }
+                            if snap.exists{
+                                dbFav.delete()
+                            }
+                        }
+                        completion(true)
+                    }
+                    
+                }else{
+                    completion(false)
+                }
+            }
+        }
+        
+    }
+    private func getAllPost(currentUser : CurrentUser , lessonName : String , completion : @escaping([String]) ->Void){
+         //İSTE/lesson-post/post/1599800825321
+         var postId = [String]()
+         let db = Firestore.firestore().collection(currentUser.short_school)
+             .document("lesson-post").collection("post").whereField("lessonName", isEqualTo: lessonName)
+         db.getDocuments { (querySnap, err) in
+             if err == nil {
+                 guard let snap = querySnap else {
+                     completion([])
+                     return }
+                 for doc in snap.documents {
+                     postId.append(doc.documentID)
+                 }
+                 completion(postId)
+             }
+         }
+     }
     
     //MARK:-load home post
     func getHomePost(){
@@ -865,7 +1005,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
             }
             else if lessonPostModel[indexPath.row].data.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_id, for: indexPath) as! NewPostHomeVC
-//                  cell.delegate = self
+                  cell.delegate = self
                 cell.currentUser = currentUser
                 cell.backgroundColor = .white
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
@@ -880,7 +1020,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_post_data_id, for: indexPath) as! NewPostHomeVCData
                 
                 cell.backgroundColor = .white
-//                cell.delegate = self
+                cell.delegate = self
                 cell.currentUser = currentUser
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
@@ -945,7 +1085,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 if mainPost[indexPath.row].postType == PostType.buySell.despription{
                     if mainPost[indexPath.row].data.isEmpty {
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         
                         cell.backgroundColor = .white
@@ -1034,7 +1174,25 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
         cell.backgroundColor = .red
         return cell
     }
-   
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: loadMoreCell, for: indexPath)
+            as! LoadMoreCell
+        cell.activityView.startAnimating()
+        return cell
+        
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if isLoadMoreHomePost{
+            return CGSize(width: view.frame.width, height: 50)
+        }else if isLoadMoreVayeAppPost{
+            return CGSize(width: view.frame.width, height: 50)
+        }else if isLoadMoreSchoolPost {
+            return CGSize(width: view.frame.width, height: 50)
+        }else{
+            return .zero
+        }
+       
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if isHomePost {
@@ -1210,7 +1368,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
        
-    }
+     }
     
 }
 
@@ -1235,9 +1393,6 @@ extension OtherUserProfile : GADInterstitialDelegate {
     }
     
 }
-
-
-
 
 extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
@@ -1329,5 +1484,348 @@ extension OtherUserProfile : UserProfileMenuBarDelegate{
     
 }
 
+extension OtherUserProfile : ActionSheetHomeLauncherDelegate {
+    func didSelect(option: ActionSheetHomeOptions) {
+        switch option {
+        case .editPost(_):
+            guard let index = selectedIndex else { return }
+            if let h = collectionview.cellForItem(at: index) as? NewPostHomeVCData {
+                let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collectionview.cellForItem(at: index) as? NewPostHomeVC{
+                let vc = StudentEditPost(currentUser: currentUser , post : lessonPostModel[index.row] , heigth : h.msgText.frame.height )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            
+            
+        case .deletePost(_):
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let index = selectedIndex else { return }
+            guard let postId = selectedPostID else {
+                Utilities.errorProgress(msg: "Hata Oluştu")
+                return }
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(postId)
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    sself.deleteToStorage(data: sself.lessonPostModel[index.row].data, postId: postId) { (_val) in
+                        if (_val){
+                            Utilities.succesProgress(msg: "Silindi")
+                        }
+                    }
+                    
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        case .slientPost(_):
+            print("slient")
+        }
+    }
+    
+    
+}
+extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
+    func didSelect(option: ActionSheetOtherUserOptions) {
+        switch option {
+        case .fallowUser(_):
+            Utilities.waitProgress(msg: "")
+            guard let index = selectedIndex else {
+                Utilities.dismissProgress()
+                return }
+            UserService.shared.fetchOtherUser(uid: favPost[index.row].senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return}
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
 
+               
+            }
+    
+            break
+        case .slientUser(_):
+            
+            break
+        case .deleteLesson(_):
+            guard let index = selectedIndex else {
+            Utilities.dismissProgress()
+            return }
+            removeLesson(lessonName: favPost[index.row].lessonName) { (_) in
+              
+            }
+            break
+        case .slientLesson(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            break
+        case .reportUser(_):
+            break
+     
+        }
+    }
+    
+    
+}
+extension OtherUserProfile : NewPostHomeVCDelegate {
+    func options(for cell: NewPostHomeVC) {
+        guard  let post = cell.lessonPostModel else {
+            return
+        }
+        if cell.lessonPostModel?.senderUid == currentUser.uid
+        {
+            actionSheet.delegate = self
+            actionSheet.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPostModel[index.row].postId
+        }else{
+            Utilities.waitProgress(msg: nil)
+            actionOtherUserSheet.delegate = self
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPostModel[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                    guard let sself = self else { return }
+                    Utilities.dismissProgress()
+                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    
+                }
+            
+            
+        }
+    }
+    
+    func like(for cell: NewPostHomeVC) {
+        guard let post = cell.lessonPostModel else { return }
+        PostService.shared.setLike(post: post, collectionView: collectionview, currentUser: currentUser) { (_) in
+           
+        }
+    }
+    
+    func dislike(for cell: NewPostHomeVC) {
+        guard let post = cell.lessonPostModel else { return }
 
+     PostService.shared.setDislike(post: post, collectionView: collectionview, currentUser: currentUser) { (_) in
+        
+     }
+    }
+    
+    func fav(for cell: NewPostHomeVC) {
+        guard let post = cell.lessonPostModel else { return }
+
+        PostService.shared.setFav(post: post, collectionView: collectionview, currentUser: currentUser) { (_) in
+            
+        }
+    }
+    
+    func comment(for cell: NewPostHomeVC) {
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: NewPostHomeVC) {
+        guard let url = URL(string: (cell.lessonPostModel?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+    
+    func showProfile(for cell: NewPostHomeVC) {
+        
+    }
+    
+    func goProfileByMention(userName: String) {
+        if "@\(userName)" == currentUser.username {
+        }else{
+            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                       
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                     
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+               
+            }
+        }
+    }
+    
+    func clickMention(username: String) {
+        if "@\(username)" == currentUser.username {
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }else{
+            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    
+}
+
+extension OtherUserProfile : NewPostHomeVCDataDelegate {
+    func showProfile(for cell: NewPostHomeVCData) {
+
+    }
+    func options(for cell: NewPostHomeVCData) {
+        guard  let post = cell.lessonPostModel else {
+            return
+        }
+        if cell.lessonPostModel?.senderUid == currentUser.uid
+        {
+            actionSheet.delegate = self
+            actionSheet.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPostModel[index.row].postId
+        }else{
+            Utilities.waitProgress(msg: nil)
+            actionOtherUserSheet.delegate = self
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = lessonPostModel[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                    guard let sself = self else { return }
+                    Utilities.dismissProgress()
+                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    
+                }
+            
+            
+        }
+        
+    }
+    
+    func like(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
+        PostService.shared.setLike(post: post, collectionView: collectionview, currentUser: currentUser) { (_) in
+            
+        }
+    }
+    
+    func dislike(for cell: NewPostHomeVCData) {
+           guard let post = cell.lessonPostModel else { return }
+        PostService.shared.setDislike(post: post, collectionView: collectionview, currentUser: currentUser) { (_) in
+            
+        }
+   
+    }
+    
+    func fav(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
+        PostService.shared.setFav(post: post, collectionView: collectionview, currentUser: currentUser) { (_) in
+            
+        }
+   
+    }
+    
+    func comment(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
+        let vc = CommentVC(currentUser: currentUser, post : post)
+        navigationController?.pushViewController(vc, animated: true)
+            
+    }
+    
+    func linkClick(for cell: NewPostHomeVCData) {
+        guard let url = URL(string: (cell.lessonPostModel?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+   
+    
+    
+    
+}
+
+extension OtherUserProfile : BuySellVCDelegate {
+    func options(for cell: BuyAndSellView) {
+        
+    }
+    
+    func like(for cell: BuyAndSellView) {
+        
+    }
+    
+    func dislike(for cell: BuyAndSellView) {
+        
+    }
+    
+    func comment(for cell: BuyAndSellView) {
+        
+    }
+    
+    func linkClick(for cell: BuyAndSellView) {
+        
+    }
+    
+    func showProfile(for cell: BuyAndSellView) {
+        
+    }
+    
+    func mapClick(for cell: BuyAndSellView) {
+        
+    }
+    
+    
+}
