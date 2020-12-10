@@ -25,7 +25,7 @@ class LessonList: UITableViewController {
     //MARK: -lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         setNavigationBar()
         self.navigationController?.navigationBar.isHidden = false
         navigationItem.title = "Ders Ekle - Çıkar"
@@ -267,7 +267,7 @@ class LessonList: UITableViewController {
                                     }
                                 }
                             }
-                           
+                            
                         }else{
                             Utilities.errorProgress(msg: "Eklenemedi")
                         }
@@ -275,7 +275,7 @@ class LessonList: UITableViewController {
                 }else{
                     Utilities.errorProgress(msg: "Eklenemedi")
                 }
-        }
+            }
     }
     private func checkExitLesson(lessonName : String? ,completion : @escaping (Bool) -> Void){
         
@@ -312,8 +312,8 @@ class LessonList: UITableViewController {
     private func addAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
         for item in postId {
-           let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post").document(item)
+            let db = Firestore.firestore().collection("user")
+                .document(currentUser.uid).collection("lesson-post").document(item)
             db.setData(["postId":item], merge: true) { (err) in
                 if err == nil {
                     completion(true)
@@ -327,8 +327,8 @@ class LessonList: UITableViewController {
     private func removeAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
         for item in postId {
-           let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid).collection("lesson-post").document(item)
+            let db = Firestore.firestore().collection("user")
+                .document(currentUser.uid).collection("lesson-post").document(item)
             db.delete { (err) in
                 if err == nil {
                     completion(true)
@@ -366,7 +366,7 @@ class LessonList: UITableViewController {
                                     dbNoti.delete()
                                     
                                 }else{
-                                  Utilities.errorProgress(msg: "Ders Silinemedi")
+                                    Utilities.errorProgress(msg: "Ders Silinemedi")
                                 }
                             }
                         }
