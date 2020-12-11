@@ -141,7 +141,7 @@ class CommentVC: UIViewController, DismisDelegate {
         }else{
             tableView.register(CommentVCDataHeader.self, forHeaderFooterViewReuseIdentifier: headerId_data)
             let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 11)!)
-            self.tableView.sectionHeaderHeight = 60 + 8 + h + 4 + 4 + 100 + 45
+            self.tableView.sectionHeaderHeight = 200 + h
             self.tableView.reloadData()
         }
         
