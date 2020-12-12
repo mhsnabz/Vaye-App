@@ -135,14 +135,14 @@ class CommentVC: UIViewController, DismisDelegate {
         tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.interactive
         if post.data.isEmpty{
             tableView.register(CommentVCHeader.self, forHeaderFooterViewReuseIdentifier: headerId)
-            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 11)!)
-            self.tableView.sectionHeaderHeight = 60 + 8 + h + 4 + 4 + 45
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+            self.tableView.sectionHeaderHeight = 60 + 4 + h + 4  + 4 + 25 + 30
             self.tableView.reloadData()
         }else{
             tableView.register(CommentVCDataHeader.self, forHeaderFooterViewReuseIdentifier: headerId_data)
-            let h = post.text.height(withConstrainedWidth: view.frame.width - 24, font: UIFont(name: Utilities.font, size: 11)!)
-            self.tableView.sectionHeaderHeight = 200 + h
-            self.tableView.reloadData()
+            let h = post.text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
+            self.tableView.sectionHeaderHeight = 60 + 4 + h + 4 + 100 + 4 + 25 + 30
+                self.tableView.reloadData()
         }
         
         

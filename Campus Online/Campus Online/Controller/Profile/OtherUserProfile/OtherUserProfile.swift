@@ -32,7 +32,25 @@ private let cell_foodme_data_id = "cell_foodme_data_id"
 private let cell_camp_id = "cell_camp_id"
 private let cell_camp_data_id = "cell_camp_data_id"
 
-
+extension OtherUserProfile : ASMainOtherUserDelegate {
+    func didSelect(option: ASMainPostOtherUserOptions) {
+        switch option {
+        
+        case .fallowUser(_):
+            break
+        case .slientUser(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            break
+        case .reportUser(_):
+            break
+        }
+    }
+    
+    
+}
 
 class OtherUserProfile: UIViewController     {
     lazy var lessonPostModel = [LessonPostModel]()
@@ -58,11 +76,20 @@ class OtherUserProfile: UIViewController     {
     var currentUser : CurrentUser
     var collectionview: UICollectionView!
     weak var profileHeaderDelegate : ProfileHeaderMenuBarDelegate?
-    private  var actionSheet : ActionSheetHomeLauncher
-    private var actionOtherUserSheet : ActionSheetOtherUserLaunher
-    private var actionSheetCurrentUser : ASNoticesPostCurrentUserLaunher
-    private var actionSheetMainCurrentUser : ActionSheetMainPost
-    private var actionSheetOtherUser : ASMainPostOtherUser
+  
+    
+    
+    
+    //MARK:-home launcher
+    private var homeLauncher : ActionSheetHomeLauncher
+    private var homeLauncherOtherUser : ActionSheetOtherUserLaunher
+    //MARK:-school launcher
+    private var schoolLauncher : ASNoticesPostLaunher
+    private var schoolLauncherCurrentUser : ASNoticesPostCurrentUserLaunher
+    
+    //MARK:-vaye app launcher
+    private var vayeAppLauncherCurrentUser : ActionSheetMainPost
+    private var vayeAppLaunherOtherUser :  ASMainPostOtherUser
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
     //MARK:-post filter val
     var isHomePost : Bool = false
@@ -311,14 +338,21 @@ class OtherUserProfile: UIViewController     {
         self.currentUser = currentUser
         self.otherUser = otherUser
         self.profileModel = profileModel
-        self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
-        self.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+     
         self.width = width
-        self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
-        self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
-        self.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
-        self.actionSheetMainCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+      
         
+       
+        //home launcher
+        self.homeLauncher = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
+        self.homeLauncherOtherUser = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        //notices launher
+        
+        self.schoolLauncher = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        self.schoolLauncherCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        //vayeApp launher
+        self.vayeAppLauncherCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        self.vayeAppLaunherOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         super.init(nibName: nil, bundle: nil)
       
         
@@ -1600,21 +1634,21 @@ extension OtherUserProfile : NewPostHomeVCDelegate {
         }
         if cell.lessonPostModel?.senderUid == currentUser.uid
         {
-            actionSheet.delegate = self
-            actionSheet.show(post: post)
+            homeLauncher.delegate = self
+            homeLauncher.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = lessonPostModel[index.row].postId
         }else{
             Utilities.waitProgress(msg: nil)
-            actionOtherUserSheet.delegate = self
+            homeLauncherOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = lessonPostModel[index.row].postId
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                     guard let sself = self else { return }
                     Utilities.dismissProgress()
-                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    sself.homeLauncherOtherUser.show(post: post, otherUser: user)
                     
                 }
             
@@ -1736,21 +1770,21 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
         }
         if cell.lessonPostModel?.senderUid == currentUser.uid
         {
-            actionSheet.delegate = self
-            actionSheet.show(post: post)
+            homeLauncher.delegate = self
+            homeLauncher.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = lessonPostModel[index.row].postId
         }else{
             Utilities.waitProgress(msg: nil)
-            actionOtherUserSheet.delegate = self
+            homeLauncherOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = lessonPostModel[index.row].postId
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                     guard let sself = self else { return }
                     Utilities.dismissProgress()
-                    sself.actionOtherUserSheet.show(post: post, otherUser: user)
+                    sself.homeLauncherOtherUser.show(post: post, otherUser: user)
                     
                 }
             
@@ -1806,8 +1840,8 @@ extension OtherUserProfile : BuySellVCDelegate {
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-            actionSheetCurrentUser.delegate = self
-            actionSheetMainCurrentUser.show(post: post)
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -1821,7 +1855,7 @@ extension OtherUserProfile : BuySellVCDelegate {
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
-                sself.actionSheetOtherUser.show(post : post , otherUser : user)
+                sself.vayeAppLaunherOtherUser.show(post : post , otherUser : user)
                 
 
             }
@@ -2049,8 +2083,8 @@ extension OtherUserProfile : BuySellVCDataDelegate {
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-            actionSheetCurrentUser.delegate = self
-            actionSheetMainCurrentUser.show(post: post)
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -2062,7 +2096,7 @@ extension OtherUserProfile : BuySellVCDataDelegate {
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
-                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
 
             }
         }
@@ -2150,8 +2184,8 @@ extension OtherUserProfile : FoodMeVCDelegate {
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-            actionSheetCurrentUser.delegate = self
-            actionSheetMainCurrentUser.show(post: post)
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -2163,7 +2197,7 @@ extension OtherUserProfile : FoodMeVCDelegate {
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
-                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
 
             }
         }
@@ -2256,8 +2290,8 @@ extension OtherUserProfile :FoodMeVCDataDelegate{
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-            actionSheetCurrentUser.delegate = self
-            actionSheetMainCurrentUser.show(post: post)
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -2269,7 +2303,7 @@ extension OtherUserProfile :FoodMeVCDataDelegate{
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
-                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
 
             }
         }
@@ -2363,8 +2397,8 @@ extension OtherUserProfile :CampingVCDataDelegate{
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-            actionSheetCurrentUser.delegate = self
-            actionSheetMainCurrentUser.show(post: post)
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -2376,7 +2410,7 @@ extension OtherUserProfile :CampingVCDataDelegate{
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
-                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
 
             }
         }
@@ -2470,8 +2504,8 @@ extension OtherUserProfile :CampingVCDelegate{
         guard let post = cell.mainPost else { return }
         if post.senderUid == currentUser.uid
         {
-            actionSheetCurrentUser.delegate = self
-            actionSheetMainCurrentUser.show(post: post)
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -2483,7 +2517,7 @@ extension OtherUserProfile :CampingVCDelegate{
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
-                sself.actionSheetOtherUser.show(post: post, otherUser: user)
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
 
             }
         }
@@ -2574,7 +2608,27 @@ extension OtherUserProfile :CampingVCDelegate{
 }
 extension OtherUserProfile :NewPostNoticesVCDelegate{
     func options(for cell: NoticesCell) {
-       
+        guard let post = cell.noticesPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            schoolLauncherCurrentUser.delegate = self
+            schoolLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.schoolLauncher.show(post: post, otherUser: user)
+                
+            }
+        }
     }
     
     func like(for cell: NoticesCell) {
@@ -2718,7 +2772,27 @@ extension OtherUserProfile :NewPostNoticesVCDelegate{
 }
 extension OtherUserProfile :NewPostNoticesDataVCDelegate{
     func options(for cell: NoticesDataCell) {
-        
+        guard let post = cell.noticesPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            schoolLauncherCurrentUser.delegate = self
+            schoolLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.schoolLauncher.show(post: post, otherUser: user)
+                
+            }
+        }
     }
     
     func like(for cell: NoticesDataCell) {
