@@ -1002,6 +1002,13 @@ extension CommentVC : ActionSheetOtherUserLauncherDelegate {
         case .slientPost(_):
             break
         case .reportPost(_):
+//            guard let index = selectedIndex else {
+//            Utilities.dismissProgress()
+//            return }
+//            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, postId: lessonPost[index.row].postId)
+//            let controller = UINavigationController(rootViewController: vc)
+//            controller.modalPresentationStyle = .fullScreen
+//            self.present(controller, animated: true, completion: nil)
             break
         case .reportUser(_):
             print("report user")

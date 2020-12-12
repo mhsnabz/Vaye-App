@@ -644,6 +644,8 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
         }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.reportPost(currentUser).description {
                 //FIXME: report post
+          
+            
         }
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientLesson(currentUser).description
         {
