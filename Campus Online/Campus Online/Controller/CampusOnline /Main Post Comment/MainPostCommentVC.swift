@@ -773,17 +773,26 @@ extension MainPostCommentVC : ASMainPostLaungerDelgate {
                     let vc = EditFoodMePost(currentUser: currentUser, post: post, h: size)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                                    Utilities.dismissProgress()
+                        
+                    })
                 }else if post.postType == PostType.buySell.despription{
                     let vc = EditSellBuyPost(currentUser: currentUser, post: post, h: size)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                                 Utilities.dismissProgress()
+                     
+                 })
                 }else if post.postType == PostType.camping.despription{
                     let vc = EditCampingPost(currentUser: currentUser, post: post, h: size)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                                 Utilities.dismissProgress()
+                     
+                 })
                 }
           
            

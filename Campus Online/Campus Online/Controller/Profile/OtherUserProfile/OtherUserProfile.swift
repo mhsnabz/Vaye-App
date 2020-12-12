@@ -2615,13 +2615,13 @@ extension OtherUserProfile :NewPostNoticesVCDelegate{
             schoolLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
-            selectedPostID = mainPost[index.row].postId
+            selectedPostID = schoolPost[index.row].postId
         }
         else{
             Utilities.waitProgress(msg: nil)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
-            selectedPostID = mainPost[index.row].postId
+            selectedPostID = schoolPost[index.row].postId
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
@@ -2779,13 +2779,13 @@ extension OtherUserProfile :NewPostNoticesDataVCDelegate{
             schoolLauncherCurrentUser.show(post: post)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
-            selectedPostID = mainPost[index.row].postId
+            selectedPostID = schoolPost[index.row].postId
         }
         else{
             Utilities.waitProgress(msg: nil)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
-            selectedPostID = mainPost[index.row].postId
+            selectedPostID = schoolPost[index.row].postId
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 Utilities.dismissProgress()

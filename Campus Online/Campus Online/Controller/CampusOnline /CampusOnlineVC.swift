@@ -856,12 +856,18 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                     let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                        Utilities.dismissProgress()
+            
+        })
                 }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
                     let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                        Utilities.dismissProgress()
+            
+        })
                 }
             }else if mainPost[index.row].postType == PostType.foodMe.despription{
                 if let h = collectionview.cellForItem(at: index) as? FoodMeViewData {
@@ -873,7 +879,10 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                     let vc = EditFoodMePost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                                    Utilities.dismissProgress()
+                        
+                    })
                 }
                 
             }else if mainPost[index.row].postType == PostType.camping.despription{
@@ -886,7 +895,9 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                     let vc = EditCampingPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
-                    self.present(controller, animated: true, completion: nil)
+                    self.present(controller, animated: true, completion: {
+                        Utilities.dismissProgress()
+                    })
                 }
             }
             

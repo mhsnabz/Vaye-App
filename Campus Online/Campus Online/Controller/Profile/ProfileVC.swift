@@ -31,6 +31,9 @@ import FirebaseFirestore
 import FirebaseStorage
 import SDWebImage
 import GoogleMobileAds
+import MapKit
+import CoreLocation
+
 class ProfileVC: UIViewController  , UIScrollViewDelegate{
    
     
@@ -71,6 +74,17 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     var isLoadMoreSchoolPost : Bool = false
     var isLoadMoreVayeAppPost : Bool = false
     var isLoadMoreFavPost : Bool = false
+    
+    
+    
+    //MARK:-school launcher
+    private var schoolLauncher : ASNoticesPostLaunher
+    private var schoolLauncherCurrentUser : ASNoticesPostCurrentUserLaunher
+    
+    //MARK:-vaye app launcher
+    private var vayeAppLauncherCurrentUser : ActionSheetMainPost
+    private var vayeAppLaunherOtherUser :  ASMainPostOtherUser
+    
     //MARK: -properties
     let titleLbl : UILabel = {
        let lbl = UILabel()
@@ -279,6 +293,15 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         self.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
         self.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         self.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        
+        
+        //notices launher
+        
+        self.schoolLauncher = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        self.schoolLauncherCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        //vayeApp launher
+        self.vayeAppLauncherCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        self.vayeAppLaunherOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
         
         self.width = width
         print("width : \(width)")
@@ -1187,7 +1210,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
             }else{
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_notices_data_id, for: indexPath) as! NoticesDataCell
                 cell.backgroundColor = .white
-//                cell.delegate = self
+                cell.delegate = self
                 cell.currentUser = currentUser
                 let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
@@ -1214,7 +1237,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 if mainPost[indexPath.row].postType == PostType.buySell.despription{
                     if mainPost[indexPath.row].data.isEmpty {
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         
                         cell.backgroundColor = .white
@@ -1228,7 +1251,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     }else {
                         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
                         cell.backgroundColor = .white
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -1243,7 +1266,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 }else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
                     if mainPost[indexPath.row].data.isEmpty {
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_id, for: indexPath) as! FoodMeView
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         cell.backgroundColor = .white
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
@@ -1256,7 +1279,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_foodme_data_id, for: indexPath) as! FoodMeViewData
                         
                         cell.backgroundColor = .white
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -1271,7 +1294,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     if mainPost[indexPath.row].data.isEmpty {
                        
                             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_id, for: indexPath) as! CampingView
-//                            cell.delegate = self
+                            cell.delegate = self
                             cell.currentUser = currentUser
                             cell.backgroundColor = .white
                             let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
@@ -1284,7 +1307,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_data_id, for: indexPath) as! CampingDataView
                         
                         cell.backgroundColor = .white
-//                        cell.delegate = self
+                        cell.delegate = self
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
@@ -2130,5 +2153,462 @@ extension ProfileVC : ASMainPostLaungerDelgate {
         }
     }
     
+    
+}
+extension ProfileVC : BuySellVCDelegate {
+    func linkClick(for cell: BuyAndSellView) {
+        
+    }
+    
+    func showProfile(for cell: BuyAndSellView) {
+        
+    }
+    
+    func options(for cell: BuyAndSellView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+//            actionOtherUserSheet.delegate = self
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.vayeAppLaunherOtherUser.show(post : post , otherUser : user)
+                
+
+            }
+
+
+        }
+    }
+    func mapClick(for cell: BuyAndSellView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+
+    }
+    func like(for cell: BuyAndSellView)
+    {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: BuyAndSellView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    
+    
+    func comment(for cell: BuyAndSellView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
+}
+extension ProfileVC : NewPostNoticesDataVCDelegate {
+    func options(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            schoolLauncherCurrentUser.delegate = self
+            schoolLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = schoolPost[index.row].postId
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = schoolPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.schoolLauncher.show(post: post, otherUser: user)
+                
+            }
+        }
+    }
+    
+    func like(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setPostLike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("liked")
+            
+        }
+    }
+    
+    func dislike(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        NoticesService.shared.setDislike( collectionview: collectionview, currentUser: currentUser, post: post) { (_) in
+            print("disliked")
+        }
+    }
+    
+    func comment(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func showProfile(for cell: NoticesDataCell) {
+        
+    }
+    
+    
+}
+extension ProfileVC : BuySellVCDataDelegate {
+    func mapClick(for cell: BuyAndSellDataView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    func options(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+   
+    
+    func comment(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: BuyAndSellDataView) {
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+    
+    func showProfile(for cell: BuyAndSellDataView) {
+       
+    }
+    
+    
+    
+}
+extension ProfileVC : FoodMeVCDelegate {
+    func options(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: FoodMeView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: FoodMeView) {
+        
+    }
+    
+    func showProfile(for cell: FoodMeView) {
+        
+    }
+    
+    func mapClick(for cell: FoodMeView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    
+    
+}
+extension ProfileVC : FoodMeVCDataDelegate {
+    func options(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.food_me.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: FoodMeViewData) {
+        
+    }
+    
+    func mapClick(for cell: FoodMeViewData) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    func showProfile(for cell: FoodMeViewData) {
+       
+    }
+    
+}
+extension ProfileVC : CampingVCDelegate {
+    func options(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: CampingView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: CampingView) {
+        
+    }
+    
+    func showProfile(for cell: CampingView) {
+       
+    }
+    
+    func mapClick(for cell: CampingView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    
+}
+extension ProfileVC : CampingVCDataDelegate {
+    func options(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        if post.senderUid == currentUser.uid
+        {
+            vayeAppLauncherCurrentUser.delegate = self
+            vayeAppLauncherCurrentUser.show(post: post)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+        }else {
+           Utilities.waitProgress(msg: nil)
+            guard let  index = collectionview.indexPath(for: cell) else { return }
+            selectedIndex = index
+            selectedPostID = mainPost[index.row].postId
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                Utilities.dismissProgress()
+                sself.vayeAppLaunherOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
+    }
+    
+    func like(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
+    }
+    
+    func dislike(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.camping.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+            
+        }
+    }
+    
+    func comment(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func linkClick(for cell: CampingDataView) {
+        
+    }
+    
+    func mapClick(for cell: CampingDataView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    func showProfile(for cell: CampingDataView) {
+        
+    }
     
 }
