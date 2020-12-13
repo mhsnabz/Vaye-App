@@ -682,6 +682,7 @@ extension FoodMe : FoodMeVCDataDelegate {
             selectedPostID = mainPost[index.row].postId
         }
         else{
+            actionSheetOtherUser.delegate = self
             Utilities.waitProgress(msg: nil)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
@@ -825,6 +826,29 @@ extension FoodMe : ASMainPostLaungerDelgate {
             }
         case .slientPost(_):
            break
+        }
+    }
+    
+    
+}
+extension FoodMe : ASMainOtherUserDelegate {
+    func didSelect(option: ASMainPostOtherUserOptions) {
+        switch option{
+        
+        case .fallowUser(_):
+            break
+        case .slientUser(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            guard let index = selectedIndex else { return }
+            let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)
+            navigationController?.pushViewController(vc, animated: true)
+        case .reportUser(_):
+            guard let index = selectedIndex else { return }
+            let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportUser.description)
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     

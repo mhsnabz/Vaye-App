@@ -603,6 +603,7 @@ extension CampVC : CampingVCDelegate{
             selectedPostID = mainPost[index.row].postId
         }else {
            Utilities.waitProgress(msg: nil)
+            actionSheetOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -774,4 +775,31 @@ extension CampVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADU
         self.loadMore = false
         self.collectionview.reloadData()
     }
+}
+extension CampVC : ASMainOtherUserDelegate {
+    func didSelect(option: ASMainPostOtherUserOptions) {
+        switch option {
+        
+        case .fallowUser(_):
+            break
+        case .slientUser(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            guard let index = selectedIndex else { return }
+            let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid
+                                 , postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)
+            navigationController?.pushViewController(vc, animated: true)
+            break
+        case .reportUser(_):
+            guard let index = selectedIndex else { return }
+            let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid
+                                 , postId: mainPost[index.row].postId, reportType: ReportType.reportUser.description)
+            navigationController?.pushViewController(vc, animated: true)
+            break
+        }
+    }
+    
+    
 }

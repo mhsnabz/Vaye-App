@@ -193,6 +193,7 @@ class MainPostCommentVC: UIViewController , DismisDelegate {
             actionSheetCurrentUser.show(post: post)
             inputAccessoryView?.isHidden = true
         }else{
+            actionSheetOtherUser.delegate = self
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
                 guard let sself = self else { return }
                 sself.actionSheetOtherUser.show(post: sself.post, otherUser: user)
@@ -989,6 +990,50 @@ extension MainPostCommentVC :  CampingDataCommentHeaderDelegate{
         guard let lat = post.geoPoint?.latitude else { return }
         guard let longLat = post.geoPoint?.longitude else { return }
         openInMap(lat: lat, longLat: longLat, locationName: locaitonName)
+    }
+    
+    
+}
+extension MainPostCommentVC : ASMainOtherUserDelegate {
+    func didSelect(option: ASMainPostOtherUserOptions) {
+        switch option {
+        
+        case .fallowUser(_):
+            break
+        case .slientUser(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            
+            
+            if post.postType == PostType.buySell.despription {
+                let vc = ReportingVC(target: ReportTarget.buySellPost.description, currentUser: currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportPost.description)
+                navigationController?.pushViewController(vc, animated: true)
+                
+            }else if post.postType == PostType.foodMe.despription{
+                let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportPost.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }else if post.postType == PostType.camping.despription{
+                let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportPost.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            break
+        case .reportUser(_):
+           
+            if post.postType == PostType.buySell.despription {
+                let vc = ReportingVC(target: ReportTarget.buySellPost.description, currentUser: currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportUser.description)
+                navigationController?.pushViewController(vc, animated: true)
+                
+            }else if post.postType == PostType.foodMe.despription{
+                let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportUser.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }else if post.postType == PostType.camping.despription{
+                let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportUser.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            break
+        }
     }
     
     

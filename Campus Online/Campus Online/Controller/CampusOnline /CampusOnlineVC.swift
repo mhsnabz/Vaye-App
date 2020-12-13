@@ -47,7 +47,7 @@ class CampusOnlineVC: UIViewController{
     private var actionSheetCurrentUser : ActionSheetMainPost
     private var actionSheetOtherUser : ASMainPostOtherUser
     let adUnitID =  "ca-app-pub-3940256099942544/3986624511"
-//        let adUnitID = "ca-app-pub-1362663023819993/1801312504"
+    //        let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     let label : UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .center
@@ -75,11 +75,11 @@ class CampusOnlineVC: UIViewController{
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-   
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        animationView()
+        //        animationView()
         
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
@@ -94,7 +94,7 @@ class CampusOnlineVC: UIViewController{
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(hole(_:)))
         swipeRight.direction = UISwipeGestureRecognizer.Direction.right
         self.view.addGestureRecognizer(swipeRight)
-
+        
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(hole(_:)))
         swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
         self.view.addGestureRecognizer(swipeLeft)
@@ -108,7 +108,7 @@ class CampusOnlineVC: UIViewController{
     @objc  func hole(_ recognizer: UISwipeGestureRecognizer) {
         if (recognizer.direction == UISwipeGestureRecognizer.Direction.left)
         {
-           self.menuClick()
+            self.menuClick()
         }else if recognizer.direction == .right {
             self.menuClick()
         }else {
@@ -116,9 +116,9 @@ class CampusOnlineVC: UIViewController{
         }
     }
     lazy var backView : UIView = {
-       let v = UIView()
+        let v = UIView()
         v.backgroundColor = UIColor.init(white: 0.95, alpha: 0.5)
-       
+        
         return v
     }()
     //MARK:-selectors
@@ -162,9 +162,9 @@ class CampusOnlineVC: UIViewController{
         }
         
     }
-
+    
     fileprivate func configureUI(){
- 
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -185,7 +185,7 @@ class CampusOnlineVC: UIViewController{
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
         refresher.tintColor = .white
         collectionview.refreshControl?.beginRefreshing()
-      
+        
         getPost()
     }
     
@@ -272,7 +272,7 @@ class CampusOnlineVC: UIViewController{
     }
     
     private func loadMorePost(completion: @escaping(Bool) ->Void){
-     
+        
         
         guard let pagee = page else {
             loadMore = false
@@ -290,7 +290,7 @@ class CampusOnlineVC: UIViewController{
                 self.loadMore = false
                 collectionview.reloadData()
                 completion(false)
-            
+                
             }else{
                 for item in snap.documents{
                     let db = Firestore.firestore().collection("main-post")
@@ -312,8 +312,8 @@ class CampusOnlineVC: UIViewController{
                                     completion(true)
                                     
                                 }
-                               
-                          
+                                
+                                
                                 
                             }else{
                                 
@@ -334,16 +334,16 @@ class CampusOnlineVC: UIViewController{
                         }
                         
                     }
-                   
+                    
                     page = snap.documents.last
                     
-                  
+                    
                     
                 }
                 self.fetchAds()
-//                self.collectionview.reloadData()
+                //                self.collectionview.reloadData()
                 
-//                loadMore = false
+                //                loadMore = false
                 
             }
         }
@@ -407,7 +407,7 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
                     cell.backgroundColor = .white
                     let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                     cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                   
+                    
                     cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                     cell.mainPost = mainPost[indexPath.row]
                     return cell
@@ -428,17 +428,17 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
                 }
             }else if mainPost[indexPath.row].postType == PostType.camping.despription{
                 if mainPost[indexPath.row].data.isEmpty {
-                   
-                        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_id, for: indexPath) as! CampingView
-                        cell.delegate = self
-                        cell.currentUser = currentUser
-                        cell.backgroundColor = .white
-                        let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
-                        cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                       
-                        cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-                        cell.mainPost = mainPost[indexPath.row]
-                        return cell
+                    
+                    let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_id, for: indexPath) as! CampingView
+                    cell.delegate = self
+                    cell.currentUser = currentUser
+                    cell.backgroundColor = .white
+                    let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
+                    cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
+                    
+                    cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+                    cell.mainPost = mainPost[indexPath.row]
+                    return cell
                 }else{
                     let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cell_camp_data_id, for: indexPath) as! CampingDataView
                     
@@ -458,7 +458,7 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
             
             
         }
-       
+        
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: "empty", for: indexPath) as! EmptyCell
         return cell
         
@@ -532,22 +532,22 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
         
         let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row], target: mainPost[indexPath.row].postType)
         navigationController?.pushViewController(vc, animated: true)
-       
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-      
-          if mainPost.count > 5 {
-             
-              if indexPath.item == mainPost.count - 1 {
-                  loadMorePost { (val) in
-                      
-                  }
-              }else{
-                  self.loadMore = false
-              }
-          }
+        
+        if mainPost.count > 5 {
+            
+            if indexPath.item == mainPost.count - 1 {
+                loadMorePost { (val) in
+                    
+                }
+            }else{
+                self.loadMore = false
+            }
+        }
     }
     
 }
@@ -565,7 +565,7 @@ extension CampusOnlineVC :  BuySellVCDelegate{
         }
         else{
             Utilities.waitProgress(msg: nil)
-//            actionOtherUserSheet.delegate = self
+            actionSheetOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -574,22 +574,22 @@ extension CampusOnlineVC :  BuySellVCDelegate{
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post : post , otherUser : user)
                 
-
+                
             }
-
-
+            
+            
         }
     }
     func mapClick(for cell: BuyAndSellView) {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
-
+        
     }
     func like(for cell: BuyAndSellView)
     {
@@ -616,17 +616,17 @@ extension CampusOnlineVC :  BuySellVCDelegate{
     
     func linkClick(for cell: BuyAndSellView)
     {
-//        guard let url = URL(string: (cell.mainPost?.link)!) else {
-//            return
-//        }
-//        UIApplication.shared.open(url)
+        //        guard let url = URL(string: (cell.mainPost?.link)!) else {
+        //            return
+        //        }
+        //        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellView) {
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
                 guard let self = self else { return }
@@ -638,7 +638,7 @@ extension CampusOnlineVC :  BuySellVCDelegate{
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -650,20 +650,20 @@ extension CampusOnlineVC :  BuySellVCDelegate{
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }
                 }
-
-        
+                
+                
             }
         }
     }
@@ -688,18 +688,18 @@ extension CampusOnlineVC :  BuySellVCDelegate{
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }                }
-               
+                
             }
         }
     }
@@ -712,7 +712,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
@@ -728,7 +728,8 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }else {
-           Utilities.waitProgress(msg: nil)
+            Utilities.waitProgress(msg: nil)
+            actionSheetOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -736,7 +737,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -755,7 +756,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
         }
     }
     
-   
+    
     
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
@@ -774,7 +775,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
                 guard let self = self else { return }
@@ -786,7 +787,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -798,20 +799,20 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }
                 }
-
-        
+                
+                
             }
         }
     }
@@ -822,7 +823,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
 extension CampusOnlineVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-      
+        
         print("\(adLoader) failed with error: \(error.localizedDescription)")
         self.loadMore = true
         self.collectionview.reloadData()
@@ -858,16 +859,16 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: {
                         Utilities.dismissProgress()
-            
-        })
+                        
+                    })
                 }else if let  h = collectionview.cellForItem(at: index) as? BuyAndSellView{
                     let vc = EditSellBuyPost(currentUser: currentUser, post: mainPost[index.row], h: h.msgText.frame.height)
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: {
                         Utilities.dismissProgress()
-            
-        })
+                        
+                    })
                 }
             }else if mainPost[index.row].postType == PostType.foodMe.despription{
                 if let h = collectionview.cellForItem(at: index) as? FoodMeViewData {
@@ -880,7 +881,7 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                     let controller = UINavigationController(rootViewController: vc)
                     controller.modalPresentationStyle = .fullScreen
                     self.present(controller, animated: true, completion: {
-                                    Utilities.dismissProgress()
+                        Utilities.dismissProgress()
                         
                     })
                 }
@@ -904,7 +905,7 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
             
             break
         case .deletePost(_):
-           
+            
             Utilities.waitProgress(msg: "Siliniyor")
             guard let index = selectedIndex else { return }
             guard let postId = selectedPostID else {
@@ -914,7 +915,7 @@ extension CampusOnlineVC : ASMainPostLaungerDelgate {
                 .document("post")
                 .collection("post")
                 .document(postId)
-           
+            
             db.delete {[weak self] (err) in
                 guard let sself = self else { return }
                 if err == nil {
@@ -947,7 +948,8 @@ extension CampusOnlineVC : FoodMeVCDelegate{
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }else {
-           Utilities.waitProgress(msg: nil)
+            actionSheetOtherUser.delegate = self
+            Utilities.waitProgress(msg: nil)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -955,7 +957,7 @@ extension CampusOnlineVC : FoodMeVCDelegate{
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -989,7 +991,7 @@ extension CampusOnlineVC : FoodMeVCDelegate{
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
                 guard let self = self else { return }
@@ -1001,7 +1003,7 @@ extension CampusOnlineVC : FoodMeVCDelegate{
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -1012,20 +1014,20 @@ extension CampusOnlineVC : FoodMeVCDelegate{
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }
                 }
-
-        
+                
+                
             }
         }
     }
@@ -1034,7 +1036,7 @@ extension CampusOnlineVC : FoodMeVCDelegate{
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
@@ -1055,7 +1057,8 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }else {
-           Utilities.waitProgress(msg: nil)
+            Utilities.waitProgress(msg: nil)
+            actionSheetOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -1063,7 +1066,7 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -1097,7 +1100,7 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
@@ -1108,7 +1111,7 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
                 guard let self = self else { return }
@@ -1120,7 +1123,7 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -1132,20 +1135,20 @@ extension CampusOnlineVC : FoodMeVCDataDelegate {
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }
                 }
-
-        
+                
+                
             }
         }
     }
@@ -1164,7 +1167,8 @@ extension CampusOnlineVC : CampingVCDelegate {
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }else {
-           Utilities.waitProgress(msg: nil)
+            Utilities.waitProgress(msg: nil)
+            actionSheetOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -1172,7 +1176,7 @@ extension CampusOnlineVC : CampingVCDelegate {
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -1206,7 +1210,7 @@ extension CampusOnlineVC : CampingVCDelegate {
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
                 guard let self = self else { return }
@@ -1218,7 +1222,7 @@ extension CampusOnlineVC : CampingVCDelegate {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -1230,20 +1234,20 @@ extension CampusOnlineVC : CampingVCDelegate {
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }
                 }
-
-        
+                
+                
             }
         }
     }
@@ -1252,7 +1256,7 @@ extension CampusOnlineVC : CampingVCDelegate {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
@@ -1273,7 +1277,8 @@ extension CampusOnlineVC : CampingVCDataDelegate {
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
         }else {
-           Utilities.waitProgress(msg: nil)
+            Utilities.waitProgress(msg: nil)
+            actionSheetOtherUser.delegate = self
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
@@ -1281,7 +1286,7 @@ extension CampusOnlineVC : CampingVCDataDelegate {
                 guard let sself = self else { return }
                 Utilities.dismissProgress()
                 sself.actionSheetOtherUser.show(post: post, otherUser: user)
-
+                
             }
         }
     }
@@ -1315,7 +1320,7 @@ extension CampusOnlineVC : CampingVCDataDelegate {
         guard let lat = cell.mainPost?.geoPoint.latitude else { return }
         guard let long = cell.mainPost?.geoPoint.longitude else { return }
         let coordinate = CLLocationCoordinate2DMake(lat, long)
-                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
         if let name = cell.mainPost?.locationName {
             mapItem.name = name
         }
@@ -1326,7 +1331,7 @@ extension CampusOnlineVC : CampingVCDataDelegate {
         guard  let post = cell.mainPost else {
             return
         }
-      
+        
         if post.senderUid == currentUser.uid{
             UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
                 guard let self = self else { return }
@@ -1338,7 +1343,7 @@ extension CampusOnlineVC : CampingVCDataDelegate {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-
+            
         }else{
             Utilities.waitProgress(msg: nil)
             UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
@@ -1350,20 +1355,64 @@ extension CampusOnlineVC : CampingVCDataDelegate {
                     UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                         if val {
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }else{
                             let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
+                            
                             sself.navigationController?.pushViewController(vc, animated: true)
                             Utilities.dismissProgress()
                         }
                         
                     }
                 }
-        
+                
             }
+        }
+    }
+    
+    
+}
+extension CampusOnlineVC : ASMainOtherUserDelegate {
+    func didSelect(option: ASMainPostOtherUserOptions) {
+        switch option{
+        
+        case .fallowUser(_):
+            break
+        case .slientUser(_):
+            break
+        case .slientPost(_):
+            break
+        case .reportPost(_):
+            
+            guard let index = selectedIndex else { return }
+            if mainPost[index.row].postType == PostType.buySell.despription {
+                let vc = ReportingVC(target: ReportTarget.buySellPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)
+                navigationController?.pushViewController(vc, animated: true)
+                
+            }else if mainPost[index.row].postType == PostType.foodMe.despription{
+                let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }else if mainPost[index.row].postType == PostType.camping.despription{
+                let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            break
+        case .reportUser(_):
+            guard let index = selectedIndex else { return }
+            if mainPost[index.row].postType == PostType.buySell.despription {
+                let vc = ReportingVC(target: ReportTarget.buySellPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportUser.description)
+                navigationController?.pushViewController(vc, animated: true)
+                
+            }else if mainPost[index.row].postType == PostType.foodMe.despription{
+                let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportUser.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }else if mainPost[index.row].postType == PostType.camping.despription{
+                let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportUser.description)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            break
         }
     }
     
