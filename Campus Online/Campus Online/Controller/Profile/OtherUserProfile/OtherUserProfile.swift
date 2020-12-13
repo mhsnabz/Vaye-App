@@ -1621,10 +1621,8 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
             guard let index = selectedIndex else {
             Utilities.dismissProgress()
             return }
-            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, postId: lessonPostModel[index.row].postId)
-            let controller = UINavigationController(rootViewController: vc)
-            controller.modalPresentationStyle = .fullScreen
-            self.present(controller, animated: true, completion: nil)
+            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, otherUser: lessonPostModel[index.row].senderUid, postId: lessonPostModel[index.row].postId, reportType: ReportType.reportPost.description)
+            navigationController?.pushViewController(vc, animated: true)
             break
         case .reportUser(_):
             break

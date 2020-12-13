@@ -1109,10 +1109,17 @@ extension HomeVC : ActionSheetOtherUserLauncherDelegate{
             guard let index = selectedIndex else {
             Utilities.dismissProgress()
             return }
-            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, postId: lessonPost[index.row].postId)
+            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, otherUser: lessonPost[index.row].senderUid, postId: lessonPost[index.row].postId, reportType: ReportType.reportPost.description)
+           
             navigationController?.pushViewController(vc, animated: true)
             break
         case .reportUser(_):
+            guard let index = selectedIndex else {
+            Utilities.dismissProgress()
+            return }
+            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, otherUser: lessonPost[index.row].senderUid, postId: lessonPost[index.row].postId, reportType: ReportType.reportUser.description)
+           
+            navigationController?.pushViewController(vc, animated: true)
             break
      
         }
