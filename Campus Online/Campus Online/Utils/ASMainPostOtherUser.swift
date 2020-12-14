@@ -122,12 +122,13 @@ class ASMainPostOtherUser : NSObject {
             completion(false)
         }
     }
+    //main-post/post/post/1607266298521
     private func setPostSlient(post : MainPostModel?,completion : @escaping(Bool) ->Void){
         guard let post = post else { return }
         ///main-post/sell-buy/post/1604436850197
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
         db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
@@ -155,7 +156,7 @@ class ASMainPostOtherUser : NSObject {
         ///main-post/sell-buy/post/1604436850197
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection("main-post")
-            .document(post.postType)
+            .document("post")
             .collection("post")
             .document(post.postId)
         db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])  {[weak self] (err) in
@@ -163,24 +164,24 @@ class ASMainPostOtherUser : NSObject {
                 Utilities.dismissProgress()
                 return}
             if err == nil {
-                Utilities.dismissProgress()
+              
                 sself.postIsSlient = false
                  sself.post?.silent.remove(element : sself.currentUser.uid)
                 completion(false)
-                sself.tableView.reloadData()
+
             }else{
-                Utilities.dismissProgress()
+               
                 sself.postIsSlient = true
                 sself.post?.silent.append(sself.currentUser.uid)
                 completion(true)
-                sself.tableView.reloadData()
+
             }
         }
     
     }
     private func setUserSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user").document(otherUserUid)
-        db.updateData(["slient":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+        db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
             guard let sself = self else {
                            Utilities.dismissProgress()
                            return}
