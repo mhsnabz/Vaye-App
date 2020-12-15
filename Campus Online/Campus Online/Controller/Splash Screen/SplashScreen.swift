@@ -116,39 +116,39 @@ class SplashScreen: UIViewController {
         let db = Firestore.firestore().collection("user").document(uid)
         db.getDocument { (doc, err) in
             if err == nil {
-                if !doc!.exists
-                {
-                    //                        self.progres.dismiss()
-                    //                       let vc = TeacherVC()
-                    //                        vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-                    //                       self.present(vc, animated: true, completion: nil)
-                    
-                }
-                else if (doc?.get("name") ) == nil {
-                    //                       self.progres.dismiss()
-                    //                                          let vc = TeacherVC()
-                    //                                           vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-                    //                                          self.present(vc, animated: true, completion: nil)
-                }
-                else
-                {
-                    let value = doc!.get("hasClasses") as! Bool
-                    
-                    if !value
-                    {
-                        //                            self.progres.dismiss()
-                        //                           let vc = SetTeacherFakulte()
-                        //                           vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-                        //                           self.present(vc, animated: true, completion: nil)
-                        //
+                guard let doc = doc else { return }
+                if doc.exists {
+                    if (doc.get("name")) == nil {
+                        Utilities.dismissProgress()
+                        
+                        let cont = UINavigationController(rootViewController: TeacherVC())
+                        cont.modalPresentationStyle = .fullScreen
+                        self.present(cont, animated: true, completion: nil)
+                        self.waitAnimation.removeFromSuperview()
+                    } else if (doc.get("fakulte") == nil){
+                        Utilities.dismissProgress()
+                        UserService.shared.getCurrentUser(uid: Auth.auth().currentUser!.uid) { (user) in
+                            let cont = UINavigationController(rootViewController: SetTeacherFakulte(currentUser : user))
+                            cont.modalPresentationStyle = .fullScreen
+                            self.present(cont, animated: true, completion: nil)
+                            self.waitAnimation.removeFromSuperview()
+                        }
+                        
                     }
+                }else  {
+                    Utilities.errorProgress(msg: "Kaydınızı Bulunmuyor")
                     
                     
+                    let cont = UINavigationController(rootViewController: LoginVC())
+                    cont.modalPresentationStyle = .fullScreen
+                    self.present(cont, animated: true, completion: nil)
+                    self.waitAnimation.removeFromSuperview()
+                        
                 }
             }
-        }
     }
     
+    }
     func checkHasExistStudent(withUid uid : String!){
         let db = Firestore.firestore().collection("user").document(uid)
         db.getDocument { (doc, err) in

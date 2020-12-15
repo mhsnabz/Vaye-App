@@ -191,6 +191,8 @@
 		66C4A6F2250C3CCB00259322 /* DataViewDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A6F1250C3CCB00259322 /* DataViewDoc.swift */; };
 		66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C379258566D000244D3B /* ReportingVC.swift */; };
 		66D7C3822585931400244D3B /* ReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3812585931400244D3B /* ReportingService.swift */; };
+		66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3B625882F9900244D3B /* TeacherVC.swift */; };
+		66D7C3BF25883D2700244D3B /* SetTeacherFakulte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */; };
 		66D911CF24EEA9E8002D760A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911CE24EEA9E8002D760A /* AppDelegate.swift */; };
 		66D911D824EEA9EA002D760A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D911D724EEA9EA002D760A /* Assets.xcassets */; };
 		66D911E624EEA9EA002D760A /* Campus_OnlineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911E524EEA9EA002D760A /* Campus_OnlineTests.swift */; };
@@ -436,6 +438,8 @@
 		66C4A6F1250C3CCB00259322 /* DataViewDoc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewDoc.swift; sourceTree = "<group>"; };
 		66D7C379258566D000244D3B /* ReportingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingVC.swift; sourceTree = "<group>"; };
 		66D7C3812585931400244D3B /* ReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingService.swift; sourceTree = "<group>"; };
+		66D7C3B625882F9900244D3B /* TeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherVC.swift; sourceTree = "<group>"; };
+		66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTeacherFakulte.swift; sourceTree = "<group>"; };
 		66D911CB24EEA9E8002D760A /* Campus Online.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Campus Online.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D911CE24EEA9E8002D760A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66D911D724EEA9EA002D760A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1095,6 +1099,15 @@
 			path = Report;
 			sourceTree = "<group>";
 		};
+		66D7C3B525882F8300244D3B /* Teacher */ = {
+			isa = PBXGroup;
+			children = (
+				66D7C3B625882F9900244D3B /* TeacherVC.swift */,
+				66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */,
+			);
+			path = Teacher;
+			sourceTree = "<group>";
+		};
 		66D911C224EEA9E8002D760A = {
 			isa = PBXGroup;
 			children = (
@@ -1199,6 +1212,7 @@
 		66D911FF24EEAA1E002D760A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				66D7C3B525882F8300244D3B /* Teacher */,
 				66D7C378258566BE00244D3B /* Report */,
 				669839F5257CE75800100F28 /* Image Slider */,
 				6608990324FD0BA80023E53B /* New Post */,
@@ -1683,6 +1697,7 @@
 				660FB99E2569D6D00014D406 /* FoodMeCommentHeader.swift in Sources */,
 				66D7C3822585931400244D3B /* ReportingService.swift in Sources */,
 				6677553F252CED1400DBF3CD /* CoMenuCell.swift in Sources */,
+				66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */,
 				6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */,
 				663B27332576759900A3CABB /* HeaderView.swift in Sources */,
 				66D9122024EEABA3002D760A /* ProfileVC.swift in Sources */,
@@ -1724,6 +1739,7 @@
 				66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */,
 				66AA9C5F25251175008DFB86 /* NotificationModel.swift in Sources */,
 				6652016C257010B6003BF4C7 /* Profile_Header.swift in Sources */,
+				66D7C3BF25883D2700244D3B /* SetTeacherFakulte.swift in Sources */,
 				660FB9A32569D6E00014D406 /* FoodMeDataCommentHeader.swift in Sources */,
 				66024C2D251D4E51009E8A7E /* RepliesComment.swift in Sources */,
 				66775544252CEE1400DBF3CD /* CoMenuHeader.swift in Sources */,

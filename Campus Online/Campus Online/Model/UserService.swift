@@ -21,6 +21,16 @@ struct UserService {
             completion(currentUser)
         }
     }
+    func getCurrentUser(uid : String , completion : @escaping(CurrentUser) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(uid)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let user = docSnap else { return }
+                completion(CurrentUser.init(dic: user.data()!))
+            }
+        }
+    }
     func fetchOtherUser ( uid : String , completion : @escaping(OtherUser) -> Void){
 
         let db = Firestore.firestore().collection("user")
