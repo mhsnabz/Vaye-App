@@ -193,6 +193,7 @@
 		66D7C3822585931400244D3B /* ReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3812585931400244D3B /* ReportingService.swift */; };
 		66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3B625882F9900244D3B /* TeacherVC.swift */; };
 		66D7C3BF25883D2700244D3B /* SetTeacherFakulte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */; };
+		66D7C3C4258852A500244D3B /* TeacherBolumTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3C3258852A500244D3B /* TeacherBolumTB.swift */; };
 		66D911CF24EEA9E8002D760A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911CE24EEA9E8002D760A /* AppDelegate.swift */; };
 		66D911D824EEA9EA002D760A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D911D724EEA9EA002D760A /* Assets.xcassets */; };
 		66D911E624EEA9EA002D760A /* Campus_OnlineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911E524EEA9EA002D760A /* Campus_OnlineTests.swift */; };
@@ -440,6 +441,7 @@
 		66D7C3812585931400244D3B /* ReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingService.swift; sourceTree = "<group>"; };
 		66D7C3B625882F9900244D3B /* TeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherVC.swift; sourceTree = "<group>"; };
 		66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTeacherFakulte.swift; sourceTree = "<group>"; };
+		66D7C3C3258852A500244D3B /* TeacherBolumTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherBolumTB.swift; sourceTree = "<group>"; };
 		66D911CB24EEA9E8002D760A /* Campus Online.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Campus Online.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D911CE24EEA9E8002D760A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66D911D724EEA9EA002D760A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1104,6 +1106,7 @@
 			children = (
 				66D7C3B625882F9900244D3B /* TeacherVC.swift */,
 				66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */,
+				66D7C3C3258852A500244D3B /* TeacherBolumTB.swift */,
 			);
 			path = Teacher;
 			sourceTree = "<group>";
@@ -1692,6 +1695,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66D7C3C4258852A500244D3B /* TeacherBolumTB.swift in Sources */,
 				668B6A7B251BD5D900A8902F /* SwipeCellHelper.swift in Sources */,
 				66E326A924F991BB004CB61D /* LessonCell.swift in Sources */,
 				660FB99E2569D6D00014D406 /* FoodMeCommentHeader.swift in Sources */,

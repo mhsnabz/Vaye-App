@@ -181,7 +181,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     let number : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 12)
-        lbl.text = "121503031"
+        lbl.text = " "
         lbl.textColor = .darkGray
         return lbl
     }()
@@ -263,9 +263,8 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         v.backgroundColor = .white
         v.addSubview(profileImage)
      
-         v.addSubview(followBtn)
-         followBtn.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: v.rightAnchor, marginTop: 0, marginLeft: 50, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
-        followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+        v.addSubview(followBtn)
+       followBtn.anchor(top: v.topAnchor, left: nil, bottom: nil, rigth: v.rightAnchor, marginTop: 20, marginLeft: 10, marginBottom: 0, marginRigth: 10, width: 170, heigth: 30)
         
         v.addSubview(aboutSection)
         aboutSection.anchor(top: profileImage.bottomAnchor, left: v.leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 75)
@@ -347,6 +346,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
         name.text = currentUser.name
         school.text = currentUser.schoolName
         major.text = currentUser.bolum
+       
         UserService.shared.getFollowersCount(uid: currentUser.uid) {[weak self] (val) in
             guard let sself = self else { return }
             sself.followers = NSMutableAttributedString(string: "\(val)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])

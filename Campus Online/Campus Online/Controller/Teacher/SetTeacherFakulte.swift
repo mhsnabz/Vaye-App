@@ -108,14 +108,14 @@ class SetTeacherFakulte: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching{
-            let vc = BolumTB()
+            let vc = TeacherBolumTB(currentUser: currentUser)
             vc.fakulteName = dataSourceFiltred[indexPath.row]
-            vc.currentUser = self.currentUser
+
             self.navigationController?.pushViewController(vc, animated: true)
         }else{
 
-            let vc = BolumTB()
-            vc.currentUser = self.currentUser
+            let vc = TeacherBolumTB(currentUser: currentUser)
+
             vc.fakulteName = dataSource[indexPath.row]
             self.navigationController?.pushViewController(vc, animated: true)
         }
