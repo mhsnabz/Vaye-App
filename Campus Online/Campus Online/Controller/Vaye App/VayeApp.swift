@@ -80,7 +80,10 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
     
     func scrollToIndex ( menuIndex : Int) {
         let index = IndexPath(item: menuIndex, section: 0)
-        collecitonView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+        
+        self.collecitonView.isPagingEnabled = false
+        self.collecitonView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+        self.collecitonView.isPagingEnabled = true
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -95,12 +98,13 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
     }
     private func configureUI(){
         view.addSubview(collecitonView)
-        collecitonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 50, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collecitonView.anchor(top: menuBar.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
   
         collecitonView.register(MainCell.self, forCellWithReuseIdentifier: mainCell)
         collecitonView.register(FoodMe_Cell.self, forCellWithReuseIdentifier: foodMeCell)
         collecitonView.register(Camping_Cell.self, forCellWithReuseIdentifier: campingCell)
         collecitonView.register(BuySell_Cell.self, forCellWithReuseIdentifier: buySellCell)
+        
     }
 
     
@@ -115,7 +119,11 @@ extension VayeApp : UICollectionViewDelegate , UICollectionViewDataSource , UICo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: mainCell, for: indexPath) as! MainCell
-            cell.backgroundColor = .darkGray
+            
+            cell.currentUser = currentUser
+            cell.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+            cell.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+            cell.rootController = self
             return cell
         }else if indexPath.item == 1{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: buySellCell, for: indexPath) as! BuySell_Cell
@@ -132,7 +140,8 @@ extension VayeApp : UICollectionViewDelegate , UICollectionViewDataSource , UICo
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: view.frame.height)
+        let x = view.safeAreaInsets.top + view.safeAreaInsets.bottom + 55
+        return CGSize(width: view.frame.width, height: view.frame.height - x)
     }
     
     

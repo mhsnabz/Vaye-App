@@ -551,6 +551,33 @@ extension CampusOnlineVC : UICollectionViewDelegate , UICollectionViewDelegateFl
     }
     
 }
+//GADAdLoaderDelegate
+extension CampusOnlineVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
+    
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+        
+        print("\(adLoader) failed with error: \(error.localizedDescription)")
+        self.loadMore = true
+        self.collectionview.reloadData()
+    }
+    
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        self.nativeAd = nativeAd
+        if mainPost.count > 0{
+            if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                self.mainPost.sort(by: { (post, post1) -> Bool in
+                    
+                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                })
+                
+                self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
+            }
+        }
+        self.loadMore = false
+        self.collectionview.reloadData()
+    }
+}
+
 //BuySellVCDelegate
 extension CampusOnlineVC :  BuySellVCDelegate{
     func options(for cell: BuyAndSellView) {
@@ -819,32 +846,7 @@ extension CampusOnlineVC : BuySellVCDataDelegate {
     
     
 }
-//GADAdLoaderDelegate
-extension CampusOnlineVC :  GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
-    
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-        
-        print("\(adLoader) failed with error: \(error.localizedDescription)")
-        self.loadMore = true
-        self.collectionview.reloadData()
-    }
-    
-    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
-        self.nativeAd = nativeAd
-        if mainPost.count > 0{
-            if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
-                self.mainPost.sort(by: { (post, post1) -> Bool in
-                    
-                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
-                })
-                
-                self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
-            }
-        }
-        self.loadMore = false
-        self.collectionview.reloadData()
-    }
-}
+
 //MARK:- ASMainPostLaungerDelgate
 extension CampusOnlineVC : ASMainPostLaungerDelgate {
     func didSelect(option: ASCurrentUserMainPostOptions) {
