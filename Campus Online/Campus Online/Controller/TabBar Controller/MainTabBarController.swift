@@ -31,11 +31,11 @@ class MainTabbar: UITabBarController,UITabBarControllerDelegate  {
     
     func configureViewControler(user : CurrentUser){
         let homeVC = setNavigationController(title: "Ana Sayfa", unselectedImage: UIImage(named: "home")!, selectedImage: UIImage(named: "home-selected")!,rootViewController: ContainerController(currentUser: user))
-        let campus_online = setNavigationController(title: "Online Kampüs",unselectedImage: UIImage(named: "c-unselected")!, selectedImage: UIImage(named: "c-unselected")!,rootViewController: COContainerController(currentUser: user))
+        let vaye_app = setNavigationController(title: "Online Kampüs",unselectedImage: UIImage(named: "c-unselected")!, selectedImage: UIImage(named: "c-unselected")!,rootViewController: VayeApp(currentUser: user))
         let notificationVC = setNavigationController(title: "Bildirimler",unselectedImage: UIImage(named: "not")!, selectedImage: UIImage(named: "not-selected")!,rootViewController: NotificationVC(currentUser: user))
         let chatVC = setNavigationController(title: "Sohbet",unselectedImage: UIImage(named: "chat")!, selectedImage: UIImage(named: "chat-selected")!,rootViewController: MessagesVC(currentUser: user))
         
-        viewControllers = [homeVC,campus_online,notificationVC,chatVC]
+        viewControllers = [homeVC,vaye_app,notificationVC,chatVC]
         
         tabBar.tintColor = UIColor.black
         tabBar.backgroundColor = .white

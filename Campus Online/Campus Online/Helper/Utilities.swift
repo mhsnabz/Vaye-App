@@ -300,6 +300,9 @@ extension UIColor {
     static func collectionColor () -> UIColor {
         return UIColor.init(red: 218/255, green: 230/255, blue: 245/255, alpha: 1)
     }
+    static func unselectedColor () -> UIColor {
+        return UIColor.init(red: 112/255, green: 112/255, blue: 112/255, alpha: 0.5)
+    }
     
 }
 extension Date {
