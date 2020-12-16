@@ -10,7 +10,8 @@ import UIKit
 
 class VayeAppMenuBar: UIView  , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout ,UICollectionViewDelegate {
    
-    
+    weak var delegate : MainMenuBarSelectedIndex?
+    weak var vayeAppController : VayeApp?
     //MARK:--properties
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -33,6 +34,7 @@ class VayeAppMenuBar: UIView  , UICollectionViewDataSource , UICollectionViewDel
         let selecteIndex = IndexPath(item: 0, section: 0)
         collecitonView.selectItem(at: selecteIndex, animated: false, scrollPosition: .left)
         setUpHorizantalBar()
+        delegate?.getIndex(indexItem: 0)
     }
     
     required init?(coder: NSCoder) {
@@ -71,11 +73,8 @@ class VayeAppMenuBar: UIView  , UICollectionViewDataSource , UICollectionViewDel
         return 0
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let x = CGFloat(indexPath.item) * frame.width / 4
-        horizontalBarLeftConstarint?.constant = x
-        UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-            self.layoutIfNeeded()
-        }, completion: nil)
+        delegate?.getIndex(indexItem: indexPath.item)
+        vayeAppController?.scrollToIndex(menuIndex: indexPath.item)
     }
 }
 

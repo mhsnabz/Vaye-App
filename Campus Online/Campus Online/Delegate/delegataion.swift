@@ -331,3 +331,7 @@ protocol CommentDelegate : class {
     func goProfile(cell : CommentMsgCell)
     func clickMention(username : String)
 }
+
+protocol MainMenuBarSelectedIndex : class {
+    func getIndex(indexItem : Int) 
+}
