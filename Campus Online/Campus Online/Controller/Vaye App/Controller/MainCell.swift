@@ -897,8 +897,8 @@ extension MainCell : FoodMeVCDelegate{
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
-            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else { return }
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+               
                 Utilities.dismissProgress()
                actionSheetOtherUser.show(post: post, otherUser: user)
                 

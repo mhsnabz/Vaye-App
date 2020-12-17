@@ -269,7 +269,7 @@ extension BuySell_Cell  : UICollectionViewDelegate , UICollectionViewDelegateFlo
         }else{
             if mainPost[indexPath.row].data.isEmpty {
                 let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! BuyAndSellView
-//                cell.delegate = self
+                cell.delegate = self
                 cell.currentUser = currentUser
                 
                 cell.backgroundColor = .white
@@ -284,7 +284,7 @@ extension BuySell_Cell  : UICollectionViewDelegate , UICollectionViewDelegateFlo
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellData, for: indexPath) as! BuyAndSellDataView
                 
                 cell.backgroundColor = .white
-//                cell.delegate = self
+                cell.delegate = self
                 cell.currentUser = currentUser
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 cell.msgText.frame = CGRect(x: 70, y: 38, width: frame.width - 78, height: h + 4)
@@ -406,8 +406,8 @@ extension BuySell_Cell : BuySellVCDelegate{
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
             selectedPostID = mainPost[index.row].postId
-            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
-                guard let sself = self else { return }
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
                 Utilities.dismissProgress()
                 actionSheetOtherUser.show(post: post, otherUser: user)
                 
@@ -428,7 +428,7 @@ extension BuySell_Cell : BuySellVCDelegate{
     func like(for cell: BuyAndSellView)
     {
         guard let post = cell.mainPost else { return }
-        guard let currentUser = currentUser else { return }
+        guard let currentUser = currentUser else { return }
         MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collectionview, currentUser: currentUser, post: post) { (_) in
             print("succes")
         }

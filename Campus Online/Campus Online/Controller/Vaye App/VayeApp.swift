@@ -185,7 +185,10 @@ extension VayeApp : UICollectionViewDelegate , UICollectionViewDataSource , UICo
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campingCell, for: indexPath) as! Camping_Cell
-            cell.backgroundColor = .red
+            cell.currentUser = currentUser
+            cell.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+            cell.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+            cell.rootController = self
             return cell
         }
     }
