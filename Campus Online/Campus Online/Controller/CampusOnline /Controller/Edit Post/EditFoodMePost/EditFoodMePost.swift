@@ -146,6 +146,7 @@ class EditFoodMePost: UIViewController
         self.h = h
         self.currentUser = currentUser
         self.post = post
+        Utilities.dismissProgress()
         super.init(nibName: nil, bundle: nil)
     }
     

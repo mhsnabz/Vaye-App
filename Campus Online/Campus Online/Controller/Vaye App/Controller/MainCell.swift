@@ -27,7 +27,7 @@ private let cell_camp_data_id = "cell_camp_data_id"
 
 class MainCell: UICollectionViewCell
 {
-     var currentUser : CurrentUser!{
+     var currentUser : CurrentUser?{
         didSet{
             getPost()
 

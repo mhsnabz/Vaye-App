@@ -847,33 +847,6 @@ extension BuyAndCellVC : ASMainPostLaungerDelgate {
     
     
 }
-
-//MARK: - GADAdLoaderDelegate
-extension BuyAndCellVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
-    
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-        
-        print("\(adLoader) failed with error: \(error.localizedDescription)")
-        self.loadMore = true
-        self.collectionview.reloadData()
-    }
-    
-    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
-        self.nativeAd = nativeAd
-        if mainPost.count > 0{
-            if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
-                self.mainPost.sort(by: { (post, post1) -> Bool in
-                    
-                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
-                })
-                
-                self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
-            }
-        }
-        self.loadMore = false
-        self.collectionview.reloadData()
-    }
-}
 extension BuyAndCellVC : ASMainOtherUserDelegate {
     func didSelect(option: ASMainPostOtherUserOptions) {
         switch option {
@@ -901,3 +874,30 @@ extension BuyAndCellVC : ASMainOtherUserDelegate {
     
     
 }
+//MARK: - GADAdLoaderDelegate
+extension BuyAndCellVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
+    
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+        
+        print("\(adLoader) failed with error: \(error.localizedDescription)")
+        self.loadMore = true
+        self.collectionview.reloadData()
+    }
+    
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        self.nativeAd = nativeAd
+        if mainPost.count > 0{
+            if  let time_e = self.mainPost[(self.mainPost.count) - 1].postTime{
+                self.mainPost.sort(by: { (post, post1) -> Bool in
+                    
+                    return post.postTime?.dateValue() ?? time_e.dateValue()   > post1.postTime?.dateValue() ??  time_e.dateValue()
+                })
+                
+                self.mainPost.append(MainPostModel.init(nativeAd: nativeAd , postTime : self.mainPost[(self.mainPost.count) - 1].postTime!))
+            }
+        }
+        self.loadMore = false
+        self.collectionview.reloadData()
+    }
+}
+

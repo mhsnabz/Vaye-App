@@ -21,12 +21,22 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         didSet{
             guard let index = selectedIndex else{
                 navigationItem.title = "Vaye.App"
+        
                 return
             }
+            
             navigationItem.title = navBarTitle[index]
+        
         }
     }
-    
+    //MARK:-properties
+    let newPostButton : UIButton = {
+        let btn  = UIButton(type: .system)
+        btn.clipsToBounds = true
+        btn.setImage(UIImage(named: "new-post")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.setBackgroundColor(color: .mainColor(), forState: .normal)
+        return btn
+    }()
     //MARK:--properties
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -104,10 +114,43 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         collecitonView.register(FoodMe_Cell.self, forCellWithReuseIdentifier: foodMeCell)
         collecitonView.register(Camping_Cell.self, forCellWithReuseIdentifier: campingCell)
         collecitonView.register(BuySell_Cell.self, forCellWithReuseIdentifier: buySellCell)
+        view.addSubview(newPostButton)
+        newPostButton.anchor(top: nil, left: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 12, marginRigth: 12, width: 50, heigth: 50)
+        newPostButton.addTarget(self, action: #selector(newPost), for: .touchUpInside)
+        newPostButton.layer.cornerRadius = 25
+        
         
     }
 
-    
+    @objc func newPost(){
+        guard let index = selectedIndex else { return }
+        if index == 1 {
+            
+            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                guard let sself = self else { return }
+                let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                
+            }
+        }else if index == 2 {
+            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                guard let sself = self else { return }
+                let vc = SetNewFoodMePost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                
+            }
+        }else if index == 3 {
+            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                guard let sself = self else { return }
+                let vc = SetNewCampingPost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                
+            }
+        }
+    }
    
 }
 
@@ -127,11 +170,18 @@ extension VayeApp : UICollectionViewDelegate , UICollectionViewDataSource , UICo
             return cell
         }else if indexPath.item == 1{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: buySellCell, for: indexPath) as! BuySell_Cell
-            cell.backgroundColor = .yellow
+            cell.currentUser = currentUser
+            cell.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+            cell.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+            cell.rootController = self
             return cell
         }else if indexPath.item == 2{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: foodMeCell, for: indexPath) as! FoodMe_Cell
-            cell.backgroundColor = .brown
+            cell.currentUser = currentUser
+            cell.actionSheetCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+            cell.actionSheetOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+            cell.rootController = self
+          
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campingCell, for: indexPath) as! Camping_Cell
