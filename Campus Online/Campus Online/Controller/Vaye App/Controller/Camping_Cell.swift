@@ -62,6 +62,7 @@ class Camping_Cell: UICollectionViewCell {
    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        configureUI()
     }
     
     required init?(coder: NSCoder) {
@@ -84,9 +85,9 @@ class Camping_Cell: UICollectionViewCell {
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
-        refresher.tintColor = .collectionColor()
+        refresher.tintColor = .white
         collectionview.refreshControl?.beginRefreshing()
-        getPost()
+        
     }
     
     func getPost(){

@@ -98,7 +98,7 @@ class MainCell: UICollectionViewCell
         collectionview.alwaysBounceVertical = true
         collectionview.refreshControl = refresher
         refresher.addTarget(self, action: #selector(loadData), for: .valueChanged)
-        refresher.tintColor = .collectionColor()
+        refresher.tintColor = .white
         collectionview.refreshControl?.beginRefreshing()
         
         getPost()
