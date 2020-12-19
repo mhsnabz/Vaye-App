@@ -129,7 +129,10 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         
     }
     @objc func optionsLauncher(){
-        let vc = VayeAppNotification()
+        
+        
+        
+        let vc = VayeAppNotification(currentUser : currentUser)
         let controller = UINavigationController(rootViewController: vc)
         controller.modalPresentationStyle = .fullScreen
         self.present(controller, animated: true, completion: nil)

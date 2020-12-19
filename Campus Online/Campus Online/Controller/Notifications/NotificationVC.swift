@@ -41,7 +41,7 @@ class NotificationVC: UIViewController {
         setNavigationBar()
         navigationItem.title = "Bildirimler"
         configureTableViewController()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showLauncher))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showLauncher))
         get_notification(currentUser: currentUser)
     }
     

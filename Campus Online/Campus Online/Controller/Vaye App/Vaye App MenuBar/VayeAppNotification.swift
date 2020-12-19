@@ -7,9 +7,15 @@
 //
 
 import UIKit
-
+import FirebaseFirestore
 class VayeAppNotification: UITableViewController {
 
+    var currentUser : CurrentUser
+    
+    lazy var isFoodMe : Bool  = false
+    lazy var isCamping : Bool = false
+    lazy var isBuySell : Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = false
@@ -19,8 +25,34 @@ class VayeAppNotification: UITableViewController {
         tableView.separatorStyle = .none
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "down-arrow").withRenderingMode(.alwaysOriginal), style: .done, target: self, action: #selector(dismissVC))
         
+             MainPostService.shared.checkFollowTopic(currentUser: currentUser, topic: "food-me") {[weak self] (val) in
+                guard let sself = self else { return }
+                sself.isFoodMe = val
+                sself.tableView.reloadData()
+                
+             }
+        MainPostService.shared.checkFollowTopic(currentUser: currentUser, topic: "camping") {[weak self] (val) in
+           guard let sself = self else { return }
+           sself.isCamping = val
+           sself.tableView.reloadData()
+           
+        }
+        MainPostService.shared.checkFollowTopic(currentUser: currentUser, topic: "sell-buy") {[weak self] (val) in
+           guard let sself = self else { return }
+           sself.isBuySell = val
+           sself.tableView.reloadData()
+           
+        }
+        
     }
-
+    init(currentUser : CurrentUser) {
+        self.currentUser = currentUser
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     @objc func dismissVC(){
         self.dismiss(animated: true, completion: nil)
     }
@@ -38,18 +70,21 @@ class VayeAppNotification: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! VayeAppNotificationCell
         cell.selectionStyle = .none
-        cell.switchButton.tintColor = .mainColor()
         if indexPath.item == 0 {
             cell.titleLabel.text = "Al-Sat"
+             
             cell.textLbl.text = "Yeni Bir İlan Paylaşıldığında Telefonunuza Anlık Bildirimler Alırsınız"
+            cell.isOpen = isBuySell
         }
         else if indexPath.item == 1 {
             cell.titleLabel.text = "Yemek"
             cell.textLbl.text = "Yeni Bir Yemek İlanı Paylaşıldığında Telefonunuza Anlık Bildirimler Alırsınız"
+            cell.isOpen = isFoodMe
         }
         else if indexPath.item == 2 {
             cell.titleLabel.text = "Kamp"
             cell.textLbl.text = "Yeni Bir Kamp İlanı Paylaşıldığında Telefonunuza Anlık Bildirimler Alırsınız"
+            cell.isOpen = isCamping
         }
         return cell
     }
@@ -58,17 +93,121 @@ class VayeAppNotification: UITableViewController {
         return 70
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-     
+        let cell = tableView.cellForRow(at: indexPath) as! VayeAppNotificationCell
+        if indexPath.item == 0 {
+            if cell.switchButton.isOn {
+                print(" buy sell closed")
+                
+                followTopic(currentUser: currentUser, topic: "sell-buy", isFollowing: true) {[weak self] (_val) in
+                    guard let sself = self else {
+                        return
+                    }
+                    cell.switchButton.isOn = _val
+                    sself.isBuySell = _val
+                }
+            }else{
+                print(" buy sell  opened")
+                followTopic(currentUser: currentUser, topic: "sell-buy", isFollowing: false) {[weak self] (_val) in
+                    guard let sself = self else {
+                        return
+                    }
+                    cell.switchButton.isOn = _val
+                    sself.isBuySell = _val
+                }
+            }
+        }else if indexPath.item == 1 {
+            if cell.switchButton.isOn {
+                followTopic(currentUser: currentUser, topic: "food-me", isFollowing: true) {[weak self] (_val) in
+                    guard let sself = self else {
+                        return
+                    }
+                    cell.switchButton.isOn = _val
+                    sself.isFoodMe = _val
+
+                }
+            }else{
+                followTopic(currentUser: currentUser, topic: "food-me", isFollowing: false) {[weak self] (_val) in
+                    guard let sself = self else {
+                        return
+                    }
+                    sself.isFoodMe = _val
+                    cell.switchButton.isOn = _val
+                }
+            }
+        }else if indexPath.item == 2 {
+            if cell.switchButton.isOn {
+                followTopic(currentUser: currentUser, topic: "camping", isFollowing: true) {[weak self] (_val) in
+                    guard let sself = self else {
+                        return
+                    }
+                    sself.isCamping = _val
+                    cell.switchButton.isOn = _val
+                }
+            }else{
+                followTopic(currentUser: currentUser, topic: "camping", isFollowing: false) {[weak self] (_val) in
+                    guard let sself = self else {
+                        return
+                    }
+                    sself.isCamping = _val
+                    cell.switchButton.isOn = _val
+                }
+            }
+        }
+        
     }
 
 
+    private func followTopic(currentUser : CurrentUser, topic : String , isFollowing  : Bool , completion : @escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+    
+          
+            if isFollowing{
+                
+                
+                let db = Firestore.firestore().collection("main-post")
+                    .document(topic)
+                    .collection("followers")
+                    .document(currentUser.uid)
+                db.delete { (err) in
+                    if err == nil {
+                        Utilities.succesProgress(msg: "Bildirimler Kapandı")
+                       completion(false)
+                    }
+                }
+            }else{
+                
+                let db = Firestore.firestore().collection("main-post")
+                    .document(topic)
+                    .collection("followers").document(currentUser.uid)
+                
+                db.setData(["userId":currentUser.uid as Any , "school":currentUser.short_school as Any] as [String : Any], merge: true) { (err) in
+                    if err == nil {
+                        Utilities.succesProgress(msg: "Bildirimler Açıldı")
+                        completion(true)
+                    }
+                }
+            }
+        
+        
+    }
+   
+  
+    
 }
 
 class VayeAppNotificationCell : UITableViewCell {
     
-     var switchButton : UISwitch = {
+     var isOpen : Bool? {
+        didSet{
+            guard let isOpen = isOpen else { return }
+            switchButton.isOn = isOpen
+        }
+    }
+    
+    lazy var switchButton : UISwitch = {
        let s = UISwitch()
-        s.isUserInteractionEnabled = false
+        
+        
         return s
     }()
     
@@ -112,16 +251,15 @@ class VayeAppNotificationCell : UITableViewCell {
         addSubview(line)
         line.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0.3)
      
-        switchButton.addTarget(self, action: #selector(selected(_:)), for: .valueChanged)
-        switchButton.tintColor = .mainColor()
-    
+        switchButton.addTarget(self, action: #selector(selected(sender:)), for: .valueChanged)
+        
         
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    @objc func selected(_ sender:UISwitch){
+    @objc func selected(sender:UISwitch){
         if sender.isOn {
             print("closes")
         }else{
