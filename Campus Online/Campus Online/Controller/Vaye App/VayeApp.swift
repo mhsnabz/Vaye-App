@@ -65,9 +65,9 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         super.viewDidLoad()
         view.backgroundColor = .white
         setNavigationBar()
-        
         setupMenuBar()
         configureUI()
+        configureRigthBarButton()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -83,6 +83,10 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func configureRigthBarButton(){
+    let rigthBtn = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(optionsLauncher))
+        navigationItem.rightBarButtonItem = rigthBtn
+    }
     //MARK:--funcitons
     private func  setupMenuBar(){
         navigationItem.title = navBarTitle[0]
@@ -124,7 +128,12 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         
         
     }
-
+    @objc func optionsLauncher(){
+        let vc = VayeAppNotification()
+        let controller = UINavigationController(rootViewController: vc)
+        controller.modalPresentationStyle = .fullScreen
+        self.present(controller, animated: true, completion: nil)
+    }
     @objc func newPost(){
         if let index = selectedIndex {
             if index  == 0 {

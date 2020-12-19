@@ -214,7 +214,7 @@ class MainPostCommentVC: UIViewController , DismisDelegate {
             for item in text.findMentionText(){
                 MainPostCommentService.shared.send_comment_mention_user(username: item, currentUser: currentUser, text: text, type: NotificationType.comment_mention.desprition, post: post)}
         }
-    }
+    } 
     @objc func showMenu(){
         
     }

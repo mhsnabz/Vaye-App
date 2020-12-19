@@ -158,6 +158,7 @@
 		6690A6A32547236400E88BC0 /* MainPostCommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6690A6A22547236300E88BC0 /* MainPostCommentService.swift */; };
 		66939978258DD88200525C1A /* MainPostActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66939977258DD88200525C1A /* MainPostActionSheet.swift */; };
 		6693997D258DD8FE00525C1A /* MainPostASViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693997C258DD8FE00525C1A /* MainPostASViewModel.swift */; };
+		66939982258E0ACC00525C1A /* VayeAppNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66939981258E0ACC00525C1A /* VayeAppNotification.swift */; };
 		669839E7257BC84C00100F28 /* NoticesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839E6257BC84C00100F28 /* NoticesModel.swift */; };
 		669839EC257BC98100100F28 /* NoticesNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839EB257BC98100100F28 /* NoticesNewCell.swift */; };
 		669839F1257BDF4B00100F28 /* NoticesMainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839F0257BDF4B00100F28 /* NoticesMainModel.swift */; };
@@ -414,6 +415,7 @@
 		6690A6A22547236300E88BC0 /* MainPostCommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostCommentService.swift; sourceTree = "<group>"; };
 		66939977258DD88200525C1A /* MainPostActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostActionSheet.swift; sourceTree = "<group>"; };
 		6693997C258DD8FE00525C1A /* MainPostASViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostASViewModel.swift; sourceTree = "<group>"; };
+		66939981258E0ACC00525C1A /* VayeAppNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VayeAppNotification.swift; sourceTree = "<group>"; };
 		669839E6257BC84C00100F28 /* NoticesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesModel.swift; sourceTree = "<group>"; };
 		669839EB257BC98100100F28 /* NoticesNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesNewCell.swift; sourceTree = "<group>"; };
 		669839F0257BDF4B00100F28 /* NoticesMainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesMainModel.swift; sourceTree = "<group>"; };
@@ -1143,6 +1145,7 @@
 			isa = PBXGroup;
 			children = (
 				66D7C3D52589779B00244D3B /* VayeAppMenuBar.swift */,
+				66939981258E0ACC00525C1A /* VayeAppNotification.swift */,
 			);
 			path = "Vaye App MenuBar";
 			sourceTree = "<group>";
@@ -1871,6 +1874,7 @@
 				6690A672253B994400E88BC0 /* BuyAndSellView.swift in Sources */,
 				66B2100E251474D4002BD8A3 /* LoadMoreCell.swift in Sources */,
 				668F04B22524BF24007BD9C7 /* NotificaitonService.swift in Sources */,
+				66939982258E0ACC00525C1A /* VayeAppNotification.swift in Sources */,
 				6615FC89250AE46E00776664 /* LessonPostModel.swift in Sources */,
 				667A50EE2519E8A5009000D2 /* UserProfileFilterVM.swift in Sources */,
 				660F5AD72503DA9A00F72558 /* LicenseTB.swift in Sources */,
