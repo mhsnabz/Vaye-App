@@ -338,3 +338,7 @@ protocol CommentDelegate : class {
 protocol MainMenuBarSelectedIndex : class {
     func getIndex(indexItem : Int) 
 }
+
+protocol HomeMenuBarSelectedIndex : class {
+    func getIndex ( indexItem : Int)
+}
