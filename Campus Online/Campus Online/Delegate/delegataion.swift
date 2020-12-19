@@ -31,6 +31,9 @@ protocol MenuHeaderDelegate : class {
 protocol ActionSheetLauncherDelegate : class {
     func didSelect(option : ActionSheetOptions)
 }
+protocol MainPostLauncherDelegate : class {
+    func didSelect(option : MainPostSheetOptions)
+}
 protocol ActionSheetHomeLauncherDelegate : class {
     func didSelect(option : ActionSheetHomeOptions)
 }

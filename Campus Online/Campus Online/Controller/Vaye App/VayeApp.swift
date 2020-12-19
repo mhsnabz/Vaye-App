@@ -29,6 +29,8 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         
         }
     }
+    
+    private var mainPostLauncher : MainPostActionSheet
     //MARK:-properties
     let newPostButton : UIButton = {
         let btn  = UIButton(type: .system)
@@ -73,6 +75,7 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
+        self.mainPostLauncher = MainPostActionSheet(currentUser: currentUser)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -123,33 +126,42 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
     }
 
     @objc func newPost(){
-        guard let index = selectedIndex else { return }
-        if index == 1 {
-            
-            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
-                guard let sself = self else { return }
-                let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
-                
+        if let index = selectedIndex {
+            if index  == 0 {
+                mainPostLauncher.show()
+                mainPostLauncher.delegate = self
             }
-        }else if index == 2 {
-            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
-                guard let sself = self else { return }
-                let vc = SetNewFoodMePost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+            else if index == 1 {
                 
+                UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                    guard let sself = self else { return }
+                    let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                    
+                }
+            }else if index == 2 {
+                UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                    guard let sself = self else { return }
+                    let vc = SetNewFoodMePost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                    
+                }
+            }else if index == 3 {
+                UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                    guard let sself = self else { return }
+                    let vc = SetNewCampingPost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                    
+                }
             }
-        }else if index == 3 {
-            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
-                guard let sself = self else { return }
-                let vc = SetNewCampingPost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
-                
-            }
+        }else{
+            mainPostLauncher.show()
+            mainPostLauncher.delegate = self
         }
+   
     }
    
 }
@@ -197,6 +209,41 @@ extension VayeApp : UICollectionViewDelegate , UICollectionViewDataSource , UICo
         return CGSize(width: view.frame.width, height: view.frame.height - x)
     }
     
+    
+    
+}
+extension VayeApp : MainPostLauncherDelegate {
+    func didSelect(option: MainPostSheetOptions) {
+        switch option {
+        
+        case .buyAndSellPost(_):
+            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                guard let sself = self else { return }
+                let vc = SetNewBuySellVC(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                
+            }
+                
+            
+             
+        case .foodMePost(_):
+                UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                    guard let sself = self else { return }
+                    let vc = SetNewFoodMePost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }
+        case .campingPost(_):
+            UserService.shared.getFollowers(uid: currentUser.uid) {[weak self] (currentUserFollowers) in
+                guard let sself = self else { return }
+                let vc = SetNewCampingPost(currentUser : sself.currentUser, currentUserFollowers: currentUserFollowers)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+                
+            }
+        }
+    }
     
     
 }
