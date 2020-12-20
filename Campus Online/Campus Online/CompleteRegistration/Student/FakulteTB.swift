@@ -64,7 +64,8 @@ class FakulteTB: UITableViewController {
         showSearchBar(shouldShow: !shouldShow)
         searchBar.showsCancelButton = shouldShow
         navigationItem.titleView = shouldShow ? searchBar : nil
-        
+        isSearching = shouldShow
+        tableView.reloadData()
     }
     
     // MARK: - Table view data source

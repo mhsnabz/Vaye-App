@@ -1183,13 +1183,7 @@ extension HomeVC : ActionSheetHomeLauncherDelegate{
         }
     }
 }
-extension Array where Element: Equatable{
-    mutating func remove (element: Element) {
-        if let i = self.firstIndex(of: element) {
-            self.remove(at: i)
-        }
-    }
-}
+
 extension HomeVC : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {

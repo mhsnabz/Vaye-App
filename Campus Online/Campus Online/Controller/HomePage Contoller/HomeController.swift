@@ -228,7 +228,10 @@ extension HomeController  : UICollectionViewDelegate , UICollectionViewDataSourc
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: home_cell, for: indexPath) as! Home_Cell
-            
+            cell.currentUser = currentUser
+            cell.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
+            cell.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+            cell.rootController = self
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: scholl_cell, for: indexPath) as! School_Cell

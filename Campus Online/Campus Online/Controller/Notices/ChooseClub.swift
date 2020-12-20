@@ -81,6 +81,8 @@ class ChooseClub: UITableViewController {
         showSearchBar(shouldShow: !shouldShow)
         searchBar.showsCancelButton = shouldShow
         navigationItem.titleView = shouldShow ? searchBar : nil
+        isSearching = shouldShow
+        tableView.reloadData()
         
     }
     @objc func searchBarClick(){
