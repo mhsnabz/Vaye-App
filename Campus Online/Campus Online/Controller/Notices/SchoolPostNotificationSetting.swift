@@ -13,6 +13,9 @@ class SchoolPostNotificationSetting: UITableViewController {
     
     var currentUser : CurrentUser
     var names = [ClupNames]()
+    var dataSourceFilter = [ClupNames]()
+    var isSearching = false
+    let searchBar = UISearchBar()
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
@@ -43,54 +46,125 @@ class SchoolPostNotificationSetting: UITableViewController {
             }
         }
         
-
+        searchBar.sizeToFit()
+        searchBar.delegate = self
+        showSearchBar(shouldShow: true)
     }
     @objc func dismissVC(){
         self.dismiss(animated: true, completion: nil)
+    }
+    func showSearchBar(shouldShow : Bool){
+        if shouldShow {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchBarClick))
+        }else{
+            navigationItem.rightBarButtonItem = nil
+            
+        }
+    }
+    @objc func searchBarClick(){
+        navigationItem.titleView = searchBar
+        searchBar.showsCancelButton = true
+        searchBar.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
+        navigationItem.rightBarButtonItem = nil
+        searchBar.becomeFirstResponder()
+        searchBar.placeholder = "Kulüp Adı Giriniz"
+        
+    }
+    func search( shouldShow : Bool ){
+        showSearchBar(shouldShow: !shouldShow)
+        searchBar.showsCancelButton = shouldShow
+        navigationItem.titleView = shouldShow ? searchBar : nil
+        
     }
     // MARK: - Table view data source
 
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return names.count
+        if isSearching {
+            return dataSourceFilter.count
+        }else{
+            return names.count
+        }
+        
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! SchollNotificationSettingCell
+        
+        
         cell.selectionStyle = .none
-        cell.item = names[indexPath.row]
-        if let isExist = names[indexPath.row].followers?.contains(currentUser.uid) {
-            if isExist {
-                cell.switchButton.isOn = true
+        if isSearching {
+            cell.item = dataSourceFilter[indexPath.row]
+            if let isExist = dataSourceFilter[indexPath.row].followers?.contains(currentUser.uid) {
+                if isExist {
+                    cell.switchButton.isOn = true
+                }else{
+                    cell.switchButton.isOn = false
+                }
             }else{
                 cell.switchButton.isOn = false
             }
         }else{
-            cell.switchButton.isOn = false
+            cell.item = names[indexPath.row]
+            if let isExist = names[indexPath.row].followers?.contains(currentUser.uid) {
+                if isExist {
+                    cell.switchButton.isOn = true
+                }else{
+                    cell.switchButton.isOn = false
+                }
+            }else{
+                cell.switchButton.isOn = false
+            }
         }
+        
+       
         
         
         return cell
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! SchollNotificationSettingCell
-        if cell.switchButton.isOn {
-            Utilities.waitProgress(msg: nil)
-            cell.switchButton.isOn = false
-            NoticesService.shared.unFollowTopic(id: names[indexPath.item].id, currentUser: currentUser) { (_) in
-                Utilities.dismissProgress()
+     
+        if isSearching {
+            if cell.switchButton.isOn {
+                Utilities.waitProgress(msg: nil)
+                cell.switchButton.isOn = false
+                NoticesService.shared.unFollowTopic(id: dataSourceFilter[indexPath.item].id, currentUser: currentUser) { (_) in
+                    Utilities.dismissProgress()
+                    
                 
-            
+                }
+            }else{
+                Utilities.waitProgress(msg: nil)
+                cell.switchButton.isOn = true
+                NoticesService.shared.followTopic(id: dataSourceFilter[indexPath.item].id, currentUser: currentUser) { (_) in
+                    
+                    Utilities.dismissProgress()
+                    
+                }
+                
             }
         }else{
-            Utilities.waitProgress(msg: nil)
-            cell.switchButton.isOn = true
-            NoticesService.shared.followTopic(id: names[indexPath.item].id, currentUser: currentUser) { (_) in
+            if cell.switchButton.isOn {
+                Utilities.waitProgress(msg: nil)
+                cell.switchButton.isOn = false
+                NoticesService.shared.unFollowTopic(id: names[indexPath.item].id, currentUser: currentUser) { (_) in
+                    Utilities.dismissProgress()
+                    
                 
-                Utilities.dismissProgress()
+                }
+            }else{
+                Utilities.waitProgress(msg: nil)
+                cell.switchButton.isOn = true
+                NoticesService.shared.followTopic(id: names[indexPath.item].id, currentUser: currentUser) { (_) in
+                    
+                    Utilities.dismissProgress()
+                    
+                }
                 
             }
-            
         }
+        
+        
     }
 
 }
@@ -143,5 +217,36 @@ class SchollNotificationSettingCell : UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension SchoolPostNotificationSetting : UISearchBarDelegate{
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        search(shouldShow: false)
+    }
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        print("start")
+    }
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        print("cancel")
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty || searchText == " " {
+            isSearching = false
+            self.tableView.reloadData()
+        }
+        else
+        {
+            
+            isSearching = true
+            dataSourceFilter = names
+            dataSourceFilter = names.filter({ (names) -> Bool in
+                guard let text = searchBar.text else { return false }
+                return names.id.contains(text)
+            })
+           
+            self.tableView.reloadData()
+            
+        }
     }
 }
