@@ -6,7 +6,7 @@
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
-import UIKit
+ 
 import UIKit
 import FirebaseFirestore
 import GoogleMobileAds

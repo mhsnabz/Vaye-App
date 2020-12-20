@@ -235,7 +235,10 @@ extension HomeController  : UICollectionViewDelegate , UICollectionViewDataSourc
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: scholl_cell, for: indexPath) as! School_Cell
-            
+            cell.currentUser = currentUser
+            cell.rootController = self
+            cell.actionSheetOtherUser = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+            cell.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
             return cell
         }
     }
