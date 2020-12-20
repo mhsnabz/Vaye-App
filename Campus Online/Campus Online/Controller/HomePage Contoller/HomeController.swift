@@ -15,6 +15,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     }
     var selectedIndex : Int?{
         didSet{
+            setNavBarButton()
             guard let index = selectedIndex else { return }
             if index == 0 {
                 navigationItem.title = currentUser.bolum
@@ -59,8 +60,12 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     //MARK:--lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavigationContoller()
-        // Do any additional setup after loading the view.
+        navigationItem.title = "Vaye.App"
+        setNavigationBar()
+        setupMenuBar()
+        configureUI()
+        setNavBarButton()
+        
     }
     
     
@@ -113,6 +118,9 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         self.view.backgroundColor = .white
         if #available(iOS 13.0, *) {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menu")?.withTintColor(.black, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
+            
+        
+            
             navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "plus")?.withTintColor(.black, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
         } else {
             let rigthBtn = UIBarButtonItem(image: UIImage(named: "menu")!, style: .plain, target: self, action: #selector(menuClick))
@@ -120,12 +128,24 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             navigationItem.leftBarButtonItem = rigthBtn
             navigationItem.rightBarButtonItem = leftBtn
         }
-        navigationItem.title = "Vaye.App"
-        setNavigationBar()
-        setupMenuBar()
-        configureUI()
+     
         
     }
+    
+    private func setNavBarButton(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "menu").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action:  #selector(menuClick))
+        if let index = selectedIndex {
+           
+            if index == 0 {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
+            }else if index == 1 {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(schollNotificaitonSetting))
+            }
+        }else{
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
+        }
+    }
+    
     private func configureUI(){
         view.addSubview(collecitonView)
         collecitonView.anchor(top: menuBar.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
@@ -142,6 +162,12 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     }
     
     //MARK:-selecctors
+    @objc func schollNotificaitonSetting(){
+        let vc = SchoolPostNotificationSetting(currentUser : currentUser)
+        let controller = UINavigationController(rootViewController: vc)
+        controller.modalPresentationStyle = .fullScreen
+        self.present(controller, animated: true, completion: nil)
+    }
     @objc func menuClick(){
         self.delegate?.handleMenuToggle(forMenuOption: nil)
         if !isMenuOpen {

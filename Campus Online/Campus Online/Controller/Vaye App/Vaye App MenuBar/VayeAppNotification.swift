@@ -206,8 +206,6 @@ class VayeAppNotificationCell : UITableViewCell {
     
     lazy var switchButton : UISwitch = {
        let s = UISwitch()
-        
-        
         return s
     }()
     

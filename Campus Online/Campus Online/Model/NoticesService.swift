@@ -46,6 +46,19 @@ class NoticesService {
         }
     }
     
+    func setClupNames(currenUser : CurrentUser , names : [String]){
+        ///İSTE/clup/names/fallowers/fallowers/@deneme
+        for item in names{
+            let db = Firestore.firestore().collection(currenUser.short_school)
+                .document("clup")
+                .collection("name")
+                .document(item)
+            let dic = ["followes":[]] as [String:Any]
+            db.setData(dic, merge: true, completion: nil)
+           
+        }
+    }
+    
     
     func setNewNotice(currentUser : CurrentUser,postType: String,clupName : String, postId : String , msgText : String , datas :[String] , short_school : String , completion : @escaping(Bool)->Void){
         let dic = [
@@ -783,4 +796,28 @@ class NoticesService {
                 }
             }}
     }
+    ///İSTE/clup/name/ Tasarım Öğrenci Topluluğu
+    func followTopic(id : String ,currentUser : CurrentUser, completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("clup")
+            .collection("name")
+            .document(id)
+        db.updateData(["followers":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
+    func unFollowTopic(id : String ,currentUser : CurrentUser, completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("clup")
+            .collection("name")
+            .document(id)
+        db.updateData(["followers":FieldValue.arrayRemove([currentUser.uid as Any])]) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
+    
 }
