@@ -89,6 +89,10 @@
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
 		6649DD7524F15D6F000532B2 /* SlideMenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */; };
 		6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */; };
+		664E9F5F259017B7007EBE52 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F5E259017B7007EBE52 /* SignUp.swift */; };
+		664E9F64259017F7007EBE52 /* SignUpMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F63259017F7007EBE52 /* SignUpMenuBar.swift */; };
+		664E9F69259019A3007EBE52 /* StudentSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F68259019A3007EBE52 /* StudentSignUp.swift */; };
+		664E9F6E259019B0007EBE52 /* TeacherSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F6D259019B0007EBE52 /* TeacherSignUp.swift */; };
 		66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6925277CCA00CB043D /* NotificationLaunher.swift */; };
 		66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6E25277E3500CB043D /* ActionSheetNotification.swift */; };
 		6652014B256E9E99003BF4C7 /* EditCampingPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6652014A256E9E99003BF4C7 /* EditCampingPost.swift */; };
@@ -352,6 +356,10 @@
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		6649DD7424F15D6F000532B2 /* SlideMenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuHeader.swift; sourceTree = "<group>"; };
 		6649DD7624F1BC55000532B2 /* SlideMenuFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuFooter.swift; sourceTree = "<group>"; };
+		664E9F5E259017B7007EBE52 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
+		664E9F63259017F7007EBE52 /* SignUpMenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpMenuBar.swift; sourceTree = "<group>"; };
+		664E9F68259019A3007EBE52 /* StudentSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentSignUp.swift; sourceTree = "<group>"; };
+		664E9F6D259019B0007EBE52 /* TeacherSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherSignUp.swift; sourceTree = "<group>"; };
 		66512F6925277CCA00CB043D /* NotificationLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLaunher.swift; sourceTree = "<group>"; };
 		66512F6E25277E3500CB043D /* ActionSheetNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetNotification.swift; sourceTree = "<group>"; };
 		6652014A256E9E99003BF4C7 /* EditCampingPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCampingPost.swift; sourceTree = "<group>"; };
@@ -735,6 +743,10 @@
 				661333F924F3FDF2002677AB /* ForgetPasswordVC.swift */,
 				661333FB24F4206A002677AB /* ChooseSchool.swift */,
 				6613340524F43CD5002677AB /* ChooseSchoolCell.swift */,
+				664E9F5E259017B7007EBE52 /* SignUp.swift */,
+				664E9F63259017F7007EBE52 /* SignUpMenuBar.swift */,
+				664E9F68259019A3007EBE52 /* StudentSignUp.swift */,
+				664E9F6D259019B0007EBE52 /* TeacherSignUp.swift */,
 			);
 			path = "Login Register ForgetPassword";
 			sourceTree = "<group>";
@@ -1802,6 +1814,7 @@
 				6622C23D2505CE2200E3B3F0 /* LessonInfo.swift in Sources */,
 				668B6A2E251BAFC200A8902F /* FlexibleTextView.swift in Sources */,
 				66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */,
+				664E9F6E259019B0007EBE52 /* TeacherSignUp.swift in Sources */,
 				66024C27251D0C77009E8A7E /* CommentModel.swift in Sources */,
 				66983A19257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift in Sources */,
 				665BB3FC254C78AF003B4E9E /* MainPostReplyVC.swift in Sources */,
@@ -1810,6 +1823,7 @@
 				66C032852570CE6F004DC40A /* MenuBar.swift in Sources */,
 				6615FC8D250B38D200776664 /* NewPostHomeVCData.swift in Sources */,
 				660FB97025646E7D0014D406 /* SetNewFoodMePost.swift in Sources */,
+				664E9F64259017F7007EBE52 /* SignUpMenuBar.swift in Sources */,
 				66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
 				66AF72C825133096007E96BC /* FieldListLiteAdCell.swift in Sources */,
@@ -1952,6 +1966,7 @@
 				66024C33251DEA2C009E8A7E /* RepliedHeader.swift in Sources */,
 				668F04A2251F6502007BD9C7 /* OtherUserFilterVM.swift in Sources */,
 				660FB9D8256CE2820014D406 /* EditFoodMePost.swift in Sources */,
+				664E9F69259019A3007EBE52 /* StudentSignUp.swift in Sources */,
 				6652F02925176971003462BC /* FirFile.swift in Sources */,
 				66F25F1524F6E8E9005B0591 /* FakulteCell.swift in Sources */,
 				660FB9CA256A6FF70014D406 /* CampingCommentHeader.swift in Sources */,
@@ -1977,6 +1992,7 @@
 				66C0328D2570D216004DC40A /* MenuBarFilter.swift in Sources */,
 				66F4CD48250E803F0076D12E /* StudentEditPostDocCell.swift in Sources */,
 				66FA4ACF257E93F200E8F35B /* NoticesCommentDataHeader.swift in Sources */,
+				664E9F5F259017B7007EBE52 /* SignUp.swift in Sources */,
 				6615FC93250B3AAE00776664 /* DataViewPdfCell.swift in Sources */,
 				660BC46C2515AD0B005D0EF8 /* MenuController.swift in Sources */,
 				6615FC8B250AF67B00776664 /* LottieRefreshControl.swift in Sources */,

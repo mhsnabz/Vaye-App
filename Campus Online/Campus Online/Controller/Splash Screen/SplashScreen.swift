@@ -31,7 +31,7 @@ class SplashScreen: UIViewController {
         waitAnimation.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waitAnimation.play()
         splahScreen.animationType = .twitter
-        
+      
         if Auth.auth().currentUser?.uid != nil {
             
           //  Utilities.waitProgress(msg: nil)

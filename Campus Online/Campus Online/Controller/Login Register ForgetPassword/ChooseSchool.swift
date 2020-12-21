@@ -111,7 +111,7 @@ class ChooseSchool: UITableViewController {
 
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = RegisterVC()
+        let vc = SignUp()
         if isSearching
         {
             vc.school = dataSourceFiltred[indexPath.row]

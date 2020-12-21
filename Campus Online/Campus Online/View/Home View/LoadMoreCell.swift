@@ -10,7 +10,7 @@ import UIKit
 import Lottie
 class LoadMoreCell: UICollectionViewCell
 {
-    let activityView = UIActivityIndicatorView(style: .white)
+    let activityView = UIActivityIndicatorView(style: .gray)
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(activityView)

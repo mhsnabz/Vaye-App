@@ -1,15 +1,18 @@
 //
-//  HomeMenuBar.swift
+//  SignUpMenuBar.swift
 //  Campus Online
 //
-//  Created by mahsun abuzeyitoğlu on 19.12.2020.
+//  Created by mahsun abuzeyitoğlu on 21.12.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
 import UIKit
-class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDelegateFlowLayout ,UICollectionViewDelegate{
+
+private let reuseIdentifier = "Cell"
+
+class SignUpMenuBar: UIView ,  UICollectionViewDataSource , UICollectionViewDelegateFlowLayout ,UICollectionViewDelegate{
     weak var delegate : HomeMenuBarSelectedIndex?
-    weak var homeController : HomeController?
+    weak var homeController : SignUp?
     var horizontalBarLeftConstarint : NSLayoutConstraint?
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -20,9 +23,8 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
         cv.delegate = self
         return cv
     }()
-    override init(frame : CGRect){
+    override init(frame: CGRect) {
         super.init(frame: frame)
-
         addSubview(collecitonView)
         collecitonView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collecitonView.register(HomeMenu_Cell.self, forCellWithReuseIdentifier: "cell")
@@ -32,7 +34,9 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
         delegate?.getIndex(indexItem: 0)
     }
     
-    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     //MARK:--funcitons
     func setUpHorizantalBar(){
         let horizontalBarView = UIView()
@@ -46,13 +50,6 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
         horizontalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/2).isActive = true
         horizontalBarView.heightAnchor.constraint(equalToConstant: 1.5).isActive = true
     }
-    
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 2
     }
@@ -60,9 +57,9 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! HomeMenu_Cell
         if indexPath.item == 0 {
-            cell.lbl.text = "Bölüm Duyuruları"
+            cell.lbl.text = "Öğrenci"
         }else if indexPath.item == 1 {
-            cell.lbl.text = "Okul Kulüpleri"
+            cell.lbl.text = "Öğretim Görevlisi"
         }
         return cell
     }
@@ -74,39 +71,11 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.getIndex(indexItem: indexPath.item)
-       homeController?.scrollToIndex(menuIndex: indexPath.item)
+//       homeController?.scrollToIndex(menuIndex: indexPath.item)
     }
     
-}
-class HomeMenu_Cell : UICollectionViewCell {
     
-    let lbl : UILabel = {
-        let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 11)
-        lbl.textColor = .lightGray 
 
-        return lbl
-    }()
-    override var isSelected: Bool{
-        didSet{
-            if isSelected {
-                lbl.font = UIFont(name: Utilities.fontBold, size: 13)
-                lbl.textColor = .black
-            }else{
-                lbl.font = UIFont(name: Utilities.font, size: 11)
-                lbl.textColor = .lightGray
-            }
-        }
-    }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        addSubview(lbl)
-        lbl.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        lbl.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        lbl.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+
+
 }
