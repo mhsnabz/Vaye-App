@@ -141,6 +141,7 @@ class CompleteSigingUp: UIViewController {
                "priority":"student",
                "uid":taskUser.uid!,
                "bolum":_bolumName,
+               "fakulte":fakulteName,
                "short_school":taskUser.short_school! ,
                "schoolName":taskUser.schoolName!,
                "username":taskUser.username!
