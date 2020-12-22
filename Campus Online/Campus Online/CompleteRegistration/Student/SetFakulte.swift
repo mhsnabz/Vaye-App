@@ -109,15 +109,15 @@ class SetFakulte: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching{
-            let vc = BolumTB()
-            vc.fakulteName = dataSourceFiltred[indexPath.row]
-//            vc.currentUser = self.currentUser
+            taskUser.fakulte = dataSourceFiltred[indexPath.row]
+            let vc = SetBolum(taskUser: taskUser , fakulteName : dataSourceFiltred[indexPath.row] )
+   
             self.navigationController?.pushViewController(vc, animated: true)
         }else{
 
-            let vc = BolumTB()
-//            vc.currentUser = self.currentUser
-            vc.fakulteName = dataSource[indexPath.row]
+            taskUser.fakulte = dataSource[indexPath.row]
+            let vc = SetBolum(taskUser: taskUser , fakulteName : dataSource[indexPath.row] )
+
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

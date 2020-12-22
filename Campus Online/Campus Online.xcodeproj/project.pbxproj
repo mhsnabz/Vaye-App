@@ -97,6 +97,7 @@
 		664E9F7825914823007EBE52 /* SetStudentNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F7725914823007EBE52 /* SetStudentNumber.swift */; };
 		664E9F7D25914AEB007EBE52 /* SetFakulte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F7C25914AEB007EBE52 /* SetFakulte.swift */; };
 		664E9F8225914CD6007EBE52 /* SetBolum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F8125914CD6007EBE52 /* SetBolum.swift */; };
+		664E9F872591EB87007EBE52 /* CompleteSigingUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F862591EB87007EBE52 /* CompleteSigingUp.swift */; };
 		66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6925277CCA00CB043D /* NotificationLaunher.swift */; };
 		66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6E25277E3500CB043D /* ActionSheetNotification.swift */; };
 		6652014B256E9E99003BF4C7 /* EditCampingPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6652014A256E9E99003BF4C7 /* EditCampingPost.swift */; };
@@ -368,6 +369,7 @@
 		664E9F7725914823007EBE52 /* SetStudentNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetStudentNumber.swift; sourceTree = "<group>"; };
 		664E9F7C25914AEB007EBE52 /* SetFakulte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFakulte.swift; sourceTree = "<group>"; };
 		664E9F8125914CD6007EBE52 /* SetBolum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBolum.swift; sourceTree = "<group>"; };
+		664E9F862591EB87007EBE52 /* CompleteSigingUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSigingUp.swift; sourceTree = "<group>"; };
 		66512F6925277CCA00CB043D /* NotificationLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLaunher.swift; sourceTree = "<group>"; };
 		66512F6E25277E3500CB043D /* ActionSheetNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetNotification.swift; sourceTree = "<group>"; };
 		6652014A256E9E99003BF4C7 /* EditCampingPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCampingPost.swift; sourceTree = "<group>"; };
@@ -787,6 +789,7 @@
 				664E9F7725914823007EBE52 /* SetStudentNumber.swift */,
 				664E9F7C25914AEB007EBE52 /* SetFakulte.swift */,
 				664E9F8125914CD6007EBE52 /* SetBolum.swift */,
+				664E9F862591EB87007EBE52 /* CompleteSigingUp.swift */,
 			);
 			path = Student;
 			sourceTree = "<group>";
@@ -1812,6 +1815,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				664E9F872591EB87007EBE52 /* CompleteSigingUp.swift in Sources */,
 				66D7C3C4258852A500244D3B /* TeacherBolumTB.swift in Sources */,
 				668B6A7B251BD5D900A8902F /* SwipeCellHelper.swift in Sources */,
 				66E326A924F991BB004CB61D /* LessonCell.swift in Sources */,

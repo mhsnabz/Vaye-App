@@ -18,16 +18,13 @@ class SetBolum: UITableViewController {
     let searchBar = UISearchBar()
     var taskUser : TaskUser
     var isSearching = false
-    var fakulteName : String!{
-        didSet {
-            navigationItem.title = fakulteName
-        }
-    }
+    var fakulteName : String
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setNavigationBar()
         navigationItem.backBarButtonItem?.title = ""
+        navigationItem.title = fakulteName
         getBolumName(fakulteName : fakulteName)
         searchBar.sizeToFit()
         searchBar.delegate = self
@@ -36,8 +33,9 @@ class SetBolum: UITableViewController {
         tableView.separatorStyle = .none
     }
 
-    init(taskUser : TaskUser) {
+    init(taskUser : TaskUser , fakulteName : String) {
         self.taskUser = taskUser
+        self.fakulteName = fakulteName
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -98,19 +96,16 @@ class SetBolum: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching
         {
-            let vc = CompleteRegistration()
-            vc._bolumName = dataSourceFiltred[indexPath.row]
-            vc._fakulteName = fakulteName
-        //    vc.currentUser = currentUser
+            taskUser.bolum = dataSourceFiltred[indexPath.row]
+            
+            let vc = CompleteSigingUp(taskUser: taskUser, _bolumName: dataSourceFiltred[indexPath.row], _fakulteName: taskUser.fakulte)
+      
             self.navigationController?.pushViewController(vc, animated: true)
         }
         else
         {
-            
-            let vc = CompleteRegistration()
-            vc._bolumName = dataSource[indexPath.row]
-            vc._fakulteName = fakulteName
-         //   vc.currentUser = currentUser
+            taskUser.bolum = dataSource[indexPath.row]
+            let vc = CompleteSigingUp(taskUser: taskUser, _bolumName: dataSource[indexPath.row], _fakulteName: taskUser.fakulte)
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

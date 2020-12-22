@@ -111,7 +111,13 @@ class RegisterVC: UIViewController {
         btn.addTarget(self, action: #selector(goBack), for: .touchUpInside)
         return btn
     }()
-    
+    let reg : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Hesap Oluştur", for: .normal)
+        btn.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 16)
+        btn.addTarget(self, action: #selector(setNewUser), for: .touchUpInside)
+        return btn
+    }()
     let userName : TweeAttributedTextField = {
         let txt = TweeAttributedTextField()
         txt.placeholder = "@kullanıcı adınınzı belirleyin"
@@ -135,15 +141,6 @@ class RegisterVC: UIViewController {
         
         return txt
     }()
-    
-    let reg : UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle("Hesap Oluştur", for: .normal)
-        btn.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 16)
-        btn.addTarget(self, action: #selector(setNewUser), for: .touchUpInside)
-        return btn
-    }()
-    
     let name : TweeAttributedTextField = {
         let txt = TweeAttributedTextField()
         txt.placeholder = "Adınız ve Soyadınız"
