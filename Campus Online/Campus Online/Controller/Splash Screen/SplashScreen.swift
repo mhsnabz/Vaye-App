@@ -108,8 +108,6 @@ class SplashScreen: UIViewController {
                                     }
                                     
                                 }
-                            }else{
-                                self.checkHasExistStudent(withUid: uid)
                             }
                         }
                         
@@ -167,63 +165,7 @@ class SplashScreen: UIViewController {
     }
     
     }
-    func checkHasExistStudent(withUid uid : String!){
-        let db = Firestore.firestore().collection("user").document(uid)
-        db.getDocument { (doc, err) in
-            if err == nil {
-                
-                //
-                //                if doc!.get("number") == nil {
-                //                    self.splahScreen.startAnimation{
-                //                        Utilities.dismissProgress()
-                //                        let vc = StudentNumberVC()
-                //                        vc.currentUser =  CurrentUser.init(dic: doc!.data()!)
-                //                        self.navControl = UINavigationController(rootViewController: vc)
-                //                        self.navControl.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-                //                        self.present(self.navControl, animated: true, completion: nil)
-                //                    }
-                //
-                //                }else
-                if doc!.get("fakulte") == nil {
-                    self.waitAnimation.removeFromSuperview()
-                    self.splahScreen.startAnimation{
-                        
-                        let vc = StudentNumberVC()
-                        vc.currentUser =  CurrentUser.init(dic: doc!.data()!)
-                        self.navControl = UINavigationController(rootViewController: vc)
-                        self.navControl.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-                        self.present(self.navControl, animated: true, completion: nil)
-                    }
-                    
-                    
-                }else if doc!.get("bolum") == nil
-                {
-                    self.waitAnimation.removeFromSuperview()
-                    self.splahScreen.startAnimation{
-                        
-                        let vc = StudentNumberVC()
-                        vc.currentUser =  CurrentUser.init(dic: doc!.data()!)
-                        self.navControl = UINavigationController(rootViewController: vc)
-                        self.navControl.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-                        self.present(self.navControl, animated: true, completion: nil)
-                    }
-                    
-                }
-                else{
-                    self.waitAnimation.removeFromSuperview()
-                    self.splahScreen.startAnimation{
-                        
-                        return
-                    }
-                    
-                }
-                
-                
-                
-                
-            }
-        }
-    }
+
     
     
 }

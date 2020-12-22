@@ -75,6 +75,18 @@ class SignUp: UIViewController,HomeMenuBarSelectedIndex
         self.collecitonView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
         self.collecitonView.isPagingEnabled = true
     }
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        menuBar.horizontalBarLeftConstarint?.constant = scrollView.contentOffset.x / 2
+    }
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let memoryIndex = targetContentOffset.pointee.x / view.frame.width
+     
+        let index = IndexPath(item: Int(memoryIndex), section: 0)
+        menuBar.collecitonView.selectItem(at: index, animated: true, scrollPosition: .centeredHorizontally)
+        menuBar.delegate?.getIndex(indexItem: Int(memoryIndex))
+    }
     // MARK: UICollectionViewDataSource
 
 
@@ -94,6 +106,8 @@ extension SignUp : UICollectionViewDelegate , UICollectionViewDataSource , UICol
             return cell
         }else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: teacher, for: indexPath) as! TeacherSignUp
+            cell.school = school
+            cell.rootController = self
             return cell
         }
     }

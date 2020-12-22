@@ -71,7 +71,7 @@ class SignUpMenuBar: UIView ,  UICollectionViewDataSource , UICollectionViewDele
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.getIndex(indexItem: indexPath.item)
-//       homeController?.scrollToIndex(menuIndex: indexPath.item)
+       homeController?.scrollToIndex(menuIndex: indexPath.item)
     }
     
     

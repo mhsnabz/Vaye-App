@@ -170,8 +170,7 @@ class StudentSignUp: UICollectionViewCell {
         Utilities.enabledButton(reg)
         view.addSubview(stackViewLogin)
         let size = stackViewLogin.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        print(size.width)
-        print(size.height)
+        
         stackViewLogin.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 20, marginLeft: 40, marginBottom: 0, marginRigth: 40, width: 0, heigth: 162 + 12 + 50)
         return view
     }()
