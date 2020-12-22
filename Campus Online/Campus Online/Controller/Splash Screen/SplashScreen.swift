@@ -98,7 +98,22 @@ class SplashScreen: UIViewController {
                     let priority = docSnap?.get("priority") as! String
                     if priority == "student"
                     {
-                        self.checkHasExistStudent(withUid: uid)
+                        UserService.shared.checkUserIsComplete(uid: uid) { (val) in
+                            if val{
+                                UserService.shared.getTaskUser(uid: uid) { (user) in
+                                    let cont = UINavigationController(rootViewController: SetStudentNumber(taskUser: user))
+                                    cont.modalPresentationStyle = .fullScreen
+                                    self.present(cont, animated: true) {
+                                        self.waitAnimation.removeFromSuperview()
+                                    }
+                                    
+                                }
+                            }else{
+                                self.checkHasExistStudent(withUid: uid)
+                            }
+                        }
+                        
+                        
                     }
                     else if priority == "teacher"
                     {
@@ -107,6 +122,9 @@ class SplashScreen: UIViewController {
                 }
                 else{
                     self.waitAnimation.removeFromSuperview()
+                   
+                    
+                   
                 }
             }
         }

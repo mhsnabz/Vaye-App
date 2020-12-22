@@ -93,6 +93,10 @@
 		664E9F64259017F7007EBE52 /* SignUpMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F63259017F7007EBE52 /* SignUpMenuBar.swift */; };
 		664E9F69259019A3007EBE52 /* StudentSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F68259019A3007EBE52 /* StudentSignUp.swift */; };
 		664E9F6E259019B0007EBE52 /* TeacherSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F6D259019B0007EBE52 /* TeacherSignUp.swift */; };
+		664E9F7325914592007EBE52 /* TaskUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F7225914592007EBE52 /* TaskUser.swift */; };
+		664E9F7825914823007EBE52 /* SetStudentNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F7725914823007EBE52 /* SetStudentNumber.swift */; };
+		664E9F7D25914AEB007EBE52 /* SetFakulte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F7C25914AEB007EBE52 /* SetFakulte.swift */; };
+		664E9F8225914CD6007EBE52 /* SetBolum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F8125914CD6007EBE52 /* SetBolum.swift */; };
 		66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6925277CCA00CB043D /* NotificationLaunher.swift */; };
 		66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6E25277E3500CB043D /* ActionSheetNotification.swift */; };
 		6652014B256E9E99003BF4C7 /* EditCampingPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6652014A256E9E99003BF4C7 /* EditCampingPost.swift */; };
@@ -360,6 +364,10 @@
 		664E9F63259017F7007EBE52 /* SignUpMenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpMenuBar.swift; sourceTree = "<group>"; };
 		664E9F68259019A3007EBE52 /* StudentSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentSignUp.swift; sourceTree = "<group>"; };
 		664E9F6D259019B0007EBE52 /* TeacherSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherSignUp.swift; sourceTree = "<group>"; };
+		664E9F7225914592007EBE52 /* TaskUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskUser.swift; sourceTree = "<group>"; };
+		664E9F7725914823007EBE52 /* SetStudentNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetStudentNumber.swift; sourceTree = "<group>"; };
+		664E9F7C25914AEB007EBE52 /* SetFakulte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFakulte.swift; sourceTree = "<group>"; };
+		664E9F8125914CD6007EBE52 /* SetBolum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBolum.swift; sourceTree = "<group>"; };
 		66512F6925277CCA00CB043D /* NotificationLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLaunher.swift; sourceTree = "<group>"; };
 		66512F6E25277E3500CB043D /* ActionSheetNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetNotification.swift; sourceTree = "<group>"; };
 		6652014A256E9E99003BF4C7 /* EditCampingPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCampingPost.swift; sourceTree = "<group>"; };
@@ -776,6 +784,9 @@
 				66F25F1024F6BD39005B0591 /* FakulteTB.swift */,
 				66F25F1624F78618005B0591 /* BolumTB.swift */,
 				66F25F1824F7A7CD005B0591 /* CompleteRegistration.swift */,
+				664E9F7725914823007EBE52 /* SetStudentNumber.swift */,
+				664E9F7C25914AEB007EBE52 /* SetFakulte.swift */,
+				664E9F8125914CD6007EBE52 /* SetBolum.swift */,
 			);
 			path = Student;
 			sourceTree = "<group>";
@@ -1283,6 +1294,7 @@
 				669839F0257BDF4B00100F28 /* NoticesMainModel.swift */,
 				66D7C3812585931400244D3B /* ReportingService.swift */,
 				66EAC8F6258EED95003CF7A3 /* ClupNames.swift */,
+				664E9F7225914592007EBE52 /* TaskUser.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1823,6 +1835,7 @@
 				66C032852570CE6F004DC40A /* MenuBar.swift in Sources */,
 				6615FC8D250B38D200776664 /* NewPostHomeVCData.swift in Sources */,
 				660FB97025646E7D0014D406 /* SetNewFoodMePost.swift in Sources */,
+				664E9F7325914592007EBE52 /* TaskUser.swift in Sources */,
 				664E9F64259017F7007EBE52 /* SignUpMenuBar.swift in Sources */,
 				66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */,
 				66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */,
@@ -1881,6 +1894,7 @@
 				661333DD24F36C76002677AB /* NotificationSetting.swift in Sources */,
 				669839F7257CE77400100F28 /* ImageSliderVC.swift in Sources */,
 				66AA9C5725251053008DFB86 /* NotificaitionCell.swift in Sources */,
+				664E9F7825914823007EBE52 /* SetStudentNumber.swift in Sources */,
 				6690A66A253B38A000E88BC0 /* MainPostUploadService.swift in Sources */,
 				66FA4ABD257E623600E8F35B /* EditNoticesPost.swift in Sources */,
 				66864461257B06C7003483D8 /* NoticesDataCell.swift in Sources */,
@@ -1912,6 +1926,7 @@
 				66024C22251CEFF3009E8A7E /* CommentService.swift in Sources */,
 				6622C2402505D1DD00E3B3F0 /* LessonInfoCell.swift in Sources */,
 				66E326AB24F9C01C004CB61D /* UserService.swift in Sources */,
+				664E9F8225914CD6007EBE52 /* SetBolum.swift in Sources */,
 				661333F624F3FDD6002677AB /* LoginVC.swift in Sources */,
 				66A5F0D6250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift in Sources */,
 				66EAC8A2258E6234003CF7A3 /* HomeMenuBar.swift in Sources */,
@@ -1943,6 +1958,7 @@
 				66B2B41F2554B8290088262E /* ASMainPostOtherUserCell.swift in Sources */,
 				6613340824F4E9C1002677AB /* SchoolModel.swift in Sources */,
 				66D9121B24EEAB85002D760A /* NotificationVC.swift in Sources */,
+				664E9F7D25914AEB007EBE52 /* SetFakulte.swift in Sources */,
 				660898FF24FC50810023E53B /* FullScreenImage.swift in Sources */,
 				6690A665253A223F00E88BC0 /* MainPostModel.swift in Sources */,
 				66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */,

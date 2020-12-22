@@ -13,7 +13,8 @@ import Firebase
 import JDropDownAlert
 import SVProgressHUD
 import PopupDialog
-
+import FirebaseAuth
+import FirebaseFirestore
 class LoginVC: UIViewController {
     
     
@@ -172,6 +173,9 @@ class LoginVC: UIViewController {
         
     }
     
+
+    //MARK:--functions
+
     //MARK: -Handelers
     
     @objc func login(){
@@ -187,17 +191,33 @@ class LoginVC: UIViewController {
                 guard let user = result?.user else {
                     Utilities.dismissProgress()
                     return }
-                let db = Firestore.firestore().collection("user").document(user.uid)
-                db.getDocument { (docSnap, err) in
-                    if err == nil {
-                        let vc = SplashScreen()
-                        vc.currentUser = CurrentUser.init(dic: docSnap!.data()!)
-                        vc.modalPresentationStyle = .fullScreen
-                        self.present(vc, animated: true) {
-                            Utilities.dismissProgress()
+                
+                UserService.shared.checkUserIsComplete(uid: user.uid) {[weak self] (val) in
+                    guard let sself = self else { return }
+                    if val {
+                        UserService.shared.getTaskUser(uid: user.uid) { (user) in
+                            let vc = SetStudentNumber(taskUser : user)
+                            vc.modalPresentationStyle = .fullScreen
+                            sself.present(vc, animated: true) {
+                                Utilities.dismissProgress()
+                            }
+                        }
+                    }else{
+                        let db = Firestore.firestore().collection("user").document(user.uid)
+                        db.getDocument { (docSnap, err) in
+                            if err == nil {
+                                let vc = SplashScreen()
+                                vc.currentUser = CurrentUser.init(dic: docSnap!.data()!)
+                                vc.modalPresentationStyle = .fullScreen
+                                sself.present(vc, animated: true) {
+                                    Utilities.dismissProgress()
+                                }
+                            }
                         }
                     }
                 }
+                
+              
                 
             }else{
                 if err?.localizedDescription == "The password is invalid or the user does not have a password." {

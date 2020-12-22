@@ -302,4 +302,37 @@ struct UserService {
     }
     
     
+    func checkUserIsComplete(uid : String , completion : @escaping(Bool) -> Void){
+        ///task-user/VH7uSHHUVYPI2GP5hZ0NH5wFBUA2
+        let db = Firestore.firestore().collection("task-user")
+            .document(uid)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists
+                {
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+                
+            }else{
+                print(err?.localizedDescription as Any)
+            }
+        }
+    }
+    
+    
+    func getTaskUser(uid : String , completion : @escaping(TaskUser) -> Void){
+        let db = Firestore.firestore().collection("task-user")
+            .document(uid)
+        db.getDocument { (docsnap, err) in
+            if err == nil {
+                guard let snap = docsnap else {
+                    return
+                }
+                completion(TaskUser.init(uid: uid, dic: snap.data()!))
+            }
+        }
+    }
 }

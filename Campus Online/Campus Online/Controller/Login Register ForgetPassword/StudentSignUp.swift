@@ -322,6 +322,14 @@ class StudentSignUp: UICollectionViewCell {
                                                 dbc.collection("status").document(Auth.auth().currentUser!.uid).setData(["status":false], merge: true) { (err) in
                                                     if err == nil {
                                                         Utilities.dismissProgress()
+                                                        do {
+                                                        
+                                                            try  Auth.auth().signOut()
+                                                           
+                                                        }
+                                                        catch {
+                                                            print("err : \(error.localizedDescription.description)")
+                                                        }
                                                         // create the alert
                                                                let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "\(String(describing: result?.user.email) ) adresine Bir Tane Doğrulama E-Postası Gönderdik. Lütfen E-Posta Adresinizi Doğrulayıp Tekrar Giriş Yapınız", preferredStyle: UIAlertController.Style.alert)
 
@@ -332,14 +340,7 @@ class StudentSignUp: UICollectionViewCell {
                                                                 vc.modalPresentationStyle = .fullScreen
 
                                                                 sself.rootController?.present(vc, animated: true, completion: {
-                                                                    do {
-                                                                    
-                                                                        try  Auth.auth().signOut()
-                                                                       
-                                                                    }
-                                                                    catch {
-                                                                        print("err : \(error.localizedDescription.description)")
-                                                                    }
+                                                                   
                                                                 })
                                                                }))
                                                         
