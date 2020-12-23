@@ -25,9 +25,12 @@ class TaskUser {
     var twitter : String!
     var github : String!
     var slientUser : [String]!
-  
+    var unvan : String!
     init(uid : String ,dic : Dictionary<String,Any>) {
         self.uid = uid
+        if let unvan = dic["unvan"] as? String {
+            self.unvan = unvan
+        }
         if let email = dic["email"] as? String {
             self.email = email
         }

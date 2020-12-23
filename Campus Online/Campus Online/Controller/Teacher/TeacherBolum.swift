@@ -23,6 +23,7 @@ class TeacherBolum: UITableViewController {
 
         setNavigationBar()
         navigationItem.backBarButtonItem?.title = ""
+        navigationItem.title = "Bölüm Seçiniz"
         getBolumName(fakulteName : currentUser.fakulte)
         searchBar.sizeToFit()
         searchBar.delegate = self
@@ -50,7 +51,11 @@ class TeacherBolum: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        if isSearching{
+            return dataSourceFiltred.count
+        }else{
+            return dataSource.count
+        }
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! FakulteCell
@@ -69,22 +74,14 @@ class TeacherBolum: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching
         {
-//            let vc = CompleteRegistration()
-//            vc._bolumName = dataSourceFiltred[indexPath.row]
-//            vc._fakulteName = fakulteName
-//            vc.currentUser = currentUser
-//            self.navigationController?.pushViewController(vc, animated: true)
-            showAlert(fakulete: fakulteName, bolum: dataSourceFiltred[indexPath.row])
+            currentUser.bolum = dataSourceFiltred[indexPath.row]
+            showAlert(fakulete: currentUser.fakulte, bolum: dataSourceFiltred[indexPath.row])
         }
         else
         {
             
-//            let vc = CompleteRegistration()
-//            vc._bolumName = dataSource[indexPath.row]
-//            vc._fakulteName = fakulteName
-//            vc.currentUser = currentUser
-//            self.navigationController?.pushViewController(vc, animated: true)
-            showAlert(fakulete: fakulteName, bolum: dataSource[indexPath.row])
+            currentUser.bolum = dataSource[indexPath.row]
+            showAlert(fakulete: currentUser.fakulte, bolum: dataSource[indexPath.row])
         }
     }
     //MARK: --functions
@@ -116,11 +113,14 @@ class TeacherBolum: UITableViewController {
                 guard let sself = self else { return }
                 sself.completeRegistiration(bolum: bolum, fakulte: fakulete) { (err) in
                     if err{
-                        Utilities.succesProgress(msg: "Kayıt Tamamlandı")
-                        let vc = MainTabbar()
-                        vc.modalPresentationStyle = .fullScreen
-//                        vc.currentUser = sself.currentUser
-                        sself.present(vc, animated: true, completion: nil)
+                        UserService.shared.getCurrentUser(uid: sself.currentUser.uid) { (user) in
+                            Utilities.succesProgress(msg: "Kayıt Tamamlandı")
+                            let vc = MainTabbar()
+                            vc.modalPresentationStyle = .fullScreen
+                            vc.currentUser = user
+                            sself.present(vc, animated: true, completion: nil)
+                        }
+                     
                     }
                 }
               }))
@@ -135,19 +135,60 @@ class TeacherBolum: UITableViewController {
         Utilities.waitProgress(msg: "Lütfen Bekleyiniz")
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
-        db.setData(["fakulte":fakulte , "bolum":bolum] as [String : Any], merge: true) {[weak self] (err) in
+        
+        let dic = ["number":""
+                   ,"short_school":currentUser.short_school as Any,
+                   "schoolName":currentUser.schoolName as Any,
+                   "fakulte":currentUser.fakulte as Any,
+                   "bolum":currentUser.bolum as Any
+                   ,"name":currentUser.name as Any
+                   ,"slient":[],
+                   "profileImage":""
+                   ,"unvan":currentUser.unvan as Any,
+                   "thumb_image":""
+                   ,"email":currentUser.email as Any,
+                   "priority":"teacher"
+                   ,"uid":currentUser.uid as Any,
+                   "username":currentUser.username as Any ,
+                   "instagram": "",
+                   "twitter":"",
+                   "linkedin":"",
+                   "github":""] as [String : Any]
+        
+        db.setData(dic, merge: true) {[weak self] (err) in
             guard let sself = self else { return }
             if err == nil {
                 let db = Firestore.firestore().collection("status")
                     .document(sself.currentUser.uid)
-                db.setData(["status":true] as [String : Any], merge: true) { (err) in
+                db.setData(["status":true], merge: true) { (err) in
                     if err == nil {
                         let db = Firestore.firestore().collection(sself.currentUser.short_school)
                             .document("teacher")
                             .collection("uid").document(sself.currentUser.uid)
                         db.setData(["uid":sself.currentUser.uid as Any] as [String : Any], merge: true) { (err) in
                             if err == nil {
-                                completion(true)
+                                sself.setUserName(currentUser: sself.currentUser) { (_) in
+                                    let db = Firestore.firestore().collection("task-teacher")
+                                        .document(sself.currentUser.uid)
+                                    db.delete { (err) in
+                                        if err == nil {
+                                            
+                                            let db = Firestore.firestore().collection("user")
+                                                .document(sself.currentUser.uid)
+                                                .collection("saved-task")
+                                                .document("task")
+                                            
+                                            db.setData(["data":[]] as [String:Any], merge: true) { (err) in
+                                                if err == nil {
+                                                    completion(true)
+                                                }
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                
+                               
                             }
                         }
                     }
@@ -155,6 +196,30 @@ class TeacherBolum: UITableViewController {
             }
         }
         
+       
+        
+    }
+    
+    func setUserName(currentUser : TaskUser, completion: @escaping(Bool) ->Void ){
+        //username/@deneme
+        //İSTE/teacher/uid/N2Hh7fsd3QZwa8Lv5vfMfEaPIgt1
+        let db = Firestore.firestore().collection("username")
+            .document(currentUser.username)
+        let dic = ["uid":currentUser.uid as Any , "email":currentUser.email  as String, "username":currentUser.username as String] as [String : Any]
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("teacher")
+                    .collection("uid")
+                    .document(currentUser.uid)
+                db.setData(["uid":currentUser.uid as Any], merge: true) { (err) in
+                    if err == nil {
+                        completion(true)
+                    }
+                }
+                
+            }
+        }
     }
     
     func showSearchBar(shouldShow : Bool){
