@@ -96,6 +96,9 @@
 		664E9F7D25914AEB007EBE52 /* SetFakulte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F7C25914AEB007EBE52 /* SetFakulte.swift */; };
 		664E9F8225914CD6007EBE52 /* SetBolum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F8125914CD6007EBE52 /* SetBolum.swift */; };
 		664E9F872591EB87007EBE52 /* CompleteSigingUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F862591EB87007EBE52 /* CompleteSigingUp.swift */; };
+		664E9F9B2592FA48007EBE52 /* SetTeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F9A2592FA48007EBE52 /* SetTeacherVC.swift */; };
+		664E9FA02593016D007EBE52 /* TeacherFakulte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9F9F2593016D007EBE52 /* TeacherFakulte.swift */; };
+		664E9FA52593031D007EBE52 /* TeacherBolum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664E9FA42593031D007EBE52 /* TeacherBolum.swift */; };
 		66512F6A25277CCA00CB043D /* NotificationLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6925277CCA00CB043D /* NotificationLaunher.swift */; };
 		66512F6F25277E3500CB043D /* ActionSheetNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66512F6E25277E3500CB043D /* ActionSheetNotification.swift */; };
 		6652014B256E9E99003BF4C7 /* EditCampingPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6652014A256E9E99003BF4C7 /* EditCampingPost.swift */; };
@@ -363,6 +366,9 @@
 		664E9F7C25914AEB007EBE52 /* SetFakulte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFakulte.swift; sourceTree = "<group>"; };
 		664E9F8125914CD6007EBE52 /* SetBolum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBolum.swift; sourceTree = "<group>"; };
 		664E9F862591EB87007EBE52 /* CompleteSigingUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSigingUp.swift; sourceTree = "<group>"; };
+		664E9F9A2592FA48007EBE52 /* SetTeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTeacherVC.swift; sourceTree = "<group>"; };
+		664E9F9F2593016D007EBE52 /* TeacherFakulte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherFakulte.swift; sourceTree = "<group>"; };
+		664E9FA42593031D007EBE52 /* TeacherBolum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherBolum.swift; sourceTree = "<group>"; };
 		66512F6925277CCA00CB043D /* NotificationLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLaunher.swift; sourceTree = "<group>"; };
 		66512F6E25277E3500CB043D /* ActionSheetNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetNotification.swift; sourceTree = "<group>"; };
 		6652014A256E9E99003BF4C7 /* EditCampingPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCampingPost.swift; sourceTree = "<group>"; };
@@ -1151,6 +1157,9 @@
 				66D7C3B625882F9900244D3B /* TeacherVC.swift */,
 				66D7C3BE25883D2700244D3B /* SetTeacherFakulte.swift */,
 				66D7C3C3258852A500244D3B /* TeacherBolumTB.swift */,
+				664E9F9A2592FA48007EBE52 /* SetTeacherVC.swift */,
+				664E9F9F2593016D007EBE52 /* TeacherFakulte.swift */,
+				664E9FA42593031D007EBE52 /* TeacherBolum.swift */,
 			);
 			path = Teacher;
 			sourceTree = "<group>";
@@ -1950,6 +1959,7 @@
 				66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */,
 				661333E524F395B2002677AB /* HomeMenuController.swift in Sources */,
 				6615FC87250A945700776664 /* NewPostHomeVC.swift in Sources */,
+				664E9F9B2592FA48007EBE52 /* SetTeacherVC.swift in Sources */,
 				668F04AD2520CC94007BD9C7 /* LessonInfoModel.swift in Sources */,
 				66D9121424EEAB49002D760A /* HomeVC.swift in Sources */,
 				6608990D24FD70B60023E53B /* NewPostImageCell.swift in Sources */,
@@ -1965,6 +1975,7 @@
 				6677556C252E9E1F00DBF3CD /* FoodMe.swift in Sources */,
 				660FB9B6256A358C0014D406 /* CampingDataView.swift in Sources */,
 				66024C33251DEA2C009E8A7E /* RepliedHeader.swift in Sources */,
+				664E9FA52593031D007EBE52 /* TeacherBolum.swift in Sources */,
 				668F04A2251F6502007BD9C7 /* OtherUserFilterVM.swift in Sources */,
 				660FB9D8256CE2820014D406 /* EditFoodMePost.swift in Sources */,
 				664E9F69259019A3007EBE52 /* StudentSignUp.swift in Sources */,
@@ -1997,6 +2008,7 @@
 				660BC46C2515AD0B005D0EF8 /* MenuController.swift in Sources */,
 				6615FC8B250AF67B00776664 /* LottieRefreshControl.swift in Sources */,
 				660FB9A9256A356E0014D406 /* CampingCell.swift in Sources */,
+				664E9FA02593016D007EBE52 /* TeacherFakulte.swift in Sources */,
 				6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */,
 				66775565252E9E0100DBF3CD /* BuyAndCellVC.swift in Sources */,
 				660FB996256903B80014D406 /* EmptyCell.swift in Sources */,

@@ -115,7 +115,22 @@ class SplashScreen: UIViewController {
                     }
                     else if priority == "teacher"
                     {
-                        self.checkHasExistTeacher(withUid : uid)
+                        UserService.shared.checkTeacherIsComplet(uid: uid) { (val) in
+                            print(val)
+                            if val {
+                                UserService.shared.getTaskTeacher(uid: uid) { (user) in
+                                    let cont = UINavigationController(rootViewController: SetTeacherVC(currentUser: user))
+                                    cont.modalPresentationStyle = .fullScreen
+                                    self.present(cont, animated: true) {
+                                        self.waitAnimation.removeFromSuperview()
+                                    }
+                                }
+                            }else{
+                                Utilities.errorProgress(msg: "Kaydınız Bulunmuyor")
+                            }
+                        }
+                        
+                       // self.checkHasExistTeacher(withUid : uid)
                     }
                 }
                 else{

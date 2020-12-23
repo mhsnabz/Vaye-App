@@ -97,7 +97,7 @@ class TeacherSignUp: UICollectionViewCell
         txt.infoFontSize = UIFont.smallSystemFontSize
         txt.infoTextColor = .red
         txt.infoAnimationDuration = 0.4
-
+        
         
         return txt
     }()
@@ -117,7 +117,7 @@ class TeacherSignUp: UICollectionViewCell
         txt.returnKeyType = .continue
         txt.autocapitalizationType = .none
         txt.keyboardType = UIKeyboardType.emailAddress
-      
+        
         
         return txt
     }()
@@ -144,7 +144,7 @@ class TeacherSignUp: UICollectionViewCell
         let btn = UIButton(type: .system)
         btn.setTitle("Hesap Oluştur", for: .normal)
         btn.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 16)
-      
+        
         return btn
     }()
     override init(frame: CGRect) {
@@ -332,7 +332,7 @@ extension TeacherSignUp : UITableViewDelegate , UITableViewDataSource {
                 Utilities.dismissProgress()
                 return
             }
-           
+            
             if !name.hasText {
                 name.infoLabel.text = "Lütfen Adınızı ve Soyadınızı Giriniz"
                 Utilities.dismissProgress()
@@ -386,24 +386,25 @@ extension TeacherSignUp : UITableViewDelegate , UITableViewDataSource {
                         return
                     }
                 }else{
-                   
-                        Utilities.waitProgress(msg: "Hesap Oluşturuluyor...")
-                        var dic = Dictionary<String,Any>()
-                         dic = ["number":""
-                                   ,"schoolName":schooll.name as String
-                                   ,"name":_name,
-                                   "slient":[],
-                                   "profileImage":""
-                                   ,"unvan":_unvan,
-                                   "thumb_image":"",
-                                   "email":result.user.email! as String,
-                                   "priority":"teacher"
-                                   ,"uid":result.user.uid as String
-                                   ,"username":"" as Any
-                                   , "instagram": "",
-                                   "twitter":""
-                                   ,"linkedin":""
-                                   ,"github":""] as [String : Any]
+                    
+                    Utilities.waitProgress(msg: "Hesap Oluşturuluyor...")
+                    var dic = Dictionary<String,Any>()
+                    dic = ["number":""
+                           ,"schoolName":schooll.name as String,
+                           "short_school":schooll.shortName as Any 
+                           ,"name":_name,
+                           "slient":[],
+                           "profileImage":""
+                           ,"unvan":_unvan,
+                           "thumb_image":"",
+                           "email":result.user.email! as String,
+                           "priority":"teacher"
+                           ,"uid":result.user.uid as String
+                           ,"username":"" as Any
+                           , "instagram": "",
+                           "twitter":""
+                           ,"linkedin":""
+                           ,"github":""] as [String : Any]
                     
                     let db = Firestore.firestore().collection("task-teacher")
                         .document(result.user.uid)
@@ -412,35 +413,35 @@ extension TeacherSignUp : UITableViewDelegate , UITableViewDataSource {
                         if err == nil {
                             let dbc = Firestore.firestore()
                             dbc.collection("priority").document(Auth.auth().currentUser!.uid)
-                                .setData(["priority" : "teacheer"], merge: true) { (err) in
+                                .setData(["priority" : "teacher"], merge: true) { (err) in
                                     if err == nil {
                                         dbc.collection("status").document(result.user.uid).setData(["status":false] , merge: true) { (err) in
                                             if err == nil {
                                                 Utilities.dismissProgress()
                                                 do {
-                                                
+                                                    
                                                     try  Auth.auth().signOut()
-                                                   
+                                                    
                                                 }
                                                 catch {
                                                     print("err : \(error.localizedDescription.description)")
                                                 }
                                                 
                                                 // create the alert
-                                                       let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "Hesabınız Onay Aldıktan Sonra Kayıtlı E-Posta Adresinize En Geç 24 saat İçinde Doğrulama E-Postası Göndereceğiz.", preferredStyle: UIAlertController.Style.alert)
-
-                                                       // add an action (button)
-                                                       alert.addAction(UIAlertAction(title: "TAMAM", style: UIAlertAction.Style.default, handler: {
-                                                       action in
-                                                        let vc = LoginVC()
-                                                        vc.modalPresentationStyle = .fullScreen
-
-                                                        sself.rootController?.present(vc, animated: true, completion: {
-                                                           
-                                                        })
-                                                       }))
+                                                let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "Hesabınız Onay Aldıktan Sonra Kayıtlı E-Posta Adresinize En Geç 24 saat İçinde Doğrulama E-Postası Göndereceğiz.", preferredStyle: UIAlertController.Style.alert)
                                                 
-                                                    sself.rootController?.present(alert, animated: true, completion: nil)
+                                                // add an action (button)
+                                                alert.addAction(UIAlertAction(title: "TAMAM", style: UIAlertAction.Style.default, handler: {
+                                                    action in
+                                                    let vc = LoginVC()
+                                                    vc.modalPresentationStyle = .fullScreen
+                                                    
+                                                    sself.rootController?.present(vc, animated: true, completion: {
+                                                        
+                                                    })
+                                                }))
+                                                
+                                                sself.rootController?.present(alert, animated: true, completion: nil)
                                                 
                                             }else{
                                                 Utilities.dismissProgress()
@@ -464,7 +465,7 @@ extension TeacherSignUp : UITableViewDelegate , UITableViewDataSource {
                             return
                         }
                     }
-                        
+                    
                     
                 }
             }
