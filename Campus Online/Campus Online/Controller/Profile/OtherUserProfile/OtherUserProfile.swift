@@ -91,6 +91,13 @@ class OtherUserProfile: UIViewController     {
     private var vayeAppLauncherCurrentUser : ActionSheetMainPost
     private var vayeAppLaunherOtherUser :  ASMainPostOtherUser
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
+    
+    var interstitalGithub : GADInterstitial!
+    var interstitalInsta : GADInterstitial!
+    var interstitalLinked : GADInterstitial!
+    var interstitalTwitter : GADInterstitial!
+    
+    var ads_target : String = ""
     //MARK:-post filter val
     var isHomePost : Bool = false
     var isSchoolPost : Bool = false
@@ -226,33 +233,33 @@ class OtherUserProfile: UIViewController     {
     let sendMsg : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "msg").withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
         return btn
     }()
     
     let github : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "github")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
         return btn
     }()
     let linkedin : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "linkedin")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goLinkedIn), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goLinkedIn), for: .touchUpInside)
         return btn
     }()
     
     let twitter : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "twitter")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goTwitter), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goTwitter), for: .touchUpInside)
         return btn
     }()
     let instagram : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "ig")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goInstagram), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goInstagram), for: .touchUpInside)
         return btn
     }()
     
@@ -327,6 +334,11 @@ class OtherUserProfile: UIViewController     {
             getMainPost()
         }
         
+        interstitalTwitter = createAd()
+        interstitalGithub = createAd()
+        interstitalLinked = createAd()
+        interstitalInsta = createAd()
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -362,10 +374,58 @@ class OtherUserProfile: UIViewController     {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK:--selectors
+    @objc func goGithub(){
+        if interstitalGithub.isReady {
+          
+            ads_target = "github"
+            interstitalGithub.present(fromRootViewController: self)
+        }else{
+             guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+             UIApplication.shared.open(url)
+        }
+    }
+    @objc func goInstagram(){
+        if interstitalInsta.isReady {
+           
+            ads_target = "instagram"
+            interstitalInsta.present(fromRootViewController: self)
+        }else{
+             guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+             UIApplication.shared.open(url)
+        }
+    }
+    @objc func goTwitter(){
+        if interstitalTwitter.isReady {
+            
+            ads_target = "twitter"
+            interstitalTwitter.present(fromRootViewController: self)
+        }else{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+             UIApplication.shared.open(url)
+        }
+    }
+    @objc func goLinkedIn(){
+        if interstitalLinked.isReady {
+            
+            ads_target = "linkedin"
+            
+            interstitalLinked.present(fromRootViewController: self)
+        }else{
+            guard let url = URL(string: otherUser.linkedin ) else { return }
+             UIApplication.shared.open(url)
+        }
+    }
     @objc func dissmis(){
        self.dismiss(animated: true, completion: nil)
     }
    //MARK:-functions
+    
+    private func getUsername(username : String) ->String{
+        
+        return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
+    }
+    
     private func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
         if data.count == 0{
             completion(true)
@@ -1409,27 +1469,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
     
 }
 
-extension OtherUserProfile : GADInterstitialDelegate {
-    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
-        
-    }
-    func interstitialWillPresentScreen(_ ad: GADInterstitial) {
-        
-    }
-    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
-        print("dismiss")
-    }
-    func interstitialWillLeaveApplication(_ ad: GADInterstitial) {
-        
-    }
-    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
-        
-    }
-    func interstitialDidFail(toPresentScreen ad: GADInterstitial) {
-        print("failed")
-    }
-    
-}
+
 
 extension OtherUserProfile : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate , GADUnifiedNativeAdDelegate {
     
@@ -2868,4 +2908,63 @@ extension OtherUserProfile :NewPostNoticesDataVCDelegate{
         }
     }
     
+}
+extension OtherUserProfile : GADInterstitialDelegate {
+    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
+        if ads_target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "linkedin"{
+            guard let url = URL(string:  otherUser.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+    }
+    func interstitialDidFail(toPresentScreen ad: GADInterstitial) {
+        print("fail")
+    }
+
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        if ads_target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "linkedin"{
+            guard let url = URL(string:  otherUser.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+        
+    }
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        print("reveived")
+    }
+    func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
+       
+        if ads_target == "github"{
+           
+            guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: otherUser.github) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "twitter"{
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: otherUser.twitter) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "instagram"{
+            guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: otherUser.instagram) ) else { return }
+            UIApplication.shared.open(url)
+        }else if ads_target == "linkedin"{
+            guard let url = URL(string:  otherUser.linkedin ) else { return }
+            UIApplication.shared.open(url)
+        }
+    }
 }
