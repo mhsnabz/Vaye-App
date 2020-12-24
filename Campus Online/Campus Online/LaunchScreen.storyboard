@@ -12,23 +12,24 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                    <view key="view" autoresizesSubviews="NO" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="qcb-O2-5wg">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="P5C-ii-F1Z">
                                 <rect key="frame" x="157" y="398" width="100" height="100"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="M2k-F6-t0D"/>
-                                    <constraint firstAttribute="height" constant="100" id="nSw-5S-5n5"/>
+                                    <constraint firstAttribute="height" constant="100" id="V0C-jT-MmC"/>
+                                    <constraint firstAttribute="width" constant="100" id="cnn-Oj-KLN"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="0.32371705769999998" green="0.55905485150000001" blue="0.91376441720000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="qcb-O2-5wg" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Msm-1S-3YV"/>
-                            <constraint firstItem="qcb-O2-5wg" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="dhQ-u3-pG2"/>
+                            <constraint firstItem="P5C-ii-F1Z" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="42y-TS-w37"/>
+                            <constraint firstItem="P5C-ii-F1Z" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="AuN-of-4Cv"/>
                         </constraints>
                     </view>
                 </viewController>
