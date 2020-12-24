@@ -167,7 +167,7 @@ class OtherUserProfile: UIViewController     {
          followBtn.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 50, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
          followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
        
-//         followBtn.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
+         followBtn.addTarget(self, action: #selector(setFollow), for: .touchUpInside)
          return view
 
     }()
@@ -315,6 +315,7 @@ class OtherUserProfile: UIViewController     {
     override func viewDidLoad() {
         super.viewDidLoad()
         interstitalAd = createAd()
+        
         setNavigationBar()
         navigationItem.title = otherUser.username
         configureUI()
@@ -338,6 +339,14 @@ class OtherUserProfile: UIViewController     {
         interstitalGithub = createAd()
         interstitalLinked = createAd()
         interstitalInsta = createAd()
+        
+        let seconds = 2.0
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+            
+            if self.interstitalAd.isReady {
+                self.interstitalAd.present(fromRootViewController: self)
+            }
+        }
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -420,6 +429,67 @@ class OtherUserProfile: UIViewController     {
        self.dismiss(animated: true, completion: nil)
     }
    //MARK:-functions
+    
+    @objc func setFollow(){
+        Utilities.waitProgress(msg: "")
+        guard let isFallowingUser = isFallowingUser else { return }
+        if isFallowingUser{
+            let db = Firestore.firestore().collection("user")
+                .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    
+                    UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser.uid) { (val) in
+                        sself.isFallowingUser = val
+            
+                        Utilities.succesProgress(msg: nil)
+                    }
+                    let db = Firestore.firestore().collection("user")
+                        .document(sself.currentUser.uid)
+                        .collection("following").document(sself.otherUser.uid)
+                    db.delete { (err) in
+                        if err == nil {
+                            Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
+                        }else{
+                            Utilities.errorProgress(msg: nil)
+                        }
+                    }
+                
+                
+                }
+            }
+        }else{
+            let db = Firestore.firestore().collection("user")
+                .document(otherUser.uid).collection("fallowers").document(currentUser.uid)
+            db.setData(["user":currentUser.uid as Any] as [String:Any], merge: true) {[weak self] (err) in
+                if err == nil {
+                    guard let sself = self else { return }
+                
+                    UserService.shared.checkFollowers(currentUser: sself.currentUser, otherUser: sself.otherUser.uid) { (val) in
+                        sself.isFallowingUser = val
+                   
+                        Utilities.succesProgress(msg: nil)
+                    }
+                    let db = Firestore.firestore().collection("user")
+                        .document(sself.currentUser.uid)
+                        .collection("following").document(sself.otherUser.uid)
+                  
+                    db.setData(["user":sself.otherUser.uid as Any], merge: true) { (err) in
+                        if err == nil{
+                            Utilities.succesProgress(msg: "Takip Ediliyor")
+                            NotificaitonService.shared.start_following_you(currentUser: sself.currentUser, otherUser: sself.otherUser, text: Notification_description.following_you.desprition, type: NotificationType.following_you.desprition) { (_) in
+                                
+                            }
+                        }else{
+                            Utilities.errorProgress(msg: nil)
+                        }
+                    }
+                  
+                }
+            }
+        }
+    }
     
     private func getUsername(username : String) ->String{
         
@@ -1741,67 +1811,7 @@ extension OtherUserProfile : NewPostHomeVCDelegate {
         
     }
     
-//    func goProfileByMention(userName: String) {
-//        if "@\(userName)" == currentUser.username {
-//        }else{
-//            UserService.shared.getUserByMention(username: userName) {[weak self] (user) in
-//                guard let sself = self else { return }
-//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-//                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
-//                        if val {
-//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-//
-//                            sself.navigationController?.pushViewController(vc, animated: true)
-//                            Utilities.dismissProgress()
-//                        }else{
-//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-//
-//                            sself.navigationController?.pushViewController(vc, animated: true)
-//                            Utilities.dismissProgress()
-//                        }
-//
-//                    }
-//                }
-//
-//            }
-//        }
-//    }
-    
-//    func clickMention(username: String) {
-//        if "@\(username)" == currentUser.username {
-//            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
-//                guard let self = self else { return }
-//                if val{
-//                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
-//                    self.navigationController?.pushViewController(vc, animated: true)
-//                }else{
-//                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
-//                    self.navigationController?.pushViewController(vc, animated: true)
-//                }
-//            }
-//        }else{
-//            UserService.shared.getUserByMention(username: username) {[weak self] (user) in
-//                guard let sself = self else { return }
-//                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-//                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
-//                        if val {
-//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-//
-//                            sself.navigationController?.pushViewController(vc, animated: true)
-//                            Utilities.dismissProgress()
-//                        }else{
-//                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-//
-//                            sself.navigationController?.pushViewController(vc, animated: true)
-//                            Utilities.dismissProgress()
-//                        }
-//
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
+
     
 }
 
