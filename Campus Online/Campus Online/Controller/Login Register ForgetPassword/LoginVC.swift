@@ -192,20 +192,7 @@ class LoginVC: UIViewController {
                     Utilities.dismissProgress()
                     return }
                 
-//                UserService.shared.checkUserIsComplete(uid: user.uid) {[weak self] (val) in
-//                    guard let sself = self else { return }
-//                    if val {
-//                        UserService.shared.getTaskUser(uid: user.uid) { (user) in
-//                            let vc = SetStudentNumber(taskUser : user)
-//                            vc.modalPresentationStyle = .fullScreen
-//                            sself.present(vc, animated: true) {
-//                                Utilities.dismissProgress()
-//                            }
-//                        }
-//                    }else{
-//
-//                    }
-//                }
+
                 let db = Firestore.firestore().collection("user").document(user.uid)
                 db.getDocument {[weak self] (docSnap, err) in
                     guard let sself = self else { return }

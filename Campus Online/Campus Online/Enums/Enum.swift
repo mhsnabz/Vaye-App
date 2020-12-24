@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 enum MenuOption : Int ,CustomStringConvertible {
     case major
-    case school_notices
+//    case school_notices
     case not
     case rate
     case set
@@ -20,8 +20,8 @@ enum MenuOption : Int ,CustomStringConvertible {
         switch self {
         case .major:
            return ""
-        case.school_notices:
-          return  ""
+//        case.school_notices:
+//          return  ""
         case .rate :
             return "Bizi Değerlendir"
         case .set:
@@ -36,7 +36,7 @@ enum MenuOption : Int ,CustomStringConvertible {
     var image : UIImage {
            switch self {
            case .major : return UIImage(named: "home")!.withRenderingMode(.alwaysOriginal)
-           case .school_notices : return UIImage(named: "notices")!.withRenderingMode(.alwaysOriginal)
+//           case .school_notices : return UIImage(named: "notices")!.withRenderingMode(.alwaysOriginal)
            case .set : return UIImage(named: "set")!.withRenderingMode(.alwaysOriginal)
            case .not : return UIImage(named: "not-setting")!.withRenderingMode(.alwaysOriginal)
            case .rate:

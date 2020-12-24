@@ -80,14 +80,7 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeMenuCell.reuseIdentifier, for: indexPath) as! HomeMenuCell
         cell.backgroundColor = .white
-        if indexPath.item == 1 {
-            let menuOption = MenuOption(rawValue: indexPath.row)
-            cell.homeBtn.setImage(menuOption?.image, for: .normal)
-            cell.homeTitle.setTitle(currentUser.short_school, for: .normal)
-            cell.delegate = self
-            cell.selectionStyle = .none
-        }
-        else if indexPath.item == 0{
+        if indexPath.item == 0{
             let menuOption = MenuOption(rawValue: indexPath.row)
             cell.homeBtn.setImage(menuOption?.image, for: .normal)
             cell.homeTitle.setTitle(currentUser.bolum, for: .normal)
@@ -102,7 +95,7 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
             cell.selectionStyle = .none
         }
       
-        if indexPath.row == 2 {
+        if indexPath.row == 1 {
             cell.line.isHidden = false
         }
         
@@ -125,7 +118,7 @@ extension MenuController : UITableViewDataSource , UITableViewDelegate {
         return 250
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return 5
     }
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {

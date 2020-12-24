@@ -136,12 +136,14 @@ class CompleteSigingUp: UIViewController {
                ,"name":taskUser.name!,
                "slient":[]
                ,"profileImage":""
-               ,"thumb_image":""
+               ,"thumb_image":"",
+               "mention":true,"comment":true,"like":true,"follow":true,"lessonNotices":true
+               
                ,"email":taskUser.email!,
                "priority":"student",
                "uid":taskUser.uid!,
                "bolum":_bolumName,
-               "fakulte":fakulteName,
+               "fakulte":_fakulteName,
                "short_school":taskUser.short_school! ,
                "schoolName":taskUser.schoolName!,
                "username":taskUser.username!

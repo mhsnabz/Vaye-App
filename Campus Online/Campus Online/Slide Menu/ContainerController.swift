@@ -94,14 +94,13 @@ class ContainerController: UIViewController {
         case .major:
             
             break
-        case .school_notices:
-            let vc = NoticesVC(currentUser: currentUser)
-            navigationController?.pushViewController(vc, animated: true)
-            
-            break
+//        case .school_notices:
+//
+//
+//            break
         case .not:
-            let vc = NotificationSetting()
-            vc.barTitle = "Bildirim Ayarları"
+            let vc = NotificationSetting(currentUser : currentUser)
+
             vc.modalPresentationStyle = .fullScreen
             self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
             break
