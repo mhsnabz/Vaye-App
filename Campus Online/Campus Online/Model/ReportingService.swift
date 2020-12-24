@@ -30,4 +30,25 @@ class ReportingService {
         }
             
     }
+    func setAppReport(reportType : String , reportTarget : String? , currentUser : CurrentUser ,text : String, completion : @escaping(Bool)->Void){
+        let dic = ["text":text,
+            "reportType" : reportType,
+            "reportTarget":reportTarget ?? "",
+            "time":FieldValue.serverTimestamp(),
+            "reportedBy":currentUser.uid as Any
+        ] as [String : Any]
+        
+        let db = Firestore.firestore().collection("report")
+            .document(reportType)
+            .collection("reportTo")
+            .document(currentUser.uid)
+            .collection("report")
+        db.addDocument(data: dic) { (err) in
+            if err == nil{
+                completion(true)
+            }else{
+                completion(false)
+            }
+        }
+    }
 }

@@ -15,11 +15,11 @@ class SplashScreen: UIViewController {
     var navControl : UIViewController!
     var currentUser : CurrentUser?
     var waitAnimation = AnimationView()
-    let splahScreen  = RevealingSplashView(iconImage: UIImage(named: "logo")!, iconInitialSize: CGSize(width: 100 , height: 100), backgroundColor: .white)
+    let splahScreen  = RevealingSplashView(iconImage: UIImage(named: "logo")!, iconInitialSize: CGSize(width: 100 , height: 100), backgroundColor: .mainColor())
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .mainColor()
         navigationController?.navigationBar.isHidden = true
         waitAnimation = .init(name : "newton")
         waitAnimation.animationSpeed = 1

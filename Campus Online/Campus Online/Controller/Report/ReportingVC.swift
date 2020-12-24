@@ -15,6 +15,7 @@ enum ReportTarget {
     case homePost
     case campingPost
     case noticesPost
+    case appReport
     var description : String {
         switch self{
         
@@ -28,12 +29,15 @@ enum ReportTarget {
             return "campingPost"
         case .noticesPost:
             return "noticesPost"
+        case .appReport:
+            return "appReport"
         }
     }
 }
 enum ReportType{
     case reportUser
     case reportPost
+    case appReport
     var description : String{
         switch self{
         
@@ -41,6 +45,8 @@ enum ReportType{
             return "reportUser"
         case .reportPost:
             return "reportPost"
+        case .appReport:
+            return "appReport"
         }
     }
 }
@@ -180,11 +186,22 @@ class ReportingVC: UIViewController {
             Utilities.errorProgress(msg: "Gönderinizi Boş Olamaz")
             return
         }else{
-            ReportingService.shared.setReport(reportType: reportType, reportTarget: target, postId: postId, currentUser: currentUser, text: text, otherUser: otherUser) {[weak self] (_) in
-                guard let sself = self else { return }
-                sself.navigationController?.popViewController(animated: true)
-                Utilities.succesProgress(msg: "Geri Bildiriminiz İçin\n Teşekkür Ederiz")
+            
+            if ReportType.appReport.description == reportType {
+                ReportingService.shared.setAppReport(reportType: reportType, reportTarget: reportType, currentUser: currentUser, text: text) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    sself.navigationController?.popViewController(animated: true)
+                    Utilities.succesProgress(msg: "Geri Bildiriminiz İçin\n Teşekkür Ederiz")
+                }
+            }else{
+                ReportingService.shared.setReport(reportType: reportType, reportTarget: target, postId: postId, currentUser: currentUser, text: text, otherUser: otherUser) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    sself.navigationController?.popViewController(animated: true)
+                    Utilities.succesProgress(msg: "Geri Bildiriminiz İçin\n Teşekkür Ederiz")
+                }
             }
+            
+           
         }
     }
     

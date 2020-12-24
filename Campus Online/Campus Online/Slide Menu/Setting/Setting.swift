@@ -92,7 +92,7 @@ extension Setting : UITableViewDelegate , UITableViewDataSource
         }else if section == 1{
             return 3
         }else if section == 2{
-            return 2
+            return 3
         }else {
             return 2
         }
@@ -135,15 +135,19 @@ extension Setting : UITableViewDelegate , UITableViewDataSource
         else if indexPath == [2,1]{
             cell.img.image = UIImage(named: "rate-us")!
             cell.lbl.text = "Bizi Değerlendir"
+        }else if indexPath == [2,2]{
+            cell.img.image = UIImage(named: "info_mail")!
+            cell.lbl.text = "destek@vaye.app"
+            cell.lbl.textColor = .mainColor()
         }
         else if indexPath == [3,0]{
             cell.img.image = UIImage(named: "ig")!
-            cell.lbl.text = "@onlinecampus"
+            cell.lbl.text = "@vaye.app"
             cell.lbl.textColor = UIColor.systemBlue
         }
         else if indexPath == [3,1]{
             cell.img.image = UIImage(named: "twitter")!
-            cell.lbl.text = "@onlinecampus"
+            cell.lbl.text = "@vaye.app"
             cell.lbl.textColor = UIColor.systemBlue
         }
         cell.backgroundColor = .white
@@ -187,7 +191,7 @@ extension Setting : UITableViewDelegate , UITableViewDataSource
     }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if section == 3{
-            return 120
+            return 70
         }else{
             return 0
         }
@@ -220,16 +224,31 @@ extension Setting : UITableViewDelegate , UITableViewDataSource
             navigationController?.pushViewController(vc, animated: true)
         }
         else if indexPath == [2,0]{
-//            cell.lbl.text = "Sorun Bildir"
+            let vc = ReportingVC(target: ReportTarget.appReport.description, currentUser: currentUser, otherUser: "nil", postId: "nil", reportType: ReportType.appReport.description)
+            navigationController?.pushViewController(vc, animated: true)
         }
         else if indexPath == [2,1]{
 //            cell.lbl.text = "Bizi Değerlendir"
         }
         else if indexPath == [3,0]{
-//            cell.lbl.text = "@onlinecampus"
+            
+            guard let url = URL(string: "https://www.instagram.com/vaye.app" ) else { return }
+            UIApplication.shared.open(url)
         }
         else if indexPath == [3,1]{
-//            cell.img.image = UIImage(named: "twitter")!
+       
+            guard let url = URL(string: "https://twitter.com/vaye.app" ) else { return }
+            UIApplication.shared.open(url)
+        }
+        
+        else if indexPath == [2,2] {
+            let mail = "destek@vaye.app"
+            guard let url = URL(string: ("mailto:\(mail)") )else {
+                return
+            }
+            UIApplication.shared.open(url)
+            
+        
         }
     }
 }
