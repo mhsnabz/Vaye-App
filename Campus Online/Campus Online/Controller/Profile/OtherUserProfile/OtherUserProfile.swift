@@ -153,6 +153,7 @@ class OtherUserProfile: UIViewController     {
         btn.setBackgroundColor(color: .mainColor(), forState: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.layer.cornerRadius = 5
+        btn.addTarget(self, action: #selector(setFollow), for: .touchUpInside)
         return btn
     }()
     lazy var imageSections : UIView = {
@@ -167,7 +168,7 @@ class OtherUserProfile: UIViewController     {
          followBtn.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 50, marginBottom: 0, marginRigth: 10, width: 0, heigth: 30)
          followBtn.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
        
-         followBtn.addTarget(self, action: #selector(setFollow), for: .touchUpInside)
+        
          return view
 
     }()

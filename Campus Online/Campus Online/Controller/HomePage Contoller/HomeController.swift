@@ -65,14 +65,11 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         setupMenuBar()
         configureUI()
         setNavBarButton()
-        
     }
-    
     
     init(currentUser : CurrentUser) {
         self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -92,6 +89,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     private func  setupMenuBar(){
         
         view.addSubview(menuBar)
+        
         menuBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 44)
         menuBar.delegate = self
     }

@@ -195,12 +195,13 @@ extension Setting : UITableViewDelegate , UITableViewDataSource
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath == [0,0]{
-//            cell.img.image = UIImage(named: "mail")!
+
          
             
         }else if indexPath == [0,1]{
 
-//            cell.lbl.text = "Şifre Ayarları"
+            let vc = ChangePassword(currentUser : currentUser)
+            navigationController?.pushViewController(vc, animated: true)
         }
         
         else if indexPath == [1,0]{
@@ -209,12 +210,12 @@ extension Setting : UITableViewDelegate , UITableViewDataSource
             navigationController?.pushViewController(vc, animated: true)
         }
         else if indexPath == [1,1]{
-//            cell.lbl.text = "Hizmet Koşulları"
+
             let vc = KullanımKosulları()
              navigationController?.pushViewController(vc, animated: true)
         }
         else if indexPath == [1,2]{
-//            cell.lbl.text = "Gizlilik Politikası"
+
             let vc = GizlilikPolitikasi()
             navigationController?.pushViewController(vc, animated: true)
         }
