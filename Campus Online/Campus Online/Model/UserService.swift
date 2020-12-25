@@ -417,7 +417,7 @@ struct UserService {
             .document("lesson")
             .collection(currentUser.bolum)
             .document(lessonName)
-            .collection("lesson-post").limit(toLast: 10)
+            .collection("lesson-post").limit(toLast: 10).order(by: "postId", descending: true)
         ////user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
         let dbLesson = Firestore.firestore().collection("user")
             .document(currentUser.uid)
@@ -438,4 +438,82 @@ struct UserService {
         }
     
     }
+    
+    func teacherRemoveLessonPost(currentUser : CurrentUser , lessonName : String , completion:@escaping(Bool) -> Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson")
+            .collection(currentUser.bolum)
+            .document(lessonName)
+            .collection("lesson-post")
+        ////user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+        let dbLesson = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("lesson-post")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else {
+                    completion(true)
+                    return
+                }
+                for item in snap.documents {
+                    dbLesson.document(item.documentID).delete()
+                    
+                }
+                completion(true)
+            }
+        }
+        
+    }
+    
+    func teacherRemoveLesson(lessonName : String , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
+        let dic = ["teacherName":"empty",
+                   "teacherId":"empty",
+                   "teacherEmail":"empty",
+                   "lessonName":lessonName] as [String:Any]
+        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson")
+            .collection(currentUser.bolum)
+            .document(lessonName)
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                let dbNoti = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson").collection(currentUser.bolum)
+                    .document(lessonName).collection("notification_getter").document(currentUser.uid)
+                dbNoti.setData(["uid":currentUser.uid as Any], merge: true) { (err) in
+                    if err == nil {
+                        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                        let db = Firestore.firestore().collection("user")
+                            .document(currentUser.uid)
+                            .collection("lesson")
+                            .document(lessonName)
+                        db.setData(dic, merge: true) { (err) in
+                            if err == nil {
+                                teacherRemoveLessonPost(currentUser: currentUser, lessonName: lessonName) { (_) in
+                                    let db = Firestore.firestore().collection("user")
+                                        .document(currentUser.uid)
+                                        .collection("lesson")
+                                        .document(lessonName)
+                                    db.delete { (err) in
+                                        if err == nil {
+                                            completion(true)
+                                        }
+                                }
+                                
+                            }
+                            }
+                                else{
+                                completion(false)
+                            }
+                        }
+                    }else{
+                        Utilities.errorProgress(msg: "Ders Silinemedi")
+                        completion(false)
+                    }
+                }
+            }else{
+                Utilities.errorProgress(msg: "Ders Silinemedi")
+                completion(false)
+            }
+    }
+}
 }

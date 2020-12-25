@@ -35,7 +35,7 @@ class TeacherSetLesson: UITableViewController {
             self.tableView.reloadData()
             Utilities.dismissProgress()
         }
-
+    
     }
     
     init(currentUser : CurrentUser ) {
@@ -43,6 +43,8 @@ class TeacherSetLesson: UITableViewController {
 
         super.init(nibName: nil, bundle: nil)
     }
+    
+ 
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -160,7 +162,7 @@ class TeacherSetLesson: UITableViewController {
                         cell.mark.image = UIImage(named: "cancel")
                         cell.fallowerNumber.text = sself.dataSource[indexPath.row].teacherName
                         cell.fallowerLabel.text = ""
-                        sself.selectedLesson = sself.dataSourceFiltred[indexPath.row].lessonName
+                        sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
                     }else{
                         cell.mark.image = UIImage(named: "add")
                         cell.fallowerNumber.text = "Ders Seçilebilir"
@@ -177,6 +179,31 @@ class TeacherSetLesson: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
+    }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        search(shouldShow: false)
+        if isSearching {
+            checkExistLesson(lessonName: dataSourceFiltred[indexPath.row].lessonName) {[weak self] (val) in
+                guard let sself = self else { return }
+                if val{
+                    UserService.shared.teacherRemoveLesson(lessonName: sself.dataSourceFiltred[indexPath.row].lessonName, currentUser: sself.currentUser) { (_) in
+                        Utilities.succesProgress(msg: "Ders Silinidi")
+                        sself.tableView.reloadData()
+                        
+                    }
+                }else{
+                    if sself.dataSourceFiltred[indexPath.row].teacherId == "empty" {
+                        UserService.shared.teacherAddLesson(currentUser: sself.currentUser, lessonName: sself.dataSourceFiltred[indexPath.row].lessonName) { (_) in
+                            Utilities.succesProgress(msg: "Dersiniz Eklendi")
+                            sself.tableView.reloadData()
+                        }
+                    }else{
+                        Utilities.errorProgress(msg: "Bu Dersi Seçemezsiniz")
+                    }
+                    
+                }
+            }
+        }
     }
 
 }
