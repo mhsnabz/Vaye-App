@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 private let home_cell = "Home_cell"
 private let scholl_cell = "scholl_cell"
 class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
@@ -183,6 +184,14 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         
         if currentUser.priority == "teacher"
         {
+           let vc = TeacherSetLesson(currentUser: currentUser)
+            vc.modalPresentationStyle = .fullScreen
+            if #available(iOS 13.0, *) {
+                vc.isModalInPresentation = true
+            } else {
+                // Fallback on earlier versions
+            }
+            self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
             
         }else if currentUser.priority == "student"{
             let vc = LessonList(currentUser: currentUser)
@@ -219,7 +228,8 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             centerController.modalPresentationStyle = .fullScreen
             self.present(centerController, animated: true, completion: nil) }
     }
-    
+
+  
     
     
 }

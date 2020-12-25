@@ -368,4 +368,74 @@ struct UserService {
     }
     
     
+    func teacherAddLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void)
+    {
+        //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
+        let dic = ["teacherName":currentUser.name as Any,
+                   "teacherId":currentUser.uid as Any,
+                   "teacherEmail":currentUser.email as Any,
+                   "lessonName":lessonName] as [String:Any]
+        let db = Firestore.firestore().collection(currentUser.short_school).document("lesson")
+            .collection(currentUser.bolum)
+            .document(lessonName)
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                let dbNoti = Firestore.firestore().collection(currentUser.short_school)
+                    .document("lesson").collection(currentUser.bolum)
+                    .document(lessonName).collection("notification_getter").document(currentUser.uid)
+                dbNoti.setData(["uid":currentUser.uid as Any], merge: true) { (err) in
+                    if err == nil {
+                        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+                        let db = Firestore.firestore().collection("user")
+                            .document(currentUser.uid)
+                            .collection("lesson")
+                            .document(lessonName)
+                        db.setData(dic, merge: true) { (err) in
+                            if err == nil {
+                                getLessonPost(currentUser: currentUser, lessonName: lessonName) { (_) in
+                                    completion(true)
+                                }
+                            }else{
+                                completion(false)
+                            }
+                        }
+                    }else{
+                        Utilities.errorProgress(msg: "Ders Eklenemedi")
+                        completion(false)
+                    }
+                }
+            }else{
+                Utilities.errorProgress(msg: "Ders Eklenemedi")
+                completion(false)
+            }
+        }
+    }
+    
+    func getLessonPost(currentUser  : CurrentUser,lessonName : String , completion : @escaping(Bool) ->Void){
+        //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/lesson-post
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson")
+            .collection(currentUser.bolum)
+            .document(lessonName)
+            .collection("lesson-post").limit(toLast: 10)
+        ////user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
+        let dbLesson = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("lesson-post")
+ 
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else {
+                    completion(true)
+                    return
+                }
+                for item in snap.documents {
+                    dbLesson.document(item.documentID).setData(["postId":item.documentID], merge: true)
+                    
+                }
+                completion(true)
+            }
+        }
+    
+    }
 }
