@@ -181,17 +181,24 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     }
     @objc func setLessons(){
         
-        let vc = LessonList(currentUser: currentUser)
-        vc.currentUser = currentUser
-        vc.modalPresentationStyle = .fullScreen
-        if #available(iOS 13.0, *) {
-            vc.isModalInPresentation = true
-        } else {
-            // Fallback on earlier versions
+        if currentUser.priority == "teacher"
+        {
+            
+        }else if currentUser.priority == "student"{
+            let vc = LessonList(currentUser: currentUser)
+            vc.currentUser = currentUser
+            vc.modalPresentationStyle = .fullScreen
+            if #available(iOS 13.0, *) {
+                vc.isModalInPresentation = true
+            } else {
+                // Fallback on earlier versions
+            }
+            
+            vc.modalPresentationStyle = .fullScreen
+            self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
         }
         
-        vc.modalPresentationStyle = .fullScreen
-        self.present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
+        
     }
     
     @objc func newPost(){
