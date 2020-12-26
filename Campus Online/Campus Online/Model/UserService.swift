@@ -516,4 +516,28 @@ struct UserService {
             }
     }
 }
+    
+    func getLessonFallowers(currentUser : CurrentUser , lessonName : String , completion : @escaping([String])->Void){
+        var user : [String] = []
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson")
+            .collection(currentUser.bolum)
+            .document(lessonName)
+            .collection("fallowers")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty {
+                    completion(user)
+                }else{
+                    for item in snap.documents{
+                        user.append(item.documentID)
+                       
+                    }
+                    Utilities.dismissProgress()
+                    completion(user)
+                }
+            }
+        }
+    }
 }

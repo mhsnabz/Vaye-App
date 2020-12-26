@@ -213,20 +213,39 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     @objc func newPost(){
         if let index = selectedIndex{
             if index == 0 {
-                let vc = ChooseLessonTB(currentUser: currentUser)
-                let  centerController = UINavigationController(rootViewController: vc)
-                centerController.modalPresentationStyle = .fullScreen
-                self.present(centerController, animated: true, completion: nil) }
+                if currentUser.priority == "teacher" {
+                    
+                    let vc = TeacherChooseLesson(currentUser: currentUser)
+                    let  centerController = UINavigationController(rootViewController: vc)
+                    centerController.modalPresentationStyle = .fullScreen
+                    self.present(centerController, animated: true, completion: nil)
+                }else{
+                    
+                    let vc = ChooseLessonTB(currentUser: currentUser)
+                    let  centerController = UINavigationController(rootViewController: vc)
+                    centerController.modalPresentationStyle = .fullScreen
+                    self.present(centerController, animated: true, completion: nil)
+                }
+             }
             else if index == 1{
                 let vc = ChooseClub(currentUser: currentUser, dataSource: NoticesService.shared.getHastag(currentUser: currentUser))
                 navigationController?.pushViewController(vc, animated: true)
             }
         }
         else {
+            if currentUser.priority == "teacher" {
+            
+            let vc = TeacherChooseLesson(currentUser: currentUser)
+            let  centerController = UINavigationController(rootViewController: vc)
+            centerController.modalPresentationStyle = .fullScreen
+            self.present(centerController, animated: true, completion: nil)
+        }else{
+            
             let vc = ChooseLessonTB(currentUser: currentUser)
             let  centerController = UINavigationController(rootViewController: vc)
             centerController.modalPresentationStyle = .fullScreen
-            self.present(centerController, animated: true, completion: nil) }
+            self.present(centerController, animated: true, completion: nil)
+        } }
     }
 
   
