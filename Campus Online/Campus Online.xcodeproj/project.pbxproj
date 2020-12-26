@@ -206,6 +206,8 @@
 		66C5781F2595F4BF006E9756 /* TeacherSetLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5781E2595F4BF006E9756 /* TeacherSetLesson.swift */; };
 		66C578272596D139006E9756 /* TeacherSetNewPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C578262596D139006E9756 /* TeacherSetNewPost.swift */; };
 		66C5782C2596D16F006E9756 /* TeacherChooseLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5782B2596D16F006E9756 /* TeacherChooseLesson.swift */; };
+		66C5783125971A61006E9756 /* StudentListTB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5783025971A61006E9756 /* StudentListTB.swift */; };
+		66C5783625971B32006E9756 /* SingleStudentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5783525971B32006E9756 /* SingleStudentCell.swift */; };
 		66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C379258566D000244D3B /* ReportingVC.swift */; };
 		66D7C3822585931400244D3B /* ReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3812585931400244D3B /* ReportingService.swift */; };
 		66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3B625882F9900244D3B /* TeacherVC.swift */; };
@@ -480,6 +482,8 @@
 		66C5781E2595F4BF006E9756 /* TeacherSetLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherSetLesson.swift; sourceTree = "<group>"; };
 		66C578262596D139006E9756 /* TeacherSetNewPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherSetNewPost.swift; sourceTree = "<group>"; };
 		66C5782B2596D16F006E9756 /* TeacherChooseLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherChooseLesson.swift; sourceTree = "<group>"; };
+		66C5783025971A61006E9756 /* StudentListTB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentListTB.swift; sourceTree = "<group>"; };
+		66C5783525971B32006E9756 /* SingleStudentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleStudentCell.swift; sourceTree = "<group>"; };
 		66D7C379258566D000244D3B /* ReportingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingVC.swift; sourceTree = "<group>"; };
 		66D7C3812585931400244D3B /* ReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingService.swift; sourceTree = "<group>"; };
 		66D7C3B625882F9900244D3B /* TeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherVC.swift; sourceTree = "<group>"; };
@@ -1158,6 +1162,8 @@
 				66C5781E2595F4BF006E9756 /* TeacherSetLesson.swift */,
 				66C578262596D139006E9756 /* TeacherSetNewPost.swift */,
 				66C5782B2596D16F006E9756 /* TeacherChooseLesson.swift */,
+				66C5783025971A61006E9756 /* StudentListTB.swift */,
+				66C5783525971B32006E9756 /* SingleStudentCell.swift */,
 			);
 			path = TeacherSetLesson;
 			sourceTree = "<group>";
@@ -1904,6 +1910,7 @@
 				660FB9BB256A54C70014D406 /* SetNewCampingPost.swift in Sources */,
 				660FB9C0256A55460014D406 /* CampingModel.swift in Sources */,
 				66D9122824EEAC6E002D760A /* delegataion.swift in Sources */,
+				66C5783625971B32006E9756 /* SingleStudentCell.swift in Sources */,
 				660F5ACD2502D06C00F72558 /* AddUserCell.swift in Sources */,
 				66D7C3D62589779B00244D3B /* VayeAppMenuBar.swift in Sources */,
 				661333E824F3B25B002677AB /* ProfileCell.swift in Sources */,
@@ -2039,6 +2046,7 @@
 				6615FC8F250B398800776664 /* DataView.swift in Sources */,
 				66AF724C251321E9007E96BC /* LessonInfoHeaderTwo.swift in Sources */,
 				665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */,
+				66C5783125971A61006E9756 /* StudentListTB.swift in Sources */,
 				6690A6A32547236400E88BC0 /* MainPostCommentService.swift in Sources */,
 				66836A062531D3B400AB73AE /* SearchCell.swift in Sources */,
 				66D7C3D02589768900244D3B /* VayeApp.swift in Sources */,

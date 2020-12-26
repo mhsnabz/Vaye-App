@@ -38,7 +38,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var heigth : CGFloat = 0.0
     var data = [SelectedData]()
     var success = true
-     var fallowers = [LessonFallowerUser]()
+    var fallowers = [LessonFallowerUser]()
     var selectedLesson : String
     var link : String?
     let lbl = UILabel(frame: .zero)
@@ -60,7 +60,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     let removeLink : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "cancel").withRenderingMode(.alwaysOriginal), for: .normal)
-       
+        
         return btn
     }()
     
@@ -72,10 +72,10 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         v.addSubview(cloudLink)
         cloudLink.anchor(top: nil, left: cloudImage.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         cloudLink.centerYAnchor.constraint(equalTo: cloudImage.centerYAnchor).isActive = true
-       
+        
         return v
     }()
-  lazy  var name : NSMutableAttributedString = {
+    lazy  var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
     }()
@@ -206,6 +206,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         self.cloudDriveLink.isHidden = true
         removeLink.isHidden = true
     }
+    private func goToLink(_ target : String)
+    {  if let url = URL(string: target){
+        UIApplication.shared.open(url) }
+        
+    }
     private func detectLink(_ link : String){
         let url = NSURL(string: link)
         let domain = url?.host
@@ -250,14 +255,10 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }
     private func checkDataModelHasValue(data : Data) ->Bool{
         dataModel.contains { (model) -> Bool in
-           return  model.data == data
+            return  model.data == data
         }
     }
-    private func goToLink(_ target : String)
-    {  if let url = URL(string: target){
-        UIApplication.shared.open(url) }
-        
-    }
+  
     fileprivate func rigtBarButton() {
         //        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
         
@@ -278,11 +279,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         controller.dismiss(animated: true, completion: nil)
         gallery = nil
     }
-
+    
     fileprivate func configureCollectionView() {
         view.addSubview(headerView)
         headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 80)
-
+        
         view.addSubview(text)
         
         text.anchor(top: headerView.bottomAnchor, left: headerView.leftAnchor, bottom: nil, rigth: headerView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 100)
@@ -304,11 +305,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         
         view.addSubview(removeLink)
         removeLink.anchor(top: stack.bottomAnchor, left: nil, bottom: nil, rigth: stack.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 20, width: 0, heigth: 25)
-
+        
         removeLink.isHidden = true
         
         cloudDriveLink.isHidden = true
- 
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         collectionview = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -384,14 +385,14 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         let formatter = NumberFormatter()
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 2
-
+        
         formatter.numberStyle = .decimal
-
+        
         return formatter.string(from: val / (1024 * 1024) as NSNumber) ?? "n/a"
         
     }
     private func SizeOfData(data : [SelectedData]) -> Float {
-       
+        
         for item in data {
             let bcf = ByteCountFormatter()
             bcf.allowedUnits = [.useKB] // optional: restricts the units to MB only
@@ -400,7 +401,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             totolDataInMB += Float(item.data.count)
             
         }
-       return totolDataInMB / (1024 * 1024 )
+        return totolDataInMB / (1024 * 1024 )
         
     }
     @objc func setNewPost()
@@ -425,17 +426,17 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             val.append(data[number].data)
             dataType.append(data[number].type)
         }
-           if self.data.isEmpty{
-               PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
+        if self.data.isEmpty{
+            PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
                 guard let sself = self else { return }
                 sself.navigationController?.popViewController(animated: true)
                 self?.setMyPostOnDatabase(postId: date) { (_) in
                     Utilities.succesProgress(msg: "Paylaşıldı")
-                 
+                    
                 }
-               }
+            }
             self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
-           }else {
+        }else {
             
             
             UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
@@ -452,11 +453,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                     }
                     
                 }  }
-           }
+        }
         
     }
-
-  
+    
+    
     
     private func sendNotification(lessonName : String ,text : String , type : String , postId : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
@@ -467,7 +468,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             guard let sself = self else { return }
             guard let snap = querySnap else { return }
             if snap.isEmpty{
-           
+                
             }else{
                 for item in snap.documents{
                     getterUids.append(NotificationGetter(uid: item.get("uid") as! String))
@@ -484,11 +485,11 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     //MARK: - getMentions
     private func getMention(completion : @escaping([String]) ->Void){
         guard let text = text.text else { return }
-            let val = text.findMentionText()
-            for i in val {
-                userNames.append(i)
-            }
-           completion(userNames)
+        let val = text.findMentionText()
+        for i in val {
+            userNames.append(i)
+        }
+        completion(userNames)
     }
     
     func setMyPostOnDatabase(postId : String , completion : @escaping(Bool) ->Void){
@@ -501,7 +502,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             }
         }
     }
-  
+    
     @objc func _addPdf(){
         let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .import)
         importMenu.delegate = self
@@ -572,7 +573,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                             self.collectionview.reloadData()
                             self.navigationItem.title = "\( self.getSizeOfData(data: self.data)) mb"
                         }
-                      
+                        
                     }
                 }
             }
@@ -634,9 +635,9 @@ extension StudentNewPost : UICollectionViewDataSource, UICollectionViewDelegateF
         let width  = (view.frame.width - 30 ) / 3
         return CGSize(width: width, height: width)
     }
-   
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,                                minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,  minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
     
@@ -704,7 +705,7 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
                     self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
                     self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.doc.description, data:  try Data(contentsOf: myURL)))
                     self.collectionview.reloadData()
-                     self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                    self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
                 }
             }
             catch{
@@ -720,7 +721,7 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
                 }else{
                     self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.pdf.description))
                     
-                   
+                    
                     self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.pdf.description, data:  try Data(contentsOf: myURL)))
                     self.collectionview.reloadData()
                     self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
@@ -741,9 +742,9 @@ extension StudentNewPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
                     self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
                     self.dataModel.append(DatasModel.init(postDate: self.postDate, currentUser: self.currentUser, lessonName: self.selectedLesson, type: DataTypes.doc.description, data:  try Data(contentsOf: myURL)))
                     self.collectionview.reloadData()
-                     self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
+                    self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
                 }
-               
+                
             }
             catch{
                 print(error)
@@ -897,7 +898,7 @@ extension StudentNewPost : DeleteImage  {
         self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
     }
     
-   
+    
 }
 extension StudentNewPost : DeletePdf {
     func deletePdf(for cell: NewPostPdfCell) {

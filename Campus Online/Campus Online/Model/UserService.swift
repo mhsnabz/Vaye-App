@@ -524,6 +524,7 @@ struct UserService {
             .collection(currentUser.bolum)
             .document(lessonName)
             .collection("fallowers")
+        
         db.getDocuments { (querySnap, err) in
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -531,7 +532,7 @@ struct UserService {
                     completion(user)
                 }else{
                     for item in snap.documents{
-                        user.append(item.documentID)
+                        user.append(item.get("uid") as! String)
                        
                     }
                     Utilities.dismissProgress()
