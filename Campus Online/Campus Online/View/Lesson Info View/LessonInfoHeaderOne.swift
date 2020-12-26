@@ -7,9 +7,14 @@
 //
 
 import UIKit
-
+import SDWebImage
 class LessonInfoHeaderOne: UICollectionViewCell
 {
+    weak var teacher : OtherUser?{
+        didSet{
+            configure()
+        }
+    }
     
     lazy var headerOne : UIView = {
        let view = UIView()
@@ -53,12 +58,12 @@ class LessonInfoHeaderOne: UICollectionViewCell
            let lbl = UILabel()
            lbl.font = UIFont(name: Utilities.font, size: 15)
            lbl.textColor = .black
-            lbl.text = "Prof.Dr.Test Test"
+
            return lbl
        }()
        let username : UILabel = {
            let lbl = UILabel()
-            lbl.text = "@username"
+
            lbl.font = UIFont(name: Utilities.font, size: 12)
            lbl.textColor = .lightGray
            return lbl
@@ -71,5 +76,14 @@ class LessonInfoHeaderOne: UICollectionViewCell
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(){
+        guard let user = teacher else { return }
+      username.text = user.username
+       name.text = user.name
+        img.sd_imageIndicator = SDWebImageActivityIndicator.white
+        img.sd_setImage(with: URL(string: user.thumb_image))
+        
     }
 }

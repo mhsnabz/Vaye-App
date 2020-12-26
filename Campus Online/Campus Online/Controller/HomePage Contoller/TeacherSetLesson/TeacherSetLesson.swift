@@ -17,7 +17,7 @@ class TeacherSetLesson: UITableViewController {
     var centrelController : UIViewController!
     var isSearching = false
     let searchBar = UISearchBar()
-    
+    private var actionSheet : ActionSheetLauncher
     var selectedLesson : String?
     
     override func viewDidLoad() {
@@ -40,7 +40,7 @@ class TeacherSetLesson: UITableViewController {
     
     init(currentUser : CurrentUser ) {
         self.currentUser = currentUser
-
+        self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.lessonEdit.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -144,10 +144,17 @@ class TeacherSetLesson: UITableViewController {
                         cell.fallowerLabel.text = ""
                         sself.selectedLesson = sself.dataSourceFiltred[indexPath.row].lessonName
                     }else{
-                        cell.mark.image = UIImage(named: "add")
-                        cell.fallowerNumber.text = "Ders Seçilebilir"
-                        cell.fallowerLabel.text = ""
-                        sself.selectedLesson = sself.dataSourceFiltred[indexPath.row].lessonName
+                        if sself.dataSourceFiltred[indexPath.row].teacherId == "empty" {
+                            cell.mark.image = UIImage(named: "add")
+                            cell.fallowerNumber.text = "Ders Seçilebilir"
+                            cell.fallowerLabel.text = ""
+                            sself.selectedLesson = sself.dataSourceFiltred[indexPath.row].lessonName
+                        }else{
+                            cell.mark.image = nil
+                            cell.fallowerNumber.text = sself.dataSourceFiltred[indexPath.row].teacherName
+                            cell.fallowerLabel.text = ""
+                            sself.selectedLesson = sself.dataSourceFiltred[indexPath.row].lessonName
+                        }
                     }
                     cell.lessonName.text = sself.dataSourceFiltred[indexPath.row].lessonName
                 }
@@ -164,10 +171,18 @@ class TeacherSetLesson: UITableViewController {
                         cell.fallowerLabel.text = ""
                         sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
                     }else{
-                        cell.mark.image = UIImage(named: "add")
-                        cell.fallowerNumber.text = "Ders Seçilebilir"
-                        cell.fallowerLabel.text = ""
-                        sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
+                        if sself.dataSource[indexPath.row].teacherId == "empty" {
+                            cell.mark.image = UIImage(named: "add")
+                            cell.fallowerNumber.text = "Ders Seçilebilir"
+                            cell.fallowerLabel.text = ""
+                            sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
+                        }else{
+                            cell.mark.image = nil
+                            cell.fallowerNumber.text = sself.dataSource[indexPath.row].teacherName
+                            cell.fallowerLabel.text = ""
+                            sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
+                        }
+                    
                     }
                     cell.lessonName.text = sself.dataSource[indexPath.row].lessonName
                 }
@@ -181,22 +196,54 @@ class TeacherSetLesson: UITableViewController {
         return 50
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        search(shouldShow: false)
         if isSearching {
             checkExistLesson(lessonName: dataSourceFiltred[indexPath.row].lessonName) {[weak self] (val) in
                 guard let sself = self else { return }
                 if val{
+                    Utilities.waitProgress(msg: "Ders Siliniyor")
                     UserService.shared.teacherRemoveLesson(lessonName: sself.dataSourceFiltred[indexPath.row].lessonName, currentUser: sself.currentUser) { (_) in
-                        Utilities.succesProgress(msg: "Ders Silinidi")
-                        sself.tableView.reloadData()
+                        sself.getLessons { (model) in
+                            sself.dataSource = model
+                            sself.dataSourceFiltred = model
+                            sself.tableView.reloadData()
+                            Utilities.succesProgress(msg: "Ders Silindi")
+                            sself.search(shouldShow: false)
+                        }
                         
                     }
                 }else{
                     if sself.dataSourceFiltred[indexPath.row].teacherId == "empty" {
-                        UserService.shared.teacherAddLesson(currentUser: sself.currentUser, lessonName: sself.dataSourceFiltred[indexPath.row].lessonName) { (_) in
-                            Utilities.succesProgress(msg: "Dersiniz Eklendi")
+                        sself.actionSheet.show()
+                        sself.actionSheet.delegate = self
+                        sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
+                        
+                    }else{
+                        Utilities.errorProgress(msg: "Bu Dersi Seçemezsiniz")
+                    }
+                    
+                }
+            }
+        }else{
+            checkExistLesson(lessonName: dataSource[indexPath.row].lessonName) {[weak self] (val) in
+                guard let sself = self else { return }
+                if val{
+                    Utilities.waitProgress(msg: "Ders Siliniyor")
+                    UserService.shared.teacherRemoveLesson(lessonName: sself.dataSource[indexPath.row].lessonName, currentUser: sself.currentUser) { (_) in
+                        sself.getLessons { (model) in
+                            sself.dataSource = model
+                            sself.dataSourceFiltred = model
                             sself.tableView.reloadData()
+                            Utilities.succesProgress(msg: "Ders Silindi")
+                            sself.search(shouldShow: false)
                         }
+                        
+                    }
+                }else{
+                    if sself.dataSource[indexPath.row].teacherId == "empty" {
+                        sself.actionSheet.show()
+                        sself.actionSheet.delegate = self
+                        sself.selectedLesson = sself.dataSource[indexPath.row].lessonName
+                        
                     }else{
                         Utilities.errorProgress(msg: "Bu Dersi Seçemezsiniz")
                     }
@@ -243,13 +290,30 @@ extension TeacherSetLesson : ActionSheetLauncherDelegate{
         switch option{
         
         case .addLesson(_):
+            Utilities.waitProgress(msg: "Ders Ekleniyor")
             guard let lessonName = selectedLesson else { return }
             UserService.shared.teacherAddLesson(currentUser: currentUser, lessonName: lessonName) {[weak self] (_) in
                 guard let sself = self else { return }
-                Utilities.succesProgress(msg: "Ders Eklendi")
-                sself.tableView.reloadData()
+                
+            
+                sself.getLessons { (model) in
+                    sself.dataSource = model
+                    sself.dataSourceFiltred = model
+                    sself.tableView.reloadData()
+                    Utilities.succesProgress(msg: "Ders Eklendi")
+                    sself.search(shouldShow: false)
+                }
             }
         case .lessonInfo(_):
+            guard let lessonName = selectedLesson else { return }
+            
+            
+            let vc = LessonInfo(lessonName: lessonName, currentUser: currentUser)
+            centrelController = UINavigationController(rootViewController: vc)
+            centrelController.modalPresentationStyle = .fullScreen
+            self.present(centrelController, animated: true) {
+                return
+            }
             break
         case .reportLesson(_):
             break

@@ -424,7 +424,7 @@ extension LessonList : ActionSheetLauncherDelegate {
             break
         case .lessonInfo(_):
             guard let currentUser = currentUser else { return }
-            let vc = LessonInfo(lessonName: lesson_name!, major: currentUser.bolum, sorthSchoolName: currentUser.short_school)
+            let vc = LessonInfo(lessonName: lesson_name!,currentUser: currentUser)
             centrelController = UINavigationController(rootViewController: vc)
             centrelController.modalPresentationStyle = .fullScreen
             self.present(centrelController, animated: true) {

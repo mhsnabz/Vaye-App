@@ -417,7 +417,7 @@ struct UserService {
             .document("lesson")
             .collection(currentUser.bolum)
             .document(lessonName)
-            .collection("lesson-post").limit(toLast: 10).order(by: "postId", descending: true)
+            .collection("lesson-post").limit(to: 10).order(by: "postId", descending: true)
         ////user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson/Bilgisayar Programlama
         let dbLesson = Firestore.firestore().collection("user")
             .document(currentUser.uid)

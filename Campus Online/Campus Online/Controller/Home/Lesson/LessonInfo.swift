@@ -15,9 +15,11 @@ class LessonInfo: UIViewController {
     var collectionview: UICollectionView!
     var list = [LessonFallowerUser]()
     var lessonName : String
-    var sorthSchoolName: String
-    var major : String
+    var teacherName : String?
+    var teacherUserName : String?
     var isExist : Bool = false
+    var currentUser : CurrentUser
+    var teacher : OtherUser?
     //MARK:- lifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,19 +29,16 @@ class LessonInfo: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "down-arrow"), style: .plain, target: self, action: #selector(dismisVC))
         configureCollectionView()
         getTeacherInfo()
-        UserService.shared.fetchFallowers(sorthSchoolName, major, lessonName) {[weak self] (user) in
+        UserService.shared.fetchFallowers(currentUser.short_school, currentUser.bolum, lessonName) {[weak self] (user) in
             self?.list.append(user)
             self?.collectionview.reloadData()
         }
 
     }
 
-    init(lessonName : String , major : String , sorthSchoolName : String){
+    init(lessonName : String  ,currentUser : CurrentUser){
         self.lessonName = lessonName
-        self.major = major
-        self.sorthSchoolName = sorthSchoolName
-        print(self.lessonName)
-        print(self.sorthSchoolName)
+        self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -49,8 +48,9 @@ class LessonInfo: UIViewController {
     
   //MARK:- functions
     private func getTeacherInfo(){
-       let db = Firestore.firestore().collection(sorthSchoolName)
-                   .document("lesson").collection(major).document(lessonName)
+        ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson").collection(currentUser.bolum).document(lessonName)
         db.getDocument { (docSnap, err) in
             if err == nil {
                 if let doc = docSnap {
@@ -58,6 +58,13 @@ class LessonInfo: UIViewController {
                         self.isExist = false
                     }else{
                         self.isExist = true
+                       
+                        if let uid = doc.get("teacherId") as? String {
+                            UserService.shared.getOtherUser(userId: uid) { (user) in
+                                self.teacher = user
+                                self.collectionview.reloadData()
+                            }
+                        }
                     }
                 }
             }
@@ -65,7 +72,7 @@ class LessonInfo: UIViewController {
         }
     }
  
-
+    
     
     private func configureCollectionView(){
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -102,6 +109,7 @@ extension LessonInfo : UICollectionViewDelegate , UICollectionViewDelegateFlowLa
         if isExist {
               let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerIdOne, for: indexPath) as! LessonInfoHeaderOne
             header.headerOne.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 114)
+            header.teacher = teacher
                    return header
         }else {
               let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerTwo, for: indexPath) as! LessonInfoHeaderTwo
