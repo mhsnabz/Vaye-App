@@ -21,6 +21,7 @@ class StudentListTB: UITableViewController {
         tableView.rowHeight = 60
         tableView.separatorStyle = .none
         for item in stundetList{
+           
             UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
                 guard let sself = self else { return }
                 sself.list.append(user)

@@ -280,4 +280,59 @@ class PostService{
         }
     }
     
+    
+    //MARK::- teacher service
+    
+    func teacherSetNewPost( link : String?,currentUser : CurrentUser,postId : String ,users : [String] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void){
+        let silent : [String] = []
+        var dic = ["lessonName":lessonName,
+        "postTime":FieldValue.serverTimestamp(),
+        "senderName":currentUser.name as Any,
+        "text":msgText,
+        "likes":[],
+        "favori":[],
+        "senderUid":currentUser.uid as Any,
+        "silent":silent as Any,
+        "comment":0,
+        "dislike":[],
+        "data":datas,
+        "postID":Int64(postId) as Any,
+        "username" : currentUser.username as Any,
+        "thumb_image": currentUser.thumb_image as Any,
+        "link":link ?? ""] as [String:Any]
+        if !datas.isEmpty {
+            dic["data"] = datas
+        }
+        setPostForLesson(currentUser: currentUser, dic: dic, short_school: currentUser.short_school, lessonName: lessonName, postId: postId) {[weak self] (val) in
+            guard let sself = self else { return }
+            if val {
+                sself.teacherSetPostForUser(userId: users, postId: postId) { (value) in
+                    if value {
+                        completion(true)
+                    }else{
+                        completion(false)
+                    }
+                }
+            }
+        }
+    }
+    
+    func teacherSetPostForUser (userId : [String] , postId : String , completion : @escaping(Bool) ->Void){
+        
+        let db = Firestore.firestore().collection("user")
+        let dic = ["postId":postId] as [String:Any]
+        for uid in userId {
+            
+            db.document(uid).collection("lesson-post")
+                .document(postId).setData(dic, merge: true) { (err) in
+                    if err != nil {
+                        print("setPostForUser err \(err as Any)")
+                    }
+                    completion(true)
+            }
+            
+        }
+    }
+    
+    
 }

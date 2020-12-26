@@ -98,7 +98,6 @@ class TeacherChooseLesson: UITableViewController {
         guard let lessonName = lessonName else { return }
         let vc = TeacherSetNewPost(currentUser : currentUser , lessonName : lessonName , users : followers)
         self.navigationController?.pushViewController(vc, animated: true)
-        
     }
     // MARK: - Table view data source
     

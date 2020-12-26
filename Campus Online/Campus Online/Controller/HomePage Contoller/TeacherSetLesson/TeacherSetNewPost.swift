@@ -242,6 +242,7 @@ class TeacherSetNewPost: UIViewController , LightboxControllerDismissalDelegate 
         configureCollectionView()
         configure()
         removeLink.addTarget(self, action: #selector(removeLinkClick), for: .touchUpInside)
+        rigtBarButton()
 
     }
     init(currentUser : CurrentUser ,lessonName : String , users : [String]) {
@@ -321,7 +322,132 @@ class TeacherSetNewPost: UIViewController , LightboxControllerDismissalDelegate 
         profileImage.sd_setImage(with: URL(string: currentUser.thumb_image))
         
     }
-    
+    fileprivate func rigtBarButton() {
+        //        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(setNewPost))
+        
+        let button: UIButton = UIButton(type: .custom)
+        //set image for button
+        button.setImage(UIImage(named: "post-it")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        //add function for button
+        button.addTarget(self, action: #selector(setNewPost), for: .touchUpInside)
+        //set frame
+        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        
+        let barButton = UIBarButtonItem(customView: button)
+        //assign button to navigationbar
+        self.navigationItem.rightBarButtonItem = barButton
+    }
+    @objc func setNewPost(){
+        text.endEditing(true)
+        
+        if SizeOfData(data: data) > 14.95 {
+            Utilities.errorProgress(msg: "Max 15 mb Yükleyebilirsiniz")
+        }
+        guard !text.text.isEmpty else {
+            
+            Utilities.errorProgress(msg: "Gönderiniz Boş Olamaz")
+            return
+        }
+        Utilities.waitProgress(msg: "Paylaşılıyor")
+        let date =  Int64(Date().timeIntervalSince1970 * 1000).description
+        var val = [Data]()
+        var dataType = [String]()
+        let url = [String]()
+        for number in 0..<(data.count) {
+            val.append(data[number].data)
+            dataType.append(data[number].type)
+        }
+        if self.data.isEmpty{
+            PostService.shared.teacherSetNewPost(link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text!, datas: url, lessonName: self.selectedLesson, short_school: currentUser.short_school, major: currentUser.bolum) {[weak self] (_) in
+                guard let sself = self else { return }
+                sself.navigationController?.popViewController(animated: true)
+                sself.setMyPostOnDatabase(postId: date) { (_) in
+                    Utilities.succesProgress(msg: "Paylaşıldı")
+                    
+                }
+                
+            }
+            if selectedLesson == "Genel Duyuru"{
+                let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                var notificaitonGetter = [NotificationGetter]()
+                for item in fallowers {
+                    notificaitonGetter.append(NotificationGetter(uid: item))
+                }
+                
+                NotificaitonService.shared.new_home_post_notification(currentUser: currentUser, postId: date, getterUids: notificaitonGetter, text: text.text, type: NotificationType.home_new_post.desprition, lessonName: "Genel Duyuru", notificaitonId: notificaitonId) { (_) in
+                    
+                }
+                    
+                
+            }else{
+                self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
+            }
+          
+        }else{
+            UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: selectedLesson, type: dataType, data: val) { (url) in
+                PostService.shared.teacherSetNewPost(link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text!, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    sself.navigationController?.popViewController(animated: true)
+                    PostService.shared.setThumbDatas(currentUser: sself.currentUser, postId: date) {[weak self] (_) in
+                        
+                        self?.setMyPostOnDatabase(postId: date) { (_) in
+                            Utilities.succesProgress(msg: "Paylaşıldı")
+                        }
+                    }
+                    sself.setMyPostOnDatabase(postId: date) { (_) in
+                        Utilities.succesProgress(msg: "Paylaşıldı")
+                        
+                    }
+                    
+                }
+                if self.selectedLesson == "Genel Duyuru"{
+                    let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+                    var notificaitonGetter = [NotificationGetter]()
+                    for item in self.fallowers {
+                        notificaitonGetter.append(NotificationGetter(uid: item))
+                    }
+                    
+                    NotificaitonService.shared.new_home_post_notification(currentUser: self.currentUser, postId: date, getterUids: notificaitonGetter, text: self.text.text, type: NotificationType.home_new_post.desprition, lessonName: "Genel Duyuru", notificaitonId: notificaitonId) { (_) in
+                        
+                    }
+                        
+                    
+                }else{
+                    self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
+                }
+            }
+        }
+    }
+    func setMyPostOnDatabase(postId : String , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("my-post")
+            .document(postId)
+        db.setData(["postId":postId] as [String:Any], merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
+    private func sendNotification(lessonName : String ,text : String , type : String , postId : String){
+        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+        var getterUids = [NotificationGetter]()
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter")
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else { return }
+            if snap.isEmpty{
+                
+            }else{
+                for item in snap.documents{
+                    getterUids.append(NotificationGetter(uid: item.get("uid") as! String))
+                }
+                NotificaitonService.shared.new_home_post_notification(currentUser: sself.currentUser, postId: postId, getterUids: getterUids,  text: text, type: NotificationType.home_new_post.desprition, lessonName: lessonName, notificaitonId: notificaitonId) { (_) in
+                    print("succes")
+                }
+            }
+        }
+    }
     //MARK:--helper functions
     private func goToLink(_ target : String)
     {  if let url = URL(string: target){
