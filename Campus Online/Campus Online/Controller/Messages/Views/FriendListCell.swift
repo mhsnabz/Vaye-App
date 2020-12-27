@@ -37,7 +37,7 @@ class FriendListCell: UICollectionViewCell
         collectionview = UICollectionView(frame: frame, collectionViewLayout: layout)
         collectionview.dataSource = self
         collectionview.delegate = self
-        collectionview.backgroundColor = UIColor(white: 0.95, alpha: 0.7)
+        collectionview.backgroundColor = .white
         addSubview(collectionview)
         collectionview.anchor(top: topAnchor, left: leftAnchor, bottom:bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collectionview.register(FiriendListItem.self, forCellWithReuseIdentifier: cellId)
@@ -53,7 +53,7 @@ extension FriendListCell : UICollectionViewDelegate , UICollectionViewDelegateFl
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FiriendListItem
-        cell.backgroundColor = .white
+
         if let user = friendListModel?[indexPath.row] {
             cell.user = user
         }

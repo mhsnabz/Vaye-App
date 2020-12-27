@@ -43,7 +43,7 @@ class FiriendListItem: UICollectionViewCell {
     }()
     let line : UIView = {
        let v = UIView()
-        v.backgroundColor = .lightText
+        v.backgroundColor = .lightGray
         return v
     }()
     override init(frame: CGRect) {
