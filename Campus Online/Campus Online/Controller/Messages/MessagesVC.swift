@@ -28,6 +28,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     var currentUser : CurrentUser
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
+    lazy var friendList = [OtherUser]()
     var page : DocumentSnapshot? = nil
     //MARK:--properties
     lazy var collecitonView : UICollectionView = {
@@ -69,6 +70,15 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         setupMenuBar()
         configureUI()
         setNavBarButton()
+        if !currentUser.friendList.isEmpty {
+            for item in currentUser.friendList{
+                UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
+                    guard let sself = self else { return }
+                    sself.friendList.append(user)
+                    sself.collecitonView.reloadData()
+                }
+            }
+        }
     }
     private func configureUI(){
         view.addSubview(collecitonView)
@@ -137,7 +147,7 @@ extension MessagesVC  : UICollectionViewDelegate , UICollectionViewDataSource , 
 
             cell.currentUser = currentUser
             cell.rootController = self
-
+            cell.friendListModel = friendList
             return cell
         }
     }

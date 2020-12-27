@@ -10,13 +10,13 @@ import Foundation
 import FirebaseFirestore
 class MessagesService {
     static public var shared = MessagesService()
-    func getFriendList(currentUser : CurrentUser , completion:@escaping([FriendListModel]) ->Void){
-        var list = [FriendListModel]()
+    func getFriendList(currentUser : CurrentUser , completion:@escaping([OtherUser]) ->Void){
+        var list = [OtherUser]()
         if currentUser.friendList.isEmpty {
             completion(list)
         }else{
             for item in currentUser.friendList {
-                getFriends(uid: item) { (user) in
+                UserService.shared.getOtherUser(userId: item) { (user) in
                     list.append(user)
                 }
             }
@@ -26,13 +26,13 @@ class MessagesService {
     }
     
     
-    func getFriends(uid : String , completion:@escaping(FriendListModel)->Void){
+    func getFriends(uid : String , completion:@escaping(OtherUser)->Void){
         let db = Firestore.firestore().collection("user")
             .document(uid)
         db.getDocument { (docSnap, err) in
             if err == nil{
                 guard let snap = docSnap else { return }
-                completion(FriendListModel.init(dic: snap.data()!))
+                completion(OtherUser.init(dic: snap.data()!))
             }
         }
     }

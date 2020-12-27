@@ -13,22 +13,12 @@ private let cellId = "cell"
 class FriendListCell: UICollectionViewCell
 {
     
-    var currentUser : CurrentUser?{
+    var currentUser : CurrentUser?
+     var friendListModel : [OtherUser]?{
         didSet{
-            guard let user = currentUser else { return }
-            friendListModel = [FriendListModel]()
-            MessagesService.shared.getFriendList(currentUser: user) {[weak self] (list) in
-                guard let sself = self else { return }
-                for item in list{
-                    sself.friendListModel.append(item)
-                    sself.collectionview.reloadData()
-                }
-             
-       
-            }
+            collectionview.reloadData()
         }
     }
-    lazy var friendListModel = [FriendListModel]()
     var collectionview: UICollectionView!
     weak var rootController : MessagesVC?
     override init(frame: CGRect) {
@@ -57,13 +47,17 @@ class FriendListCell: UICollectionViewCell
 }
 extension FriendListCell : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout , UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(friendListModel.count)
-        return friendListModel.count
+        guard let list = friendListModel else { return 0}
+        return list.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FiriendListItem
-        cell.user = friendListModel[indexPath.row]
+        cell.backgroundColor = .white
+        if let user = friendListModel?[indexPath.row] {
+            cell.user = user
+        }
+        
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

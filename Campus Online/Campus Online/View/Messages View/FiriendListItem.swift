@@ -11,7 +11,7 @@ import SDWebImage
 class FiriendListItem: UICollectionViewCell {
     
     
-    weak var user : FriendListModel?{
+    weak var user : OtherUser?{
         didSet{
             configureUser()
         }
@@ -21,7 +21,7 @@ class FiriendListItem: UICollectionViewCell {
        let img = UIImageView()
         img.clipsToBounds = true
         img.layer.borderWidth = 0.3
-        img.layer.borderColor = UIColor.white.cgColor
+        img.layer.borderColor = UIColor.lightGray.cgColor
         return img
     }()
     
@@ -43,18 +43,18 @@ class FiriendListItem: UICollectionViewCell {
     }()
     let line : UIView = {
        let v = UIView()
-        v.backgroundColor = .lightGray
+        v.backgroundColor = .lightText
         return v
     }()
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        backgroundColor = .white
         addSubview(profileImage)
         profileImage.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 20, marginBottom: 0, marginRigth: 0, width: 50, heigth: 50)
         profileImage.layer.cornerRadius = 25
         
         let stack = UIStackView(arrangedSubviews: [userName,userSchoolName])
-        stack.axis = .horizontal
+        stack.axis = .vertical
         stack.spacing = 8
         addSubview(stack)
         stack.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 50)
