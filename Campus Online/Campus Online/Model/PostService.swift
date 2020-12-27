@@ -303,6 +303,7 @@ class PostService{
         if !datas.isEmpty {
             dic["data"] = datas
         }
+        setPostForSenderTeacher(currentUser: currentUser, postId: postId)
         setPostForLesson(currentUser: currentUser, dic: dic, short_school: currentUser.short_school, lessonName: lessonName, postId: postId) {[weak self] (val) in
             guard let sself = self else { return }
             if val {
@@ -315,6 +316,12 @@ class PostService{
                 }
             }
         }
+    }
+    
+    func setPostForSenderTeacher(currentUser  : CurrentUser , postId :String ){
+        let db = Firestore.firestore().collection("user").document(currentUser.uid)
+            .collection("lesson-post").document(postId)
+        db.setData(["postId":postId] as [String:Any], merge: true)
     }
     
     func teacherSetPostForUser (userId : [String] , postId : String , completion : @escaping(Bool) ->Void){

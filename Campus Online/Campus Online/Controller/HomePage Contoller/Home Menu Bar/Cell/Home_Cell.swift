@@ -325,6 +325,7 @@ class Home_Cell: UICollectionViewCell {
            adLoader.delegate = self
            adLoader.load(GADRequest())
        }
+  
     //MARK:-selectors
     @objc func loadData(){
         collectionview.refreshControl?.beginRefreshing()
@@ -760,7 +761,22 @@ extension Home_Cell : ActionSheetHomeLauncherDelegate {
                 if err == nil {
                     sself.deleteToStorage(data: sself.lessonPost[index.row].data, postId: postId) { (_val) in
                         if (_val){
-                            Utilities.succesProgress(msg: "Silindi")
+                            //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/lesson-post
+                            let db = Firestore.firestore().collection(currentUser.short_school)
+                                .document("lesson")
+                                .collection(currentUser.bolum)
+                                .document(sself.lessonPost[index.row].lessonName)
+                                .collection("lesson-post")
+                                .document(postId)
+                            db.delete { (err) in
+                                if err == nil {
+                                    Utilities.succesProgress(msg: "Silindi")
+                                    
+                                }
+                            }
+                            
+                            
+                        
                         }
                     }
                     
