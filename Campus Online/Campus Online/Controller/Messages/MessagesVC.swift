@@ -134,11 +134,10 @@ extension MessagesVC  : UICollectionViewDelegate , UICollectionViewDataSource , 
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: friend_cell, for: indexPath) as! FriendListCell
-            cell.backgroundColor = .black
-//            cell.currentUser = currentUser
-//            cell.rootController = self
-//            cell.actionSheetOtherUser = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
-//            cell.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+
+            cell.currentUser = currentUser
+            cell.rootController = self
+
             return cell
         }
     }
