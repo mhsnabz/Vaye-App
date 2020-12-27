@@ -137,9 +137,9 @@ class CompleteSigingUp: UIViewController {
                "slient":[]
                ,"profileImage":""
                ,"thumb_image":"",
-               "mention":true,"comment":true,"like":true,"follow":true,"lessonNotices":true
-               
-               ,"email":taskUser.email!,
+               "mention":true,"comment":true,"like":true,"follow":true,"lessonNotices":true,
+               "friendList":[],
+               "email":taskUser.email!,
                "priority":"student",
                "uid":taskUser.uid!,
                "bolum":_bolumName,

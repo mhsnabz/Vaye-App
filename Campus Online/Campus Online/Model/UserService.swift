@@ -541,4 +541,74 @@ struct UserService {
             }
         }
     }
+    
+    
+    func chekcIsMutual(currentUserUid : String , otherUserUid : String , completion : @escaping(Bool) ->Void){
+        
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/fallowers
+        let db = Firestore.firestore().collection("user")
+            .document(otherUserUid).collection("following").document(currentUserUid)
+        let dbb = Firestore.firestore().collection("user")
+            .document(currentUserUid).collection("following").document(otherUserUid)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion(false)
+                    return }
+                if snap.exists {
+                    dbb.getDocument { (snapp, err) in
+                        guard let snapp = snapp else{
+                            completion(false)
+                            return
+                        }
+                        if snapp.exists{
+                            completion(true)
+                        }else{
+                            completion(false)
+                        }
+                    }
+                }else{
+                    completion(false)
+                }
+            }
+        }
+    }
+    
+    func addAsMessagesFriend(currentUserUid : String , otherUserUid : String )
+    {
+        
+        chekcIsMutual(currentUserUid: currentUserUid, otherUserUid: otherUserUid) { (val) in
+            if val {
+                let db = Firestore.firestore().collection("user")
+                    .document(currentUserUid)
+                db.updateData(["friendList":FieldValue.arrayUnion([otherUserUid])]) { (err) in
+                    if err == nil {
+                        let dbb = Firestore.firestore().collection("user")
+                            .document(otherUserUid)
+                        dbb.updateData(["friendList":FieldValue.arrayUnion([currentUserUid])]) { (err) in
+                            if err == nil {
+                                print("can send message")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+         
+    }
+    func removeFromFriendList(currentUserUid : String , otherUserUid : String){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUserUid)
+        db.updateData(["friendList":FieldValue.arrayRemove([otherUserUid])]) { (err) in
+            if err == nil {
+                let db = Firestore.firestore().collection("user")
+                    .document(otherUserUid)
+                db.updateData(["friendList":FieldValue.arrayRemove([currentUserUid])]) { (err) in
+                    if err == nil {
+                        
+                    }
+                }
+            }
+        }
+    }
 }

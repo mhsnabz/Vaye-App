@@ -108,6 +108,7 @@ class ActionSheetOtherUserLaunher : NSObject{
                         .collection("following").document(sself.otherUser!.uid)
                     db.delete { (err) in
                         if err == nil {
+                            UserService.shared.removeFromFriendList(currentUserUid: sself.currentUser.uid, otherUserUid: sself.otherUser!.uid)
                             Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
                         }else{
                             Utilities.errorProgress(msg: nil)
@@ -135,6 +136,7 @@ class ActionSheetOtherUserLaunher : NSObject{
                   
                     db.setData(["user":sself.otherUser!.uid as Any], merge: true) { (err) in
                         if err == nil{
+                            UserService.shared.addAsMessagesFriend(currentUserUid: sself.currentUser.uid, otherUserUid: sself.otherUser!.uid )
                             Utilities.succesProgress(msg: "Takip Ediliyor")
                             NotificaitonService.shared.start_following_you(currentUser: sself.currentUser, otherUser: sself.otherUser!, text: Notification_description.following_you.desprition, type: NotificationType.following_you.desprition) { (_) in
                                 

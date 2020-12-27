@@ -30,11 +30,15 @@ class CurrentUser {
     var like :Bool!
     var follow:Bool!
     var lessonNotices:Bool!
+    var friendList :[String]!
     init(dic : Dictionary<String,Any>) {
         
         if let email = dic["email"] as? String {
             self.email = email
         }
+        if let friendList = dic["friendList"] as? [String] {
+                   self.friendList = friendList
+               }
         if let slientUser = dic["slient"] as? [String] {
                    self.slientUser = slientUser
                }
