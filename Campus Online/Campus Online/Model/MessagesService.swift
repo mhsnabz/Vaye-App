@@ -68,7 +68,7 @@ class MessagesService {
             "id": newMessage.messageId,
             "type": newMessage.kind.messageKindString,
             "content": msg,
-            "date": newMessage.sentDate,
+            "date": FieldValue.serverTimestamp(),
             "time":time,
             "senderUid" : currentUser.uid as Any,
             "is_read": false,

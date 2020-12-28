@@ -13,21 +13,35 @@ import InputBarAccessoryView
 import CoreLocation
 import FirebaseFirestore
 class ConservationVC: MessagesViewController {
-    
+    public static let dateFormatter: DateFormatter = {
+        let formattre = DateFormatter()
+        formattre.dateStyle = .short
+        formattre.timeStyle = .medium
+        formattre.locale = .current
+          return formattre
+      }()
+    var page : DocumentSnapshot? = nil
     var currentUser : CurrentUser
     var otherUser : OtherUser
     private let selfSender : Sender?
     private var messages = [Message]()
     public var isNewConversation = false
-    
+    weak var snapShotListener : ListenerRegistration?
+    var isLoadMore : Bool?{
+        didSet{
+            guard let loadMore = isLoadMore else { return }
+            if loadMore {
+                print("loadMore item")
+            }else{
+                print("stop item")
+            }
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setMessagesSetting()
-        
-        messages.append(Message(sender: selfSender!, messageId: "1", sentDate: Date(), kind:.text("naber")))
-        messages.append(Message(sender: selfSender!, messageId: "2", sentDate: Date(), kind:.text("nasıl gidiyo")))
-        messages.append(Message(sender: selfSender!, messageId: "3", sentDate: Date(), kind:.text("hoppa")))
+        getAllMessages(currentUser: currentUser, otherUser: otherUser)
         configureNavBar()
         setupInputButton()
     }
@@ -46,6 +60,8 @@ class ConservationVC: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         messageInputBar.inputTextView.becomeFirstResponder()
+        messagesCollectionView.scrollToBottom()
+        
         
     }
     //MARK: -- functions
@@ -70,8 +86,11 @@ class ConservationVC: MessagesViewController {
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+        
         messageInputBar.delegate = self
         messagesCollectionView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
+    
+        
     }
     
     fileprivate func configureNavBar(){
@@ -99,8 +118,73 @@ class ConservationVC: MessagesViewController {
         navigationItem.leftBarButtonItems = [leftButton]
     }
     
-    func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Message) -> Void){
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+           print("y: \(scrollView.contentOffset.y)")
+            
+           if scrollView.contentOffset.y < 0{
+              isLoadMore = true
+           }else{
+            isLoadMore = false
+           }
+       }
+    
+    func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser){
+        let db = Firestore.firestore().collection("messages")
+            .document(currentUser.uid)
+            .collection(otherUser.uid).limit(toLast: 10).order(by: "id")
+             
+        db.getDocuments  {[weak self] (querySnap, err) in
+                        guard let sself = self else { return }
+                        if err == nil {
+                            guard let snap = querySnap else { return }
+                            for item in snap.documents{
+                                
+            
+                                    var profileUrl = ""
+                                    if (item.get("senderUid") as! String) == currentUser.uid{
+                                        profileUrl = currentUser.thumb_image
+                                    }else{
+                                        profileUrl = otherUser.thumb_image
+                                    }
+            
+                                    let sender = Sender(senderId: item.get("senderUid") as! String, displayName: item.get("name") as! String , profileImageUrl: profileUrl)
+                                    let date = item.get("date") as? Timestamp
+            
+                                    sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.get("content") as! String)))
+                                    sself.messagesCollectionView.reloadData()
+            
+                                
+                            }
+                            sself.page = snap.documents.last
+                            print("last documentId : \(snap.documents.first?.documentID)")
+                        }
+                    }
         
+       
+//        db.addSnapshotListener {[weak self] (querySnap, err) in
+//            guard let sself = self else { return }
+//            if err == nil {
+//                guard let snap = querySnap else { return }
+//                for item in snap.documentChanges{
+//                    if item.type == .added {
+//
+//                        var profileUrl = ""
+//                        if (item.document.get("senderUid") as! String) == currentUser.uid{
+//                            profileUrl = currentUser.thumb_image
+//                        }else{
+//                            profileUrl = otherUser.thumb_image
+//                        }
+//
+//                        let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
+//                        let date = item.document.get("date") as? Timestamp
+//
+//                        sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+//                        sself.messagesCollectionView.reloadData()
+//
+//                    }
+//                }
+//            }
+//        }
     }
     
 
@@ -110,8 +194,10 @@ class ConservationVC: MessagesViewController {
     @objc func sendMessages(){
  
         guard let text = messageInputBar.inputTextView.text else { return }
+        messageInputBar.inputTextView.text = ""
         let message =  Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .text(text) )
         MessagesService.shared.sendMessage(newMessage: message, currentUser: currentUser, otherUser: otherUser , time : Int64(Date().timeIntervalSince1970 * 1000))
+        messagesCollectionView.scrollToBottom()
         
     }
     
@@ -172,7 +258,7 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
     }
     
     func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        let size = CGSize(width: messagesCollectionView.frame.width, height: 50)
+        let size = CGSize(width: messagesCollectionView.frame.width, height: 25)
         if section == 0 {
             return size
         }
@@ -201,8 +287,12 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
         return 14
     }
     func cellBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        return NSMutableAttributedString(string: "\(messages[indexPath.row].sentDate.timeAgoDisplay())", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray])
+        let dateString = MessageKitDateFormatter.shared.string(from: messages[[indexPath.section][indexPath.item]].sentDate)
+ 
+        return NSMutableAttributedString(string: "\(dateString)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
     }
+    
+    
    
     
     
@@ -227,7 +317,7 @@ class MessageDateReusableView: MessageReusableView {
         
         label = PaddingLabel()
         label.backgroundColor = .white
-        label.textColor = UIColor.darkGray
+        label.textColor = .white
         label.textAlignment = .center
         label.numberOfLines = 1
         label.font = UIFont.systemFont(ofSize: 11)
@@ -236,8 +326,8 @@ class MessageDateReusableView: MessageReusableView {
         self.addSubview(label)
         
         label.clipsToBounds = true
-        label.layer.cornerRadius = 3
-        
+        label.layer.cornerRadius = 5
+        label.backgroundColor = .lightGray
         label.snp.makeConstraints { (make) in
             make.center.equalTo(self.center)
             make.top.equalTo(self.snp.top).offset(2)

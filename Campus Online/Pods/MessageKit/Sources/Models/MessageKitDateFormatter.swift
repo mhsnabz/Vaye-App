@@ -54,6 +54,8 @@ open class MessageKitDateFormatter {
             formatter.doesRelativeDateFormatting = true
             formatter.dateStyle = .short
             formatter.timeStyle = .short
+            formatter.locale = Locale(identifier: "tr_TR")
+        
         case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
             formatter.dateFormat = "EEEE h:mm a"
         case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year):
