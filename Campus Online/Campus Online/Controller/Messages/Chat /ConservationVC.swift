@@ -10,23 +10,10 @@ import UIKit
 import MessageKit
 import SDWebImage
 import InputBarAccessoryView
-
-struct Message : MessageType {
-    var sender: SenderType
-    var messageId: String
-    var sentDate: Date
-    var kind: MessageKind
-}
-
-struct Sender : SenderType {
-    var senderId: String
-    var displayName: String
-    var profileImageUrl : String
-    
-}
-
+import CoreLocation
+import FirebaseFirestore
 class ConservationVC: MessagesViewController {
-
+    
     var currentUser : CurrentUser
     var otherUser : OtherUser
     private let selfSender : Sender?
@@ -35,10 +22,12 @@ class ConservationVC: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setMessagesSetting()
-       
-        messages.append(Message(sender: selfSender!, messageId: "id", sentDate: Date(), kind:.text("naber")))
+        
+        messages.append(Message(sender: selfSender!, messageId: "1", sentDate: Date(), kind:.text("naber")))
+        messages.append(Message(sender: selfSender!, messageId: "2", sentDate: Date(), kind:.text("nasıl gidiyo")))
+        messages.append(Message(sender: selfSender!, messageId: "3", sentDate: Date(), kind:.text("hoppa")))
         configureNavBar()
         setupInputButton()
     }
@@ -49,7 +38,7 @@ class ConservationVC: MessagesViewController {
         selfSender = Sender(senderId: currentUser.uid, displayName: currentUser.name, profileImageUrl: currentUser.thumb_image)
         super.init(nibName: nil, bundle: nil)
     }
-   
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,18 +46,18 @@ class ConservationVC: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         messageInputBar.inputTextView.becomeFirstResponder()
-
+        
     }
     //MARK: -- functions
     private func setupInputButton() {
-            let button = InputBarButtonItem()
-            button.setSize(CGSize(width: 35, height: 35), animated: false)
+        let button = InputBarButtonItem()
+        button.setSize(CGSize(width: 35, height: 35), animated: false)
         button.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
-            button.onTouchUpInside { [weak self] _ in
-              //  self?.presentInputActionSheet()
-            }
-            messageInputBar.setLeftStackViewWidthConstant(to: 36, animated: false)
-            messageInputBar.setStackViewItems([button], forStack: .left, animated: false)
+//        button.onTouchUpInside { [weak self] _ in
+//            //  self?.presentInputActionSheet()
+//        }
+        messageInputBar.setLeftStackViewWidthConstant(to: 36, animated: false)
+        messageInputBar.setStackViewItems([button], forStack: .left, animated: false)
         
         let sendButton = InputBarButtonItem()
         sendButton.setSize(CGSize(width: 35, height: 35), animated: false)
@@ -76,18 +65,18 @@ class ConservationVC: MessagesViewController {
         messageInputBar.setRightStackViewWidthConstant(to: 36, animated: false)
         messageInputBar.setStackViewItems([sendButton], forStack: .right, animated: false)
         sendButton.addTarget(self, action: #selector(sendMessages), for: .touchUpInside)
-        }
+    }
     fileprivate func setMessagesSetting() {
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messageInputBar.delegate = self
-        
+        messagesCollectionView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
     }
     
     fileprivate func configureNavBar(){
         let tap = UITapGestureRecognizer(target: self, action: #selector(goProfile))
-
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(optionsMenu))
         navigationItem.title = otherUser.name
         let containView = UIView(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
@@ -102,18 +91,28 @@ class ConservationVC: MessagesViewController {
         imageview.isUserInteractionEnabled = true
         containView.addSubview(imageview)
         let leftButton = UIBarButtonItem(customView: containView)
-       
+        
         imageview.sd_imageIndicator = SDWebImageActivityIndicator.white
         imageview.sd_setImage(with: URL(string: otherUser.thumb_image))
         self.navigationItem.leftItemsSupplementBackButton = true
         
         navigationItem.leftBarButtonItems = [leftButton]
     }
+    
+    func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Message) -> Void){
+        
+    }
+    
 
+    
     //MARK:-- selectors
     
     @objc func sendMessages(){
-        print("text : \(messageInputBar.inputTextView.text)")
+ 
+        guard let text = messageInputBar.inputTextView.text else { return }
+        let message =  Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .text(text) )
+        MessagesService.shared.sendMessage(newMessage: message, currentUser: currentUser, otherUser: otherUser , time : Int64(Date().timeIntervalSince1970 * 1000))
+        
     }
     
     @objc func optionsMenu()
@@ -133,7 +132,7 @@ class ConservationVC: MessagesViewController {
                 }
             }
         }
-     
+        
     }
 }
 //MARK:--MessagesDataSource , MessagesLayoutDelegate , MessagesDisplayDelegate
@@ -172,6 +171,40 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
         return .black
     }
     
+    func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        let size = CGSize(width: messagesCollectionView.frame.width, height: 50)
+        if section == 0 {
+            return size
+        }
+        
+        let currentIndexPath = IndexPath(row: 0, section: section)
+        let lastIndexPath = IndexPath(row: 0, section: section - 1)
+        let lastMessage = messageForItem(at: lastIndexPath, in: messagesCollectionView)
+        let currentMessage = messageForItem(at: currentIndexPath, in: messagesCollectionView)
+        
+        if currentMessage.sentDate.isInSameDayOf(date: lastMessage.sentDate) {
+            return .zero
+        }
+        
+        return size
+    }
+    
+    // MARK: Header
+    
+    func messageHeaderView( for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView ) -> MessageReusableView {
+        let messsage = messageForItem(at: indexPath, in: messagesCollectionView)
+        let header = messagesCollectionView.dequeueReusableHeaderView(MessageDateReusableView.self, for: indexPath)
+        header.label.text = MessageKitDateFormatter.shared.string(from: messsage.sentDate)
+        return header
+    }
+    func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 14
+    }
+    func cellBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        return NSMutableAttributedString(string: "\(messages[indexPath.row].sentDate.timeAgoDisplay())", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray])
+    }
+   
+    
     
 }
 //MARK:--import InputBarAccessoryView
@@ -184,3 +217,74 @@ extension ConservationVC : InputBarAccessoryViewDelegate{
         print("text : \(text)")
     }
 }
+
+class MessageDateReusableView: MessageReusableView {
+    var label: PaddingLabel!
+    
+    override init (frame : CGRect) {
+        super.init(frame : frame)
+        self.backgroundColor = .none
+        
+        label = PaddingLabel()
+        label.backgroundColor = .white
+        label.textColor = UIColor.darkGray
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.font = UIFont.systemFont(ofSize: 11)
+        label.paddingLeft = 5
+        label.paddingRight = 5
+        self.addSubview(label)
+        
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 3
+        
+        label.snp.makeConstraints { (make) in
+            make.center.equalTo(self.center)
+            make.top.equalTo(self.snp.top).offset(2)
+            make.bottom.equalTo(self.snp.bottom).offset(-2)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+class PaddingLabel: UILabel {
+    
+    var textEdgeInsets = UIEdgeInsets.zero {
+        didSet { invalidateIntrinsicContentSize() }
+    }
+    
+    open override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        let insetRect = bounds.inset(by: textEdgeInsets)
+        let textRect = super.textRect(forBounds: insetRect, limitedToNumberOfLines: numberOfLines)
+        let invertedInsets = UIEdgeInsets(top: -textEdgeInsets.top, left: -textEdgeInsets.left, bottom: -textEdgeInsets.bottom, right: -textEdgeInsets.right)
+        return textRect.inset(by: invertedInsets)
+    }
+    
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: textEdgeInsets))
+    }
+    
+    
+    var paddingLeft: CGFloat {
+        set { textEdgeInsets.left = newValue }
+        get { return textEdgeInsets.left }
+    }
+    
+    var paddingRight: CGFloat {
+        set { textEdgeInsets.right = newValue }
+        get { return textEdgeInsets.right }
+    }
+    
+    var paddingTop: CGFloat {
+        set { textEdgeInsets.top = newValue }
+        get { return textEdgeInsets.top }
+    }
+    
+    var paddingBottom: CGFloat {
+        set { textEdgeInsets.bottom = newValue }
+        get { return textEdgeInsets.bottom }
+    }
+}
+

@@ -313,6 +313,17 @@ extension Date {
     init(milliseconds:Int64) {
         self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
     }
+    func isInSameDayOf(date: Date) -> Bool {
+          return Calendar.current.isDate(self, inSameDayAs: date)
+      }
+      
+      func isToday() -> Bool {
+          return Calendar.current.isDateInToday(self)
+      }
+      
+      func wasYesterday() -> Bool {
+          return Calendar.current.isDateInYesterday(self)
+      }
 }
 extension Date {
     func timeAgoDisplay() -> String {

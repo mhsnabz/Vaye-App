@@ -36,4 +36,58 @@ class MessagesService {
             }
         }
     }
+    
+    
+    func sendMessage(newMessage : Message , currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
+       var msg = ""
+       
+        switch newMessage.kind{
+            
+        case .text(let messageText):
+            msg = messageText
+        case .attributedText(_):
+            break
+        case .photo(_):
+            break
+        case .video(_):
+            break
+        case .location(_):
+            break
+        case .emoji(_):
+            break
+        case .audio(_):
+            break
+        case .contact(_):
+            break
+        case .custom(_):
+            break
+        }
+
+
+        let dic: [String: Any] = [
+            "id": newMessage.messageId,
+            "type": newMessage.kind.messageKindString,
+            "content": msg,
+            "date": newMessage.sentDate,
+            "time":time,
+            "senderUid" : currentUser.uid as Any,
+            "is_read": false,
+            "name": currentUser.name as Any
+        ] as [String : Any]
+        
+        let dbSender = Firestore.firestore().collection("messages")
+            .document(currentUser.uid)
+            .collection(otherUser.uid)
+            .document(newMessage.messageId)
+        dbSender.setData(dic, merge: true, completion: nil)
+        
+        
+        let dbGetter = Firestore.firestore().collection("messages")
+            .document(otherUser.uid)
+            .collection(currentUser.uid)
+            .document(newMessage.messageId)
+        dbGetter.setData(dic, merge: true, completion: nil)
+    }
+    
+    
 }
