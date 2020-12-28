@@ -9,6 +9,8 @@
 import UIKit
 import MessageKit
 import SDWebImage
+import InputBarAccessoryView
+
 struct Message : MessageType {
     var sender: SenderType
     var messageId: String
@@ -29,15 +31,16 @@ class ConservationVC: MessagesViewController {
     var otherUser : OtherUser
     private let selfSender : Sender?
     private var messages = [Message]()
+    public var isNewConversation = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        messagesCollectionView.messagesDataSource = self
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
+        setMessagesSetting()
        
         messages.append(Message(sender: selfSender!, messageId: "id", sentDate: Date(), kind:.text("naber")))
         configureNavBar()
+        setupInputButton()
     }
     
     init(currentUser : CurrentUser , otherUser : OtherUser) {
@@ -51,7 +54,37 @@ class ConservationVC: MessagesViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        messageInputBar.inputTextView.becomeFirstResponder()
+
+    }
     //MARK: -- functions
+    private func setupInputButton() {
+            let button = InputBarButtonItem()
+            button.setSize(CGSize(width: 35, height: 35), animated: false)
+        button.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
+            button.onTouchUpInside { [weak self] _ in
+              //  self?.presentInputActionSheet()
+            }
+            messageInputBar.setLeftStackViewWidthConstant(to: 36, animated: false)
+            messageInputBar.setStackViewItems([button], forStack: .left, animated: false)
+        
+        let sendButton = InputBarButtonItem()
+        sendButton.setSize(CGSize(width: 35, height: 35), animated: false)
+        sendButton.setImage(#imageLiteral(resourceName: "send").withRenderingMode(.alwaysOriginal), for: .normal)
+        messageInputBar.setRightStackViewWidthConstant(to: 36, animated: false)
+        messageInputBar.setStackViewItems([sendButton], forStack: .right, animated: false)
+        sendButton.addTarget(self, action: #selector(sendMessages), for: .touchUpInside)
+        }
+    fileprivate func setMessagesSetting() {
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
+        messageInputBar.delegate = self
+        
+    }
+    
     fileprivate func configureNavBar(){
         let tap = UITapGestureRecognizer(target: self, action: #selector(goProfile))
 
@@ -78,6 +111,11 @@ class ConservationVC: MessagesViewController {
     }
 
     //MARK:-- selectors
+    
+    @objc func sendMessages(){
+        print("text : \(messageInputBar.inputTextView.text)")
+    }
+    
     @objc func optionsMenu()
     {
         print("options")
@@ -98,7 +136,7 @@ class ConservationVC: MessagesViewController {
      
     }
 }
-
+//MARK:--MessagesDataSource , MessagesLayoutDelegate , MessagesDisplayDelegate
 extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , MessagesDisplayDelegate{
     func currentSender() -> SenderType {
         return selfSender!
@@ -111,6 +149,38 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
     }
+    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        let sender = message.sender
+        if sender.senderId == selfSender?.senderId {
+            avatarView.sd_setImage(with: URL(string: currentUser.thumb_image), completed: nil)
+        }else{
+            avatarView.sd_setImage(with: URL(string: otherUser.thumb_image), completed: nil)
+        }
+    }
+    func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        let sender = message.sender
+        if sender.senderId == selfSender?.senderId {
+            return .mainColor()
+        }
+        return  UIColor.init(white: 0.80, alpha: 0.5)
+    }
+    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        let sender = message.sender
+        if sender.senderId == selfSender?.senderId {
+            return .white
+        }
+        return .black
+    }
     
     
+}
+//MARK:--import InputBarAccessoryView
+
+extension ConservationVC : InputBarAccessoryViewDelegate{
+    func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
+        guard !text.replacingOccurrences(of: " ", with: "").isEmpty else {
+            return
+        }
+        print("text : \(text)")
+    }
 }

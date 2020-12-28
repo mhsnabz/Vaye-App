@@ -303,12 +303,7 @@ extension MenuController : UIImagePickerControllerDelegate,UINavigationControlle
         let filename = "profileImage" + (Auth.auth().currentUser?.uid)!
         let storageRef = Storage.storage().reference().child("profileImage").child(filename)
         
-        SVProgressHUD.setBackgroundColor(.black)
-        SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
-        SVProgressHUD.setDefaultStyle(.dark)
-        SVProgressHUD.setBorderColor(.white)
-        
-        SVProgressHUD.setForegroundColor(.white)
+        Utilities.waitProgress(msg: "Resim Yükleniyor")
         uploadTask = storageRef.putData(uploadData, metadata: metaDataForImage) {
             (metadata , err ) in
             if err != nil {
