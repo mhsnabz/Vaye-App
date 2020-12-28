@@ -55,7 +55,7 @@ class FiriendListItem: UICollectionViewCell {
         
         let stack = UIStackView(arrangedSubviews: [userName,userSchoolName])
         stack.axis = .vertical
-        stack.spacing = 8
+        stack.distribution = .fillEqually
         addSubview(stack)
         stack.anchor(top: nil, left: profileImage.rightAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 12, width: 0, heigth: 50)
         profileImage.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true

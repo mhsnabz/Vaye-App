@@ -39,7 +39,7 @@
   
   pod 'ActiveLabel'
   
-  pod 'OEMentions'
+  #pod 'OEMentions'
   
   pod 'lottie-ios'
   
@@ -55,6 +55,9 @@
   
   pod 'WMSegmentControl'
   
+  pod 'MessageKit'
+
+
   # Pods for Campus Online
   target 'Campus OnlineTests' do
     

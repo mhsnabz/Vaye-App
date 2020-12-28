@@ -214,6 +214,7 @@
 		66C578522598BD55006E9756 /* FriendListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C578512598BD55006E9756 /* FriendListModel.swift */; };
 		66C578572598BE3A006E9756 /* MessagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C578562598BE3A006E9756 /* MessagesService.swift */; };
 		66C5785D2598BFB8006E9756 /* FiriendListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5785C2598BFB8006E9756 /* FiriendListItem.swift */; };
+		66C5786325999462006E9756 /* ConservationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5786225999462006E9756 /* ConservationVC.swift */; };
 		66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C379258566D000244D3B /* ReportingVC.swift */; };
 		66D7C3822585931400244D3B /* ReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3812585931400244D3B /* ReportingService.swift */; };
 		66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3B625882F9900244D3B /* TeacherVC.swift */; };
@@ -496,6 +497,7 @@
 		66C578512598BD55006E9756 /* FriendListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListModel.swift; sourceTree = "<group>"; };
 		66C578562598BE3A006E9756 /* MessagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesService.swift; sourceTree = "<group>"; };
 		66C5785C2598BFB8006E9756 /* FiriendListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiriendListItem.swift; sourceTree = "<group>"; };
+		66C5786225999462006E9756 /* ConservationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConservationVC.swift; sourceTree = "<group>"; };
 		66D7C379258566D000244D3B /* ReportingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingVC.swift; sourceTree = "<group>"; };
 		66D7C3812585931400244D3B /* ReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingService.swift; sourceTree = "<group>"; };
 		66D7C3B625882F9900244D3B /* TeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherVC.swift; sourceTree = "<group>"; };
@@ -1205,6 +1207,14 @@
 			path = "Messages View";
 			sourceTree = "<group>";
 		};
+		66C57861259989BF006E9756 /* Chat  */ = {
+			isa = PBXGroup;
+			children = (
+				66C5786225999462006E9756 /* ConservationVC.swift */,
+			);
+			path = "Chat ";
+			sourceTree = "<group>";
+		};
 		66D7C378258566BE00244D3B /* Report */ = {
 			isa = PBXGroup;
 			children = (
@@ -1455,6 +1465,7 @@
 		66D9120E24EEAAFC002D760A /* Messages */ = {
 			isa = PBXGroup;
 			children = (
+				66C57861259989BF006E9756 /* Chat  */,
 				66C57843259858C0006E9756 /* Views */,
 				66C5783A259856E6006E9756 /* Chat Menu Bar */,
 				66D9121D24EEAB97002D760A /* MessagesVC.swift */,
@@ -1621,8 +1632,8 @@
 				66D911C724EEA9E8002D760A /* Sources */,
 				66D911C824EEA9E8002D760A /* Frameworks */,
 				66D911C924EEA9E8002D760A /* Resources */,
-				D0810609E9E203A8E19B6A15 /* [CP] Embed Pods Frameworks */,
 				66F25F1224F6DEC3005B0591 /* ShellScript */,
+				FFA8A36D43DC46008EE940F6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1660,7 +1671,7 @@
 				66D911E824EEA9EA002D760A /* Sources */,
 				66D911E924EEA9EA002D760A /* Frameworks */,
 				66D911EA24EEA9EA002D760A /* Resources */,
-				70A183138B5AAB52DB3D169D /* [CP] Embed Pods Frameworks */,
+				8881CFC74FCA122B4120D606 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1814,7 +1825,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n\n";
 		};
-		70A183138B5AAB52DB3D169D /* [CP] Embed Pods Frameworks */ = {
+		8881CFC74FCA122B4120D606 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1853,7 +1864,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D0810609E9E203A8E19B6A15 /* [CP] Embed Pods Frameworks */ = {
+		FFA8A36D43DC46008EE940F6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2096,6 +2107,7 @@
 				665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */,
 				66C5783125971A61006E9756 /* StudentListTB.swift in Sources */,
 				6690A6A32547236400E88BC0 /* MainPostCommentService.swift in Sources */,
+				66C5786325999462006E9756 /* ConservationVC.swift in Sources */,
 				66836A062531D3B400AB73AE /* SearchCell.swift in Sources */,
 				66D7C3D02589768900244D3B /* VayeApp.swift in Sources */,
 				660F5ADC2503DB5800F72558 /* SingleLisans.swift in Sources */,

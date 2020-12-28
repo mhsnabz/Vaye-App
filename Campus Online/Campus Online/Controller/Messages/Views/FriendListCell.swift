@@ -60,6 +60,13 @@ extension FriendListCell : UICollectionViewDelegate , UICollectionViewDelegateFl
         
         return cell
     }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let user = friendListModel?[indexPath.row] else { return }
+        guard let currentUser = currentUser else { return }
+        let vc = ConservationVC(currentUser: currentUser, otherUser: user)
+        self.rootController?.navigationController?.pushViewController(vc, animated: true)
+        
+    }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: frame.width, height: 70)
     }

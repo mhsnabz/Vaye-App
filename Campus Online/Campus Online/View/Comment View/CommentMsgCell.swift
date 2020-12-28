@@ -8,7 +8,6 @@
 
 import UIKit
 import ActiveLabel
-import SwipeCellKit
 import SDWebImage
 class CommentMsgCell: UITableViewCell
 {

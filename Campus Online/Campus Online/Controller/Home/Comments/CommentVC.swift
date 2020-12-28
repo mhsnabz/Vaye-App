@@ -9,7 +9,6 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseStorage
-import SwipeCellKit
 private let reuseIdentifier = "Cell"
 private let msgCellID = "msg_cell_id"
 private let headerId = "header_id"
