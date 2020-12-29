@@ -184,7 +184,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         
         navigationItem.leftBarButtonItems = [leftButton]
     }
-    
+  
 
 
     func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser){
@@ -211,7 +211,20 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
                         let date = item.document.get("date") as? Timestamp
 
-                        sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        if (item.document.get("type") as! String) == "photo" {
+                            let h = item.document.get("heigth") as! CGFloat
+                            let w = item.document.get("width") as! CGFloat
+                            let url = item.document.get("content") as! String
+                            guard let val = URL(string: url) else { return }
+                            let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            
+                        }
+                        else if (item.document.get("type") as! String) == "text"{
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        }
+                        
+                        
                         sself.messagesCollectionView.reloadDataAndKeepOffset()
                         sself.page = snap.documents.last
                         sself.firstPage = snap.documents.first
@@ -243,8 +256,18 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
 
                         let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
                         let date = item.document.get("date") as? Timestamp
-
-                        sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        if (item.document.get("type") as! String) == "photo" {
+                            let h = item.document.get("heigth") as! CGFloat
+                            let w = item.document.get("width") as! CGFloat
+                            let url = item.document.get("content") as! String
+                            guard let val = URL(string: url) else { return }
+                            let media = Media(url: val, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            
+                        }
+                        else if (item.document.get("type") as! String) == "text"{
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        }
                         sself.messagesCollectionView.reloadDataAndKeepOffset()
                         sself.page = snap.documents.last
                         sself.firstPage = snap.documents.first
@@ -285,7 +308,18 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                     let sender = Sender(senderId: item.get("senderUid") as! String, displayName: item.get("name") as! String , profileImageUrl: profileUrl)
                     let date = item.get("date") as? Timestamp
 
-                    sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.get("content") as! String)))
+                    if (item.get("type") as! String) == "photo" {
+                        let h = item.get("heigth") as! CGFloat
+                        let w = item.get("width") as! CGFloat
+                        let url = item.get("content") as! String
+                        guard let val = URL(string: url) else { return }
+                        let media = Media(url: val, image: nil, placeholderImage: #imageLiteral(resourceName: "menu-camp"), size: CGSize(width: w, height: h))
+                        sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                        
+                    }
+                    else if (item.get("type") as! String) == "text"{
+                        sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.get("content") as! String)))
+                    }
                  
                     sself.messages.sort { (msg1, msg2) -> Bool in
                         return msg1.sentDate < msg2.sentDate
@@ -339,11 +373,12 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     }
     
     //MARK:--sendImage
-    func uploadImage(data : Data , currentUser : String ,uploadCount : Int, otherUser : String , type : String ,completion:@escaping(String) ->Void){
+    func uploadImage(heigth : CGFloat , width : CGFloat,data : Data , currentUser : String ,uploadCount : Int, otherUser : String , type : String ,completion:@escaping(String) ->Void){
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+5) {
             self.semaphore.wait()
             let metaDataForData = StorageMetadata()
             let dataName = Date().millisecondsSince1970.description
+            
             if type == DataTypes.image.description {
                 metaDataForData.contentType = DataTypes.image.contentType
                 let storageRef = Storage.storage().reference()
@@ -364,6 +399,9 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                     
                                     return
                                 }
+                                self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
+                                    
+                                }
                                 completion(dataUrl)
                                 self.semaphore.signal()
                             }
@@ -374,6 +412,15 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         }
         
     }
+    func sendImageMessage(currentUser : CurrentUser,width : CGFloat , heigth : CGFloat , otherUser : OtherUser , url : String  , completion : @escaping(Bool) ->Void){
+        guard let url = URL(string: url) else {
+            completion(false)
+            return }
+        let media = Media(url: url, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_unselected"), size: CGSize(width: width, height: heigth))
+        let message = Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .photo(media))
+        MessagesService.shared.sendMessage(newMessage: message, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+    }
+    
     var succesCount : Int = 0
     func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data)
     {
@@ -455,8 +502,10 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                    
                     image.resolve { (img) in
                         
-                        if let img_data = img!.jpegData(compressionQuality: 0.8){
-                            self.uploadImage(data: img_data,currentUser: self.currentUser.uid, uploadCount : images.count, otherUser: self.otherUser.uid, type: DataTypes.image.description) { (url) in
+                        if let img_data = img!.jpegData(compressionQuality: 0.4),
+                           let heigth = img?.size.height,
+                           let width = img?.size.width{
+                            self.uploadImage(heigth : heigth , width: width ,data: img_data,currentUser: self.currentUser.uid, uploadCount : images.count, otherUser: self.otherUser.uid, type: DataTypes.image.description) { (url) in
                                 print("url \(url)")
                             }
 //
@@ -572,7 +621,35 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
         return NSMutableAttributedString(string: "\(dateString)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
     }
     
-    
+    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        guard  let message = message as? Message else {
+            return
+        }
+        switch message.kind{
+        case .photo(let media):
+            guard let url = media.url else { return }
+            
+            imageView.sd_imageIndicator = SDWebImageActivityIndicator.white
+            imageView.sd_setImage(with: url)
+            
+        case .text(_):
+            break
+        case .attributedText(_):
+            break
+        case .video(_):
+            break
+        case .location(_):
+            break
+        case .emoji(_):
+            break
+        case .audio(_):
+            break
+        case .contact(_):
+            break
+        case .custom(_):
+            break
+        }
+    }
    
     
     

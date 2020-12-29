@@ -10,6 +10,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseStorage
 import SVProgressHUD
+import MessageKit
 class MessagesService {
     var totalCompletedData : Float = 0
     var uploadTask : StorageUploadTask?
@@ -44,14 +45,22 @@ class MessagesService {
     
     func sendMessage(newMessage : Message , currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
        var msg = ""
-       
+        var width : CGFloat = 0.0
+        var heigth : CGFloat = 0.0
+      
         switch newMessage.kind{
             
         case .text(let messageText):
             msg = messageText
         case .attributedText(_):
             break
-        case .photo(_):
+        case .photo(let mediaItem):
+            if let targetUrlString = mediaItem.url?.absoluteString{
+                msg = targetUrlString
+                heigth = mediaItem.size.height
+                width = mediaItem.size.width
+                
+            }
             break
         case .video(_):
             break
@@ -68,6 +77,8 @@ class MessagesService {
         }
 
 
+        
+        
         let dic: [String: Any] = [
             "id": newMessage.messageId,
             "type": newMessage.kind.messageKindString,
@@ -76,6 +87,8 @@ class MessagesService {
             "time":time,
             "senderUid" : currentUser.uid as Any,
             "is_read": false,
+            "width" :width ,
+            "heigth" : heigth,
             "name": currentUser.name as Any
         ] as [String : Any]
         
