@@ -12,7 +12,13 @@ import SDWebImage
 import InputBarAccessoryView
 import CoreLocation
 import FirebaseFirestore
-class ConservationVC: MessagesViewController , DismisDelegate {
+import Lightbox
+import Gallery
+import FirebaseStorage
+import SVProgressHUD
+import Lottie
+class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
+   
     func dismisMenu() {
         inputAccessoryView?.isHidden = false
         
@@ -24,7 +30,36 @@ class ConservationVC: MessagesViewController , DismisDelegate {
         formattre.locale = .current
           return formattre
       }()
-   
+    
+    var waitAnimation = AnimationView()
+    let sendingDescription : UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Dosyalar Gönderiliyor"
+        lbl.font = UIFont(name: Utilities.fontBold, size: 10)
+        lbl.textColor = .black
+        return lbl
+    }()
+    lazy var progressBar : UIView = {
+       let v = UIView()
+        v.backgroundColor = .white
+        v.addSubview(sendingDescription)
+        sendingDescription.anchor(top: v.topAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 14)
+        sendingDescription.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
+        waitAnimation = .init(name : "bar")
+        waitAnimation.animationSpeed = 1
+        waitAnimation.contentMode = .scaleAspectFill
+        waitAnimation.loopMode = .loop
+        
+        v.addSubview(waitAnimation)
+        waitAnimation.anchor(top: sendingDescription.bottomAnchor, left: v.leftAnchor, bottom: nil, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 8)
+        
+        return v
+    }()
+    
+    private var uploadTask : StorageUploadTask?
+    var dataModel = [MessageGalleryModel]()
+    var data = [SelectedData]()
+    var gallery: GalleryController!
     var page : DocumentSnapshot? = nil
     var firstPage : DocumentSnapshot? = nil
     var currentUser : CurrentUser
@@ -57,6 +92,9 @@ class ConservationVC: MessagesViewController , DismisDelegate {
         getAllMessages(currentUser: currentUser, otherUser: otherUser)
         configureNavBar()
         setupInputButton()
+        view.addSubview(progressBar)
+        progressBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
+        progressBar.isHidden = true
     }
     
     init(currentUser : CurrentUser , otherUser : OtherUser) {
@@ -75,6 +113,7 @@ class ConservationVC: MessagesViewController , DismisDelegate {
         super.viewDidAppear(animated)
         messageInputBar.inputTextView.becomeFirstResponder()
         messagesCollectionView.scrollToBottom()
+        
         
         
     }
@@ -277,6 +316,7 @@ class ConservationVC: MessagesViewController , DismisDelegate {
     
     @objc func optionsMenu()
     {
+        messageInputBar.inputTextView.resignFirstResponder()
         actionsSheet.show()
         actionsSheet.delegate = self
         actionsSheet.dismisDelgate = self
@@ -296,6 +336,169 @@ class ConservationVC: MessagesViewController , DismisDelegate {
             }
         }
         
+    }
+    
+    //MARK:--sendImage
+    func uploadImage(data : Data , currentUser : String ,uploadCount : Int, otherUser : String , type : String ,completion:@escaping(String) ->Void){
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+5) {
+            self.semaphore.wait()
+            let metaDataForData = StorageMetadata()
+            let dataName = Date().millisecondsSince1970.description
+            if type == DataTypes.image.description {
+                metaDataForData.contentType = DataTypes.image.contentType
+                let storageRef = Storage.storage().reference()
+                    .child("messages")
+                    .child(currentUser)
+                    .child(otherUser)
+                    .child(dataName + DataTypes.image.mimeType)
+                self.uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                    if err != nil {
+                        print("err \(err as Any)")
+                    }else{
+                        Storage.storage().reference()
+                            .child("messages")
+                            .child(currentUser)
+                            .child(otherUser)
+                            .child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                                guard let dataUrl = url?.absoluteString else {
+                                    
+                                    return
+                                }
+                                completion(dataUrl)
+                                self.semaphore.signal()
+                            }
+                    }
+                })
+            }
+            self.uploadFiles(uploadTask: self.uploadTask! , count : uploadCount , percentTotal: 5 , data: data)
+        }
+        
+    }
+    var succesCount : Int = 0
+    func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data)
+    {
+        uploadTask.observe(.progress) {  snapshot in
+            print(snapshot.progress as Any) //
+            
+            let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
+                / Float(snapshot.progress!.totalUnitCount)
+            print("upload : \(percentComplete )")
+            
+                self.sendingDescription.text = "\(self.succesCount + 1). Dosya %\(Int(percentComplete))"
+         
+           
+        }
+        
+        uploadTask.observe(.success) { (snap) in
+            
+            switch (snap.status) {
+                
+            case .unknown:
+                break
+            case .resume:
+                break
+            case .progress:
+                
+                break
+            case .pause:
+                break
+            case .success:
+                self.succesCount += 1
+                self.sendingDescription.text = "\(count) Dosya Gönderiliyor \(self.succesCount). Dosya Gönderildi"
+                if self.succesCount == count {
+                    self.waitAnimation.stop()
+                    self.progressBar.isHidden = true
+                    self.sendingDescription.text = "Dosyalar Gönderiliyor"
+                }
+                print("succesCount \(self.succesCount)")
+                break
+                
+            case .failure:
+                print("error ")
+                break
+            @unknown default:
+                break
+            }
+            
+        }
+        
+    }
+    //MARK:--imagePicker
+    
+    private func checkDataModelHasValue(data : Data) ->Bool{
+        dataModel.contains { (model) -> Bool in
+            return  model.data == data
+        }
+    }
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func getImagesData(images: [Image] , completion:@escaping([SelectedData])->Void){
+      
+        completion(data)
+    }
+    private let dispatchQueue = DispatchQueue(label: "taskQueue", qos: .background)
+
+    //value 1 indicate only one task will be performed at once.
+    private let semaphore = DispatchSemaphore(value: 1)
+    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        
+      
+        controller.dismiss(animated: true) {
+            if images.count > 0{
+                self.waitAnimation.play()
+                self.progressBar.isHidden = false
+            }
+       
+                for image  in images {
+                   
+                    image.resolve { (img) in
+                        
+                        if let img_data = img!.jpegData(compressionQuality: 0.8){
+                            self.uploadImage(data: img_data,currentUser: self.currentUser.uid, uploadCount : images.count, otherUser: self.otherUser.uid, type: DataTypes.image.description) { (url) in
+                                print("url \(url)")
+                            }
+//
+                           
+                        }
+                    }
+                    
+                }
+              
+            }
+        gallery = nil
+    }
+    
+    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+        
+    }
+    
+    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
+        LightboxConfig.DeleteButton.enabled = true
+        
+        Utilities.waitProgress(msg: nil)
+        Image.resolve(images: images, completion: { [weak self] resolvedImages in
+            Utilities.dismissProgress()
+            self?.showLightbox(images: resolvedImages.compactMap({ $0 }))
+        })
+    }
+    
+    func galleryControllerDidCancel(_ controller: GalleryController) {
+        controller.dismiss(animated: true, completion: nil)
+        gallery = nil
+    }
+    func showLightbox(images: [UIImage]) {
+        guard images.count > 0 else {
+            return
+        }
+        
+        let lightboxImages = images.map({ LightboxImage(image: $0) })
+        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
+        lightbox.dismissalDelegate = self
+        lightbox.modalPresentationStyle = .fullScreen
+        
+        gallery.present(lightbox, animated: true, completion: nil)
     }
 }
 //MARK:--MessagesDataSource , MessagesLayoutDelegate , MessagesDisplayDelegate
@@ -462,7 +665,12 @@ extension ConservationVC : MessagesItemDelagate  {
         switch option {
         
         case .addImage(_):
-            print("image")
+            Config.Camera.recordLocation = false
+            Config.tabsToShow = [.imageTab]
+            gallery = GalleryController()
+            gallery.delegate = self
+            gallery.modalPresentationStyle = .fullScreen
+            present(gallery, animated: true, completion: nil)
             break
         case .addLocation(_):
             print("locaiton")

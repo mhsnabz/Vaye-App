@@ -8,7 +8,11 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseStorage
+import SVProgressHUD
 class MessagesService {
+    var totalCompletedData : Float = 0
+    var uploadTask : StorageUploadTask?
     static public var shared = MessagesService()
     func getFriendList(currentUser : CurrentUser , completion:@escaping([OtherUser]) ->Void){
         var list = [OtherUser]()
@@ -90,4 +94,141 @@ class MessagesService {
     }
     
     
+    func uploadImages(datas :[Data] , currentUser : String, type : [String]  , otherUser : String , completion:@escaping([String]) -> Void){
+        var uploadedImageUrlsArray = [String]()
+        var uploadCount = 0
+        let imagesCount = datas.count
+        let semaphore = DispatchSemaphore(value: 1)
+        for data  in 0..<(datas.count) {
+            Utilities.waitProgress(msg: "\(imagesCount) Dosya Yükleniyor\n Lütfen Bekleyiniz")
+            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+5) {
+                semaphore.wait()
+                self.saveToDataBase(currentUser: currentUser, otherUser: otherUser, data: datas[data], uploadCount, imagesCount, type[data]) { (url) in
+                    uploadedImageUrlsArray.append(url)
+                    uploadCount += 1
+                    Utilities.waitProgress(msg: "\(uploadCount). Dosya Yüklendi")
+                    if uploadCount == imagesCount{
+                        SVProgressHUD.showSuccess(withStatus: "Bütün Dosyalar Yüklendi")
+                        semaphore.signal()
+                    }
+                }
+            }
+        }
+    }
+    func saveToDataBase(currentUser : String, otherUser : String , data : Data ,_ uploadCount : Int,_ imagesCount : Int , _ type : String ,completion : @escaping(String) ->Void  ){
+        let metaDataForData = StorageMetadata()
+        let dataName = Date().millisecondsSince1970.description
+        if type == DataTypes.doc.description{
+            metaDataForData.contentType = DataTypes.doc.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.doc.mimeType)
+            uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                            completion(dataUrl)
+                        }
+                }
+            })
+        }else if type == DataTypes.pdf.description{
+            metaDataForData.contentType = DataTypes.pdf.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.pdf.mimeType)
+            uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                            completion(dataUrl)
+                        }
+                }
+            })
+        }else if type == DataTypes.image.description{
+            metaDataForData.contentType = DataTypes.image.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.image.mimeType)
+            uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                            completion(dataUrl)
+                        }
+                }
+            })
+        }
+        
+        uploadFiles(uploadTask: uploadTask! , count : uploadCount , percentTotal: 5 , data: data)
+    }
+    func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data)
+    {
+       
+        uploadTask.observe(.progress) {  snapshot in
+            print(snapshot.progress as Any) //
+            
+            let percentComplete = 100.0 * Float(snapshot.progress!.completedUnitCount)
+                / Float(snapshot.progress!.totalUnitCount)
+            print("upload : \(percentComplete )")
+            SVProgressHUD.showProgress(percentComplete / 100, status: "\(count + 1). Dosya %\(Int(percentComplete))")
+        }
+        uploadTask.observe(.success) { (snap) in
+            
+            switch (snap.status) {
+                
+            case .unknown:
+                break
+            case .resume:
+                break
+            case .progress:
+                
+                break
+            case .pause:
+                break
+            case .success:
+                //            totalCompletedData += SizeOfData(data: data)
+                break
+                
+            case .failure:
+                break
+            @unknown default:
+                break
+            }
+            
+        }
+        
+    }
 }

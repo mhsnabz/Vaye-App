@@ -128,6 +128,7 @@ extension MessagesItemLauncher : UITableViewDataSource,UITableViewDelegate {
         UIView.animate(withDuration: 0.5, animations: {
                 self.blackView.alpha = 0
                 self.showTableView(false)
+              self.dismisDelgate?.dismisMenu()
         }) { (_) in
              self.tableView.reloadData()
          
