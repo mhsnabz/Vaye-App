@@ -33,15 +33,15 @@ class ConservationVC: MessagesViewController {
            control.addTarget(self, action: #selector(loadData), for: .valueChanged)
            return control
        }()
-    var isLoadMore : Bool?{
-        didSet{
-            guard let loadMore = isLoadMore else { return }
-            if loadMore {
-                print("loadMore item")
-            }else{
-                print("stop item")
-            }
-        }
+
+    //MARK:--lifeCycle
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        snapShotListener?.remove()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        snapShotListener?.remove()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,30 +132,8 @@ class ConservationVC: MessagesViewController {
         navigationItem.leftBarButtonItems = [leftButton]
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-           print("y: \(scrollView.contentOffset.y)")
-            
-           if scrollView.contentOffset.y < 0{
-              isLoadMore = true
-           }else{
-            isLoadMore = false
-           }
-       }
-    
-    
- 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell  {
-            if indexPath.section < 4 {   // Are we within 3 rows from the top?
-                
-//                if !isLoadingList && !allRecordsLoaded {
-//                    loadMessages(messageList.count + AdditionalRecordsToLoad)
-//                }
-                print("messeges count \(messages.count)")
-                
-            }
-            return super.collectionView(collectionView, cellForItemAt: indexPath)
-        }
-    
+
+
     func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser){
       
      let db = Firestore.firestore().collection("messages")
@@ -163,7 +141,7 @@ class ConservationVC: MessagesViewController {
         .collection(otherUser.uid).limit(toLast: 10).order(by: "id")
 
        
-        db.addSnapshotListener {[weak self] (querySnap, err) in
+       snapShotListener =  db.addSnapshotListener {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             if err == nil {
                 guard let snap = querySnap else { return }
@@ -195,7 +173,7 @@ class ConservationVC: MessagesViewController {
         let next = Firestore.firestore().collection("messages")
             .document(currentUser.uid)
         .collection(otherUser.uid).order(by: "id").start(afterDocument: page).limit(to: 1)
-        next.addSnapshotListener {[weak self] (querySnap, err) in
+        snapShotListener = next.addSnapshotListener {[weak self] (querySnap, err) in
             guard let sself = self else { return }
    
             if err == nil {
@@ -261,7 +239,7 @@ class ConservationVC: MessagesViewController {
                     }
                     sself.messagesCollectionView.reloadDataAndKeepOffset()
                     sself.firstPage = snap.documents.first
-                    print("documentId : \(String(describing: snap.documents.first?.documentID.description))")
+                   
                 }
                 sself.refreshControl.endRefreshing()
             }else{
