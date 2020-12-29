@@ -21,12 +21,18 @@ class ConservationVC: MessagesViewController {
           return formattre
       }()
     var page : DocumentSnapshot? = nil
+    var firstPage : DocumentSnapshot? = nil
     var currentUser : CurrentUser
     var otherUser : OtherUser
     private let selfSender : Sender?
     private var messages = [Message]()
     public var isNewConversation = false
     weak var snapShotListener : ListenerRegistration?
+    private(set) lazy var refreshControl: UIRefreshControl = {
+           let control = UIRefreshControl()
+           control.addTarget(self, action: #selector(loadData), for: .valueChanged)
+           return control
+       }()
     var isLoadMore : Bool?{
         didSet{
             guard let loadMore = isLoadMore else { return }
@@ -89,10 +95,18 @@ class ConservationVC: MessagesViewController {
         
         messageInputBar.delegate = self
         messagesCollectionView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
-    
+        scrollsToLastItemOnKeyboardBeginsEditing = true // default false
+               maintainPositionOnKeyboardFrameChanged = true // default false
+  //      messagesCollectionView.showMessageTimestampOnSwipeLeft = true // default false
+               
+               messagesCollectionView.refreshControl = refreshControl
+      
         
     }
-    
+    @objc func loadData(){
+        
+        loadBeforePage()
+    }
     fileprivate func configureNavBar(){
         let tap = UITapGestureRecognizer(target: self, action: #selector(goProfile))
         
@@ -128,65 +142,133 @@ class ConservationVC: MessagesViewController {
            }
        }
     
-    func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser){
-        let db = Firestore.firestore().collection("messages")
-            .document(currentUser.uid)
-            .collection(otherUser.uid).limit(toLast: 10).order(by: "id")
-             
-        db.getDocuments  {[weak self] (querySnap, err) in
-                        guard let sself = self else { return }
-                        if err == nil {
-                            guard let snap = querySnap else { return }
-                            for item in snap.documents{
-                                
-            
-                                    var profileUrl = ""
-                                    if (item.get("senderUid") as! String) == currentUser.uid{
-                                        profileUrl = currentUser.thumb_image
-                                    }else{
-                                        profileUrl = otherUser.thumb_image
-                                    }
-            
-                                    let sender = Sender(senderId: item.get("senderUid") as! String, displayName: item.get("name") as! String , profileImageUrl: profileUrl)
-                                    let date = item.get("date") as? Timestamp
-            
-                                    sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.get("content") as! String)))
-                                    sself.messagesCollectionView.reloadData()
-            
-                                
-                            }
-                            sself.page = snap.documents.last
-                            print("last documentId : \(snap.documents.first?.documentID)")
-                        }
-                    }
-        
-       
-//        db.addSnapshotListener {[weak self] (querySnap, err) in
-//            guard let sself = self else { return }
-//            if err == nil {
-//                guard let snap = querySnap else { return }
-//                for item in snap.documentChanges{
-//                    if item.type == .added {
-//
-//                        var profileUrl = ""
-//                        if (item.document.get("senderUid") as! String) == currentUser.uid{
-//                            profileUrl = currentUser.thumb_image
-//                        }else{
-//                            profileUrl = otherUser.thumb_image
-//                        }
-//
-//                        let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
-//                        let date = item.document.get("date") as? Timestamp
-//
-//                        sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
-//                        sself.messagesCollectionView.reloadData()
-//
-//                    }
+    
+ 
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell  {
+            if indexPath.section < 4 {   // Are we within 3 rows from the top?
+                
+//                if !isLoadingList && !allRecordsLoaded {
+//                    loadMessages(messageList.count + AdditionalRecordsToLoad)
 //                }
-//            }
-//        }
+                print("messeges count \(messages.count)")
+                
+            }
+            return super.collectionView(collectionView, cellForItemAt: indexPath)
+        }
+    
+    func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser){
+      
+     let db = Firestore.firestore().collection("messages")
+            .document(currentUser.uid)
+        .collection(otherUser.uid).limit(toLast: 10).order(by: "id")
+
+       
+        db.addSnapshotListener {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documentChanges{
+                    if item.type == .added {
+
+                        var profileUrl = ""
+                        if (item.document.get("senderUid") as! String) == currentUser.uid{
+                            profileUrl = currentUser.thumb_image
+                        }else{
+                            profileUrl = otherUser.thumb_image
+                        }
+
+                        let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
+                        let date = item.document.get("date") as? Timestamp
+
+                        sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        sself.messagesCollectionView.reloadDataAndKeepOffset()
+                        sself.page = snap.documents.last
+                        sself.firstPage = snap.documents.first
+                        
+                    }
+                }
+            }
+           
+        }
+        
+        guard let page = self.page else { return }
+        let next = Firestore.firestore().collection("messages")
+            .document(currentUser.uid)
+        .collection(otherUser.uid).order(by: "id").start(afterDocument: page).limit(to: 1)
+        next.addSnapshotListener {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+   
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documentChanges{
+                    if item.type == .added {
+
+                        var profileUrl = ""
+                        if (item.document.get("senderUid") as! String) == currentUser.uid{
+                            profileUrl = currentUser.thumb_image
+                        }else{
+                            profileUrl = otherUser.thumb_image
+                        }
+
+                        let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
+                        let date = item.document.get("date") as? Timestamp
+
+                        sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        sself.messagesCollectionView.reloadDataAndKeepOffset()
+                        sself.page = snap.documents.last
+                        sself.firstPage = snap.documents.first
+                       
+                    }
+                }
+            }
+        }
     }
     
+    private func loadBeforePage(){
+        
+        guard let page = firstPage else {
+            refreshControl.endRefreshing()
+            return }
+        let db = Firestore.firestore().collection("messages")
+            .document(currentUser.uid)
+            .collection(otherUser.uid).order(by: "id").end(beforeDocument: page).limit(toLast: 10)
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = querySnap else {
+                    sself.refreshControl.endRefreshing()
+                    return
+                }
+                if snap.isEmpty {
+                    sself.refreshControl.endRefreshing()
+                    return
+                }
+                for item in snap.documents{
+                    var profileUrl = ""
+                    if (item.get("senderUid") as! String) == sself.currentUser.uid{
+                        profileUrl = sself.currentUser.thumb_image
+                    }else{
+                        profileUrl = sself.otherUser.thumb_image
+                    }
+
+                    let sender = Sender(senderId: item.get("senderUid") as! String, displayName: item.get("name") as! String , profileImageUrl: profileUrl)
+                    let date = item.get("date") as? Timestamp
+
+                    sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.get("content") as! String)))
+                 
+                    sself.messages.sort { (msg1, msg2) -> Bool in
+                        return msg1.sentDate < msg2.sentDate
+                    }
+                    sself.messagesCollectionView.reloadDataAndKeepOffset()
+                    sself.firstPage = snap.documents.first
+                    print("documentId : \(String(describing: snap.documents.first?.documentID.description))")
+                }
+                sself.refreshControl.endRefreshing()
+            }else{
+                sself.refreshControl.endRefreshing()
+            }
+        }
+    }
 
     
     //MARK:-- selectors
