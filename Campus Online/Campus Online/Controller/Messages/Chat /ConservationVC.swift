@@ -12,7 +12,11 @@ import SDWebImage
 import InputBarAccessoryView
 import CoreLocation
 import FirebaseFirestore
-class ConservationVC: MessagesViewController {
+class ConservationVC: MessagesViewController , DismisDelegate {
+    func dismisMenu() {
+        inputAccessoryView?.isHidden = false
+        
+    }
     public static let dateFormatter: DateFormatter = {
         let formattre = DateFormatter()
         formattre.dateStyle = .short
@@ -20,6 +24,7 @@ class ConservationVC: MessagesViewController {
         formattre.locale = .current
           return formattre
       }()
+   
     var page : DocumentSnapshot? = nil
     var firstPage : DocumentSnapshot? = nil
     var currentUser : CurrentUser
@@ -34,6 +39,8 @@ class ConservationVC: MessagesViewController {
            return control
        }()
 
+    var actionsSheet : MessagesItemLauncher
+    
     //MARK:--lifeCycle
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -56,6 +63,7 @@ class ConservationVC: MessagesViewController {
         self.currentUser = currentUser
         self.otherUser = otherUser
         selfSender = Sender(senderId: currentUser.uid, displayName: currentUser.name, profileImageUrl: currentUser.thumb_image)
+        actionsSheet = MessagesItemLauncher(currentUser: currentUser)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -75,11 +83,17 @@ class ConservationVC: MessagesViewController {
         let button = InputBarButtonItem()
         button.setSize(CGSize(width: 35, height: 35), animated: false)
         button.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
-//        button.onTouchUpInside { [weak self] _ in
-//            //  self?.presentInputActionSheet()
-//        }
-        messageInputBar.setLeftStackViewWidthConstant(to: 36, animated: false)
-        messageInputBar.setStackViewItems([button], forStack: .left, animated: false)
+        button.onTouchUpInside { [weak self] _ in
+            self?.optionsMenu()
+        }
+        let mic = InputBarButtonItem()
+        mic.setSize(CGSize(width: 35, height: 35), animated: false)
+        mic.setImage(#imageLiteral(resourceName: "mic").withRenderingMode(.alwaysOriginal), for: .normal)
+        mic.onTouchUpInside {[weak self] _ in
+            self?.optionsMenu()
+        }
+        messageInputBar.setLeftStackViewWidthConstant(to: 72, animated: false)
+        messageInputBar.setStackViewItems([button,mic], forStack: .left, animated: true)
         
         let sendButton = InputBarButtonItem()
         sendButton.setSize(CGSize(width: 35, height: 35), animated: false)
@@ -263,7 +277,10 @@ class ConservationVC: MessagesViewController {
     
     @objc func optionsMenu()
     {
-        print("options")
+        actionsSheet.show()
+        actionsSheet.delegate = self
+        actionsSheet.dismisDelgate = self
+        inputAccessoryView?.isHidden = true
     }
     @objc func goProfile(){
         UserService.shared.getProfileModel(otherUser: otherUser, currentUser: currentUser) {[weak self] (model) in
@@ -438,3 +455,27 @@ class PaddingLabel: UILabel {
     }
 }
 
+
+
+extension ConservationVC : MessagesItemDelagate  {
+    func didSelect(option: MesagesItemOption) {
+        switch option {
+        
+        case .addImage(_):
+            print("image")
+            break
+        case .addLocation(_):
+            print("locaiton")
+            break
+        case .addPdf(_):
+            print("pdf")
+            break
+        case .addDoc(_):
+            print("doc")
+            break
+            
+        }
+    }
+    
+    
+}
