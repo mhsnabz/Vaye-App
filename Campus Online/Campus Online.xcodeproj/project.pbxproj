@@ -216,6 +216,10 @@
 		66C5785D2598BFB8006E9756 /* FiriendListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5785C2598BFB8006E9756 /* FiriendListItem.swift */; };
 		66C5786325999462006E9756 /* ConservationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5786225999462006E9756 /* ConservationVC.swift */; };
 		66CB7535259C9F52000D51BE /* LocaitonPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CB7534259C9F52000D51BE /* LocaitonPicker.swift */; };
+		66CB753D259CE241000D51BE /* RecordSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CB753C259CE241000D51BE /* RecordSheet.swift */; };
+		66CB7552259CF087000D51BE /* record.json in Resources */ = {isa = PBXBuildFile; fileRef = 66CB7551259CF087000D51BE /* record.json */; };
+		66CB755A259D0121000D51BE /* play-pause.json in Resources */ = {isa = PBXBuildFile; fileRef = 66CB7559259D0121000D51BE /* play-pause.json */; };
+		66CB7567259D06B4000D51BE /* send.json in Resources */ = {isa = PBXBuildFile; fileRef = 66CB7566259D06B4000D51BE /* send.json */; };
 		66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C379258566D000244D3B /* ReportingVC.swift */; };
 		66D7C3822585931400244D3B /* ReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3812585931400244D3B /* ReportingService.swift */; };
 		66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3B625882F9900244D3B /* TeacherVC.swift */; };
@@ -505,6 +509,10 @@
 		66C5785C2598BFB8006E9756 /* FiriendListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiriendListItem.swift; sourceTree = "<group>"; };
 		66C5786225999462006E9756 /* ConservationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConservationVC.swift; sourceTree = "<group>"; };
 		66CB7534259C9F52000D51BE /* LocaitonPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaitonPicker.swift; sourceTree = "<group>"; };
+		66CB753C259CE241000D51BE /* RecordSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSheet.swift; sourceTree = "<group>"; };
+		66CB7551259CF087000D51BE /* record.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = record.json; sourceTree = "<group>"; };
+		66CB7559259D0121000D51BE /* play-pause.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "play-pause.json"; sourceTree = "<group>"; };
+		66CB7566259D06B4000D51BE /* send.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = send.json; sourceTree = "<group>"; };
 		66D7C379258566D000244D3B /* ReportingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingVC.swift; sourceTree = "<group>"; };
 		66D7C3812585931400244D3B /* ReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingService.swift; sourceTree = "<group>"; };
 		66D7C3B625882F9900244D3B /* TeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherVC.swift; sourceTree = "<group>"; };
@@ -624,8 +632,11 @@
 		6608990024FC724C0023E53B /* anim */ = {
 			isa = PBXGroup;
 			children = (
+				66CB7566259D06B4000D51BE /* send.json */,
+				66CB7559259D0121000D51BE /* play-pause.json */,
 				66F0B00A259B962600C030E6 /* bar.json */,
 				667755AF2530A0B900DBF3CD /* location-pin.json */,
+				66CB7551259CF087000D51BE /* record.json */,
 				6677559A252F68F800DBF3CD /* food.json */,
 				66775595252F670700DBF3CD /* camping.json */,
 				66775590252F664D00DBF3CD /* parties.json */,
@@ -1003,6 +1014,7 @@
 				66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */,
 				66939977258DD88200525C1A /* MainPostActionSheet.swift */,
 				66F0AFF8259B2CC300C030E6 /* MessagesItemLauncher.swift */,
+				66CB753C259CE241000D51BE /* RecordSheet.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1761,14 +1773,17 @@
 				6613340424F43813002677AB /* LaunchScreen.storyboard in Resources */,
 				66775591252F664D00DBF3CD /* parties.json in Resources */,
 				66AF72D02513353A007E96BC /* GoogleService-Info.plist in Resources */,
+				66CB755A259D0121000D51BE /* play-pause.json in Resources */,
 				6677559B252F68F800DBF3CD /* food.json in Resources */,
 				66775596252F670700DBF3CD /* camping.json in Resources */,
 				660F5AC82502A4F500F72558 /* newton.json in Resources */,
 				667755B02530A0B900DBF3CD /* location-pin.json in Resources */,
 				6677558C252F658900DBF3CD /* cell.json in Resources */,
+				66CB7567259D06B4000D51BE /* send.json in Resources */,
 				66D911D824EEA9EA002D760A /* Assets.xcassets in Resources */,
 				66F0B00B259B962600C030E6 /* bar.json in Resources */,
 				66775574252EA38E00DBF3CD /* no-one-follow.json in Resources */,
+				66CB7552259CF087000D51BE /* record.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2144,6 +2159,7 @@
 				66D7C3D02589768900244D3B /* VayeApp.swift in Sources */,
 				660F5ADC2503DB5800F72558 /* SingleLisans.swift in Sources */,
 				660FB975256470300014D406 /* FoodMeModel.swift in Sources */,
+				66CB753D259CE241000D51BE /* RecordSheet.swift in Sources */,
 				6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */,
 				66836A012531CE9F00AB73AE /* SearchInputView.swift in Sources */,
 				66E326A624F98FE7004CB61D /* LessonsModel.swift in Sources */,

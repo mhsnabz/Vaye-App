@@ -19,8 +19,9 @@ import SVProgressHUD
 import Lottie
 import MobileCoreServices
 import MapKit
+import AVFoundation
 class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
-   
+    
     func dismisMenu() {
         inputAccessoryView?.isHidden = false
         
@@ -30,8 +31,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         formattre.dateStyle = .short
         formattre.timeStyle = .medium
         formattre.locale = .current
-          return formattre
-      }()
+        return formattre
+    }()
     
     var waitAnimation = AnimationView()
     let sendingDescription : UILabel = {
@@ -42,7 +43,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         return lbl
     }()
     lazy var progressBar : UIView = {
-       let v = UIView()
+        let v = UIView()
         v.backgroundColor = .white
         v.addSubview(sendingDescription)
         sendingDescription.anchor(top: v.topAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 14)
@@ -57,7 +58,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         
         return v
     }()
-    
+    var recordingSession: AVAudioSession!
     private var uploadTask : StorageUploadTask?
     var dataModel = [MessageGalleryModel]()
     var data = [SelectedData]()
@@ -71,17 +72,19 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     public var isNewConversation = false
     weak var snapShotListener : ListenerRegistration?
     private(set) lazy var refreshControl: UIRefreshControl = {
-           let control = UIRefreshControl()
-           control.addTarget(self, action: #selector(loadData), for: .valueChanged)
-           return control
-       }()
-
+        let control = UIRefreshControl()
+        control.addTarget(self, action: #selector(loadData), for: .valueChanged)
+        return control
+    }()
+    
     var actionsSheet : MessagesItemLauncher
+    var recordSheet : RecordSheet
     
     //MARK:--lifeCycle
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         snapShotListener?.remove()
+      print("audio \(getWhistleURL())")  
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -97,6 +100,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         view.addSubview(progressBar)
         progressBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
         progressBar.isHidden = true
+        recordSheet.controller = self
     }
     
     init(currentUser : CurrentUser , otherUser : OtherUser) {
@@ -104,6 +108,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         self.otherUser = otherUser
         selfSender = Sender(senderId: currentUser.uid, displayName: currentUser.name, profileImageUrl: currentUser.thumb_image)
         actionsSheet = MessagesItemLauncher(currentUser: currentUser)
+        recordSheet = RecordSheet(currentUser: currentUser, otherUser: otherUser)
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -119,6 +125,14 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         
         
     }
+    func getWhistleURL() -> URL {
+        return getDocumentsDirectory().appendingPathComponent("recording.m4a")
+    }
+    func getDocumentsDirectory() -> URL {
+       let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+       let documentsDirectory = paths[0]
+       return documentsDirectory
+   }
     //MARK: -- functions
     private func setupInputButton() {
         let button = InputBarButtonItem()
@@ -131,7 +145,28 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         mic.setSize(CGSize(width: 35, height: 35), animated: false)
         mic.setImage(#imageLiteral(resourceName: "mic").withRenderingMode(.alwaysOriginal), for: .normal)
         mic.onTouchUpInside {[weak self] _ in
-            self?.optionsMenu()
+            
+            self?.recordingSession = AVAudioSession.sharedInstance()
+            do {
+                try self?.recordingSession.setCategory(.playAndRecord, mode: .default)
+                try self?.recordingSession.setActive(true)
+                self?.recordingSession.requestRecordPermission() { [unowned self] allowed in
+                    DispatchQueue.main.async {
+                        if allowed {
+                            self?.recordSheet.show()
+                            self?.recordSheet.dismisDelgate = self
+                            self?.inputAccessoryView?.isHidden = true
+                            self?.messageInputBar.inputTextView.resignFirstResponder()
+                        } else {
+                            // failed to record!
+                        }
+                    }
+                }
+            } catch {
+                // failed to record!
+            }
+            
+            
         }
         messageInputBar.setLeftStackViewWidthConstant(to: 72, animated: false)
         messageInputBar.setStackViewItems([button,mic], forStack: .left, animated: true)
@@ -151,11 +186,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         messageInputBar.delegate = self
         messagesCollectionView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         scrollsToLastItemOnKeyboardBeginsEditing = true // default false
-               maintainPositionOnKeyboardFrameChanged = true // default false
-  //      messagesCollectionView.showMessageTimestampOnSwipeLeft = true // default false
-               
-               messagesCollectionView.refreshControl = refreshControl
-      
+        maintainPositionOnKeyboardFrameChanged = true // default false
+        //      messagesCollectionView.showMessageTimestampOnSwipeLeft = true // default false
+        
+        messagesCollectionView.refreshControl = refreshControl
+        
         
     }
     @objc func loadData(){
@@ -186,33 +221,33 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         
         navigationItem.leftBarButtonItems = [leftButton]
     }
-  
-
-
+    
+    
+    
     func getAllMessages(currentUser : CurrentUser , otherUser : OtherUser){
-      
-     let db = Firestore.firestore().collection("messages")
+        
+        let db = Firestore.firestore().collection("messages")
             .document(currentUser.uid)
-        .collection(otherUser.uid).limit(toLast: 10).order(by: "id")
-
-       
-       snapShotListener =  db.addSnapshotListener {[weak self] (querySnap, err) in
+            .collection(otherUser.uid).limit(toLast: 10).order(by: "id")
+        
+        
+        snapShotListener =  db.addSnapshotListener {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             if err == nil {
                 guard let snap = querySnap else { return }
                 for item in snap.documentChanges{
                     if item.type == .added {
-
+                        
                         var profileUrl = ""
                         if (item.document.get("senderUid") as! String) == currentUser.uid{
                             profileUrl = currentUser.thumb_image
                         }else{
                             profileUrl = otherUser.thumb_image
                         }
-
+                        
                         let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
                         let date = item.document.get("date") as? Timestamp
-
+                        
                         if (item.document.get("type") as! String) == "photo" {
                             let h = item.document.get("heigth") as! CGFloat
                             let w = item.document.get("width") as! CGFloat
@@ -228,7 +263,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                 let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
                                 sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
                             }
-                          
+                            
                             
                         }
                         else if (item.document.get("type") as! String) == "text"{
@@ -249,28 +284,28 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                     }
                 }
             }
-           
+            
         }
         
         guard let page = self.page else { return }
         let next = Firestore.firestore().collection("messages")
             .document(currentUser.uid)
-        .collection(otherUser.uid).order(by: "id").start(afterDocument: page).limit(to: 1)
+            .collection(otherUser.uid).order(by: "id").start(afterDocument: page).limit(to: 1)
         snapShotListener = next.addSnapshotListener {[weak self] (querySnap, err) in
             guard let sself = self else { return }
-   
+            
             if err == nil {
                 guard let snap = querySnap else { return }
                 for item in snap.documentChanges{
                     if item.type == .added {
-
+                        
                         var profileUrl = ""
                         if (item.document.get("senderUid") as! String) == currentUser.uid{
                             profileUrl = currentUser.thumb_image
                         }else{
                             profileUrl = otherUser.thumb_image
                         }
-
+                        
                         let sender = Sender(senderId: item.document.get("senderUid") as! String, displayName: item.document.get("name") as! String , profileImageUrl: profileUrl)
                         let date = item.document.get("date") as? Timestamp
                         if (item.document.get("type") as! String) == "photo" {
@@ -302,7 +337,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         sself.messagesCollectionView.reloadDataAndKeepOffset()
                         sself.page = snap.documents.last
                         sself.firstPage = snap.documents.first
-                       
+                        
                     }
                 }
             }
@@ -335,11 +370,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                     }else{
                         profileUrl = sself.otherUser.thumb_image
                     }
-
+                    
                     let sender = Sender(senderId: item.get("senderUid") as! String, displayName: item.get("name") as! String , profileImageUrl: profileUrl)
                     
                     let date = item.get("date") as? Timestamp
-
+                    
                     if (item.get("type") as! String) == "photo" {
                         let h = item.get("heigth") as! CGFloat
                         let w = item.get("width") as! CGFloat
@@ -366,13 +401,13 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                         sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                     }
-                 
+                    
                     sself.messages.sort { (msg1, msg2) -> Bool in
                         return msg1.sentDate < msg2.sentDate
                     }
                     sself.messagesCollectionView.reloadDataAndKeepOffset()
                     sself.firstPage = snap.documents.first
-                   
+                    
                 }
                 sself.refreshControl.endRefreshing()
             }else{
@@ -380,12 +415,12 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
             }
         }
     }
-
+    
     
     //MARK:-- selectors
     
     @objc func sendMessages(){
- 
+        
         guard let text = messageInputBar.inputTextView.text else { return }
         messageInputBar.inputTextView.text = ""
         let message =  Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .text(text) )
@@ -542,15 +577,15 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 / Float(snapshot.progress!.totalUnitCount)
             print("upload : \(percentComplete )")
             
-                self.sendingDescription.text = "\(self.succesCount + 1). Dosya %\(Int(percentComplete))"
-         
-           
+            self.sendingDescription.text = "\(self.succesCount + 1). Dosya %\(Int(percentComplete))"
+            
+            
         }
         
         uploadTask.observe(.success) { (snap) in
             
             switch (snap.status) {
-                
+            
             case .unknown:
                 break
             case .resume:
@@ -575,7 +610,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                     self.progressBar.isHidden = true
                     self.sendingDescription.text = "Dosyalar Gönderiliyor"
                 }
-           
+                
                 break
                 
             case .failure:
@@ -600,40 +635,40 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     }
     
     func getImagesData(images: [Image] , completion:@escaping([SelectedData])->Void){
-      
+        
         completion(data)
     }
     private let dispatchQueue = DispatchQueue(label: "taskQueue", qos: .background)
-
+    
     //value 1 indicate only one task will be performed at once.
     private let semaphore = DispatchSemaphore(value: 1)
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
         
-      
+        
         controller.dismiss(animated: true) {
             if images.count > 0{
                 self.waitAnimation.play()
                 self.progressBar.isHidden = false
             }
-       
-                for image  in images {
-                   
-                    image.resolve { (img) in
-                        
-                        if let img_data = img!.jpegData(compressionQuality: 0.4),
-                           let heigth = img?.size.height,
-                           let width = img?.size.width{
-                            self.uploadImage(heigth : heigth , width: width ,data: img_data,currentUser: self.currentUser.uid, uploadCount : images.count, otherUser: self.otherUser.uid, type: DataTypes.image.description) { (url) in
-                                print("url \(url)")
-                            }
-//
-                           
-                        }
-                    }
+            
+            for image  in images {
+                
+                image.resolve { (img) in
                     
+                    if let img_data = img!.jpegData(compressionQuality: 0.4),
+                       let heigth = img?.size.height,
+                       let width = img?.size.width{
+                        self.uploadImage(heigth : heigth , width: width ,data: img_data,currentUser: self.currentUser.uid, uploadCount : images.count, otherUser: self.otherUser.uid, type: DataTypes.image.description) { (url) in
+                            print("url \(url)")
+                        }
+                        //
+                        
+                    }
                 }
-              
+                
             }
+            
+        }
         gallery = nil
     }
     
@@ -735,7 +770,7 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
     }
     func cellBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         let dateString = MessageKitDateFormatter.shared.string(from: messages[[indexPath.section][indexPath.item]].sentDate)
- 
+        
         return NSMutableAttributedString(string: "\(dateString)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
     }
     
@@ -776,7 +811,7 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
             break
         }
     }
-
+    
     
     
 }
@@ -788,54 +823,54 @@ extension ConservationVC : MessageCellDelegate {
         let message = messages[indexPath.section]
         switch message.kind{
         case .photo(let mediaItem):
-        guard let imageUrl = mediaItem.url else { return }
+            guard let imageUrl = mediaItem.url else { return }
             
             if imageUrl.absoluteString.contains("pdf") ||
                 imageUrl.absoluteString.contains("doc")
             {
-               
+                
                 UIApplication.shared.open(imageUrl)
             }
             else
             {
                 url.append( imageUrl.absoluteString)
+                
+                for item in messages{
+                    switch item.kind {
                     
-                    for item in messages{
-                        switch item.kind {
-                        
-                        case .text(_):
-                            break
-                        case .attributedText(_):
-                            break
-                        case .photo(let allItem):
-                            guard let imageUrl = allItem.url else { return }
-                            if !url.contains(imageUrl.absoluteString) {
-                                url.append(imageUrl.absoluteString)
-                            }
-                      
-                        case .video(_):
-                            break
-                        case .location(_):
-                            break
-                        case .emoji(_):
-                            break
-                        case .audio(_):
-                            break
-                        case .contact(_):
-                            break
-                        case .custom(_):
-                            break
+                    case .text(_):
+                        break
+                    case .attributedText(_):
+                        break
+                    case .photo(let allItem):
+                        guard let imageUrl = allItem.url else { return }
+                        if !url.contains(imageUrl.absoluteString) {
+                            url.append(imageUrl.absoluteString)
                         }
+                        
+                    case .video(_):
+                        break
+                    case .location(_):
+                        break
+                    case .emoji(_):
+                        break
+                    case .audio(_):
+                        break
+                    case .contact(_):
+                        break
+                    case .custom(_):
+                        break
                     }
-                    let vc = ImageSliderVC()
-                    vc.modalPresentationStyle = .fullScreen
-                    vc.DataUrl = url
-                    self.present(vc, animated: true, completion: nil)
+                }
+                let vc = ImageSliderVC()
+                vc.modalPresentationStyle = .fullScreen
+                vc.DataUrl = url
+                self.present(vc, animated: true, completion: nil)
             }
             
-     
-        
-        
+            
+            
+            
         case .text(_):
             break
         case .attributedText(_):
@@ -843,8 +878,6 @@ extension ConservationVC : MessageCellDelegate {
         case .video(_):
             break
         case .location(_):
-            
-            break
             break
         case .emoji(_):
             break
@@ -860,7 +893,7 @@ extension ConservationVC : MessageCellDelegate {
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
         let message = messages[indexPath.section]
         switch message.kind{
- 
+        
         case .text(_):
             break
         case .attributedText(_):
@@ -871,11 +904,10 @@ extension ConservationVC : MessageCellDelegate {
             break
         case .location(let item):
             let coordinates = item.location.coordinate
-             let lat = coordinates.latitude
-             let long = coordinates.longitude
+            let lat = coordinates.latitude
+            let long = coordinates.longitude
             let coordinate = CLLocationCoordinate2DMake(lat, long)
             let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
-            
             mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
         case .emoji(_):
             break
@@ -884,7 +916,7 @@ extension ConservationVC : MessageCellDelegate {
         case .contact(_):
             break
         case .custom(_):
-             break
+            break
         }
     }
 }
@@ -930,7 +962,7 @@ class MessageDateReusableView: MessageReusableView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-class PaddingLabel: UILabel {
+class PaddingLabel: UILabel  {
     
     var textEdgeInsets = UIEdgeInsets.zero {
         didSet { invalidateIntrinsicContentSize() }
