@@ -215,6 +215,7 @@
 		66C578572598BE3A006E9756 /* MessagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C578562598BE3A006E9756 /* MessagesService.swift */; };
 		66C5785D2598BFB8006E9756 /* FiriendListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5785C2598BFB8006E9756 /* FiriendListItem.swift */; };
 		66C5786325999462006E9756 /* ConservationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5786225999462006E9756 /* ConservationVC.swift */; };
+		66CB7535259C9F52000D51BE /* LocaitonPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CB7534259C9F52000D51BE /* LocaitonPicker.swift */; };
 		66D7C37A258566D000244D3B /* ReportingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C379258566D000244D3B /* ReportingVC.swift */; };
 		66D7C3822585931400244D3B /* ReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3812585931400244D3B /* ReportingService.swift */; };
 		66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D7C3B625882F9900244D3B /* TeacherVC.swift */; };
@@ -503,6 +504,7 @@
 		66C578562598BE3A006E9756 /* MessagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesService.swift; sourceTree = "<group>"; };
 		66C5785C2598BFB8006E9756 /* FiriendListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiriendListItem.swift; sourceTree = "<group>"; };
 		66C5786225999462006E9756 /* ConservationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConservationVC.swift; sourceTree = "<group>"; };
+		66CB7534259C9F52000D51BE /* LocaitonPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaitonPicker.swift; sourceTree = "<group>"; };
 		66D7C379258566D000244D3B /* ReportingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingVC.swift; sourceTree = "<group>"; };
 		66D7C3812585931400244D3B /* ReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingService.swift; sourceTree = "<group>"; };
 		66D7C3B625882F9900244D3B /* TeacherVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherVC.swift; sourceTree = "<group>"; };
@@ -1223,9 +1225,18 @@
 		66C57861259989BF006E9756 /* Chat  */ = {
 			isa = PBXGroup;
 			children = (
+				66CB7533259C9F40000D51BE /* Location Picker */,
 				66C5786225999462006E9756 /* ConservationVC.swift */,
 			);
 			path = "Chat ";
+			sourceTree = "<group>";
+		};
+		66CB7533259C9F40000D51BE /* Location Picker */ = {
+			isa = PBXGroup;
+			children = (
+				66CB7534259C9F52000D51BE /* LocaitonPicker.swift */,
+			);
+			path = "Location Picker";
 			sourceTree = "<group>";
 		};
 		66D7C378258566BE00244D3B /* Report */ = {
@@ -1942,6 +1953,7 @@
 				661333FC24F4206A002677AB /* ChooseSchool.swift in Sources */,
 				66F4CD3F250DF5E60076D12E /* StudentEditPost.swift in Sources */,
 				668F049A251F6231007BD9C7 /* OtherUserProfileFilterView.swift in Sources */,
+				66CB7535259C9F52000D51BE /* LocaitonPicker.swift in Sources */,
 				660F5AD425033E9600F72558 /* SettingCell.swift in Sources */,
 				6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */,
 				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,

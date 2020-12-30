@@ -17,6 +17,8 @@ import Gallery
 import FirebaseStorage
 import SVProgressHUD
 import Lottie
+import MobileCoreServices
+import MapKit
 class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
    
     func dismisMenu() {
@@ -145,7 +147,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        
+        messagesCollectionView.messageCellDelegate = self
         messageInputBar.delegate = self
         messagesCollectionView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         scrollsToLastItemOnKeyboardBeginsEditing = true // default false
@@ -216,12 +218,27 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                             let w = item.document.get("width") as! CGFloat
                             let url = item.document.get("content") as! String
                             guard let val = URL(string: url) else { return }
-                            let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
-                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            if url.contains("doc") {
+                                let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "doc-holder").withRenderingMode(.alwaysOriginal), size: CGSize(width: w, height: h))
+                                sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            }else if url.contains("pdf"){
+                                let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "pdf-holder").withRenderingMode(.alwaysOriginal), size: CGSize(width: w, height: h))
+                                sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            }else if url.contains("jpg"){
+                                let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
+                                sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            }
+                          
                             
                         }
                         else if (item.document.get("type") as! String) == "text"{
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        }else if (item.document.get("type") as! String) == "location"{
+                            let h = item.document.get("heigth") as! CGFloat
+                            let w = item.document.get("width") as! CGFloat
+                            let val = item.document.get("content") as! GeoPoint
+                            let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                         }
                         
                         
@@ -261,12 +278,26 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                             let w = item.document.get("width") as! CGFloat
                             let url = item.document.get("content") as! String
                             guard let val = URL(string: url) else { return }
-                            let media = Media(url: val, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
-                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            if url.contains("doc") {
+                                let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "doc-holder").withRenderingMode(.alwaysOriginal), size: CGSize(width: w, height: h))
+                                sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            }else if url.contains("pdf"){
+                                let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "pdf-holder").withRenderingMode(.alwaysOriginal), size: CGSize(width: w, height: h))
+                                sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            }else if url.contains("jpg"){
+                                let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
+                                sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                            }
                             
                         }
                         else if (item.document.get("type") as! String) == "text"{
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.document.get("content") as! String)))
+                        }else if (item.document.get("type") as! String) == "location"{
+                            let h = item.document.get("heigth") as! CGFloat
+                            let w = item.document.get("width") as! CGFloat
+                            let val = item.document.get("content") as! GeoPoint
+                            let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                         }
                         sself.messagesCollectionView.reloadDataAndKeepOffset()
                         sself.page = snap.documents.last
@@ -306,6 +337,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                     }
 
                     let sender = Sender(senderId: item.get("senderUid") as! String, displayName: item.get("name") as! String , profileImageUrl: profileUrl)
+                    
                     let date = item.get("date") as? Timestamp
 
                     if (item.get("type") as! String) == "photo" {
@@ -313,12 +345,26 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         let w = item.get("width") as! CGFloat
                         let url = item.get("content") as! String
                         guard let val = URL(string: url) else { return }
-                        let media = Media(url: val, image: nil, placeholderImage: #imageLiteral(resourceName: "menu-camp"), size: CGSize(width: w, height: h))
-                        sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                        if url.contains("doc") {
+                            let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "doc-holder").withRenderingMode(.alwaysOriginal), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                        }else if url.contains("pdf"){
+                            let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "pdf-holder").withRenderingMode(.alwaysOriginal), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                        }else if url.contains("jpg"){
+                            let media = Media(url: val, image: nil, placeholderImage:  #imageLiteral(resourceName: "camping_icon"), size: CGSize(width: w, height: h))
+                            sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.photo(media)))
+                        }
                         
                     }
                     else if (item.get("type") as! String) == "text"{
                         sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind:.text(item.get("content") as! String)))
+                    }else if (item.get("type") as! String) == "location"{
+                        let h = item.get("heigth") as! CGFloat
+                        let w = item.get("width") as! CGFloat
+                        let val = item.get("content") as! GeoPoint
+                        let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
+                        sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                     }
                  
                     sself.messages.sort { (msg1, msg2) -> Bool in
@@ -412,6 +458,70 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         }
         
     }
+    func sendDocument(heigth : CGFloat , width : CGFloat,data : Data , currentUser : String ,uploadCount : Int, otherUser : String , type : String ,completion:@escaping(String) ->Void){
+        self.waitAnimation.play()
+        self.progressBar.isHidden = false
+        let metaDataForData = StorageMetadata()
+        let dataName = Date().millisecondsSince1970.description
+        if type == DataTypes.doc.description {
+            metaDataForData.contentType = DataTypes.doc.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.doc.mimeType)
+            self.uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                            self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
+                                
+                            }
+                            completion(dataUrl)
+                            
+                        }
+                }
+            })
+        }else if type == DataTypes.pdf.description {
+            metaDataForData.contentType = DataTypes.pdf.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.pdf.mimeType)
+            self.uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                            self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
+                                
+                            }
+                            completion(dataUrl)
+                            
+                        }
+                }
+            })
+        }
+        self.uploadFiles(uploadTask: self.uploadTask! , count : 1 , percentTotal: 5 , data: data)
+    }
     func sendImageMessage(currentUser : CurrentUser,width : CGFloat , heigth : CGFloat , otherUser : OtherUser , url : String  , completion : @escaping(Bool) ->Void){
         guard let url = URL(string: url) else {
             completion(false)
@@ -424,6 +534,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     var succesCount : Int = 0
     func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data)
     {
+        
         uploadTask.observe(.progress) {  snapshot in
             print(snapshot.progress as Any) //
             
@@ -450,14 +561,21 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
             case .pause:
                 break
             case .success:
-                self.succesCount += 1
-                self.sendingDescription.text = "\(count) Dosya Gönderiliyor \(self.succesCount). Dosya Gönderildi"
-                if self.succesCount == count {
+                if count > 1 {
+                    self.succesCount += 1
+                    self.sendingDescription.text = "\(count) Dosya Gönderiliyor \(self.succesCount). Dosya Gönderildi"
+                    if self.succesCount == count {
+                        self.waitAnimation.stop()
+                        self.progressBar.isHidden = true
+                        self.sendingDescription.text = "Dosyalar Gönderiliyor"
+                    }
+                    print("succesCount \(self.succesCount)")
+                }else{
                     self.waitAnimation.stop()
                     self.progressBar.isHidden = true
                     self.sendingDescription.text = "Dosyalar Gönderiliyor"
                 }
-                print("succesCount \(self.succesCount)")
+           
                 break
                 
             case .failure:
@@ -628,9 +746,17 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
         switch message.kind{
         case .photo(let media):
             guard let url = media.url else { return }
+            if url.absoluteString.contains("doc") {
+                imageView.contentMode = .scaleAspectFill
+                imageView.image = #imageLiteral(resourceName: "doc-holder").withRenderingMode(.alwaysOriginal)
+            }else if url.absoluteString.contains("pdf"){
+                imageView.contentMode = .scaleAspectFill
+                imageView.image = #imageLiteral(resourceName: "pdf-holder").withRenderingMode(.alwaysOriginal)
+            }else if url.absoluteString.contains("jpg"){
+                imageView.sd_imageIndicator = SDWebImageActivityIndicator.white
+                imageView.sd_setImage(with: url)
+            }
             
-            imageView.sd_imageIndicator = SDWebImageActivityIndicator.white
-            imageView.sd_setImage(with: url)
             
         case .text(_):
             break
@@ -650,9 +776,117 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
             break
         }
     }
-   
+
     
     
+}
+
+extension ConservationVC : MessageCellDelegate {
+    func didTapImage(in cell: MessageCollectionViewCell) {
+        var url = [String]()
+        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+        let message = messages[indexPath.section]
+        switch message.kind{
+        case .photo(let mediaItem):
+        guard let imageUrl = mediaItem.url else { return }
+            
+            if imageUrl.absoluteString.contains("pdf") ||
+                imageUrl.absoluteString.contains("doc")
+            {
+               
+                UIApplication.shared.open(imageUrl)
+            }
+            else
+            {
+                url.append( imageUrl.absoluteString)
+                    
+                    for item in messages{
+                        switch item.kind {
+                        
+                        case .text(_):
+                            break
+                        case .attributedText(_):
+                            break
+                        case .photo(let allItem):
+                            guard let imageUrl = allItem.url else { return }
+                            if !url.contains(imageUrl.absoluteString) {
+                                url.append(imageUrl.absoluteString)
+                            }
+                      
+                        case .video(_):
+                            break
+                        case .location(_):
+                            break
+                        case .emoji(_):
+                            break
+                        case .audio(_):
+                            break
+                        case .contact(_):
+                            break
+                        case .custom(_):
+                            break
+                        }
+                    }
+                    let vc = ImageSliderVC()
+                    vc.modalPresentationStyle = .fullScreen
+                    vc.DataUrl = url
+                    self.present(vc, animated: true, completion: nil)
+            }
+            
+     
+        
+        
+        case .text(_):
+            break
+        case .attributedText(_):
+            break
+        case .video(_):
+            break
+        case .location(_):
+            
+            break
+            break
+        case .emoji(_):
+            break
+        case .audio(_):
+            break
+        case .contact(_):
+            break
+        case .custom(_):
+            break
+        }
+    }
+    func didTapMessage(in cell: MessageCollectionViewCell) {
+        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+        let message = messages[indexPath.section]
+        switch message.kind{
+ 
+        case .text(_):
+            break
+        case .attributedText(_):
+            break
+        case .photo(_):
+            break
+        case .video(_):
+            break
+        case .location(let item):
+            let coordinates = item.location.coordinate
+             let lat = coordinates.latitude
+             let long = coordinates.longitude
+            let coordinate = CLLocationCoordinate2DMake(lat, long)
+            let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+            
+            mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+        case .emoji(_):
+            break
+        case .audio(_):
+            break
+        case .contact(_):
+            break
+        case .custom(_):
+             break
+        }
+    }
 }
 //MARK:--import InputBarAccessoryView
 
@@ -734,9 +968,6 @@ class PaddingLabel: UILabel {
         get { return textEdgeInsets.bottom }
     }
 }
-
-
-
 extension ConservationVC : MessagesItemDelagate  {
     func didSelect(option: MesagesItemOption) {
         switch option {
@@ -750,15 +981,72 @@ extension ConservationVC : MessagesItemDelagate  {
             present(gallery, animated: true, completion: nil)
             break
         case .addLocation(_):
-            print("locaiton")
+            let vc = MapVC(currentUser: currentUser)
+            vc.isMessageLocation = true
+            vc.completion = { [weak self] selectedCoordinates in
+                guard let sself = self else { return }
+                let long: Double = selectedCoordinates.longitude
+                let lat: Double = selectedCoordinates.latitude
+                let locaitonItem = Location(location: CLLocation(latitude: lat, longitude: long), size: .zero)
+                let message = Message(sender: sself.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .location(locaitonItem))
+                MessagesService.shared.sendMessage(newMessage: message, currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
             break
-        case .addPdf(_):
-            print("pdf")
+        case .addDocument(_):
+            let importMenu = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF),"com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"], in: .import)
+            importMenu.delegate = self
+            importMenu.modalPresentationStyle = .formSheet
+            self.present(importMenu, animated: true, completion: nil)
             break
-        case .addDoc(_):
-            print("doc")
-            break
+        }
+    }
+    
+    
+}
+extension ConservationVC : UIDocumentPickerDelegate,UIDocumentMenuDelegate{
+    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController)
+    {
+        documentPicker.delegate = self
+        present(documentPicker, animated: true, completion: nil)
+    }
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let myURL = urls.first else {
+            return
+        }
+        if myURL.uti == "com.microsoft.word.doc"
+        {
+            do{
+                self.sendDocument(heigth: 150, width: 100, data: try Data(contentsOf: myURL), currentUser: self.currentUser.uid, uploadCount: 1, otherUser: self.currentUser.uid, type: DataTypes.doc.description) { (url) in
+                    print("url \(url)")
+                }
+            }
+            catch{
+                print("err")
+            }
             
+        }
+        else if myURL.uti == "com.adobe.pdf"
+        {
+            do{
+                self.sendDocument(heigth: 150, width: 100, data: try Data(contentsOf: myURL), currentUser: self.currentUser.uid, uploadCount: 1, otherUser: self.currentUser.uid, type: DataTypes.pdf.description) { (url) in
+                    print("url \(url)")
+                }
+            }
+            catch{
+                print("err")
+            }
+        }
+        else if myURL.uti == "org.openxmlformats.wordprocessingml.document"
+        {
+            do{
+                self.sendDocument(heigth: 150, width: 100, data: try Data(contentsOf: myURL), currentUser: self.currentUser.uid, uploadCount: 1, otherUser: self.currentUser.uid, type: DataTypes.doc.description) { (url) in
+                    print("url \(url)")
+                }
+            }
+            catch{
+                print("err")
+            }
         }
     }
     

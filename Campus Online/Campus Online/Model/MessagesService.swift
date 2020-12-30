@@ -44,7 +44,8 @@ class MessagesService {
     
     
     func sendMessage(newMessage : Message , currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
-       var msg = ""
+        var msg = ""
+        var loc : GeoPoint?
         var width : CGFloat = 0.0
         var heigth : CGFloat = 0.0
       
@@ -64,7 +65,11 @@ class MessagesService {
             break
         case .video(_):
             break
-        case .location(_):
+        case .location(let item):
+            let item = item.location
+            loc = GeoPoint(latitude: item.coordinate.latitude, longitude: item.coordinate.longitude)
+            width = 200
+            heigth = 200
             break
         case .emoji(_):
             break
@@ -77,20 +82,35 @@ class MessagesService {
         }
 
 
-        
-        
-        let dic: [String: Any] = [
-            "id": newMessage.messageId,
-            "type": newMessage.kind.messageKindString,
-            "content": msg,
-            "date": FieldValue.serverTimestamp(),
-            "time":time,
-            "senderUid" : currentUser.uid as Any,
-            "is_read": false,
-            "width" :width ,
-            "heigth" : heigth,
-            "name": currentUser.name as Any
-        ] as [String : Any]
+        var dic = Dictionary<String,Any>()
+        if  let locaiton = loc{
+             dic = [
+                "id": newMessage.messageId,
+                "type": newMessage.kind.messageKindString,
+                "content": locaiton,
+                "date": FieldValue.serverTimestamp(),
+                "time":time,
+                "senderUid" : currentUser.uid as Any,
+                "is_read": false,
+                "width" :width ,
+                "heigth" : heigth,
+                "name": currentUser.name as Any
+            ] as [String : Any]
+        }else{
+            dic = [
+                "id": newMessage.messageId,
+                "type": newMessage.kind.messageKindString,
+                "content": msg,
+                "date": FieldValue.serverTimestamp(),
+                "time":time,
+                "senderUid" : currentUser.uid as Any,
+                "is_read": false,
+                "width" :width ,
+                "heigth" : heigth,
+                "name": currentUser.name as Any
+            ] as [String : Any]
+        }
+       
         
         let dbSender = Firestore.firestore().collection("messages")
             .document(currentUser.uid)
@@ -105,7 +125,7 @@ class MessagesService {
             .document(newMessage.messageId)
         dbGetter.setData(dic, merge: true, completion: nil)
     }
-    
+
     
     func uploadImages(datas :[Data] , currentUser : String, type : [String]  , otherUser : String , completion:@escaping([String]) -> Void){
         var uploadedImageUrlsArray = [String]()

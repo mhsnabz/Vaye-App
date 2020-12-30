@@ -13,15 +13,15 @@ import FirebaseFirestore
 class MapVC: UIViewController {
 
     //MARK: - properties
-    public  var completion : ((GeoPoint) ->Void)?
+    public  var completion : ((CLLocationCoordinate2D) ->Void)?
     var currentUser : CurrentUser
     var mapView : MKMapView!
     var locationManager : CLLocationManager?
     var seacrhInputView : SearchInputView!
-    
+    var isMessageLocation : Bool?
     weak var route : MKRoute?
-     var coordinate : SetNewBuySellVC?
-  weak var choosenAnnotation : MKAnnotation?
+    var coordinate : SetNewBuySellVC?
+    weak var choosenAnnotation : MKAnnotation?
     let centerMapButton : UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "location").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -360,21 +360,32 @@ extension MapVC
 }
 extension MapVC : SearchCellDelegate {
     func getDirection(forMapItem mapItem: MKMapItem) {
-//        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
-        coordinate = SetNewBuySellVC(currentUser: currentUser, currentUserFollowers: [])
-//        Utilities.waitProgress(msg: "Konum Ekleniyor")
-        let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
-        Utilities.waitProgress(msg: "Konum Ekleniyor")
-        let db = Firestore.firestore().collection("user")
-            .document(currentUser.uid)
-            .collection("coordinate").document("locaiton")
-         let dic = ["geoPoint" : location , "locationName" : mapItem.placemark.name as Any] as [String : Any]
-        db.setData(dic) {[weak self] (err) in
-            if err == nil {
-                guard let sself = self else { return }
-                sself.navigationController?.popViewController(animated: true)
+        
+        if let isMessageLocaton = isMessageLocation {
+            if isMessageLocaton {
+                print("added locaiton : \( mapItem.placemark.coordinate.latitude)\( mapItem.placemark.coordinate.longitude)")
+                completion?(mapItem.placemark.coordinate)
+                self.navigationController?.popViewController(animated: true)
+            }
+        }else{
+            
+    //        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
+            coordinate = SetNewBuySellVC(currentUser: currentUser, currentUserFollowers: [])
+    //        Utilities.waitProgress(msg: "Konum Ekleniyor")
+            let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
+            Utilities.waitProgress(msg: "Konum Ekleniyor")
+            let db = Firestore.firestore().collection("user")
+                .document(currentUser.uid)
+                .collection("coordinate").document("locaiton")
+             let dic = ["geoPoint" : location , "locationName" : mapItem.placemark.name as Any] as [String : Any]
+            db.setData(dic) {[weak self] (err) in
+                if err == nil {
+                    guard let sself = self else { return }
+                    sself.navigationController?.popViewController(animated: true)
+                }
             }
         }
+
         
     }
     
