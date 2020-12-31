@@ -10,6 +10,7 @@ import UIKit
 import FirebaseFirestore
 private let msg_cell = "msg_cell"
 private let friend_cell = "friend_cell"
+private let request_cell = "request_cell"
 class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     func getIndex(indexItem: Int) {
         self.selectedIndex = indexItem
@@ -22,9 +23,13 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
                 navigationItem.title = "Sohbetler"
             }else if index == 1 {
                 navigationItem.title = "Arkadaşlar"
+            }else{
+                navigationItem.title = "Sohbet İstekleri"
             }
         }
     }
+    
+    weak var snapShotListener : ListenerRegistration?
     var currentUser : CurrentUser
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
@@ -80,13 +85,28 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
             }
         }
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        let index = IndexPath(item: 0, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
+            cell.snapShotListener?.remove()
+        }
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let indexChatList = IndexPath(item: 0, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: indexChatList) as? ChatListCell{
+            cell.snapShotListener?.remove()
+        }
+    }
     private func configureUI(){
         view.addSubview(collecitonView)
         collecitonView.anchor(top: menuBar.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         
         collecitonView.register(ChatListCell.self, forCellWithReuseIdentifier: msg_cell)
         collecitonView.register(FriendListCell.self, forCellWithReuseIdentifier: friend_cell)
-          
+        collecitonView.register(RequestCell.self, forCellWithReuseIdentifier: request_cell)
     }
     //MARK:--funcitons
     private func  setupMenuBar(){
@@ -115,10 +135,12 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         self.collecitonView.isPagingEnabled = false
         self.collecitonView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
         self.collecitonView.isPagingEnabled = true
+        
+       
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        menuBar.horizontalBarLeftConstarint?.constant = scrollView.contentOffset.x / 2
+        menuBar.horizontalBarLeftConstarint?.constant = scrollView.contentOffset.x / 3
     }
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let memoryIndex = targetContentOffset.pointee.x / view.frame.width
@@ -130,24 +152,31 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
 }
 extension MessagesVC  : UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: msg_cell, for: indexPath) as! ChatListCell
-            cell.backgroundColor = .red
-//            cell.currentUser = currentUser
+
+            cell.currentUser = currentUser
 //            cell.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
 //            cell.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
-//            cell.rootController = self
+            cell.rootController = self
             return cell
-        }else{
+        }else if indexPath.item == 1{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: friend_cell, for: indexPath) as! FriendListCell
 
             cell.currentUser = currentUser
             cell.rootController = self
             cell.friendListModel = friendList
+            return cell
+        }else{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: request_cell, for: indexPath) as! RequestCell
+
+            cell.currentUser = currentUser
+            cell.rootController = self
+           // cell.friendListModel = friendList
             return cell
         }
     }

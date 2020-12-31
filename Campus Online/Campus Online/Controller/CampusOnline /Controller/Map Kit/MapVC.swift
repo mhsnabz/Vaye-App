@@ -14,14 +14,14 @@ protocol GetCoordiant : class {
     func getCoordinat(locaiton : GeoPoint)
 }
 class MapVC: UIViewController {
-
+    
     //MARK: - properties
     public var completion : ((CLLocationCoordinate2D) ->Void)?
     var currentUser : CurrentUser
-     var mapView : MKMapView!
+    var mapView : MKMapView!
     var locationManager : CLLocationManager?
-     var seacrhInputView : SearchInputView!
-     var isMessageLocation : Bool?
+    var seacrhInputView : SearchInputView!
+    var isMessageLocation : Bool?
     weak var route : MKRoute?
     var coordinate : SetNewBuySellVC?
     weak var coordinatDelegate : GetCoordiant?
@@ -83,7 +83,7 @@ class MapVC: UIViewController {
     
     
     //MARK: - functions
-   
+    
     
     fileprivate func configureViews(){
         view.backgroundColor = .white
@@ -100,7 +100,7 @@ class MapVC: UIViewController {
         view.addSubview(mapView)
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         view.addSubview(centerMapButton)
-       
+        
         seacrhInputView = SearchInputView()
         seacrhInputView.delegate = self
         seacrhInputView.mapController = self
@@ -150,14 +150,14 @@ extension MapVC : SearchInputViewDelagete {
                     self.removeRoutateBtn.alpha = 1
                     self.centerMapButton.alpha = 0
                 }
-          
+                
             }
         }
     }
     
     func addPolyLine(destinationMapItem: MKMapItem) {
-//        directionEnable = true
-//        seacrhInputView.directionEnable = directionEnable
+        //        directionEnable = true
+        //        seacrhInputView.directionEnable = directionEnable
         seacrhInputView.disableViewIntercation(directionIsEnabled: true)
         genaratePollyLine(forDestinationMapItem: destinationMapItem)
     }
@@ -185,14 +185,14 @@ extension MapVC : SearchInputViewDelagete {
             UIView.animate(withDuration: 0.25) {
                 if hideButton {
                     self.centerMapButton.alpha = 0.0
-                    }else{
-                        UIView.animate(withDuration: 0.25) {
-                            self.centerMapButton.frame.origin.y += self.view.frame.width / 2
-                        }
+                }else{
+                    UIView.animate(withDuration: 0.25) {
+                        self.centerMapButton.frame.origin.y += self.view.frame.width / 2
+                    }
                 }
                 
             }
-            //
+        //
         case .fullyExpanded:
             if !hideButton{
                 UIView.animate(withDuration: 0.25) {
@@ -201,7 +201,7 @@ extension MapVC : SearchInputViewDelagete {
             }
             
             
-     
+            
         }
     }
     
@@ -210,7 +210,7 @@ extension MapVC : SearchInputViewDelagete {
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
         searchBy(natureLanguage: query, region: region, coordinate: coordinate) { (response, err) in
             response?.mapItems.forEach({ (mapItem) in
-              let annotion = MKPointAnnotation()
+                let annotion = MKPointAnnotation()
                 annotion.title = mapItem.name
                 annotion.coordinate = mapItem.placemark.coordinate
                 self.mapView.addAnnotation(annotion)
@@ -306,7 +306,7 @@ extension MapVC
         let coordinateReigon = MKCoordinateRegion(center: coordinat, latitudinalMeters: 2000, longitudinalMeters: 2000)
         mapView.setRegion(coordinateReigon, animated: true)
         if loadAnnotation{
-           loadAnnotationByQuery(query: "Market")
+            loadAnnotationByQuery(query: "Market")
         }
     }
     
@@ -339,7 +339,7 @@ extension MapVC
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
         searchBy(natureLanguage: searchQuery, region: region, coordinate: coordinate) { (response, err) in
             response?.mapItems.forEach({ (mapItem) in
-              let annotion = MKPointAnnotation()
+                let annotion = MKPointAnnotation()
                 annotion.title = mapItem.name
                 annotion.coordinate = mapItem.placemark.coordinate
                 self.mapView.addAnnotation(annotion)
@@ -374,15 +374,15 @@ extension MapVC : SearchCellDelegate {
             }
         }else{
             
-    //        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
+            //        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeWalking])
             coordinate = SetNewBuySellVC(currentUser: currentUser, currentUserFollowers: [])
-    //        Utilities.waitProgress(msg: "Konum Ekleniyor")
+            //        Utilities.waitProgress(msg: "Konum Ekleniyor")
             let location : GeoPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.longitude)
             Utilities.waitProgress(msg: "Konum Ekleniyor")
             let db = Firestore.firestore().collection("user")
                 .document(currentUser.uid)
                 .collection("coordinate").document("locaiton")
-             let dic = ["geoPoint" : location , "locationName" : mapItem.placemark.name as Any] as [String : Any]
+            let dic = ["geoPoint" : location , "locationName" : mapItem.placemark.name as Any] as [String : Any]
             db.setData(dic) {[weak self] (err) in
                 if err == nil {
                     guard let sself = self else { return }
@@ -390,7 +390,7 @@ extension MapVC : SearchCellDelegate {
                 }
             }
         }
-
+        
         
     }
     

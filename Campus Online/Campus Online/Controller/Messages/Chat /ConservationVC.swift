@@ -22,13 +22,17 @@ import MapKit
 import AVFoundation
 class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate,sendAudioProtocol, GetCoordiant {
     func getCoordinat(locaiton: GeoPoint) {
-        print("locaiton : \(locaiton)")
+        let long: Double = locaiton.longitude
+        let lat: Double = locaiton.latitude
+        let locaitonItem = Location(location: CLLocation(latitude: lat, longitude: long), size: .zero)
+        let message = Message(sender: self.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .location(locaitonItem))
+        MessagesService.shared.sendMessage(newMessage: message, fileName: nil, currentUser: self.currentUser, otherUser: self.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
     }
     
     func sendAudioItem(item: URL, fileName: String) {
-     
+        
         do {
-               let audioPlayer = try AVAudioPlayer(contentsOf: item)
+            let audioPlayer = try AVAudioPlayer(contentsOf: item)
             let duration = (CGFloat(audioPlayer.duration))
             print("url\(item)")
             uploadAudio(heigth: 200, width: 60, data: item, currentUser: currentUser.uid, uploadCount: 1, otherUser: otherUser.uid, type: DataTypes.auido.description, duration: duration) {[weak self] (url) in
@@ -38,10 +42,10 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 let message = Message(sender: sself.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .audio(item))
                 MessagesService.shared.sendMessage(newMessage: message, fileName : fileName ,currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
             }
-           } catch {
-               assertionFailure("Failed crating audio player: \(error).")
-              
-           }
+        } catch {
+            assertionFailure("Failed crating audio player: \(error).")
+            
+        }
     }
     func dismisMenu() {
         inputAccessoryView?.isHidden = false
@@ -102,12 +106,12 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     
     var actionsSheet : MessagesItemLauncher
     var recordSheet : RecordSheet
-
+    
     //MARK:--lifeCycle
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         snapShotListener?.remove()
-      print("audio \(getWhistleURL())")  
+        navigationItem.title = otherUser.name
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -149,14 +153,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         
         
     }
-    func getWhistleURL() -> URL {
-        return getDocumentsDirectory().appendingPathComponent("recording.m4a")
-    }
-    func getDocumentsDirectory() -> URL {
-       let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-       let documentsDirectory = paths[0]
-       return documentsDirectory
-   }
+    
     //MARK: -- functions
     private func setupInputButton() {
         let button = InputBarButtonItem()
@@ -300,11 +297,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                             let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                         }else if (item.document.get("type") as! String) == "audio"{
-//                            let h = item.document.get("heigth") as! CGFloat
-//                            let w = item.document.get("width") as! CGFloat
+                            //                            let h = item.document.get("heigth") as! CGFloat
+                            //                            let w = item.document.get("width") as! CGFloat
                             let url = item.document.get("content") as! String
                             let duration = item.document.get("duration") as! Float
-                           
+                            
                             guard let val = URL(string: url) else { return }
                             let audio = Audio(url: val , duration: duration, size: CGSize(width: 200, height: 40), fileName: "fileName")
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .audio(audio)))
@@ -366,8 +363,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                             let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                         }else if (item.document.get("type") as! String) == "audio"{
-//                            let h = item.document.get("heigth") as! CGFloat
-//                            let w = item.document.get("width") as! CGFloat
+                            //                            let h = item.document.get("heigth") as! CGFloat
+                            //                            let w = item.document.get("width") as! CGFloat
                             let url = item.document.get("content") as! String
                             let duration = item.document.get("duration") as! Float
                             guard let val = URL(string: url) else { return }
@@ -442,8 +439,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                         sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
                     }else if (item.get("type") as! String) == "audio"{
-//                        let h = item.get("heigth") as! CGFloat
-//                        let w = item.get("width") as! CGFloat
+                        //                        let h = item.get("heigth") as! CGFloat
+                        //                        let w = item.get("width") as! CGFloat
                         let url = item.get("content") as! String
                         let duration = item.get("duration") as! Float
                         guard let val = URL(string: url) else { return }
@@ -648,7 +645,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 .child(currentUser)
                 .child(otherUser)
                 .child(dataName + DataTypes.auido.mimeType)
-           
+            
             self.uploadTask = storageRef.putFile(from: data, metadata: metaDataForData, completion: { (metaData, err) in
                 if err != nil {
                     print("err \(err as Any)")
@@ -662,7 +659,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                 
                                 return
                             }
-                           
+                            
                             completion(dataUrl)
                             
                         }
@@ -909,7 +906,7 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
         
         return NSMutableAttributedString(string: "\(dateString)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
     }
-   
+    
     func configureAudioCell(_ cell: AudioMessageCell, message: MessageType) {
         let sender = message.sender
         if sender.senderId == currentUser.uid {
@@ -1076,11 +1073,11 @@ extension ConservationVC : MessageCellDelegate {
     }
     func didTapPlayButton(in cell: AudioMessageCell) {
         guard let indexPath = messagesCollectionView.indexPath(for: cell),
-            let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
-                print("Failed to identify message when audio cell receive tap gesture")
-                return
+              let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
+            print("Failed to identify message when audio cell receive tap gesture")
+            return
         }
-       
+        
         if audioController.playingMessage?.messageId == message.messageId {
             // tap occur in the current cell that is playing audio sound
             if audioController.state == .playing {
@@ -1099,19 +1096,19 @@ extension ConservationVC : MessageCellDelegate {
             audioController.playSound(for: message, in: cell)
             return
         }
-       
+        
     }
     func didStartAudio(in cell: AudioMessageCell) {
         
-       }
-
-       func didPauseAudio(in cell: AudioMessageCell) {
-           print("Did pause audio sound")
-       }
-
-       func didStopAudio(in cell: AudioMessageCell) {
-           print("Did stop audio sound")
-       }
+    }
+    
+    func didPauseAudio(in cell: AudioMessageCell) {
+        print("Did pause audio sound")
+    }
+    
+    func didStopAudio(in cell: AudioMessageCell) {
+        print("Did stop audio sound")
+    }
 }
 //MARK:--import InputBarAccessoryView
 
@@ -1211,11 +1208,7 @@ extension ConservationVC : MessagesItemDelagate  {
             vc.isMessageLocation = true
             vc.completion = { [weak self] selectedCoordinates in
                 guard let sself = self else { return }
-                let long: Double = selectedCoordinates.longitude
-                let lat: Double = selectedCoordinates.latitude
-                let locaitonItem = Location(location: CLLocation(latitude: lat, longitude: long), size: .zero)
-                let message = Message(sender: sself.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .location(locaitonItem))
-                MessagesService.shared.sendMessage(newMessage: message, fileName: nil, currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+                
             }
             self.navigationController?.pushViewController(vc, animated: true)
             break

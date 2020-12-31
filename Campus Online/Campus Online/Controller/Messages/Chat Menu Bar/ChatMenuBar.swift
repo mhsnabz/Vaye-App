@@ -41,7 +41,7 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
         horizontalBarLeftConstarint =  horizontalBarView.leftAnchor.constraint(equalTo: self.leftAnchor)
         horizontalBarLeftConstarint?.isActive = true
         horizontalBarView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        horizontalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/2).isActive = true
+        horizontalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/3).isActive = true
         horizontalBarView.heightAnchor.constraint(equalToConstant: 1.5).isActive = true
     }
     required init?(coder: NSCoder) {
@@ -49,7 +49,7 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -58,11 +58,13 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
             cell.lbl.text = "Sohbetler"
         }else if indexPath.item == 1 {
             cell.lbl.text = "Arkadaşlar"
+        }else if indexPath.item == 2{
+            cell.lbl.text = "Sohbet İstekleri"
         }
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 2, height: frame.height)
+        return CGSize(width: frame.width / 3, height: frame.height)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0

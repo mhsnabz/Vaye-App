@@ -49,11 +49,12 @@ class MessagesService {
         var width : CGFloat = 0.0
         var heigth : CGFloat = 0.0
         var duration : Float = 0
-        
+        var lastMsg = ""
         switch newMessage.kind{
-            
+        
         case .text(let messageText):
             msg = messageText
+            lastMsg = messageText
         case .attributedText(_):
             break
         case .photo(let mediaItem):
@@ -61,7 +62,7 @@ class MessagesService {
                 msg = targetUrlString
                 heigth = mediaItem.size.height
                 width = mediaItem.size.width
-                
+                lastMsg = "Resim"
             }
             break
         case .video(_):
@@ -71,6 +72,7 @@ class MessagesService {
             loc = GeoPoint(latitude: item.coordinate.latitude, longitude: item.coordinate.longitude)
             width = 200
             heigth = 200
+            lastMsg = "Konum"
             break
         case .emoji(_):
             break
@@ -79,19 +81,19 @@ class MessagesService {
             duration = item.duration
             width = item.size.width
             heigth = item.size.height
+            lastMsg = "Ses Kaydı"
             
- 
             break
         case .contact(_):
             break
         case .custom(_):
             break
         }
-
-
+        
+        
         var dic = Dictionary<String,Any>()
         if  let locaiton = loc{
-             dic = [
+            dic = [
                 "id": newMessage.messageId,
                 "type": newMessage.kind.messageKindString,
                 "content": locaiton,
@@ -118,22 +120,77 @@ class MessagesService {
                 "name": currentUser.name as Any
             ] as [String : Any]
         }
-       
         
-        let dbSender = Firestore.firestore().collection("messages")
-            .document(currentUser.uid)
-            .collection(otherUser.uid)
-            .document(newMessage.messageId)
-        dbSender.setData(dic, merge: true, completion: nil)
+        var dicSenderLastMessage = Dictionary<String,Any>()
+        dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"isOnline":false,"username":otherUser.username!, "name":otherUser.name! ,"type": newMessage.kind.messageKindString, "badgeCount":0]
+        var dicGetterLastMessage = Dictionary<String,Any>()
+        dicGetterLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":currentUser.thumb_image! ,"isOnline":false, "username":currentUser.username!,"name":currentUser.name!,"type": newMessage.kind.messageKindString, "badgeCount":0]
+        if currentUser.friendList.contains(otherUser.uid) {
+            let dbSender = Firestore.firestore().collection("messages")
+                .document(currentUser.uid)
+                .collection(otherUser.uid)
+                .document(newMessage.messageId)
+            dbSender.setData(dic, merge: true) { (err) in
+                if err == nil {
+                    let db = Firestore.firestore().collection("user")
+                        .document(currentUser.uid)
+                        .collection("msg-list")
+                        .document(otherUser.uid)
+                    db.setData(dicSenderLastMessage, merge: true)
+                }
+            }
+            
+            
+            let dbGetter = Firestore.firestore().collection("messages")
+                .document(otherUser.uid)
+                .collection(currentUser.uid)
+                .document(newMessage.messageId)
+            dbGetter.setData(dic, merge: true){ (err) in
+                if err == nil {
+                    let db = Firestore.firestore().collection("user")
+                        .document(otherUser.uid)
+                        .collection("msg-list")
+                        .document(currentUser.uid)
+                    db.setData(dicGetterLastMessage, merge: true)
+                }
+            }
+            
+        }else
+        {
+            let dbSender = Firestore.firestore().collection("messages")
+                .document(currentUser.uid)
+                .collection(otherUser.uid)
+                .document(newMessage.messageId)
+            dbSender.setData(dic, merge: true) { (err) in
+                if err == nil {
+                    let db = Firestore.firestore().collection("user")
+                        .document(currentUser.uid)
+                        .collection("msg-request")
+                        .document(otherUser.uid)
+                    db.setData(dicSenderLastMessage, merge: true)
+                }
+            }
+            
+            
+            let dbGetter = Firestore.firestore().collection("messages")
+                .document(otherUser.uid)
+                .collection(currentUser.uid)
+                .document(newMessage.messageId)
+            dbGetter.setData(dic, merge: true){ (err) in
+                if err == nil {
+                    let db = Firestore.firestore().collection("user")
+                        .document(otherUser.uid)
+                        .collection("msg-request")
+                        .document(currentUser.uid)
+                    db.setData(dicGetterLastMessage, merge: true)
+                }
+            }
+            
+        }
         
         
-        let dbGetter = Firestore.firestore().collection("messages")
-            .document(otherUser.uid)
-            .collection(currentUser.uid)
-            .document(newMessage.messageId)
-        dbGetter.setData(dic, merge: true, completion: nil)
     }
-
+    
     
     func uploadImages(datas :[Data] , currentUser : String, type : [String]  , otherUser : String , completion:@escaping([String]) -> Void){
         var uploadedImageUrlsArray = [String]()
@@ -240,7 +297,7 @@ class MessagesService {
     }
     func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data)
     {
-       
+        
         uploadTask.observe(.progress) {  snapshot in
             print(snapshot.progress as Any) //
             
@@ -252,7 +309,7 @@ class MessagesService {
         uploadTask.observe(.success) { (snap) in
             
             switch (snap.status) {
-                
+            
             case .unknown:
                 break
             case .resume:
@@ -276,3 +333,4 @@ class MessagesService {
         
     }
 }
+
