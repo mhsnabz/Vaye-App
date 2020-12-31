@@ -30,7 +30,19 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     }
     
     weak var snapShotListener : ListenerRegistration?
-    var currentUser : CurrentUser
+    var currentUser : CurrentUser{
+        didSet{
+            if !currentUser.friendList.isEmpty {
+                for item in currentUser.friendList{
+                    UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
+                        guard let sself = self else { return }
+                        sself.friendList.append(user)
+                        sself.collecitonView.reloadData()
+                    }
+                }
+            }
+        }
+    }
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
     lazy var friendList = [OtherUser]()
@@ -91,14 +103,26 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         let index = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
             cell.snapShotListener?.remove()
+            cell.times = -1
+            cell.collectionview.reloadData()
         }
     }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let indexChatList = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: indexChatList) as? ChatListCell{
             cell.snapShotListener?.remove()
         }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let index = IndexPath(item: 0, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
+            cell.times = 0
+            cell.collectionview.reloadData()
+        }
+        collecitonView.reloadData()
     }
     private func configureUI(){
         view.addSubview(collecitonView)

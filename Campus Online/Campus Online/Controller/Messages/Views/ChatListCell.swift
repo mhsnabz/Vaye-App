@@ -56,6 +56,7 @@ class ChatListCell: UICollectionViewCell {
                                 }
                                 
                             }
+                           
                         }
                         sself.list.sort { (list1, list2) -> Bool in
                             return list1.time?.dateValue().millisecondsSince1970 ?? Date().millisecondsSince1970 > list2.time?.dateValue().millisecondsSince1970 ?? Date().millisecondsSince1970
