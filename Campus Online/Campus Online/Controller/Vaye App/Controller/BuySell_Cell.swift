@@ -12,15 +12,12 @@ import GoogleMobileAds
 import SDWebImage
 import FirebaseStorage
 import MapKit
-
 import CoreLocation
 private let cellID = "cellID"
 private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
 private let cellAds = "cellAds"
-
 class BuySell_Cell: UICollectionViewCell {
-    
     var currentUser : CurrentUser?{
         didSet{
             getPost()

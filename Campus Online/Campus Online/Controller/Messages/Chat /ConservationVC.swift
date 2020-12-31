@@ -20,7 +20,11 @@ import Lottie
 import MobileCoreServices
 import MapKit
 import AVFoundation
-class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate,sendAudioProtocol {
+class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate,sendAudioProtocol, GetCoordiant {
+    func getCoordinat(locaiton: GeoPoint) {
+        print("locaiton : \(locaiton)")
+    }
+    
     func sendAudioItem(item: URL, fileName: String) {
      
         do {
@@ -89,6 +93,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     private var messages = [Message]()
     public var isNewConversation = false
     weak var snapShotListener : ListenerRegistration?
+    weak var coordinateDeleagete : GetCoordiant?
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -1202,6 +1207,7 @@ extension ConservationVC : MessagesItemDelagate  {
             break
         case .addLocation(_):
             let vc = MapVC(currentUser: currentUser)
+            vc.coordinatDelegate = self
             vc.isMessageLocation = true
             vc.completion = { [weak self] selectedCoordinates in
                 guard let sself = self else { return }

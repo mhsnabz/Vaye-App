@@ -10,17 +10,21 @@ import UIKit
 import MapKit
 import CoreLocation
 import FirebaseFirestore
+protocol GetCoordiant : class {
+    func getCoordinat(locaiton : GeoPoint)
+}
 class MapVC: UIViewController {
 
     //MARK: - properties
     public var completion : ((CLLocationCoordinate2D) ->Void)?
     var currentUser : CurrentUser
-    weak var mapView : MKMapView!
-   weak var locationManager : CLLocationManager?
-   weak  var seacrhInputView : SearchInputView!
+     var mapView : MKMapView!
+    var locationManager : CLLocationManager?
+     var seacrhInputView : SearchInputView!
      var isMessageLocation : Bool?
     weak var route : MKRoute?
     var coordinate : SetNewBuySellVC?
+    weak var coordinatDelegate : GetCoordiant?
     weak var choosenAnnotation : MKAnnotation?
     let centerMapButton : UIButton = {
         let btn = UIButton(type: .system)
@@ -364,7 +368,8 @@ extension MapVC : SearchCellDelegate {
         if let isMessageLocaton = isMessageLocation {
             if isMessageLocaton {
                 print("added locaiton : \( mapItem.placemark.coordinate.latitude)\( mapItem.placemark.coordinate.longitude)")
-                completion?(mapItem.placemark.coordinate)
+                let getPoint = GeoPoint(latitude: mapItem.placemark.coordinate.latitude, longitude: mapItem.placemark.coordinate.latitude)
+                coordinatDelegate?.getCoordinat(locaiton: getPoint)
                 self.navigationController?.popViewController(animated: true)
             }
         }else{
