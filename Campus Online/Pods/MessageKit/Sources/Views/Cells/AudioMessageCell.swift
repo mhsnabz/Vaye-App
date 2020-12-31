@@ -33,8 +33,8 @@ open class AudioMessageCell: MessageContentCell {
         let playButton = UIButton(type: .custom)
         let playImage = UIImage.messageKitImageWith(type: .play)
         let pauseImage = UIImage.messageKitImageWith(type: .pause)
-        playButton.setImage(playImage?.withRenderingMode(.alwaysOriginal), for: .normal)
-        playButton.setImage(pauseImage?.withRenderingMode(.alwaysOriginal), for: .selected)
+        playButton.setImage(playImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+        playButton.setImage(pauseImage?.withRenderingMode(.alwaysTemplate), for: .selected)
         return playButton
     }()
 

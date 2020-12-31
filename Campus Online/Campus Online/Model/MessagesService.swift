@@ -43,12 +43,13 @@ class MessagesService {
     }
     
     
-    func sendMessage(newMessage : Message , currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
+    func sendMessage(newMessage : Message ,fileName : String?, currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
         var msg = ""
         var loc : GeoPoint?
         var width : CGFloat = 0.0
         var heigth : CGFloat = 0.0
         var duration : Float = 0
+        
         switch newMessage.kind{
             
         case .text(let messageText):
@@ -78,6 +79,8 @@ class MessagesService {
             duration = item.duration
             width = item.size.width
             heigth = item.size.height
+            
+ 
             break
         case .contact(_):
             break
@@ -106,7 +109,7 @@ class MessagesService {
                 "type": newMessage.kind.messageKindString,
                 "content": msg,
                 "date": FieldValue.serverTimestamp(),
-                "time":time,
+                "time":time,"fileName":fileName ?? "",
                 "senderUid" : currentUser.uid as Any,
                 "is_read": false,
                 "width" :width ,

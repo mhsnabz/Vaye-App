@@ -11,7 +11,7 @@ import Lottie
 import AVFoundation
 import MessageKit
 protocol sendAudioProtocol : class {
-    func sendAudioItem(item : URL)
+    func sendAudioItem(item : URL , fileName : String)
 }
 
 class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
@@ -188,7 +188,7 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         play_pause.isHidden = true
         send.isHidden  = true
         lbl.isHidden = true
-        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(audioName)\(currentUser.uid!)\(DataTypes.auido.mimeType)")
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(audioName)\(DataTypes.auido.mimeType)")
                 let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
@@ -273,7 +273,7 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
             play_pause.play(fromFrame: 0, toFrame: 60, loopMode: .none) {[weak self] (_) in
                 guard let sself = self else { return }
                 do{
-                    sself.audioPlayer = try AVAudioPlayer(contentsOf: sself.getDocumentsDirectory().appendingPathComponent("\(sself.audioName)\(sself.currentUser.uid!)\(DataTypes.auido.mimeType)"))
+                    sself.audioPlayer = try AVAudioPlayer(contentsOf: sself.getDocumentsDirectory().appendingPathComponent("\(sself.audioName)\(DataTypes.auido.mimeType)"))
                     sself.audioPlayer?.delegate = self
                     sself.audioPlayer?.play()
                 }catch{
@@ -295,8 +295,13 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         send.play(fromFrame: 0, toFrame: 120, loopMode: .none) {[weak self] (_val) in
             guard let sself = self else { return }
             if _val{
-                sself.delegate?.sendAudioItem(item:sself.getDocumentsDirectory().appendingPathComponent("\(sself.audioName)\(sself.currentUser.uid!)\(DataTypes.auido.mimeType)"))
+                sself.delegate?.sendAudioItem(item:sself.getDocumentsDirectory().appendingPathComponent("\(sself.audioName)\(DataTypes.auido.mimeType)"), fileName: "\(sself.audioName)\(DataTypes.auido.mimeType)")
                 sself.handleDismiss()
+                sself.audioPlayer = nil
+                sself.audioName = ""
+                sself.audioRecorder = nil
+                sself.play_pause.isHidden = true
+                sself.send.isHidden = true
             }
         }
     }

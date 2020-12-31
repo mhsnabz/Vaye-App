@@ -11,6 +11,7 @@ import UIKit
 import AVFoundation
 import MessageKit
 import Alamofire
+import FirebaseStorage
 /// The `PlayerState` indicates the current audio controller state
 public enum PlayerState {
 
@@ -75,41 +76,78 @@ open class BasicAudioController: NSObject, AVAudioPlayerDelegate {
             cell.durationLabel.text = displayDelegate.audioProgressTextFormat(Float(player.currentTime), for: cell, in: collectionView)
         }
     }
-
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
     /// Used to start play audio sound
     ///
     /// - Parameters:
     ///   - message: The `MessageType` that contain the audio item to be played.
     ///   - audioCell: The `AudioMessageCell` that needs to be updated while audio is playing.
     open func playSound(for message: MessageType, in audioCell: AudioMessageCell) {
+        SetSessionPlayerOn()
         switch message.kind {
         case .audio(let item):
-            audioCell.activityIndicatorView.isHidden = false
+            audioCell.activityIndicatorView.startAnimating()
+            audioCell.playButton.isHidden = true
             playingCell = audioCell
             playingMessage = message
-            let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-            
-            AF.download(item.url, to: destination).responseData {[weak self] (response) in
+        let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("recording.m4a")
+            getDownloadData(url: item.url, fileName: "fileName") {[weak self] (data) in
+                guard let data = data else {
+                    audioCell.activityIndicatorView.stopAnimating()
+                    
+                    audioCell.playButton.isHidden = true
+                    return }
                 guard let sself = self else { return }
-                print(response.fileURL as Any)
-                guard let url = response.fileURL else {
-                    audioCell.activityIndicatorView.isHidden = true
-                    return
+                do {
+                    try data.write(to: fileURL)
+                    if let player  = try? AVAudioPlayer(contentsOf: fileURL){
+                        audioCell.activityIndicatorView.stopAnimating()
+                        audioCell.playButton.isHidden = false
+                        sself.audioPlayer = player
+                        sself.audioPlayer?.prepareToPlay()
+                        sself.audioPlayer?.delegate = self
+                        sself.audioPlayer?.play()
+                        sself.state = .playing
+                        audioCell.playButton.isSelected = true  // show pause button on audio cell
+                        sself.startProgressTimer()
+                        audioCell.delegate?.didStartAudio(in: audioCell)
+                    }else{
+                        print("err ")
+                    }
+                    
+                } catch {
+                    print(error)
                 }
-                audioCell.activityIndicatorView.isHidden = true
-                guard let player = try? AVAudioPlayer(contentsOf: url) else {
-                    print("Failed to create audio player for URL: \(url)")
-                    return
-                }
-                sself.audioPlayer = player
-                sself.audioPlayer?.prepareToPlay()
-                sself.audioPlayer?.delegate = self
-                sself.audioPlayer?.play()
-                sself.state = .playing
-                audioCell.playButton.isSelected = true  // show pause button on audio cell
-                sself.startProgressTimer()
-                audioCell.delegate?.didStartAudio(in: audioCell)
+                
+                        
             }
+//            let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory , in: .userDomainMask)
+//            print("item.url \(item.url)")
+//            AF.download(item.url, to: destination).responseData {[weak self] (response) in
+//                guard let sself = self else { return }
+//                print("response url \(response.fileURL as Any)")
+//                guard let url = response.fileURL else {
+//                    audioCell.activityIndicatorView.isHidden = true
+//                    audioCell.playButton.isHidden = false
+//
+//                    return
+//                }
+//                audioCell.activityIndicatorView.isHidden = true
+//                audioCell.playButton.isHidden = false
+//                if let player = try? AVAudioPlayer(contentsOf: URL(string: fileURL )) {
+//                    sself.audioPlayer = player
+//                    sself.audioPlayer?.prepareToPlay()
+//                    sself.audioPlayer?.delegate = self
+//                    sself.audioPlayer?.play()
+//                    sself.state = .playing
+//                    audioCell.playButton.isSelected = true  // show pause button on audio cell
+//                    sself.startProgressTimer()
+//                    audioCell.delegate?.didStartAudio(in: audioCell)
+//                }
+//            }
 //            AF.request(item.url, to: destination).downloadProgress(closure: { (progress) in
 //                    print("progress: \(progress)")
 //                }).responseData { response in
@@ -126,6 +164,36 @@ open class BasicAudioController: NSObject, AVAudioPlayerDelegate {
         }
     }
 
+    func getDownloadData(url : URL ,fileName : String , completion : @escaping(Data?) ->Void){
+        
+        let storageRef = Storage.storage().reference(forURL: url.absoluteString)
+        storageRef.getData(maxSize:  10 * 1024 * 1024) { (data, err) in
+            if err == nil {
+                guard let data = data else {
+                    completion(nil)
+                    return }
+                completion(data)
+            }else{
+                print(err?.localizedDescription as Any)
+                completion(nil)
+            }
+        }
+    }
+    func SetSessionPlayerOn()
+    {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playAndRecord)
+        } catch _ {
+        }
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch _ {
+        }
+        do {
+            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
+        } catch _ {
+        }
+    }
     /// Used to pause the audio sound
     ///
     /// - Parameters:

@@ -30,12 +30,10 @@ struct Media: MediaItem {
 }
 struct Audio : AudioItem {
     var url: URL
-    
     var duration: Float
-    
     var size: CGSize
-    
-    
+    var fileName : String
+     
 }
 struct Location: LocationItem {
     var location: CLLocation

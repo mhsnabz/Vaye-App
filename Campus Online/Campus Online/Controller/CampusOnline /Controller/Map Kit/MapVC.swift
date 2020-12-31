@@ -13,12 +13,12 @@ import FirebaseFirestore
 class MapVC: UIViewController {
 
     //MARK: - properties
-    public  var completion : ((CLLocationCoordinate2D) ->Void)?
+    public var completion : ((CLLocationCoordinate2D) ->Void)?
     var currentUser : CurrentUser
-    var mapView : MKMapView!
-    var locationManager : CLLocationManager?
-    var seacrhInputView : SearchInputView!
-    var isMessageLocation : Bool?
+    weak var mapView : MKMapView!
+   weak var locationManager : CLLocationManager?
+   weak  var seacrhInputView : SearchInputView!
+     var isMessageLocation : Bool?
     weak var route : MKRoute?
     var coordinate : SetNewBuySellVC?
     weak var choosenAnnotation : MKAnnotation?

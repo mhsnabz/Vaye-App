@@ -57,7 +57,7 @@
   
   pod 'MessageKit'
   pod 'Alamofire', '~> 5.2'
-
+  pod 'RealmSwift'
   # Pods for Campus Online
   target 'Campus OnlineTests' do
     
