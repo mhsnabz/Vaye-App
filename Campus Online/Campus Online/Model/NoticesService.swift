@@ -183,10 +183,10 @@ class NoticesService {
             }
             
         }
-        uploadFiles(uploadTask: uploadTask! , count : uploadCount , percentTotal: 5 , data: data)
+        uploadFiles(uploadTask: uploadTask! , count : uploadCount , percentTotal: 5 )
     }
     
-    func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data) {
+    func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float) {
         uploadTask.observe(.progress) {  snapshot in
             print(snapshot.progress as Any) //
             

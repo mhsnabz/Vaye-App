@@ -11,7 +11,7 @@ import Lottie
 import AVFoundation
 import MessageKit
 protocol sendAudioProtocol : class {
-    func sendAudioItem(item : Audio)
+    func sendAudioItem(item : URL)
 }
 
 class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
@@ -25,6 +25,7 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
     var audioPlayer : AVAudioPlayer?
+    var audioName : String = ""
     weak var delegate : sendAudioProtocol?
     var infoAtt : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
@@ -129,7 +130,8 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         
     }
     
-    func show(){
+    func show( audioName : String ){
+        self.audioName = audioName
         guard let window = UIApplication.shared.windows.first(where: { ($0.isKeyWindow)}) else { return }
         self.window = window
         window.addSubview(blackView)
@@ -186,7 +188,7 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         play_pause.isHidden = true
         send.isHidden  = true
         lbl.isHidden = true
-        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(audioName)\(currentUser.uid!)\(DataTypes.auido.mimeType)")
                 let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
@@ -271,7 +273,7 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
             play_pause.play(fromFrame: 0, toFrame: 60, loopMode: .none) {[weak self] (_) in
                 guard let sself = self else { return }
                 do{
-                    sself.audioPlayer = try AVAudioPlayer(contentsOf: sself.getDocumentsDirectory().appendingPathComponent("recording.m4a"))
+                    sself.audioPlayer = try AVAudioPlayer(contentsOf: sself.getDocumentsDirectory().appendingPathComponent("\(sself.audioName)\(sself.currentUser.uid!)\(DataTypes.auido.mimeType)"))
                     sself.audioPlayer?.delegate = self
                     sself.audioPlayer?.play()
                 }catch{
@@ -293,7 +295,8 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         send.play(fromFrame: 0, toFrame: 120, loopMode: .none) {[weak self] (_val) in
             guard let sself = self else { return }
             if _val{
-              
+                sself.delegate?.sendAudioItem(item:sself.getDocumentsDirectory().appendingPathComponent("\(sself.audioName)\(sself.currentUser.uid!)\(DataTypes.auido.mimeType)"))
+                sself.handleDismiss()
             }
         }
     }

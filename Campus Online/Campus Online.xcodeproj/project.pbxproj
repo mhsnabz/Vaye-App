@@ -82,6 +82,7 @@
 		6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */; };
 		6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */; };
 		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
+		662D897D259DA8EE005E83C0 /* BasicAudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662D897C259DA8EE005E83C0 /* BasicAudioController.swift */; };
 		663B27332576759900A3CABB /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27322576759900A3CABB /* HeaderView.swift */; };
 		6646AFE32574DC1C00B42590 /* CurrentUserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */; };
 		6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6649DD7224F13D7E000532B2 /* MainTabBarController.swift */; };
@@ -375,6 +376,7 @@
 		6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeaderOne.swift; sourceTree = "<group>"; };
 		6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
+		662D897C259DA8EE005E83C0 /* BasicAudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		663B27322576759900A3CABB /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		6646AFE22574DC1C00B42590 /* CurrentUserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileHeader.swift; sourceTree = "<group>"; };
 		6649DD7224F13D7E000532B2 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
@@ -1239,6 +1241,7 @@
 			children = (
 				66CB7533259C9F40000D51BE /* Location Picker */,
 				66C5786225999462006E9756 /* ConservationVC.swift */,
+				662D897C259DA8EE005E83C0 /* BasicAudioController.swift */,
 			);
 			path = "Chat ";
 			sourceTree = "<group>";
@@ -2055,6 +2058,7 @@
 				66E326AB24F9C01C004CB61D /* UserService.swift in Sources */,
 				664E9F8225914CD6007EBE52 /* SetBolum.swift in Sources */,
 				661333F624F3FDD6002677AB /* LoginVC.swift in Sources */,
+				662D897D259DA8EE005E83C0 /* BasicAudioController.swift in Sources */,
 				66A5F0D6250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift in Sources */,
 				66C5782C2596D16F006E9756 /* TeacherChooseLesson.swift in Sources */,
 				66EAC8A2258E6234003CF7A3 /* HomeMenuBar.swift in Sources */,

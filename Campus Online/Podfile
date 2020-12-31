@@ -56,7 +56,7 @@
   pod 'WMSegmentControl'
   
   pod 'MessageKit'
-
+  pod 'Alamofire', '~> 5.2'
 
   # Pods for Campus Online
   target 'Campus OnlineTests' do

@@ -119,6 +119,7 @@ enum DataTypes {
     case doc
     case pptx
     case thumb
+    case auido
     var description : String {
         switch self {
         case .image:
@@ -131,6 +132,8 @@ enum DataTypes {
             return "pptx"
         case .thumb:
             return "jpeg"
+        case.auido:
+            return "m4a"
         }
     }
     var contentType : String {
@@ -145,6 +148,8 @@ enum DataTypes {
              return "application/vnd.ms-powerpoint"
         case .thumb:
             return "image/jpeg"
+        case .auido:
+            return "audio/m4a"
         }
     }
     var mimeType : String {
@@ -159,6 +164,8 @@ enum DataTypes {
             return ".ppt"
         case .thumb:
             return ".jpg"
+        case .auido:
+            return ".m4a"
         }
     }
 }

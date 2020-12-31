@@ -48,7 +48,7 @@ class MessagesService {
         var loc : GeoPoint?
         var width : CGFloat = 0.0
         var heigth : CGFloat = 0.0
-      
+        var duration : Float = 0
         switch newMessage.kind{
             
         case .text(let messageText):
@@ -73,7 +73,11 @@ class MessagesService {
             break
         case .emoji(_):
             break
-        case .audio(_):
+        case .audio(let item):
+            msg = item.url.absoluteString
+            duration = item.duration
+            width = item.size.width
+            heigth = item.size.height
             break
         case .contact(_):
             break
@@ -106,6 +110,7 @@ class MessagesService {
                 "senderUid" : currentUser.uid as Any,
                 "is_read": false,
                 "width" :width ,
+                "duration" : duration ,
                 "heigth" : heigth,
                 "name": currentUser.name as Any
             ] as [String : Any]
@@ -148,6 +153,9 @@ class MessagesService {
             }
         }
     }
+    
+    
+    
     func saveToDataBase(currentUser : String, otherUser : String , data : Data ,_ uploadCount : Int,_ imagesCount : Int , _ type : String ,completion : @escaping(String) ->Void  ){
         let metaDataForData = StorageMetadata()
         let dataName = Date().millisecondsSince1970.description

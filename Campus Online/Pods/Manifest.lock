@@ -159,6 +159,7 @@ PODS:
     - abseil/base/config
     - abseil/meta/type_traits
   - ActiveLabel (1.1.0)
+  - Alamofire (5.4.1)
   - BoringSSL-GRPC (0.0.3):
     - BoringSSL-GRPC/Implementation (= 0.0.3)
     - BoringSSL-GRPC/Interface (= 0.0.3)
@@ -346,6 +347,7 @@ PODS:
 
 DEPENDENCIES:
   - ActiveLabel
+  - Alamofire (~> 5.2)
   - EFImageViewZoom
   - Firebase
   - Firebase/Analytics
@@ -375,6 +377,7 @@ SPEC REPOS:
   trunk:
     - abseil
     - ActiveLabel
+    - Alamofire
     - BoringSSL-GRPC
     - Cache
     - DynamicBlurView
@@ -427,6 +430,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
   ActiveLabel: 5e3f4de79a1952d4604b845a0610d4776e4b82b3
+  Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
   Cache: 48762993ec44e1d93483c4d4a13edd18452326f4
   DynamicBlurView: ccf9acd2b20c883cc2c72e3524a04d8d3ee20533
@@ -476,6 +480,6 @@ SPEC CHECKSUMS:
   TweeTextField: 2bfb6c48fdbf6eb8038260430244c9f6ebb47bce
   WMSegmentControl: 00415dce32ed41ad7623ac6ac076eedbb8140a5e
 
-PODFILE CHECKSUM: b16a4caff46d445fd0133851bb2b912d92130940
+PODFILE CHECKSUM: f330ffbb5cd50d0a7bee9c9d7a8b094027cb5d9c
 
 COCOAPODS: 1.8.4

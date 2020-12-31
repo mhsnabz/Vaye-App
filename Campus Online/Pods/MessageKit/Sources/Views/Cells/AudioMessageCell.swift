@@ -33,8 +33,8 @@ open class AudioMessageCell: MessageContentCell {
         let playButton = UIButton(type: .custom)
         let playImage = UIImage.messageKitImageWith(type: .play)
         let pauseImage = UIImage.messageKitImageWith(type: .pause)
-        playButton.setImage(playImage?.withRenderingMode(.alwaysTemplate), for: .normal)
-        playButton.setImage(pauseImage?.withRenderingMode(.alwaysTemplate), for: .selected)
+        playButton.setImage(playImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+        playButton.setImage(pauseImage?.withRenderingMode(.alwaysOriginal), for: .selected)
         return playButton
     }()
 
@@ -56,6 +56,7 @@ open class AudioMessageCell: MessageContentCell {
 
     public lazy var progressView: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .default)
+        progressView.tintColor = .white
         progressView.progress = 0.0
         return progressView
     }()

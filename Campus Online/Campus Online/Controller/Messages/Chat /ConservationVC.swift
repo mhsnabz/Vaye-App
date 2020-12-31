@@ -20,8 +20,24 @@ import Lottie
 import MobileCoreServices
 import MapKit
 import AVFoundation
-class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate {
-    
+class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate,sendAudioProtocol {
+    func sendAudioItem(item: URL) {
+        do {
+               let audioPlayer = try AVAudioPlayer(contentsOf: item)
+            let duration = (CGFloat(audioPlayer.duration))
+            print("url\(item)")
+            uploadAudio(heigth: 200, width: 60, data: item, currentUser: currentUser.uid, uploadCount: 1, otherUser: otherUser.uid, type: DataTypes.auido.description, duration: duration) {[weak self] (url) in
+                guard let sself = self else { return }
+                guard let url = URL(string: url) else { return }
+                let item = Audio(url: url, duration: Float(duration), size: .zero)
+                let message = Message(sender: sself.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .audio(item))
+                MessagesService.shared.sendMessage(newMessage: message, currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+            }
+           } catch {
+               assertionFailure("Failed crating audio player: \(error).")
+              
+           }
+    }
     func dismisMenu() {
         inputAccessoryView?.isHidden = false
         
@@ -58,6 +74,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         
         return v
     }()
+    lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
     var recordingSession: AVAudioSession!
     private var uploadTask : StorageUploadTask?
     var dataModel = [MessageGalleryModel]()
@@ -79,7 +96,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     
     var actionsSheet : MessagesItemLauncher
     var recordSheet : RecordSheet
-    
+
     //MARK:--lifeCycle
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -89,6 +106,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         snapShotListener?.remove()
+        audioController.stopAnyOngoingPlaying()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,7 +171,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 self?.recordingSession.requestRecordPermission() { [unowned self] allowed in
                     DispatchQueue.main.async {
                         if allowed {
-                            self?.recordSheet.show()
+                            self?.recordSheet.show(audioName: Int64(Date().timeIntervalSince1970 * 1000).description)
+                            self?.recordSheet.delegate = self
                             self?.recordSheet.dismisDelgate = self
                             self?.inputAccessoryView?.isHidden = true
                             self?.messageInputBar.inputTextView.resignFirstResponder()
@@ -274,9 +293,15 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                             let val = item.document.get("content") as! GeoPoint
                             let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
+                        }else if (item.document.get("type") as! String) == "audio"{
+//                            let h = item.document.get("heigth") as! CGFloat
+//                            let w = item.document.get("width") as! CGFloat
+                            let url = item.document.get("content") as! String
+                            let duration = item.document.get("duration") as! Float
+                            guard let val = URL(string: url) else { return }
+                            let audio = Audio(url: val , duration: duration, size: CGSize(width: 200, height: 50))
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .audio(audio)))
                         }
-                        
-                        
                         sself.messagesCollectionView.reloadDataAndKeepOffset()
                         sself.page = snap.documents.last
                         sself.firstPage = snap.documents.first
@@ -333,6 +358,14 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                             let val = item.document.get("content") as! GeoPoint
                             let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                             sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
+                        }else if (item.document.get("type") as! String) == "audio"{
+//                            let h = item.document.get("heigth") as! CGFloat
+//                            let w = item.document.get("width") as! CGFloat
+                            let url = item.document.get("content") as! String
+                            let duration = item.document.get("duration") as! Float
+                            guard let val = URL(string: url) else { return }
+                            let audio = Audio(url: val , duration: duration, size: CGSize(width: 200, height: 50))
+                            sself.messages.append(Message(sender: sender, messageId: item.document.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .audio(audio)))
                         }
                         sself.messagesCollectionView.reloadDataAndKeepOffset()
                         sself.page = snap.documents.last
@@ -400,6 +433,14 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         let val = item.get("content") as! GeoPoint
                         let locaiton = Location(location: CLLocation(latitude: val.latitude, longitude: val.longitude), size: CGSize(width: w, height: h))
                         sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .location(locaiton)))
+                    }else if (item.get("type") as! String) == "audio"{
+//                        let h = item.get("heigth") as! CGFloat
+//                        let w = item.get("width") as! CGFloat
+                        let url = item.get("content") as! String
+                        let duration = item.get("duration") as! Float
+                        guard let val = URL(string: url) else { return }
+                        let audio = Audio(url: val , duration: duration, size: CGSize(width: 200, height: 50))
+                        sself.messages.append(Message(sender: sender, messageId: item.get("id") as! String, sentDate: date?.dateValue() ?? Date(), kind: .audio(audio)))
                     }
                     
                     sself.messages.sort { (msg1, msg2) -> Bool in
@@ -489,7 +530,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                     }
                 })
             }
-            self.uploadFiles(uploadTask: self.uploadTask! , count : uploadCount , percentTotal: 5 , data: data)
+            self.uploadFiles(uploadTask: self.uploadTask! , count : uploadCount , percentTotal: 5 )
         }
         
     }
@@ -554,9 +595,84 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                         }
                 }
             })
+        }else if type == DataTypes.auido.description{
+            metaDataForData.contentType = DataTypes.auido.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.auido.mimeType)
+            self.uploadTask = storageRef.putData(data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.auido.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                            self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
+                                
+                            }
+                            completion(dataUrl)
+                            
+                        }
+                }
+            })
         }
-        self.uploadFiles(uploadTask: self.uploadTask! , count : 1 , percentTotal: 5 , data: data)
+        self.uploadFiles(uploadTask: self.uploadTask! , count : 1 , percentTotal: 5 )
     }
+    
+    func uploadAudio(heigth : CGFloat , width : CGFloat,data : URL , currentUser : String ,uploadCount : Int, otherUser : String , type : String,duration : CGFloat ,completion:@escaping(String) ->Void){
+        self.waitAnimation.play()
+        self.progressBar.isHidden = false
+        let metaDataForData = StorageMetadata()
+        let dataName = Date().millisecondsSince1970.description
+        if type == DataTypes.auido.description{
+            metaDataForData.contentType = DataTypes.auido.contentType
+            let storageRef = Storage.storage().reference()
+                .child("messages")
+                .child(currentUser)
+                .child(otherUser)
+                .child(dataName + DataTypes.auido.mimeType)
+           
+            self.uploadTask = storageRef.putFile(from: data, metadata: metaDataForData, completion: { (metaData, err) in
+                if err != nil {
+                    print("err \(err as Any)")
+                }else{
+                    Storage.storage().reference()
+                        .child("messages")
+                        .child(currentUser)
+                        .child(otherUser)
+                        .child(dataName + DataTypes.auido.mimeType).downloadURL { (url, err) in
+                            guard let dataUrl = url?.absoluteString else {
+                                
+                                return
+                            }
+                           
+                            completion(dataUrl)
+                            
+                        }
+                }
+            })
+        }
+        
+        self.uploadFiles(uploadTask: self.uploadTask! , count : 1 , percentTotal: 5 )
+    }
+    
+    func sendAudioMessage(currentUser : CurrentUser,width : CGFloat , heigth : CGFloat,duration : CGFloat , otherUser : OtherUser , url : String  , completion : @escaping(Bool) ->Void){
+        guard let url = URL(string: url) else {
+            completion(false)
+            return }
+        let media = Media(url: url, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_unselected"), size: CGSize(width: width, height: heigth))
+        let message = Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .photo(media))
+        MessagesService.shared.sendMessage(newMessage: message, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+    }
+    
     func sendImageMessage(currentUser : CurrentUser,width : CGFloat , heigth : CGFloat , otherUser : OtherUser , url : String  , completion : @escaping(Bool) ->Void){
         guard let url = URL(string: url) else {
             completion(false)
@@ -567,7 +683,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     }
     
     var succesCount : Int = 0
-    func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float , data : Data)
+    func uploadFiles(uploadTask : StorageUploadTask , count : Int , percentTotal : Float )
     {
         
         uploadTask.observe(.progress) {  snapshot in
@@ -726,10 +842,17 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
     }
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         let sender = message.sender
-        if sender.senderId == selfSender?.senderId {
-            return .mainColor()
+        
+        if message.kind.messageKindString == "audio"  {
+           
+            return  UIColor.init(white: 0.80, alpha: 0.5)
+        }else{
+            if sender.senderId == selfSender?.senderId {
+                return .mainColor()
+            }
+            return  UIColor.init(white: 0.80, alpha: 0.5)
         }
-        return  UIColor.init(white: 0.80, alpha: 0.5)
+        
     }
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         let sender = message.sender
@@ -773,11 +896,18 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
         
         return NSMutableAttributedString(string: "\(dateString)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 10)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
     }
-    
+   
+    func configureAudioCell(_ cell: AudioMessageCell, message: MessageType) {
+        
+    }
+    func audioTintColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        return .white
+    }
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         guard  let message = message as? Message else {
             return
         }
+        
         switch message.kind{
         case .photo(let media):
             guard let url = media.url else { return }
@@ -919,6 +1049,44 @@ extension ConservationVC : MessageCellDelegate {
             break
         }
     }
+    func didTapPlayButton(in cell: AudioMessageCell) {
+        guard let indexPath = messagesCollectionView.indexPath(for: cell),
+            let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
+                print("Failed to identify message when audio cell receive tap gesture")
+                return
+        }
+       
+        if audioController.playingMessage?.messageId == message.messageId {
+            // tap occur in the current cell that is playing audio sound
+            if audioController.state == .playing {
+                audioController.pauseSound(for: message, in: cell)
+            } else {
+                audioController.resumeSound()
+            }
+        } else {
+            // tap occur in a difference cell that the one is currently playing sound. First stop currently playing and start the sound for given message
+            audioController.stopAnyOngoingPlaying()
+            audioController.playSound(for: message, in: cell)
+        }
+        
+        guard audioController.state != .stopped else {
+            // There is no audio sound playing - prepare to start playing for given audio message
+            audioController.playSound(for: message, in: cell)
+            return
+        }
+       
+    }
+    func didStartAudio(in cell: AudioMessageCell) {
+        
+       }
+
+       func didPauseAudio(in cell: AudioMessageCell) {
+           print("Did pause audio sound")
+       }
+
+       func didStopAudio(in cell: AudioMessageCell) {
+           print("Did stop audio sound")
+       }
 }
 //MARK:--import InputBarAccessoryView
 
