@@ -604,6 +604,7 @@ struct UserService {
                                 dbb.updateData(["friendList":FieldValue.arrayUnion([currentUserUid.uid as Any])]) { (err) in
                                     if err == nil {
                                         addOnFirendList(otherUser: otherUserUid, currntUser: currentUserUid)
+                                        addOnMsgList(currentUser: currentUserUid, otherUser: otherUserUid)
                                     }
                                 }
                             }
@@ -622,26 +623,57 @@ struct UserService {
             .document(currntUser.uid)
         let dic = ["userName":currntUser.username as Any ,"uid":currntUser.uid as Any, "name":currntUser.name as Any , "short_school" : currntUser.short_school as Any ,"thumb_image":currntUser.thumb_image as Any,"tarih":FieldValue.serverTimestamp(), "bolum":currntUser.bolum as Any]  as [String : Any]
         db.setData(dic as [String : Any], merge: true)
+        currntUser.friendList.append(otherUser)
         
     }
-    func removeFromFriendList(currentUserUid : String , otherUserUid : String){
+    func removeFromFriendList(currentUserUid : CurrentUser , otherUserUid : String){
         let db = Firestore.firestore().collection("user")
-            .document(currentUserUid)
+            .document(currentUserUid.uid)
         db.updateData(["friendList":FieldValue.arrayRemove([otherUserUid])]) { (err) in
             if err == nil {
                 let db = Firestore.firestore().collection("user")
                     .document(otherUserUid)
-                db.updateData(["friendList":FieldValue.arrayRemove([currentUserUid])]) { (err) in
+                db.updateData(["friendList":FieldValue.arrayRemove([currentUserUid.uid as Any])]) { (err) in
                     if err == nil {
                         let db = Firestore.firestore().collection("user")
-                            .document(currentUserUid).collection("friend-list").document(otherUserUid)
+                            .document(currentUserUid.uid).collection("friend-list").document(otherUserUid)
                         db.delete(){(err) in
                             let db = Firestore.firestore().collection("user")
-                                .document(otherUserUid).collection("friend-list").document(currentUserUid)
+                                .document(otherUserUid).collection("friend-list").document(currentUserUid.uid)
                             db.delete()
+                            removeFromMsgList(currentUser: currentUserUid, otherUser: otherUserUid)
                         }
                         
                     }
+                }
+            }
+        }
+    }
+    
+    func removeFromMsgList(currentUser : CurrentUser , otherUser : String){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list")
+            .document(otherUser)
+          db.delete()
+    }
+    func addOnMsgList(currentUser : CurrentUser , otherUser : String){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-request")
+            .document(otherUser)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists {
+                    let model = ChatListModel(uid: otherUser, dic: snap.data()!)
+                    let db = Firestore.firestore().collection("user")
+                        .document(currentUser.uid)
+                        .collection("msg-list")
+                        .document(otherUser)
+                
+                    let dicSenderLastMessage = ["lastMsg":model.lastMsg as Any, "time":model.time as Any , "thumbImage": model.thumbImage as Any,"isOnline":model.isOnline as Any,"username":model.username as Any, "name":model.name  as Any,"type": model.type as Any, "badgeCount":0 as Any] as [String : Any]
+                    db.setData(dicSenderLastMessage, merge: true)
                 }
             }
         }

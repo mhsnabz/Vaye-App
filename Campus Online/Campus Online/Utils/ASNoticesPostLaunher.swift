@@ -287,7 +287,7 @@ class ASNoticesPostLaunher : NSObject {
                         .collection("following").document(sself.otherUser!.uid)
                     db.delete { (err) in
                         if err == nil {
-                            UserService.shared.removeFromFriendList(currentUserUid: sself.currentUser.uid, otherUserUid: sself.otherUser!.uid)
+                            UserService.shared.removeFromFriendList(currentUserUid: sself.currentUser, otherUserUid: sself.otherUser!.uid)
                             Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
                         }else{
                             Utilities.errorProgress(msg: nil)

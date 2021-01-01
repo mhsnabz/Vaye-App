@@ -93,6 +93,7 @@ class OtherUserProfile: UIViewController     {
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
     
     var interstitalGithub : GADInterstitial!
+    var interstitalMsg : GADInterstitial!
     var interstitalInsta : GADInterstitial!
     var interstitalLinked : GADInterstitial!
     var interstitalTwitter : GADInterstitial!
@@ -234,7 +235,7 @@ class OtherUserProfile: UIViewController     {
     let sendMsg : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "msg").withRenderingMode(.alwaysOriginal), for: .normal)
-        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(sendMsgClick), for: .touchUpInside)
         return btn
     }()
     
@@ -338,6 +339,7 @@ class OtherUserProfile: UIViewController     {
         
         interstitalTwitter = createAd()
         interstitalGithub = createAd()
+        interstitalMsg = createAd()
         interstitalLinked = createAd()
         interstitalInsta = createAd()
         
@@ -395,6 +397,14 @@ class OtherUserProfile: UIViewController     {
              UIApplication.shared.open(url)
         }
     }
+    @objc func sendMsgClick(){
+        if interstitalMsg.isReady {
+            ads_target = "msg"
+            interstitalMsg.present(fromRootViewController: self)
+        }else{
+            sendMessages()
+        }
+    }
     @objc func goInstagram(){
         if interstitalInsta.isReady {
            
@@ -431,6 +441,8 @@ class OtherUserProfile: UIViewController     {
     }
    //MARK:-functions
     
+    
+    
     @objc func setFollow(){
         Utilities.waitProgress(msg: "")
         guard let isFallowingUser = isFallowingUser else { return }
@@ -451,7 +463,7 @@ class OtherUserProfile: UIViewController     {
                         .collection("following").document(sself.otherUser.uid)
                     db.delete { (err) in
                         if err == nil {
-                            UserService.shared.removeFromFriendList(currentUserUid: sself.currentUser.uid, otherUserUid: sself.otherUser.uid)
+                            UserService.shared.removeFromFriendList(currentUserUid: sself.currentUser, otherUserUid: sself.otherUser.uid)
                             Utilities.succesProgress(msg: "Takip Etmeyi Bıraktınız ")
                         }else{
                             Utilities.errorProgress(msg: nil)
@@ -494,6 +506,17 @@ class OtherUserProfile: UIViewController     {
         }
     }
     
+    func sendMessages(){
+        Utilities.waitProgress(msg: nil)
+        UserService.shared.getCurrentUser(uid: currentUser.uid) {[weak self] (user) in
+            guard let sself = self else { return }
+            UserService.shared.getOtherUser(userId: sself.otherUser.uid) { (otherUser) in
+                let vc = ConservationVC(currentUser: user, otherUser: otherUser)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+            }
+        }
+    }
     private func getUsername(username : String) ->String{
         
         return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
@@ -2957,6 +2980,8 @@ extension OtherUserProfile : GADInterstitialDelegate {
         }else if ads_target == "linkedin"{
             guard let url = URL(string:  otherUser.linkedin ) else { return }
             UIApplication.shared.open(url)
+        }else if ads_target == "msg"{
+            sendMessages()
         }
         
     }
@@ -2978,6 +3003,8 @@ extension OtherUserProfile : GADInterstitialDelegate {
         }else if ads_target == "linkedin"{
             guard let url = URL(string:  otherUser.linkedin ) else { return }
             UIApplication.shared.open(url)
+        }else if ads_target == "msg"{
+            sendMessages()
         }
     }
 }
