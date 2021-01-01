@@ -657,6 +657,13 @@ struct UserService {
             .document(otherUser)
           db.delete()
     }
+    func removeRequestList(currentUser : CurrentUser , otherUser : String){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-request")
+            .document(otherUser)
+          db.delete()
+    }
     func addOnMsgList(currentUser : CurrentUser , otherUser : String){
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
@@ -674,6 +681,7 @@ struct UserService {
                 
                     let dicSenderLastMessage = ["lastMsg":model.lastMsg as Any, "time":model.time as Any , "thumbImage": model.thumbImage as Any,"isOnline":model.isOnline as Any,"username":model.username as Any, "name":model.name  as Any,"type": model.type as Any, "badgeCount":0 as Any] as [String : Any]
                     db.setData(dicSenderLastMessage, merge: true)
+                    removeRequestList(currentUser: currentUser, otherUser: otherUser)
                 }
             }
         }

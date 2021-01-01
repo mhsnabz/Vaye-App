@@ -92,9 +92,9 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     var page : DocumentSnapshot? = nil
     var firstPage : DocumentSnapshot? = nil
     var currentUser : CurrentUser
-    var otherUser : OtherUser
+     var otherUser : OtherUser
     private let selfSender : Sender?
-    private var messages = [Message]()
+    private lazy var messages = [Message]()
     public var isNewConversation = false
     weak var snapShotListener : ListenerRegistration?
     weak var coordinateDeleagete : GetCoordiant?
@@ -104,8 +104,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         return control
     }()
     
-    var actionsSheet : MessagesItemLauncher
-    var recordSheet : RecordSheet
+      var actionsSheet : MessagesItemLauncher
+     var recordSheet : RecordSheet
     
     //MARK:--lifeCycle
     override func viewWillDisappear(_ animated: Bool) {
@@ -128,7 +128,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         view.addSubview(progressBar)
         progressBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
         progressBar.isHidden = true
-        recordSheet.controller = self
+  
     }
     
     init(currentUser : CurrentUser , otherUser : OtherUser) {
@@ -1206,10 +1206,7 @@ extension ConservationVC : MessagesItemDelagate  {
             let vc = MapVC(currentUser: currentUser)
             vc.coordinatDelegate = self
             vc.isMessageLocation = true
-            vc.completion = { [weak self] selectedCoordinates in
-                guard let sself = self else { return }
-                
-            }
+           
             self.navigationController?.pushViewController(vc, animated: true)
             break
         case .addDocument(_):

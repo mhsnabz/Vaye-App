@@ -18,13 +18,13 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     var duration : Float = 0
     var isPlaying : Bool = false
     var isRecording : Bool = false
-    var controller : ConservationVC?
-    var record = AnimationView()
-    var play_pause = AnimationView()
-    var send = AnimationView()
-    var recordingSession: AVAudioSession!
+
+     lazy var record = AnimationView()
+    lazy var play_pause = AnimationView()
+    lazy var send = AnimationView()
+    weak var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
-    var audioPlayer : AVAudioPlayer?
+    weak var audioPlayer : AVAudioPlayer?
     var audioName : String = ""
     weak var delegate : sendAudioProtocol?
     var infoAtt : NSMutableAttributedString = {
