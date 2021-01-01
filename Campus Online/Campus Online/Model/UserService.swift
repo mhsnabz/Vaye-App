@@ -247,6 +247,16 @@ struct UserService {
             }
         }
     }
+    func getFirendList(uid : [String] , completion:@escaping([OtherUser]) ->Void){
+        var users = [OtherUser]()
+        for item in uid{
+            getOtherUser(userId: item) { (user) in
+                users.append(user)
+            }
+        }
+        completion(users)
+        
+    }
     
     func getProfileModel(otherUser : OtherUser,currentUser : CurrentUser , completion : @escaping(ProfileModel) ->Void){
         completion(ProfileModel(shortSchool: otherUser.short_school, currentUser: currentUser, major: otherUser.bolum, uid: otherUser.uid))
@@ -574,27 +584,45 @@ struct UserService {
         }
     }
     
-    func addAsMessagesFriend(currentUserUid : String , otherUserUid : String )
+    func addAsMessagesFriend(currentUserUid : CurrentUser , otherUserUid : String )
     {
         
-        chekcIsMutual(currentUserUid: currentUserUid, otherUserUid: otherUserUid) { (val) in
+        chekcIsMutual(currentUserUid: currentUserUid.uid , otherUserUid: otherUserUid) { (val) in
             if val {
                 let db = Firestore.firestore().collection("user")
-                    .document(currentUserUid)
-                db.updateData(["friendList":FieldValue.arrayUnion([otherUserUid])]) { (err) in
-                    if err == nil {
-                        let dbb = Firestore.firestore().collection("user")
-                            .document(otherUserUid)
-                        dbb.updateData(["friendList":FieldValue.arrayUnion([currentUserUid])]) { (err) in
+                    .document(currentUserUid.uid).collection("friend-list")
+                    .document(otherUserUid)
+                getOtherUser(userId: otherUserUid) { (user) in
+                    let dic = ["userName":user.username as Any,"uid":user.uid as Any, "name":user.name as Any, "short_school" : user.short_school as Any, "bolum":user.bolum as Any, "thumb_image" : user.thumb_image as Any, "tarih" : FieldValue.serverTimestamp()] as [String : Any]
+                    db.setData(dic as [String : Any], merge: true){ (err) in
+                        let dbc = Firestore.firestore().collection("user")
+                            .document(currentUserUid.uid)
+                        dbc.updateData(["friendList":FieldValue.arrayUnion([otherUserUid])]) { (err) in
                             if err == nil {
-                                print("can send message")
+                                let dbb = Firestore.firestore().collection("user")
+                                    .document(otherUserUid)
+                                dbb.updateData(["friendList":FieldValue.arrayUnion([currentUserUid.uid as Any])]) { (err) in
+                                    if err == nil {
+                                        addOnFirendList(otherUser: otherUserUid, currntUser: currentUserUid)
+                                    }
+                                }
                             }
                         }
                     }
+                    
                 }
+              
             }
         }
          
+    }
+    func addOnFirendList(otherUser : String , currntUser : CurrentUser){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser).collection("friend-list")
+            .document(currntUser.uid)
+        let dic = ["userName":currntUser.username as Any ,"uid":currntUser.uid as Any, "name":currntUser.name as Any , "short_school" : currntUser.short_school as Any ,"thumb_image":currntUser.thumb_image as Any,"tarih":FieldValue.serverTimestamp(), "bolum":currntUser.bolum as Any]  as [String : Any]
+        db.setData(dic as [String : Any], merge: true)
+        
     }
     func removeFromFriendList(currentUserUid : String , otherUserUid : String){
         let db = Firestore.firestore().collection("user")
@@ -605,6 +633,13 @@ struct UserService {
                     .document(otherUserUid)
                 db.updateData(["friendList":FieldValue.arrayRemove([currentUserUid])]) { (err) in
                     if err == nil {
+                        let db = Firestore.firestore().collection("user")
+                            .document(currentUserUid).collection("friend-list").document(otherUserUid)
+                        db.delete(){(err) in
+                            let db = Firestore.firestore().collection("user")
+                                .document(otherUserUid).collection("friend-list").document(currentUserUid)
+                            db.delete()
+                        }
                         
                     }
                 }

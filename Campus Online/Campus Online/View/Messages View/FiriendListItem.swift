@@ -11,7 +11,7 @@ import SDWebImage
 class FiriendListItem: UICollectionViewCell {
     
     
-    weak var user : OtherUser?{
+    weak var user : FriendListModel?{
         didSet{
             configureUser()
         }
@@ -73,7 +73,7 @@ class FiriendListItem: UICollectionViewCell {
     func configureUser(){
         guard let user = user else { return }
         name = NSMutableAttributedString(string: "\(user.name!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 14)!, NSAttributedString.Key.foregroundColor : UIColor.black])
-        name.append(NSAttributedString(string: " \(user.username!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        name.append(NSAttributedString(string: " \(user.userName!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
         userName.attributedText = name
         school = NSMutableAttributedString(string: "\(user.short_school!)", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 11)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray])
         school.append(NSAttributedString(string: "  \(user.bolum!)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 11)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))

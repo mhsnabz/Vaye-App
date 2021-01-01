@@ -30,22 +30,10 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     }
     
     weak var snapShotListener : ListenerRegistration?
-    var currentUser : CurrentUser{
-        didSet{
-            if !currentUser.friendList.isEmpty {
-                for item in currentUser.friendList{
-                    UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
-                        guard let sself = self else { return }
-                        sself.friendList.append(user)
-                        sself.collecitonView.reloadData()
-                    }
-                }
-            }
-        }
-    }
+    var currentUser : CurrentUser
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
-    lazy var friendList = [OtherUser]()
+
     var page : DocumentSnapshot? = nil
     //MARK:--properties
     lazy var collecitonView : UICollectionView = {
@@ -87,38 +75,60 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         setupMenuBar()
         configureUI()
         setNavBarButton()
-        if !currentUser.friendList.isEmpty {
-            for item in currentUser.friendList{
-                UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
-                    guard let sself = self else { return }
-                    sself.friendList.append(user)
-                    sself.collecitonView.reloadData()
-                }
-            }
-        }
+//        if !currentUser.friendList.isEmpty {
+//            for item in currentUser.friendList{
+//                UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
+//                    guard let sself = self else { return }
+//                    sself.friendList.append(user)
+//                    sself.collecitonView.reloadData()
+//                }
+//            }
+//        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        let index = IndexPath(item: 0, section: 0)
-        if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
+        snapShotListener?.remove()
+        let indexChatList = IndexPath(item: 0, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: indexChatList) as? ChatListCell{
             cell.snapShotListener?.remove()
             cell.times = -1
             cell.collectionview.reloadData()
         }
+        let indexFriendList = IndexPath(item: 1, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: indexFriendList) as? FriendListCell{
+            cell.snapShotListener?.remove()
+            cell.times = -1
+            cell.collectionview.reloadData()
+        }
+    
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        snapShotListener?.remove()
         let indexChatList = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: indexChatList) as? ChatListCell{
             cell.snapShotListener?.remove()
         }
+        let indexFriendList = IndexPath(item: 1, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: indexFriendList) as? FriendListCell{
+            cell.snapShotListener?.remove()
+            cell.times = -1
+            cell.collectionview.reloadData()
+        }
+ 
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let index = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
+            cell.times = 0
+            cell.collectionview.reloadData()
+        }
+        let indexFriendList = IndexPath(item: 1, section: 0)
+        if  let cell = collectionView(collecitonView, cellForItemAt: indexFriendList) as? FriendListCell{
+        
             cell.times = 0
             cell.collectionview.reloadData()
         }
@@ -132,6 +142,8 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         collecitonView.register(FriendListCell.self, forCellWithReuseIdentifier: friend_cell)
         collecitonView.register(RequestCell.self, forCellWithReuseIdentifier: request_cell)
     }
+  
+    
     //MARK:--funcitons
     private func  setupMenuBar(){
         
@@ -193,7 +205,7 @@ extension MessagesVC  : UICollectionViewDelegate , UICollectionViewDataSource , 
 
             cell.currentUser = currentUser
             cell.rootController = self
-            cell.friendListModel = friendList
+//            cell.friendListModel = friendList
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: request_cell, for: indexPath) as! RequestCell

@@ -6,21 +6,25 @@
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
-import Foundation
+import Firebase
 class FriendListModel {
     var name : String!
-    var username : String!
+    var userName : String!
     var short_school : String!
     var bolum : String!
     var uid : String!
     var thumb_image : String!
     var profileImage : String!
+    var tarih : Timestamp!
     init(dic : Dictionary<String,Any>) {
         if let name  = dic["name"] as? String{
             self.name = name
         }
-        if let username  = dic["username"] as? String{
-            self.username = username
+        if let userName  = dic["userName"] as? String{
+            self.userName = userName
+        }
+        if let tarih  = dic["tarih"] as? Timestamp{
+            self.tarih = tarih
         }
         if let bolum  = dic["bolum"] as? String{
             self.bolum = bolum
