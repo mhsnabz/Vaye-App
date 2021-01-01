@@ -31,19 +31,32 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
     }()
     
     lazy var requestView : UIView = {
+        
        let v = UIView()
       
-        v.addSubview(topline)
-        topline.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: nil
-                       , rigth: v.rightAnchor, marginTop: 0, marginLeft: 5, marginBottom: 0, marginRigth: 5, width: 0, heigth: 1.5)
+        requestName = NSMutableAttributedString(string: (otherUser.name)!, attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.fontBold, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black])
+        requestName.append(NSAttributedString(string: " \(otherUser.username!) ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.fontBold, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
+        requestName.append(NSAttributedString(string: "Size Mesaj Göndermek İstiyor \n", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        requestName.append(NSAttributedString(string: "İsteği Kabul Edersiniz Arkadaş Listenize Eklenecek", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        infoLbl.attributedText = requestName
+       
+        
         v.addSubview(line)
-        line.anchor(top: v.topAnchor, left: nil
-                    , bottom: v.bottomAnchor, rigth: nil, marginTop: 2, marginLeft: 0, marginBottom: 2, marginRigth: 0, width: 1, heigth: 0)
+        line.anchor(top: nil, left: nil
+                    , bottom: v.bottomAnchor, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 3, marginRigth: 0, width: 1, heigth: 45)
         line.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
         v.addSubview(accepButton)
-        accepButton.anchor(top: topline.bottomAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: line.leftAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        accepButton.anchor(top: nil, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: line.leftAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 45)
         v.addSubview(cancelButton)
-        cancelButton.anchor(top: topline.bottomAnchor, left: line.rightAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        cancelButton.anchor(top: nil, left: line.rightAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 45)
+        
+        v.addSubview(topline)
+        topline.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: nil
+                       , rigth: v.rightAnchor, marginTop: 0, marginLeft: 5, marginBottom: 0, marginRigth: 5, width: 0, heigth: 0.4)
+        
+        v.addSubview(infoLbl)
+        infoLbl.anchor(top: topline.bottomAnchor, left: v.leftAnchor, bottom: accepButton.topAnchor, rigth: v.rightAnchor, marginTop: 4, marginLeft: 4, marginBottom: 0, marginRigth: 4, width: 0, heigth: 0)
+        
         return v
     }()
     
@@ -71,29 +84,43 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
          v.backgroundColor = .lightGray
          return v
     }()
+    let infoLbl : UILabel = {
+        let lbl = UILabel()
+
+        lbl.font = UIFont(name: Utilities.font, size: 11)
+        lbl.numberOfLines = 0
+        lbl.textAlignment = .center
+        return lbl
+    }()
+    lazy  var requestName : NSMutableAttributedString = {
+        let name = NSMutableAttributedString()
+        return name
+    }()
     override var inputAccessoryView: UIView?{
         if customInputView == nil {
-            customInputView = CustomView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
+            customInputView = CustomView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
             customInputView.backgroundColor = .white
             customInputView.addSubview(requestView)
-            requestView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-            requestView.trailingAnchor.constraint(
-                equalTo: customInputView.trailingAnchor,
-                constant: 0
-            ).isActive = true
-            requestView.leadingAnchor.constraint(
-                equalTo: customInputView.leadingAnchor,
-                constant: 0
-            ).isActive = true
-            requestView.topAnchor.constraint(
-                equalTo: customInputView.topAnchor,
-                constant: 8
-            ).isActive = true
+            requestView.anchor(top: customInputView.topAnchor, left: customInputView.leftAnchor, bottom: customInputView.layoutMarginsGuide.bottomAnchor, rigth: customInputView.rightAnchor, marginTop: 8, marginLeft: 0, marginBottom: 8, marginRigth: 0, width: 0, heigth: 0)
             
-            requestView.bottomAnchor.constraint(
-                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
-                constant: -8
-            ).isActive = true
+//            requestView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+//            requestView.trailingAnchor.constraint(
+//                equalTo: customInputView.trailingAnchor,
+//                constant: 0
+//            ).isActive = true
+//            requestView.leadingAnchor.constraint(
+//                equalTo: customInputView.leadingAnchor,
+//                constant: 0
+//            ).isActive = true
+////            requestView.topAnchor.constraint(
+////                equalTo: customInputView.topAnchor,
+////                constant: 8
+////            ).isActive = true
+//
+//            requestView.bottomAnchor.constraint(
+//                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+//                constant: -8
+//            ).isActive = true
 
         }
         return customInputView
@@ -129,8 +156,8 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         configureNavBar()
         getAllMessages(currentUser: currentUser, otherUser: otherUser)
         
-        view.addSubview(requestView)
-        requestView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 56)
+//        view.addSubview(requestView)
+//        requestView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 120)
         // Do any additional setup after loading the view.
     }
     init(currentUser : CurrentUser , otherUser : OtherUser) {

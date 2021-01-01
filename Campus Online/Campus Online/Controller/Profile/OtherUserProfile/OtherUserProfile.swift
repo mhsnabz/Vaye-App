@@ -93,7 +93,7 @@ class OtherUserProfile: UIViewController     {
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
     
     weak var interstitalGithub : GADInterstitial!
-    weak var interstitalMsg : GADInterstitial!
+     var interstitalMsg : GADInterstitial!
     weak var interstitalInsta : GADInterstitial!
     weak var interstitalLinked : GADInterstitial!
     weak var interstitalTwitter : GADInterstitial!
