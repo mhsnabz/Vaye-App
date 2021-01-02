@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 class  MessagesSettingLauncher : NSObject{
     private  var currentUser : CurrentUser
     private  var otherUser : OtherUser
@@ -99,6 +100,38 @@ class  MessagesSettingLauncher : NSObject{
         }
         
     }
+    func setUserMessagesSlient(currentUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid)
+
+            db.updateData(["slientChatUser" : FieldValue.arrayUnion([currentUser.uid as String])]){(err) in
+                if err == nil {
+                    self.otherUser.slientChatUser.append(currentUser.uid)
+                    self.tableView.reloadData()
+                    Utilities.dismissProgress()
+                    
+                }
+                
+    }
+    
+    }
+    func removeUserMessagesSlient(currentUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Bool) ->Void){
+        Utilities.waitProgress(msg: nil)
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser.uid)
+
+            db.updateData(["slientChatUser" : FieldValue.arrayRemove([currentUser.uid as String])]){(err) in
+                if err == nil {
+                   
+                    self.otherUser.slientChatUser.remove(element: currentUser.uid)
+                    self.tableView.reloadData()
+                    Utilities.dismissProgress()
+                }
+                
+    }
+    
+    }
     //MARK:--selector
     @objc  func handleDismiss(){
         UIView.animate(withDuration: 0.5) {
@@ -117,8 +150,21 @@ extension MessagesSettingLauncher   : UITableViewDataSource,UITableViewDelegate{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id",for: indexPath) as! msgSettinCell
         cell.options = viewModel.imageOptions[indexPath.row]
+        if cell.titleLabel.text == MessageSettingOptions.slientChat(currentUser).description {
+            if otherUser.slientChatUser.contains(currentUser.uid) {
+                cell.titleLabel.text = "Sohbeti Sessizden Al"
+                cell.logo.image =  #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
+            }else{
+                cell.titleLabel.text = MessageSettingOptions.slientChat(currentUser).description
+                cell.logo.image =  #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
+            }
+            
+        }
+
+        
         return cell
     }
+   
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 60
     }
@@ -127,6 +173,17 @@ extension MessagesSettingLauncher   : UITableViewDataSource,UITableViewDelegate{
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let cell = tableView.cellForRow(at: indexPath) as! msgSettinCell
+        if cell.titleLabel.text == MessageSettingOptions.slientChat(currentUser).description {
+            setUserMessagesSlient(currentUser: currentUser, otherUser: otherUser) { (_) in
+                
+            }
+        }else if cell.titleLabel.text == "Sohbeti Sessizden Al"{
+          removeUserMessagesSlient(currentUser: currentUser, otherUser: otherUser) { (_) in
+                
+            }
+        }
         let option = viewModel.imageOptions[indexPath.row]
         delegate?.didSelect(option: option)
         UIView.animate(withDuration: 0.5, animations: {
@@ -146,13 +203,13 @@ class msgSettinCell : UITableViewCell {
             configure()
         }
     }
-    private let logo : UIImageView = {
+     let logo : UIImageView = {
         let img = UIImageView()
         img.clipsToBounds = true
         img.contentMode = .scaleAspectFit
         return img
     }()
-    private let titleLabel : UILabel = {
+     let titleLabel : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont(name: Utilities.font, size: 14)
         return lbl

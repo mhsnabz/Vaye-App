@@ -146,7 +146,7 @@ class CompleteSigingUp: UIViewController {
                "fakulte":_fakulteName,
                "short_school":taskUser.short_school! ,
                "schoolName":taskUser.schoolName!,
-               "username":taskUser.username!
+               "username":taskUser.username!,"slientChatUser" : []
                , "instagram": "",
                "twitter":"",
                "linkedin":"",

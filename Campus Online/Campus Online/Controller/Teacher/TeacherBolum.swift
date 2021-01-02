@@ -142,7 +142,7 @@ class TeacherBolum: UITableViewController {
                    "fakulte":currentUser.fakulte as Any,
                    "bolum":currentUser.bolum as Any
                    ,"name":currentUser.name as Any
-                   ,"slient":[],"friendList":[],
+                   ,"slient":[],"friendList":[],"slientChatUser":[],
                    "mention":true,"comment":true,"like":true,"follow":true,"lessonNotices":true,
                    "profileImage":""
                    ,"unvan":currentUser.unvan as Any,

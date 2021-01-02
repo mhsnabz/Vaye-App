@@ -1309,6 +1309,7 @@ extension ConservationVC : MessageSettinDelegate {
         case .deleteFriend(_):
             break
         case .slientChat(_):
+
             break
         case .reportUser(_):
             let vc = ReportingVC(target: ReportTarget.reportMessages.description, currentUser: currentUser, otherUser: otherUser.uid, postId: "", reportType: ReportType.reportUser.description)

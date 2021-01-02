@@ -31,11 +31,15 @@ class CurrentUser {
     var follow:Bool!
     var lessonNotices:Bool!
     var friendList :[String]!
+    var slientChatUser : [String]!
     init(dic : Dictionary<String,Any>) {
         
         if let email = dic["email"] as? String {
             self.email = email
         }
+        if let slientChatUser = dic["slientChatUser"] as? [String] {
+                   self.slientChatUser = slientChatUser
+               }
         if let friendList = dic["friendList"] as? [String] {
                    self.friendList = friendList
                }

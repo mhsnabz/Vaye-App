@@ -25,12 +25,16 @@ class OtherUser{
     var twitter : String!
     var github : String!
     var slientUser : [String]!
+    var slientChatUser : [String]!
     init(dic : Dictionary<String,Any>) {
         if let email = dic["email"] as? String {
             self.email = email
         }
         if let slientUser = dic["slient"] as? [String] {
                    self.slientUser = slientUser
+               }
+        if let slientChatUser = dic["slientChatUser"] as? [String] {
+                   self.slientChatUser = slientChatUser
                }
         if let name = dic["name"] as? String {
             self.name = name
