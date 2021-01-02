@@ -24,7 +24,7 @@ class RecordSheet : NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     lazy var send = AnimationView()
     weak var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
-    weak var audioPlayer : AVAudioPlayer?
+     var audioPlayer : AVAudioPlayer?
     var audioName : String = ""
     weak var delegate : sendAudioProtocol?
     var infoAtt : NSMutableAttributedString = {
