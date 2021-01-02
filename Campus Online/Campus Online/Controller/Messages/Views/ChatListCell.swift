@@ -98,6 +98,16 @@ extension ChatListCell : UICollectionViewDelegate , UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: frame.width, height: 70)
     }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let currentUser = currentUser else { return }
+        Utilities.waitProgress(msg: nil)
+        UserService.shared.getOtherUser(userId: list[indexPath.row].uid) {[weak self] (user) in
+            guard let sself = self else { return }
+            let vc = ConservationVC(currentUser: currentUser, otherUser: user)
+            sself.rootController?.navigationController?.pushViewController(vc, animated: true)
+            Utilities.dismissProgress()
+        }
+    }
     
     
 }

@@ -121,13 +121,10 @@ extension FriendListCell : UICollectionViewDelegate , UICollectionViewDelegateFl
         guard let currentUser = currentUser else { return }
         Utilities.waitProgress(msg: nil)
         UserService.shared.getOtherUser(userId: friendListModel[indexPath.row].uid) { (user) in
-          
-            UserService.shared.getCurrentUser(uid: currentUser.uid) { (current) in
-                let vc = ConservationVC(currentUser: current, otherUser: user)
-                self.rootController?.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
-            }
-            
+            let vc = ConservationVC(currentUser: currentUser, otherUser: user)
+            self.rootController?.navigationController?.pushViewController(vc, animated: true)
+            Utilities.dismissProgress()
+       
         }
        
         

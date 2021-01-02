@@ -118,6 +118,22 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         snapShotListener?.remove()
         audioController.stopAnyOngoingPlaying()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.title = otherUser.name
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+        snapShotListener  = db.addSnapshotListener({[weak self] (docSnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = docSnap else { return }
+                guard let data = snap.data() else { return }
+                if snap.exists {
+                    sself.currentUser = CurrentUser.init(dic: data)
+                }
+            }
+        })
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
