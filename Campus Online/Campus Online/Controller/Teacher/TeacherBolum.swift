@@ -136,7 +136,7 @@ class TeacherBolum: UITableViewController {
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
         
-        let dic = ["number":""
+        let dic = ["number":"","allowRequest":true
                    ,"short_school":currentUser.short_school as Any,
                    "schoolName":currentUser.schoolName as Any,
                    "fakulte":currentUser.fakulte as Any,

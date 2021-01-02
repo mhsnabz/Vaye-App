@@ -178,6 +178,8 @@
 		669839FF257CE9FB00100F28 /* ImageDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669839FE257CE9FB00100F28 /* ImageDataView.swift */; };
 		66983A04257D5FB600100F28 /* ASNoticesPostLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66983A03257D5FB600100F28 /* ASNoticesPostLaunher.swift */; };
 		66983A19257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */; };
+		669E1A8D25A0EF49004E8DF6 /* MessagesVCLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669E1A8C25A0EF49004E8DF6 /* MessagesVCLauncher.swift */; };
+		669E1A9225A0EF8C004E8DF6 /* MessagesVCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669E1A9125A0EF8C004E8DF6 /* MessagesVCViewModel.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
 		669F3844250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */; };
 		669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */; };
@@ -477,6 +479,8 @@
 		669839FE257CE9FB00100F28 /* ImageDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataView.swift; sourceTree = "<group>"; };
 		66983A03257D5FB600100F28 /* ASNoticesPostLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASNoticesPostLaunher.swift; sourceTree = "<group>"; };
 		66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASNoticesPostCurrentUserLaunher.swift; sourceTree = "<group>"; };
+		669E1A8C25A0EF49004E8DF6 /* MessagesVCLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesVCLauncher.swift; sourceTree = "<group>"; };
+		669E1A9125A0EF8C004E8DF6 /* MessagesVCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesVCViewModel.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
 		669F3843250DA80800D40371 /* ActionSheetHomeCurrentUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCurrentUserViewModel.swift; sourceTree = "<group>"; };
 		669F3845250DABBD00D40371 /* ActionSheetHomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeCell.swift; sourceTree = "<group>"; };
@@ -1028,6 +1032,7 @@
 				66F0AFF8259B2CC300C030E6 /* MessagesItemLauncher.swift */,
 				66CB753C259CE241000D51BE /* RecordSheet.swift */,
 				66ABFC9625A06EED00B84616 /* MessagesSettingLauncher.swift */,
+				669E1A8C25A0EF49004E8DF6 /* MessagesVCLauncher.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1058,6 +1063,7 @@
 				6693997C258DD8FE00525C1A /* MainPostASViewModel.swift */,
 				66F0AFFD259B2D5B00C030E6 /* MessagesItemViewModel.swift */,
 				66ABFC9E25A06F8700B84616 /* MessageSettingViewModel.swift */,
+				669E1A9125A0EF8C004E8DF6 /* MessagesVCViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -2066,7 +2072,9 @@
 				66775531252CCBF300DBF3CD /* COContaninerController.swift in Sources */,
 				667755A625309BEE00DBF3CD /* MapVC.swift in Sources */,
 				66C4A6F0250C355700259322 /* DataViewPDF.swift in Sources */,
+				669E1A8D25A0EF49004E8DF6 /* MessagesVCLauncher.swift in Sources */,
 				6677555F252E9DE800DBF3CD /* CampVC.swift in Sources */,
+				669E1A9225A0EF8C004E8DF6 /* MessagesVCViewModel.swift in Sources */,
 				660FB9CF256A706E0014D406 /* CampingDataCommentHeader.swift in Sources */,
 				66D7C3F12589AB3700244D3B /* BuySell_Cell.swift in Sources */,
 				660F5ACF2502E3ED00F72558 /* AddUserTB.swift in Sources */,

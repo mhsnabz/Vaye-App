@@ -510,10 +510,24 @@ class OtherUserProfile: UIViewController     {
         Utilities.waitProgress(msg: nil)
         UserService.shared.getCurrentUser(uid: currentUser.uid) {[weak self] (user) in
             guard let sself = self else { return }
-            UserService.shared.getOtherUser(userId: sself.otherUser.uid) { (otherUser) in
-                let vc = ConservationVC(currentUser: user, otherUser: otherUser)
-                sself.navigationController?.pushViewController(vc, animated: true)
-                Utilities.dismissProgress()
+            UserService.shared.getOtherUser(userId: sself.otherUser.uid) {[weak self] (otherUser) in
+                guard let sself = self else { return }
+                if otherUser.friendList.contains(sself.currentUser.uid){
+                    let vc = ConservationVC(currentUser: user, otherUser: otherUser)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    Utilities.dismissProgress()
+                }else{
+                    if otherUser.allowRequest {
+                        let vc = ConservationVC(currentUser: user, otherUser: otherUser)
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        Utilities.errorProgress(msg: "Kullanıcı Mesaj İsteklerine Kapalı")
+                    }
+                }
+               
+
+             
             }
         }
     }

@@ -135,7 +135,7 @@ class CompleteSigingUp: UIViewController {
         dic = ["number":taskUser.number!
                ,"name":taskUser.name!,
                "slient":[]
-               ,"profileImage":""
+               ,"profileImage":"","allowRequest":true
                ,"thumb_image":"",
                "mention":true,"comment":true,"like":true,"follow":true,"lessonNotices":true,
                "friendList":[],

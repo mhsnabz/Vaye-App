@@ -9,6 +9,7 @@
 import Foundation
 class OtherUser{
     var email : String!
+    var allowRequest : Bool!
     var name : String!
     var number : String!
     var priority : String!
@@ -25,16 +26,31 @@ class OtherUser{
     var twitter : String!
     var github : String!
     var slientUser : [String]!
+    var mention :Bool!
+    var comment :Bool!
+    var like :Bool!
+    var follow:Bool!
+    var lessonNotices:Bool!
+    var friendList :[String]!
     var slientChatUser : [String]!
     init(dic : Dictionary<String,Any>) {
+        
         if let email = dic["email"] as? String {
             self.email = email
         }
-        if let slientUser = dic["slient"] as? [String] {
-                   self.slientUser = slientUser
-               }
+        
+        if let allowRequest = dic["allowRequest"] as? Bool {
+            self.allowRequest = allowRequest
+        }
+        
         if let slientChatUser = dic["slientChatUser"] as? [String] {
                    self.slientChatUser = slientChatUser
+               }
+        if let friendList = dic["friendList"] as? [String] {
+                   self.friendList = friendList
+               }
+        if let slientUser = dic["slient"] as? [String] {
+                   self.slientUser = slientUser
                }
         if let name = dic["name"] as? String {
             self.name = name
@@ -81,5 +97,20 @@ class OtherUser{
         if let twitter = dic["twitter"] as? String {
                    self.twitter = twitter
                }
+        if let mention = dic["mention"] as? Bool {
+            self.mention = mention
+        }
+        if let like = dic["like"] as? Bool {
+            self.like = like
+        }
+        if let lessonNotices = dic["lessonNotices"] as? Bool {
+            self.lessonNotices = lessonNotices
+        }
+        if let comment = dic["comment"] as? Bool {
+            self.comment = comment
+        }
+        if let follow = dic["follow"] as? Bool {
+            self.follow = follow
+        }
     }
 }

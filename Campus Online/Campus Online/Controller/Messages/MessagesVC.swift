@@ -17,7 +17,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     }
     var selectedIndex : Int?{
         didSet{
-            setNavBarButton()
+            setNavBarIcon()
             guard let index = selectedIndex else { return }
             if index == 0 {
                 navigationItem.title = "Sohbetler"
@@ -33,7 +33,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     var currentUser : CurrentUser
     weak var listener : ListenerRegistration?
     weak var notificaitonListener : ListenerRegistration?
-
+    private  var messagesOption : MessagesVCLauncher?
     var page : DocumentSnapshot? = nil
     //MARK:--properties
     lazy var collecitonView : UICollectionView = {
@@ -74,18 +74,12 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
 
         setupMenuBar()
         configureUI()
-        setNavBarButton()
-//        if !currentUser.friendList.isEmpty {
-//            for item in currentUser.friendList{
-//                UserService.shared.getOtherUser(userId: item) {[weak self] (user) in
-//                    guard let sself = self else { return }
-//                    sself.friendList.append(user)
-//                    sself.collecitonView.reloadData()
-//                }
-//            }
-//        }
+        setNavigationBar()
+        setNavBarIcon()
     }
 
+    
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         snapShotListener?.remove()
@@ -145,6 +139,21 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
   
     
     //MARK:--funcitons
+    
+    private func setNavBarIcon(){
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showChatOption))
+   
+        if let index = selectedIndex {
+            if index == 0 {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showChatOption))
+            }else if index == 1 {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showChatOption))
+            }else if index == 2 {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showRequestOption))
+            }
+        }
+    }
+    
     private func  setupMenuBar(){
         
         view.addSubview(menuBar)
@@ -152,19 +161,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         menuBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 44)
         menuBar.delegate = self
     }
-    private func setNavBarButton(){
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "menu").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action:  #selector(menuClick))
-//        if let index = selectedIndex {
-//
-//            if index == 0 {
-//                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
-//            }else if index == 1 {
-//                navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(schollNotificaitonSetting))
-//            }
-//        }else{
-//            navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
-//        }
-    }
+
     func scrollToIndex ( menuIndex : Int) {
         let index = IndexPath(item: menuIndex, section: 0)
         
@@ -185,6 +182,22 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         menuBar.collecitonView.selectItem(at: index, animated: true, scrollPosition: .centeredHorizontally)
         menuBar.delegate?.getIndex(indexItem: Int(memoryIndex))
     }
+    
+    @objc func showChatOption()
+    {
+        messagesOption = MessagesVCLauncher(currentUser: currentUser, target: MessagesVCTarget.chat.description)
+        guard let messagesOption = messagesOption else { return }
+        messagesOption.show()
+        messagesOption.delegate = self
+    }
+    @objc func showRequestOption(){
+        messagesOption = MessagesVCLauncher(currentUser: currentUser, target: MessagesVCTarget.request.description)
+        guard let messagesOption = messagesOption else { return }
+        messagesOption.show()
+        messagesOption.delegate = self
+    }
+    
+    
 }
 extension MessagesVC  : UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -223,3 +236,80 @@ extension MessagesVC  : UICollectionViewDelegate , UICollectionViewDataSource , 
     
 }
 
+extension MessagesVC : MessagesVCSettingDelegate {
+    func didSelect(option: MessagesVCOptions) {
+        switch option {
+   
+        case .removeAllRequest(_):
+            Utilities.waitProgress(msg: nil)
+            ///user/4OaYqfc53gOBwAwVZMdu9XZV6ix2/msg-request/NOCWRTWMA3OXYvYFm5XFhR7KqZC2
+            let db = Firestore.firestore().collection("user")
+                .document(currentUser.uid)
+                .collection("msg-request")
+            db.getDocuments { (querySnap, err) in
+                if err == nil {
+                    guard let snap = querySnap else { return }
+                    for item in snap.documents {
+                        db.document(item.documentID).delete { (err) in
+                            if err == nil {
+                                Utilities.dismissProgress()
+                            }
+                        }
+                    }
+                }
+            }
+            break
+        case .disableRequest(_):
+            
+            if currentUser.allowRequest{
+                let alert = UIAlertController(title: "Mesaj İstekleri Kapat", message: "Sadece Karşılıklı Takipleştiğiniz Kullanıcılar Size Mesaj Atabilecek", preferredStyle: UIAlertController.Style.alert)
+
+                // add the actions (buttons)
+                alert.addAction(UIAlertAction(title: "Kapat", style: UIAlertAction.Style.destructive, handler:  { [weak self] action in
+                  guard let sself = self else { return }
+                    let db = Firestore.firestore().collection("user")
+                        .document(sself.currentUser.uid)
+                    db.setData(["allowRequest":false], merge: true) { (err) in
+                        if err == nil {
+                            sself.currentUser.allowRequest = false
+                        }
+                    }
+                 
+                }))
+                alert.addAction(UIAlertAction(title: "Vazgeç", style: UIAlertAction.Style.cancel, handler: {action in
+                  
+                }))
+
+                // show the alert
+                self.present(alert, animated: true, completion: nil)
+            }else{
+                let alert = UIAlertController(title: "Mesaj İstekleri Aç", message: "Bütün Kullanıcılar Size Mesajlaşma İsteği Gönderebilecek", preferredStyle: UIAlertController.Style.alert)
+
+                // add the actions (buttons)
+                alert.addAction(UIAlertAction(title: "Aç", style: UIAlertAction.Style.destructive, handler:  { [weak self] action in
+                  guard let sself = self else { return }
+                    let db = Firestore.firestore().collection("user")
+                        .document(sself.currentUser.uid)
+                    db.setData(["allowRequest":true], merge: true) { (err) in
+                        if err == nil {
+                            sself.currentUser.allowRequest = true
+                        }
+                    }
+                }))
+                alert.addAction(UIAlertAction(title: "Vazgeç", style: UIAlertAction.Style.cancel, handler: {action in
+                  
+                }))
+
+                // show the alert
+                self.present(alert, animated: true, completion: nil)
+            }
+            
+   
+            
+            
+            break
+        }
+    }
+    
+    
+}

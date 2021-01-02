@@ -9,6 +9,7 @@
 import Foundation
 class CurrentUser {
     var email : String!
+    var allowRequest : Bool!
     var name : String!
     var number : String!
     var priority : String!
@@ -37,6 +38,11 @@ class CurrentUser {
         if let email = dic["email"] as? String {
             self.email = email
         }
+        
+        if let allowRequest = dic["allowRequest"] as? Bool {
+            self.allowRequest = allowRequest
+        }
+        
         if let slientChatUser = dic["slientChatUser"] as? [String] {
                    self.slientChatUser = slientChatUser
                }
