@@ -187,6 +187,8 @@
 		66A5F0DD250F0510005C93B3 /* ActionOtherUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */; };
 		66AA9C5725251053008DFB86 /* NotificaitionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AA9C5625251053008DFB86 /* NotificaitionCell.swift */; };
 		66AA9C5F25251175008DFB86 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AA9C5E25251175008DFB86 /* NotificationModel.swift */; };
+		66ABFC9725A06EED00B84616 /* MessagesSettingLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66ABFC9625A06EED00B84616 /* MessagesSettingLauncher.swift */; };
+		66ABFC9F25A06F8700B84616 /* MessageSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66ABFC9E25A06F8700B84616 /* MessageSettingViewModel.swift */; };
 		66AF724C251321E9007E96BC /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF724B251321E9007E96BC /* LessonInfoHeaderTwo.swift */; };
 		66AF72C025133019007E96BC /* GoogleAdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72BF25133019007E96BC /* GoogleAdBannerView.swift */; };
 		66AF72C825133096007E96BC /* FieldListLiteAdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72C725133096007E96BC /* FieldListLiteAdCell.swift */; };
@@ -484,6 +486,8 @@
 		66A5F0DC250F0510005C93B3 /* ActionOtherUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionOtherUserCell.swift; sourceTree = "<group>"; };
 		66AA9C5625251053008DFB86 /* NotificaitionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificaitionCell.swift; sourceTree = "<group>"; };
 		66AA9C5E25251175008DFB86 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
+		66ABFC9625A06EED00B84616 /* MessagesSettingLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesSettingLauncher.swift; sourceTree = "<group>"; };
+		66ABFC9E25A06F8700B84616 /* MessageSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSettingViewModel.swift; sourceTree = "<group>"; };
 		66AF724B251321E9007E96BC /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		66AF72BF25133019007E96BC /* GoogleAdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAdBannerView.swift; sourceTree = "<group>"; };
 		66AF72C725133096007E96BC /* FieldListLiteAdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldListLiteAdCell.swift; sourceTree = "<group>"; };
@@ -1023,6 +1027,7 @@
 				66939977258DD88200525C1A /* MainPostActionSheet.swift */,
 				66F0AFF8259B2CC300C030E6 /* MessagesItemLauncher.swift */,
 				66CB753C259CE241000D51BE /* RecordSheet.swift */,
+				66ABFC9625A06EED00B84616 /* MessagesSettingLauncher.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1052,6 +1057,7 @@
 				6687DF3E2572233D00E7789C /* ProfileFilterVM.swift */,
 				6693997C258DD8FE00525C1A /* MainPostASViewModel.swift */,
 				66F0AFFD259B2D5B00C030E6 /* MessagesItemViewModel.swift */,
+				66ABFC9E25A06F8700B84616 /* MessageSettingViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -2000,6 +2006,7 @@
 				66C4A6EE250C1FA200259322 /* DataViewImage.swift in Sources */,
 				66AA9C5F25251175008DFB86 /* NotificationModel.swift in Sources */,
 				6652016C257010B6003BF4C7 /* Profile_Header.swift in Sources */,
+				66ABFC9F25A06F8700B84616 /* MessageSettingViewModel.swift in Sources */,
 				66D7C3BF25883D2700244D3B /* SetTeacherFakulte.swift in Sources */,
 				66EAC8F7258EED95003CF7A3 /* ClupNames.swift in Sources */,
 				660FB9A32569D6E00014D406 /* FoodMeDataCommentHeader.swift in Sources */,
@@ -2100,6 +2107,7 @@
 				6615FC89250AE46E00776664 /* LessonPostModel.swift in Sources */,
 				667A50EE2519E8A5009000D2 /* UserProfileFilterVM.swift in Sources */,
 				660F5AD72503DA9A00F72558 /* LicenseTB.swift in Sources */,
+				66ABFC9725A06EED00B84616 /* MessagesSettingLauncher.swift in Sources */,
 				66B2B41F2554B8290088262E /* ASMainPostOtherUserCell.swift in Sources */,
 				6613340824F4E9C1002677AB /* SchoolModel.swift in Sources */,
 				66D9121B24EEAB85002D760A /* NotificationVC.swift in Sources */,

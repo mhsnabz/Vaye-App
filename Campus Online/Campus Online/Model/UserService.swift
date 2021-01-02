@@ -702,7 +702,7 @@ struct UserService {
     func removeFromFriendList(currentUserUid : CurrentUser , otherUserUid : OtherUser){
         let db = Firestore.firestore().collection("user")
             .document(currentUserUid.uid)
-        db.updateData(["friendList":FieldValue.arrayRemove([otherUserUid])]) { (err) in
+        db.updateData(["friendList":FieldValue.arrayRemove([otherUserUid.uid as String])]) { (err) in
             if err == nil {
                 let db = Firestore.firestore().collection("user")
                     .document(otherUserUid.uid)
@@ -713,8 +713,10 @@ struct UserService {
                         db.delete(){(err) in
                             let db = Firestore.firestore().collection("user")
                                 .document(otherUserUid.uid).collection("friend-list").document(currentUserUid.uid)
-                            db.delete()
-                            removeFromMsgList(currentUser: currentUserUid, otherUser: otherUserUid.uid)
+                            db.delete(){(err) in
+                                removeFromMsgList(currentUser: currentUserUid, otherUser: otherUserUid.uid)
+                            }
+                            
                         }
 
                     }

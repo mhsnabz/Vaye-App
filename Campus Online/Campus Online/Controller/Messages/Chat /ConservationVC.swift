@@ -84,6 +84,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         return v
     }()
     lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
+   
     var recordingSession: AVAudioSession!
     private var uploadTask : StorageUploadTask?
     var dataModel = [MessageGalleryModel]()
@@ -106,7 +107,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     
       var actionsSheet : MessagesItemLauncher
      var recordSheet : RecordSheet
-    
+     var actionSheetMessage : MessagesSettingLauncher
     //MARK:--lifeCycle
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -153,7 +154,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         selfSender = Sender(senderId: currentUser.uid, displayName: currentUser.name, profileImageUrl: currentUser.thumb_image)
         actionsSheet = MessagesItemLauncher(currentUser: currentUser)
         recordSheet = RecordSheet(currentUser: currentUser, otherUser: otherUser)
-        
+        actionSheetMessage = MessagesSettingLauncher(currenUser: currentUser, otherUser: otherUser, target: MessageSettinTarget.chat.desdescription)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -238,7 +239,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     fileprivate func configureNavBar(){
         let tap = UITapGestureRecognizer(target: self, action: #selector(goProfile))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(optionsMenu))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(settingMenu))
         navigationItem.title = otherUser.name
         let containView = UIView(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
         let imageview = UIImageView(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
@@ -491,9 +492,16 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         messagesCollectionView.scrollToBottom()
         
     }
-    
+    @objc func settingMenu(){
+        messageInputBar.inputTextView.resignFirstResponder()
+        actionSheetMessage.show()
+        actionSheetMessage.delegate = self
+        actionSheetMessage.dismisDelgate = self
+        inputAccessoryView?.isHidden = true
+    }
     @objc func optionsMenu()
     {
+        
         messageInputBar.inputTextView.resignFirstResponder()
         actionsSheet.show()
         actionsSheet.delegate = self
@@ -1279,6 +1287,23 @@ extension ConservationVC : UIDocumentPickerDelegate,UIDocumentMenuDelegate{
             catch{
                 print("err")
             }
+        }
+    }
+    
+    
+}
+extension ConservationVC : MessageSettinDelegate {
+    func didSelect(option: MessageSettingOptions) {
+        switch option {
+        
+        case .deleteMessages(_):
+            break
+        case .deleteFriend(_):
+            break
+        case .slientChat(_):
+            break
+        case .reportUser(_):
+            break
         }
     }
     

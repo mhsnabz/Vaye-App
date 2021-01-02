@@ -34,6 +34,9 @@ protocol ActionSheetLauncherDelegate : class {
 protocol MainPostLauncherDelegate : class {
     func didSelect(option : MainPostSheetOptions)
 }
+protocol MessageSettinDelegate : class {
+    func didSelect(option : MessageSettingOptions)
+}
 protocol MessagesItemDelagate : class {
     func didSelect(option : MesagesItemOption)
 }
