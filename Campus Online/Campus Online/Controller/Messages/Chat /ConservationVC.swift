@@ -1307,6 +1307,10 @@ extension ConservationVC : MessageSettinDelegate {
             
             break
         case .deleteFriend(_):
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.removeFromFriendList(currentUserUid: currentUser, otherUserUid: otherUser)
+            self.navigationController?.popViewController(animated: true)
+            Utilities.dismissProgress()
             break
         case .slientChat(_):
 
