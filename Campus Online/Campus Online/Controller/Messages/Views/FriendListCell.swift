@@ -119,11 +119,15 @@ extension FriendListCell : UICollectionViewDelegate , UICollectionViewDelegateFl
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let currentUser = currentUser else { return }
+        Utilities.waitProgress(msg: nil)
         UserService.shared.getOtherUser(userId: friendListModel[indexPath.row].uid) { (user) in
-            Utilities.waitProgress(msg: nil)
-            let vc = ConservationVC(currentUser: currentUser, otherUser: user)
-            self.rootController?.navigationController?.pushViewController(vc, animated: true)
-            Utilities.dismissProgress()
+          
+            UserService.shared.getCurrentUser(uid: currentUser.uid) { (current) in
+                let vc = ConservationVC(currentUser: current, otherUser: user)
+                self.rootController?.navigationController?.pushViewController(vc, animated: true)
+                Utilities.dismissProgress()
+            }
+            
         }
        
         

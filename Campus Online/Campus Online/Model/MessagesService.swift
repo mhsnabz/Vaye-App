@@ -122,9 +122,9 @@ class MessagesService {
         }
         
         var dicSenderLastMessage = Dictionary<String,Any>()
-        dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"isOnline":false,"username":otherUser.username!, "name":otherUser.name! ,"type": newMessage.kind.messageKindString, "badgeCount":0]
+        dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"isOnline":false,"username":otherUser.username!, "name":otherUser.name!,"uid":otherUser.uid! ,"type": newMessage.kind.messageKindString, "badgeCount":0]
         var dicGetterLastMessage = Dictionary<String,Any>()
-        dicGetterLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":currentUser.thumb_image! ,"isOnline":false, "username":currentUser.username!,"name":currentUser.name!,"type": newMessage.kind.messageKindString, "badgeCount":0]
+        dicGetterLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":currentUser.thumb_image! ,"isOnline":false, "username":currentUser.username!,"uid":currentUser.uid!,"name":currentUser.name!,"type": newMessage.kind.messageKindString, "badgeCount":0]
         if currentUser.friendList.contains(otherUser.uid) {
             let dbSender = Firestore.firestore().collection("messages")
                 .document(currentUser.uid)
@@ -165,7 +165,7 @@ class MessagesService {
                 if err == nil {
                     let db = Firestore.firestore().collection("user")
                         .document(currentUser.uid)
-                        .collection("msg-request")
+                        .collection("msg-list")
                         .document(otherUser.uid)
                     db.setData(dicSenderLastMessage, merge: true)
                 }

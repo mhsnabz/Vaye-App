@@ -65,6 +65,7 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         btn.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 14)
         btn.setTitle("Kabul Et", for: .normal)
         btn.setTitleColor(.darkGray, for: .normal)
+        btn.addTarget(self, action: #selector(accept), for: .touchUpInside)
         return btn
     }()
     lazy var cancelButton :UIButton = {
@@ -72,6 +73,7 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         btn.titleLabel?.font = UIFont(name: Utilities.fontBold, size: 14)
         btn.setTitle("Sil", for: .normal)
         btn.setTitleColor(.red, for: .normal)
+        btn.addTarget(self, action: #selector(deleteClick), for: .touchUpInside)
         return btn
     }()
     let line : UIView = {
@@ -428,6 +430,26 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         }
     }
     //MARK:-selector
+    @objc func accept(){
+        Utilities.waitProgress(msg: "Arkadaş Listesine Ekleniyor")
+        UserService.shared.addOnFriendArray(currentUser : currentUser  , otherUser : otherUser ){[weak self] (_) in
+            guard let sself = self else { return }
+            
+            UserService.shared.addOtherUserOnFriendList(currentUser: sself.currentUser, otherUser: sself.otherUser) { (_) in
+                sself.navigationController?.popViewController(animated: true)
+                Utilities.dismissProgress()
+            }
+        }
+    }
+    @objc func deleteClick(){
+        Utilities.waitProgress(msg: "İstek Siliniyor")
+        removeRequestList(currentUser: currentUser, otherUser: otherUser.uid) { (_val) in
+            if _val{
+                self.navigationController?.popViewController(animated: true)
+                Utilities.dismissProgress()
+            }
+        }
+    }
     @objc func goProfile(){
         UserService.shared.getProfileModel(otherUser: otherUser, currentUser: currentUser) {[weak self] (model) in
             guard let sself = self else { return }
@@ -442,6 +464,58 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
             }
         }
         
+    }
+    func addOnFirendList(otherUser : String , currntUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(otherUser).collection("friend-list")
+            .document(currntUser.uid)
+        let dic = ["userName":currntUser.username as Any ,"uid":currntUser.uid as Any, "name":currntUser.name as Any , "short_school" : currntUser.short_school as Any ,"thumb_image":currntUser.thumb_image as Any,"tarih":FieldValue.serverTimestamp(), "bolum":currntUser.bolum as Any]  as [String : Any]
+        db.setData(dic as [String : Any], merge: true){[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                let dbc = Firestore.firestore().collection("user")
+                    .document(sself.currentUser.uid)
+                    .collection("msg-request")
+                    .document(otherUser)
+                dbc.getDocument { (docSnap, err) in
+                    if err == nil {
+                        guard let snap = docSnap else { return }
+                        guard let data = snap.data() else { return }
+                        let lastMsgInfo  = ChatListModel.init(uid: snap.documentID, dic: data)
+                        let dicSenderLastMessage = ["lastMsg":lastMsgInfo.lastMsg as Any, "time":lastMsgInfo.time as Any , "thumbImage": lastMsgInfo.thumbImage as Any,"isOnline":lastMsgInfo.isOnline as Any,"username":lastMsgInfo.username as Any, "name":lastMsgInfo.name  as Any,"type": lastMsgInfo.type as Any, "badgeCount":0 as Any] as [String : Any]
+                        dbc.setData(dicSenderLastMessage, merge: true) { (err) in
+                            if err == nil {
+                                completion(true)
+                            }else{
+                                completion(false)
+                            }
+                        }
+                    }
+                }
+                
+                completion(true)
+            }else{
+                completion(false)
+            }
+        }
+        
+        
+    }
+    
+    func removeRequestList(currentUser : CurrentUser , otherUser : String , completion:@escaping(Bool) ->Void){
+      
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-request")
+            .document(otherUser)
+        db.delete(){(err) in
+            if err  == nil {
+                completion(true)
+            }else{
+                completion(false)
+            }
+            
+        }
     }
     @objc func optionsMenu(){
         
