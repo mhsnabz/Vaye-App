@@ -92,11 +92,11 @@ class OtherUserProfile: UIViewController     {
     private var vayeAppLaunherOtherUser :  ASMainPostOtherUser
     let native_adUnitID =  "ca-app-pub-3940256099942544/3986624511"
     
-    weak var interstitalGithub : GADInterstitial!
+     var interstitalGithub : GADInterstitial!
      var interstitalMsg : GADInterstitial!
-    weak var interstitalInsta : GADInterstitial!
-    weak var interstitalLinked : GADInterstitial!
-    weak var interstitalTwitter : GADInterstitial!
+     var interstitalInsta : GADInterstitial!
+     var interstitalLinked : GADInterstitial!
+     var interstitalTwitter : GADInterstitial!
     
     var ads_target : String = ""
     //MARK:-post filter val
