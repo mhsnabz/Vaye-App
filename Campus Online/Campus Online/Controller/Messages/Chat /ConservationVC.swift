@@ -1297,12 +1297,22 @@ extension ConservationVC : MessageSettinDelegate {
         switch option {
         
         case .deleteMessages(_):
+            
+            MessagesService.shared.removeMessages(currentUser: currentUser, otherUser: otherUser) {[weak self] (_) in
+                guard let sself = self else { return }
+                MessagesService.shared.removeUserOnChatList(currentUser : sself.currentUser , otherUser : sself.otherUser){(_) in
+                    sself.navigationController?.popViewController(animated: true)
+                }
+            }
+            
             break
         case .deleteFriend(_):
             break
         case .slientChat(_):
             break
         case .reportUser(_):
+            let vc = ReportingVC(target: ReportTarget.reportMessages.description, currentUser: currentUser, otherUser: otherUser.uid, postId: "", reportType: ReportType.reportUser.description)
+            self.navigationController?.pushViewController(vc, animated: true)
             break
         }
     }

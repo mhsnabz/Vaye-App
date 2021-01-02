@@ -14,7 +14,24 @@ import FirebaseFirestore
 import MapKit
 import InputBarAccessoryView
 
-class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegate {
+class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegate, MessageSettinDelegate, DismisDelegate {
+    func didSelect(option: MessageSettingOptions) {
+        switch option {
+        case .deleteMessages(_):
+            break
+        case .reportUser(_):
+        break
+        case .slientChat(_):
+        break
+        default:
+            break
+        }
+    }
+    
+    func dismisMenu() {
+        inputAccessoryView?.isHidden = false
+    }
+    
     
     private lazy var messages = [Message]()
      var currentUser : CurrentUser
@@ -129,7 +146,7 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
     }
     
     var shouldBecomeFirstResponder:Bool = true
-
+    lazy var actionSheetMessage = MessagesSettingLauncher(currenUser: currentUser, otherUser: otherUser, target: MessageSettinTarget.request.desdescription)
     override var canBecomeFirstResponder: Bool {
     return shouldBecomeFirstResponder
     }
@@ -166,6 +183,7 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         self.currentUser = currentUser
         self.otherUser = otherUser
         selfSender = Sender(senderId: currentUser.uid, displayName: currentUser.name, profileImageUrl: currentUser.thumb_image)
+       
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -518,7 +536,11 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         }
     }
     @objc func optionsMenu(){
-        
+
+        actionSheetMessage.show()
+        actionSheetMessage.delegate = self
+        actionSheetMessage.dismisDelgate = self
+        inputAccessoryView?.isHidden = true
     }
     @objc func loadData(){
         

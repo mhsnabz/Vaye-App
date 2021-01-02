@@ -332,5 +332,35 @@ class MessagesService {
         }
         
     }
+    
+    
+    func removeMessages(currentUser : CurrentUser , otherUser : OtherUser , completion : @escaping(Bool) ->Void){
+        let db  = Firestore.firestore().collection("messages")
+            .document(currentUser.uid)
+            .collection(otherUser.uid)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documents{
+                    db.document(item.documentID).delete { (err) in
+                        if err == nil {
+                            completion(true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    func removeUserOnChatList(currentUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list")
+            .document(otherUser.uid)
+        db.delete { (err) in
+            if err == nil{
+                completion(true)
+            }
+        }
+    }
 }
 

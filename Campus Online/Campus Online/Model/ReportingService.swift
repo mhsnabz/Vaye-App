@@ -30,6 +30,9 @@ class ReportingService {
         }
             
     }
+    func setMessagesReport(reportType : String , reportTarget : String?  , currentUser : CurrentUser ,text : String, otherUser : String , completion : @escaping(Bool)->Void ){
+        
+    }
     func setAppReport(reportType : String , reportTarget : String? , currentUser : CurrentUser ,text : String, completion : @escaping(Bool)->Void){
         let dic = ["text":text,
             "reportType" : reportType,
@@ -51,4 +54,5 @@ class ReportingService {
             }
         }
     }
+    
 }

@@ -16,6 +16,7 @@ enum ReportTarget {
     case campingPost
     case noticesPost
     case appReport
+    case reportMessages
     var description : String {
         switch self{
         
@@ -31,6 +32,8 @@ enum ReportTarget {
             return "noticesPost"
         case .appReport:
             return "appReport"
+        case .reportMessages:
+            return "reportMessages"
         }
     }
 }
@@ -103,6 +106,18 @@ class ReportingVC: UIViewController {
     }()
     
  
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -193,6 +208,14 @@ class ReportingVC: UIViewController {
                     sself.navigationController?.popViewController(animated: true)
                     Utilities.succesProgress(msg: "Geri Bildiriminiz İçin\n Teşekkür Ederiz")
                 }
+                
+            }
+            else if ReportTarget.reportMessages.description == target{
+                ReportingService.shared.setReport(reportType: reportType, reportTarget: target, postId: postId, currentUser: currentUser, text: text, otherUser: otherUser) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    sself.navigationController?.popViewController(animated: true)
+                    Utilities.succesProgress(msg: "Geri Bildiriminiz İçin\n Teşekkür Ederiz")
+                }
             }else{
                 ReportingService.shared.setReport(reportType: reportType, reportTarget: target, postId: postId, currentUser: currentUser, text: text, otherUser: otherUser) {[weak self] (_) in
                     guard let sself = self else { return }
@@ -201,7 +224,7 @@ class ReportingVC: UIViewController {
                 }
             }
             
-           
+            
         }
     }
     
