@@ -23,7 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = SplashScreen()
        
         GADMobileAds.sharedInstance().start(completionHandler: nil)
-        
+       
+     
         return true
     }
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {

@@ -43,7 +43,7 @@ class MessagesService {
     }
     
     
-    func sendMessage(newMessage : Message ,fileName : String?, currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
+    func sendMessage(newMessage : Message, isOnline : Bool ,fileName : String?, currentUser : CurrentUser , otherUser : OtherUser , time : Int64 ){
         var msg = ""
         var loc : GeoPoint?
         var width : CGFloat = 0.0
@@ -122,9 +122,9 @@ class MessagesService {
         }
         
         var dicSenderLastMessage = Dictionary<String,Any>()
-        dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"isOnline":false,"username":otherUser.username!, "name":otherUser.name!,"uid":otherUser.uid! ,"type": newMessage.kind.messageKindString, "badgeCount":0]
+        dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"username":otherUser.username!, "name":otherUser.name!,"uid":otherUser.uid! ,"type": newMessage.kind.messageKindString]
         var dicGetterLastMessage = Dictionary<String,Any>()
-        dicGetterLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":currentUser.thumb_image! ,"isOnline":false, "username":currentUser.username!,"uid":currentUser.uid!,"name":currentUser.name!,"type": newMessage.kind.messageKindString, "badgeCount":0]
+        dicGetterLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":currentUser.thumb_image!, "username":currentUser.username!,"uid":currentUser.uid!,"name":currentUser.name!,"type": newMessage.kind.messageKindString]
         if currentUser.friendList.contains(otherUser.uid) {
             let dbSender = Firestore.firestore().collection("messages")
                 .document(currentUser.uid)
@@ -154,7 +154,8 @@ class MessagesService {
                     db.setData(dicGetterLastMessage, merge: true)
                 }
             }
-            
+            getBadgeCount(currentUser: currentUser, target: "msg-list", isOnline: isOnline, otherUser: otherUser)
+            setBadgeCount(currentUser: currentUser, isOnline: isOnline, otherUser: otherUser, target:  "msg-list")
         }else
         {
             let dbSender = Firestore.firestore().collection("messages")
@@ -187,9 +188,42 @@ class MessagesService {
             }
             
         }
-        
+        getBadgeCount(currentUser: currentUser, target: "msg-request", isOnline: isOnline, otherUser: otherUser)
+        setBadgeCount(currentUser: currentUser, isOnline: isOnline, otherUser: otherUser, target: "msg-request")
         
     }
+    
+    func getBadgeCount(currentUser : CurrentUser , target : String ,isOnline : Bool, otherUser : OtherUser ){
+        
+        if !isOnline {
+            let db = Firestore.firestore().collection("user")
+                .document(otherUser.uid)
+                .collection(target).document(currentUser.uid)
+                .collection("badgeCount").whereField("badge", isEqualTo:"badge")
+            db.getDocuments { (querySnap, err) in
+                if err == nil {
+                    guard let snap = querySnap else{ return }
+                    if snap.count > 0 {
+                        let db = Firestore.firestore().collection("user")
+                            .document(otherUser.uid)
+                            .collection(target).document(currentUser.uid)
+                        db.setData(["badgeCount":snap.count as Int], merge: true, completion: nil)
+                    
+                    }
+                }
+            }
+        }
+    }
+    func setBadgeCount(currentUser : CurrentUser ,isOnline : Bool, otherUser : OtherUser, target : String){
+        if !isOnline {
+            let db = Firestore.firestore().collection("user")
+                .document(otherUser.uid)
+                .collection(target).document(currentUser.uid) .collection("badgeCount")
+            db.addDocument(data: ["badge":"badge"])
+                
+        }
+    }
+    
     
     
     func uploadImages(datas :[Data] , currentUser : String, type : [String]  , otherUser : String , completion:@escaping([String]) -> Void){

@@ -26,7 +26,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         let lat: Double = locaiton.latitude
         let locaitonItem = Location(location: CLLocation(latitude: lat, longitude: long), size: .zero)
         let message = Message(sender: self.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .location(locaitonItem))
-        MessagesService.shared.sendMessage(newMessage: message, fileName: nil, currentUser: self.currentUser, otherUser: self.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+        MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: self.currentUser, otherUser: self.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
     }
     
     func sendAudioItem(item: URL, fileName: String) {
@@ -40,7 +40,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 guard let url = URL(string: url) else { return }
                 let item = Audio(url: url, duration: Float(duration), size: .zero , fileName: fileName)
                 let message = Message(sender: sself.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .audio(item))
-                MessagesService.shared.sendMessage(newMessage: message, fileName : fileName ,currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+                MessagesService.shared.sendMessage(newMessage: message, isOnline: sself.isOnline ?? false, fileName : fileName ,currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
             }
         } catch {
             assertionFailure("Failed crating audio player: \(error).")
@@ -93,7 +93,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
     var page : DocumentSnapshot? = nil
     var firstPage : DocumentSnapshot? = nil
     var currentUser : CurrentUser
-     var otherUser : OtherUser
+    var otherUser : OtherUser
+    var isOnline : Bool?
     private let selfSender : Sender?
     private lazy var messages = [Message]()
     public var isNewConversation = false
@@ -118,6 +119,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         super.viewDidDisappear(animated)
         snapShotListener?.remove()
         audioController.stopAnyOngoingPlaying()
+        let setCurrentUserOnline =  Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list")
+            .document(otherUser.uid)
+        setCurrentUserOnline.setData(["isOnline":false as Bool , "badgeCount":0], merge: true)
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -132,6 +138,48 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 if snap.exists {
                     sself.currentUser = CurrentUser.init(dic: data)
                 }
+            }
+        })
+        
+        let setCurrentUserOnline =  Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list")
+            .document(otherUser.uid)
+        setCurrentUserOnline.setData(["isOnline":true as Bool], merge: true)
+        let deleteBadgeDb = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list")
+            .document(otherUser.uid).collection("badgeCount").whereField("badge", isEqualTo: "badge")
+        let dbc = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list")
+            .document(otherUser.uid).collection("badgeCount")
+        deleteBadgeDb.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    for item in snap.documents{
+                        dbc.document(item.documentID).delete()
+                    }
+                }
+            }
+        }
+        
+       
+        
+        let isOnlineDb = Firestore.firestore().collection("user")
+            .document(otherUser.uid)
+            .collection("msg-list")
+            .document(currentUser.uid)
+        
+        snapShotListener = isOnlineDb.addSnapshotListener({[weak self] (docSnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists {
+                    sself.isOnline = snap.get("isOnline") as? Bool
+                }
+                    
             }
         })
     }
@@ -166,9 +214,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         super.viewDidAppear(animated)
         messageInputBar.inputTextView.becomeFirstResponder()
         messagesCollectionView.scrollToBottom()
-        
-        
-        
+          
     }
     
     //MARK: -- functions
@@ -488,7 +534,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         guard let text = messageInputBar.inputTextView.text else { return }
         messageInputBar.inputTextView.text = ""
         let message =  Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .text(text) )
-        MessagesService.shared.sendMessage(newMessage: message, fileName: nil, currentUser: currentUser, otherUser: otherUser , time : Int64(Date().timeIntervalSince1970 * 1000))
+        MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: currentUser, otherUser: otherUser , time : Int64(Date().timeIntervalSince1970 * 1000))
         messagesCollectionView.scrollToBottom()
         
     }
@@ -700,7 +746,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
             return }
         let media = Media(url: url, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_unselected"), size: CGSize(width: width, height: heigth))
         let message = Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .photo(media))
-        MessagesService.shared.sendMessage(newMessage: message, fileName: nil, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+        MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
     }
     
     func sendImageMessage(currentUser : CurrentUser,width : CGFloat , heigth : CGFloat , otherUser : OtherUser , url : String  , completion : @escaping(Bool) ->Void){
@@ -709,7 +755,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
             return }
         let media = Media(url: url, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_unselected"), size: CGSize(width: width, height: heigth))
         let message = Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .photo(media))
-        MessagesService.shared.sendMessage(newMessage: message, fileName: nil, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+        MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
     }
     
     var succesCount : Int = 0

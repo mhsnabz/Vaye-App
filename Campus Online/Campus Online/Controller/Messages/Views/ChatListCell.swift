@@ -104,6 +104,7 @@ extension ChatListCell : UICollectionViewDelegate , UICollectionViewDelegateFlow
         UserService.shared.getOtherUser(userId: list[indexPath.row].uid) {[weak self] (user) in
             guard let sself = self else { return }
             let vc = ConservationVC(currentUser: currentUser, otherUser: user)
+   
             sself.rootController?.navigationController?.pushViewController(vc, animated: true)
             Utilities.dismissProgress()
         }
@@ -201,6 +202,7 @@ class ChatListItem : UICollectionViewCell {
     lazy var lastMsgViewWithImage : UIView = {
         let v = UIView()
         v.addSubview(msgKidImage)
+  
         msgKidImage.anchor(top: nil, left: v.leftAnchor, bottom: nil
                            , rigth: nil
                            , marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 15, heigth: 15)
@@ -247,13 +249,15 @@ class ChatListItem : UICollectionViewCell {
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.white
         profileImage.sd_setImage(with: URL(string : user.thumbImage ?? ""))
         
-        if user.badgeCount == 0 {
+        guard let totalBadge = user.badgeCount else { return }
+        
+        if totalBadge == 0 {
             badgeCount.isHidden = true
             lastMsg.font = UIFont(name: Utilities.font, size: 12)
             lastMsg.textColor = .darkGray
             
         }else{
-            if user.badgeCount! > 9 {
+            if totalBadge > 9 {
                 badgeCount.font = UIFont(name: Utilities.fontBold, size: 8)
                 badgeCount.text = "+\(9)"
             }else{

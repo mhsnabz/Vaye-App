@@ -9,6 +9,7 @@
 import Foundation
 class CurrentUser {
     var email : String!
+    var totalBadge : Int!
     var allowRequest : Bool!
     var name : String!
     var number : String!
@@ -37,6 +38,9 @@ class CurrentUser {
         
         if let email = dic["email"] as? String {
             self.email = email
+        }
+        if let totalBadge = dic["totalBadge"] as? Int {
+            self.totalBadge = totalBadge
         }
         
         if let allowRequest = dic["allowRequest"] as? Bool {

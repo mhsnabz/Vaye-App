@@ -17,6 +17,7 @@ class MainTabbar: UITabBarController,UITabBarControllerDelegate  {
             guard let currentUser = currentUser else { return }
             configureViewControler(user: currentUser)
             
+           
         }
     }
     override func viewDidLoad() {
