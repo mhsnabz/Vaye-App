@@ -1,11 +1,9 @@
 //
 //  MessagesService.swift
 //  Campus Online
-//
 //  Created by mahsun abuzeyitoğlu on 27.12.2020.
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
-
 import Foundation
 import FirebaseFirestore
 import FirebaseStorage
@@ -89,8 +87,6 @@ class MessagesService {
         case .custom(_):
             break
         }
-        
-        
         var dic = Dictionary<String,Any>()
         if  let locaiton = loc{
             dic = [
@@ -124,7 +120,13 @@ class MessagesService {
         var dicSenderLastMessage = Dictionary<String,Any>()
         dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"username":otherUser.username!, "name":otherUser.name!,"uid":otherUser.uid! ,"type": newMessage.kind.messageKindString]
         var dicGetterLastMessage = Dictionary<String,Any>()
-        dicGetterLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":currentUser.thumb_image!, "username":currentUser.username!,"uid":currentUser.uid!,"name":currentUser.name!,"type": newMessage.kind.messageKindString]
+        dicGetterLastMessage = ["lastMsg":lastMsg,
+                                "time":FieldValue.serverTimestamp() ,
+                                "thumbImage":currentUser.thumb_image!,
+                                "username":currentUser.username!,
+                                "uid":currentUser.uid!,
+                                "name":currentUser.name!,
+                                "type": newMessage.kind.messageKindString]
         if currentUser.friendList.contains(otherUser.uid) {
             let dbSender = Firestore.firestore().collection("messages")
                 .document(currentUser.uid)
@@ -139,8 +141,6 @@ class MessagesService {
                     db.setData(dicSenderLastMessage, merge: true)
                 }
             }
-            
-            
             let dbGetter = Firestore.firestore().collection("messages")
                 .document(otherUser.uid)
                 .collection(currentUser.uid)

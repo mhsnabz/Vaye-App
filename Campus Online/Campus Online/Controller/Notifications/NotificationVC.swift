@@ -66,6 +66,15 @@ class NotificationVC: UIViewController {
         
     }
     
+    private lazy var footerView : UIView = {
+       let v = UIView()
+        let activityView = UIActivityIndicatorView(style: .gray)
+        v.addSubview(activityView)
+        activityView.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 45, heigth: 45)
+        activityView.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
+        activityView.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
+        return v
+    }()
     
     //MARK: - functions
     
@@ -91,7 +100,7 @@ class NotificationVC: UIViewController {
     func get_notification(currentUser : CurrentUser )
     {
         tableView.refreshControl?.beginRefreshing()
-        
+        isLoadMore = true
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10)
         
@@ -112,12 +121,13 @@ class NotificationVC: UIViewController {
                 
             }
             
-            DispatchQueue.main.async(execute: {
+          
                 sself.tableView.reloadData()
                 sself.refreshControl.endRefreshing()
                 sself.tableView.contentOffset = .zero
+                sself.isLoadMore = true
                 
-            })
+            
         }
         
         
@@ -125,7 +135,7 @@ class NotificationVC: UIViewController {
     }
     private func loadMoreNotification(completion : @escaping(Bool) ->Void){
         guard let pagee = page else {
-            
+            isLoadMore = false
             tableView.reloadData()
             completion(false)
             tableView.tableFooterView = nil
@@ -134,21 +144,31 @@ class NotificationVC: UIViewController {
             .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10).start(afterDocument: pagee)
         db.getDocuments {[weak self] (querySnap, err) in
             guard let sself = self else { return }
-            if err == nil {
-                guard let snap = querySnap else {
-                    return
-                }
+            guard let snap = querySnap else {
+                return
+            }
+            
+            if let err = err {
+                print("\(err.localizedDescription)")
+                completion(false)
+            }else if snap.isEmpty{
+                sself.isLoadMore = false
+                sself.tableView.reloadData()
+                completion(false)
+            }else{
                 for item in snap.documents {
                     if item.exists{
                         sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
+                        sself.isLoadMore = true
                         sself.tableView.reloadData()
                         completion(true)
                         
                     }
                 }
                 sself.page = snap.documents.last
-                sself.tableView.stopLoading()
             }
+            
+          
         }
     }
     
@@ -254,10 +274,11 @@ class NotificationVC: UIViewController {
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
         tableView.register(NotificaitionCell.self, forCellReuseIdentifier: cellId)
-        tableView.tableFooterView?.isHidden = true
+        
+//        tableView.tableFooterView?.isHidden = true
         tableView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(swipeAndRfresh), for: .valueChanged)
-        tableView.alwaysBounceVertical = true
+//        tableView.alwaysBounceVertical = true
         tableView.isUserInteractionEnabled = true
     }
     
@@ -449,6 +470,17 @@ extension NotificationVC : UITableViewDelegate , UITableViewDataSource {
             return 25 + h + 25
         }
     }
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        return footerView
+    }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if isLoadMore {
+            return 50
+        }else{
+            return 0
+        }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -584,38 +616,6 @@ extension NotificationVC : NotificationLauncherDelegate{
     
 }
 
-extension UITableView{
-    
-    func indicatorView() -> UIActivityIndicatorView{
-        var activityIndicatorView = UIActivityIndicatorView()
-        if self.tableFooterView == nil{
-            let indicatorFrame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 40)
-            activityIndicatorView = UIActivityIndicatorView(frame: indicatorFrame)
-            activityIndicatorView.isHidden = false
-            activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin]
-            activityIndicatorView.isHidden = true
-            self.tableFooterView = activityIndicatorView
-            return activityIndicatorView
-        }else{
-            return activityIndicatorView
-        }
-    }
-    
-    func addLoading(_ indexPath:IndexPath, closure: @escaping (() -> Void)){
-        indicatorView().startAnimating()
-        if let lastVisibleIndexPath = self.indexPathsForVisibleRows?.last {
-            if indexPath == lastVisibleIndexPath && indexPath.row == self.numberOfRows(inSection: 0) - 1 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    closure()
-                }
-            }
-        }
-        indicatorView().isHidden = false
-    }
-    
-    func stopLoading(){
-        indicatorView().stopAnimating()
-        indicatorView().isHidden = true
-        
-    }
-}
+
+
+
