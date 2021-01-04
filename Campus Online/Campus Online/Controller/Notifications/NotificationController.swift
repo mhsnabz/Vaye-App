@@ -57,7 +57,7 @@ class NotificationController: UIViewController {
         super.viewWillAppear(animated)
         
         
-//        getNotificationCount()
+        getNotificationCount()
         
     }
     override func viewDidLoad() {
@@ -77,7 +77,62 @@ class NotificationController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    
+    func get_notification(currentUser : CurrentUser )
+    {
+        tableView.refreshControl?.beginRefreshing()
+        loadMore = true
+        self.model = [NotificationModel]()
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10)
+        
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else {
+                return
+            }
+            if err == nil {
+                
+                for item in snap.documents {
+                    if item.exists{
+                        sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
+                        sself.page = snap.documents.last
+                        
+                    }
+                }
+                
+            }
+                sself.tableView.reloadData()
+                sself.refreshControl.endRefreshing()
+                sself.tableView.contentOffset = .zero
+                sself.loadMore = true
+        }
+        
+        
+        
+    }
+    
+    private func getNotificationCount(){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("notification").whereField("isRead", isEqualTo: false)
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                guard let sself = self else {
+                    self?.tabBarController?.tabBar.items?[2].badgeValue = nil
+                    return
+                }
+                if snap.isEmpty {
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = nil
+                }else{
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = snap.documents.count.description
+                }
+            }
+        })
+    }
     //MARK:--functions
     func configureTableViewController(){
         view.addSubview(tableView)
