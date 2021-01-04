@@ -24,18 +24,19 @@ class NotificationController: UIViewController {
     weak var notificaitonListener : ListenerRegistration?
     
     var tableView : UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         return tableView
     }()
 
-    
+    let activityView = UIActivityIndicatorView(style: .gray)
     private lazy var footerView : UIView = {
        let v = UIView()
-        let activityView = UIActivityIndicatorView(style: .gray)
+        
         v.addSubview(activityView)
         activityView.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 45, heigth: 45)
         activityView.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
         activityView.centerXAnchor.constraint(equalTo: v.centerXAnchor).isActive = true
+        activityView.startAnimating()
         return v
     }()
     
@@ -67,7 +68,7 @@ class NotificationController: UIViewController {
         navigationItem.title = "Bildirimler"
         configureTableViewController()
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "options_dots").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(showLauncher))
-        // Do any additional setup after loading the view.
+        get_notification(currentUser: currentUser)
     }
     init(currentUser : CurrentUser) {
         self.currentUser  = currentUser
@@ -83,6 +84,7 @@ class NotificationController: UIViewController {
     {
         tableView.refreshControl?.beginRefreshing()
         loadMore = true
+        activityView.startAnimating()
         self.model = [NotificationModel]()
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10)
@@ -90,6 +92,8 @@ class NotificationController: UIViewController {
         db.getDocuments {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             guard let snap = querySnap else {
+                sself.loadMore = false
+                sself.activityView.stopAnimating()
                 return
             }
             if err == nil {
@@ -97,22 +101,135 @@ class NotificationController: UIViewController {
                 for item in snap.documents {
                     if item.exists{
                         sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
-                        sself.page = snap.documents.last
+                      
                         
                     }
                 }
-                
+               
             }
                 sself.tableView.reloadData()
                 sself.refreshControl.endRefreshing()
-                sself.tableView.contentOffset = .zero
+                sself.page = snap.documents.last
                 sself.loadMore = true
+            sself.activityView.stopAnimating()
         }
         
         
         
     }
+    private func setNotificationRead(completion : @escaping(Bool)->Void){
+        Utilities.succesProgress(msg: nil)
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").whereField("isRead", isEqualTo: false)
+        db.getDocuments {[weak self] (querySnap, err) in
+            if err == nil{
+                guard let snap = querySnap else { return }
+                guard let sself = self else { return }
+                if !snap.isEmpty{
+                    for item in snap.documents{
+                        sself.makeReadNotificaiton(not_id: item.documentID) { (_) in
+                            completion(true)
+                        }
+                    }
+                }else{
+                    completion(true)
+                }
+                
+            }
+        }
+    }
+    private func makeReadNotificaiton(not_id : String ,completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").document(not_id)
+        db.setData(["isRead":true], merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
     
+    
+    private func getAllNotificationForDelete(completion : @escaping(Bool) ->Void){
+        Utilities.succesProgress(msg: nil)
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification")
+        db.getDocuments {[weak self] (querySnap, err) in
+            if err == nil{
+                guard let snap = querySnap else { return }
+                guard let sself = self else { return }
+                if !snap.isEmpty{
+                    for item in snap.documents{
+                        sself.deleteNotification(not_id: item.documentID) { (_) in
+                            completion(true)
+                        }
+                    }
+                }else{
+                    completion(true)
+                }
+                
+            }
+        }
+    }
+    private func deleteNotification(not_id : String ,completion : @escaping(Bool) -> Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").document(not_id)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil{
+                Utilities.dismissProgress()
+                if let index = sself.model.firstIndex(where: {$0.not_id == not_id}) {
+                    sself.model.remove(at: index)
+                    sself.tableView.reloadData()
+                }
+                
+                completion(true)
+            }
+        }
+    }
+    private func loadMoreNotification(completion : @escaping(Bool) ->Void){
+        guard let pagee = page else {
+            loadMore = false
+            tableView.reloadData()
+            completion(false)
+            activityView.stopAnimating()
+            return }
+        let  db =  Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").order(by: "not_id", descending: true).limit(to: 10).start(afterDocument: pagee)
+        db.getDocuments {[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            guard let snap = querySnap else {
+                sself.loadMore = false
+                sself.activityView.stopAnimating()
+                return
+            }
+            
+            if let err = err {
+                print("\(err.localizedDescription)")
+                completion(false)
+            }else if snap.isEmpty{
+                sself.loadMore = false
+                sself.activityView.stopAnimating()
+                sself.tableView.reloadData()
+                completion(false)
+            }else{
+                for item in snap.documents {
+                    if item.exists{
+                        sself.model.append(NotificationModel.init(not_id: item.get("not_id") as! String, dic: item.data()))
+                        sself.loadMore = true
+                        sself.activityView.startAnimating()
+                        sself.tableView.reloadData()
+                        completion(true)
+                        
+                    }
+                }
+                sself.page = snap.documents.last
+            }
+            
+          
+        }
+    }
     private func getNotificationCount(){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
         let db = Firestore.firestore().collection("user")
@@ -132,6 +249,136 @@ class NotificationController: UIViewController {
                 }
             }
         })
+    }
+    func markAsRead(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Okundu") {[weak self] (action, view, completion) in
+            guard let sself = self else { return }
+            sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                sself.model[indexPath.row].isRead = true
+                sself.tableView.reloadData()
+                completion(true)
+            }
+            
+        }
+        action.backgroundColor = .systemGreen
+        
+        action.image = #imageLiteral(resourceName: "readed-white").withRenderingMode(.alwaysOriginal)
+        return action
+    }
+    func showPost(at indexPath :IndexPath) ->UIContextualAction {
+        
+        let action = UIContextualAction(style: .normal, title: "Görüntüle") {[weak self] (action, view, completion) in
+            guard let sself = self  else { return }
+            
+            
+            Utilities.waitProgress(msg: nil)
+            
+            if sself.model[indexPath.row].type == NotificationType.following_you.desprition
+            {
+                UserService.shared.fetchOtherUser(uid: sself.model[indexPath.row].senderUid) {(user) in
+                    UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                        UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                            if val {
+                                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                               
+                                sself.navigationController?.pushViewController(vc, animated: true)
+                                Utilities.dismissProgress()
+                            }else{
+                                let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                    
+                                sself.navigationController?.pushViewController(vc, animated: true)
+                                Utilities.dismissProgress()
+                            }
+                            
+                        }
+                    }
+                    sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                        sself.model[indexPath.row].isRead = true
+                        sself.tableView.reloadData()
+                        
+                    }
+                }
+            }else if sself.model[indexPath.row].type == NotificationType.comment_home.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.comment_like.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.comment_mention.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.home_like.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.reply_comment.desprition ||
+                        sself.model[indexPath.row].type == NotificationType.home_new_post.desprition {
+                sself.getPost(postID: sself.model[indexPath.row].postId, not_id: sself.model[indexPath.row].not_id) { (postModel) in
+                    guard let post = postModel else {
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return }
+                    let vc = CommentVC(currentUser: sself.currentUser, post: post)
+                    sself.navigationController?.pushViewController(vc, animated: true)
+                    sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                        sself.model[indexPath.row].isRead = true
+                        sself.tableView.reloadData()
+                        
+                    }
+                    Utilities.dismissProgress()
+                }
+            }else {
+                MainPostService.shared.getMainPost(postId: sself.model[indexPath.row].postId) {[weak self] (post) in
+                    
+                    guard let post = post else{
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                        return
+                    }
+                    let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                    sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                        sself.model[indexPath.row].isRead = true
+                        sself.tableView.reloadData()
+                        
+                    }
+                    Utilities.dismissProgress()
+                    
+                }
+            }
+            
+            
+        }
+        action.backgroundColor = .mainColor()
+        action.title = "Görüntüle"
+        action.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
+        return action
+    }
+    
+    
+    func deleteAction(at indexPath :IndexPath) ->UIContextualAction {
+        let action = UIContextualAction(style: .destructive, title: "Sil") {[weak self] (action, view, completion) in
+            guard let sself = self else { return }
+            let notId = sself.model[indexPath.row].not_id
+            sself.model.remove(at: indexPath.row)
+            sself.tableView.reloadData()
+            sself.deleteNotification(not_id: notId!) { (_) in
+                
+            }
+            
+        }
+        action.backgroundColor = .red
+        
+        action.image = UIImage(named: "remove")
+        return action
+    }
+    private func getPost(postID : String,not_id : String , completion : @escaping(LessonPostModel?) ->Void){
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postID)
+        db.getDocument {[weak self] (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else { return }
+                guard let sself = self else { return }
+                if snap.exists{
+                    completion(LessonPostModel.init(postId: postID, dic: snap.data()))
+                }else{
+                    sself.deleteNotification(not_id: not_id) { (_) in
+                        Utilities.errorProgress(msg: "Bu Gönderi Silinmiş")
+                        sself.tableView.reloadData()
+                        
+                    }
+                }
+            }
+        }
     }
     //MARK:--functions
     func configureTableViewController(){
@@ -168,10 +415,13 @@ class NotificationController: UIViewController {
     }
     //MARK:-selectors
     @objc func showLauncher(){
-        
+        notificationLauncher.show()
+        notificationLauncher.delegate = self
     }
     @objc func swipeAndRfresh(){
-       
+        model = [NotificationModel]()
+        tableView.reloadData()
+        get_notification(currentUser: currentUser)
     }
 }
 
@@ -202,6 +452,9 @@ extension NotificationController : UITableViewDelegate, UITableViewDataSource{
         
         return footerView
     }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
+    }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if loadMore {
             return 50
@@ -209,5 +462,155 @@ extension NotificationController : UITableViewDelegate, UITableViewDataSource{
             return 0
         }
     }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if model.count > 9 {
+            if indexPath.row == model.count - 1 {
+                self.loadMoreNotification {(val) in
+                    if val {
+                        self.activityView.startAnimating()
+                    }else{
+                        self.activityView.stopAnimating()
+                    }
+                }
+            }
+            else{
+                activityView.stopAnimating()
+                self.loadMore = false
+            }
+        }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        Utilities.waitProgress(msg: nil)
+        
+        if model[indexPath.row].type == NotificationType.following_you.desprition
+        {
+            UserService.shared.fetchOtherUser(uid: model[indexPath.row].senderUid) {[weak self] (user) in
+                guard let sself = self else { return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
+                }
+                
+            }
+        }else if model[indexPath.row].type == NotificationType.comment_home.desprition ||
+                    model[indexPath.row].type == NotificationType.comment_like.desprition ||
+                    model[indexPath.row].type == NotificationType.comment_mention.desprition ||
+                    model[indexPath.row].type == NotificationType.home_like.desprition ||
+                    model[indexPath.row].type == NotificationType.reply_comment.desprition ||
+                    model[indexPath.row].type == NotificationType.home_new_post.desprition{
+            
+            
+            
+            
+            getPost(postID: model[indexPath.row].postId, not_id: model[indexPath.row].not_id) {[weak self] (postModel) in
+                guard let sself = self else { return }
+                guard let post = postModel else {
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                    return }
+                let vc = CommentVC(currentUser: sself.currentUser, post: post)
+                sself.navigationController?.pushViewController(vc, animated: true)
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
+                }
+                Utilities.dismissProgress()
+            }
+        }
+        else if
+            model[indexPath.row].type == NotificationType.notices_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_post_like.desprition
+                || model[indexPath.row].type == NotificationType.notices_replied_comment_like.desprition || model[indexPath.row].type == NotificationType.notices_new_comment.desprition ||
+                model[indexPath.row].type == NotificationType.notice_mention_comment.desprition{
+            NoticesService.shared.getNoticesPost(postId: model[indexPath.row].postId, currentUser: currentUser) {[weak self] (post) in
+                guard let sself = self else { return }
+                guard let post = post else {
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                    return }
+                sself.navigationController?.pushViewController(NoticeVCComment(currentUser: sself.currentUser, post: post), animated: true)
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
+                }
+                Utilities.dismissProgress()
+            }
+            
+        }
+        else {
+            MainPostService.shared.getMainPost(postId: model[indexPath.row].postId) {[weak self] (post) in
+                guard let sself = self else { return }
+                guard let post = post else{
+                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
+                    return
+                }
+                let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
+                self?.navigationController?.pushViewController(vc, animated: true)
+                sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
+                    sself.model[indexPath.row].isRead = true
+                    sself.tableView.reloadData()
+                    
+                }
+                Utilities.dismissProgress()
+                
+            }
+        }
+        
+    }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        
+        let edit = markAsRead(at: indexPath)
+        let delete = deleteAction(at: indexPath)
+        
+        return UISwipeActionsConfiguration(actions: [delete,edit])
+    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        Utilities.waitProgress(msg: nil)
+        let reply = showPost(at: indexPath)
+        Utilities.dismissProgress()
+        return UISwipeActionsConfiguration(actions: [reply])
+    }
+    
+}
+extension NotificationController : NotificationLauncherDelegate {
+    func didSelect(option: NotificationOptions) {
+        switch option {
+        
+        case .makeAllRead(_):
+            setNotificationRead {[weak self] (_) in
+                guard let sself = self else { return }
+                for item in sself.model{
+                    item.isRead = true
+                }
+                sself.tableView.reloadData()
+                Utilities.dismissProgress()
+            }
+        case .deleteAll(_):
+            getAllNotificationForDelete {[weak self] (_) in
+                guard let sself = self else { return }
+                sself.model = [NotificationModel]()
+                sself.tableView.reloadData()
+                Utilities.dismissProgress()
+            }
+        }
+    }
 }
