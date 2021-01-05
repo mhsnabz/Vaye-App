@@ -10,7 +10,7 @@ import UIKit
 import SDWebImage
 import ActiveLabel
 class NotificaitionCell: UITableViewCell {
-
+    
     
     weak var model : NotificationModel?{
         didSet {
@@ -26,7 +26,7 @@ class NotificaitionCell: UITableViewCell {
         img.backgroundColor = .white
         return img
     }()
-   lazy var name : NSMutableAttributedString = {
+    lazy var name : NSMutableAttributedString = {
         let name = NSMutableAttributedString()
         return name
     }()
@@ -46,13 +46,13 @@ class NotificaitionCell: UITableViewCell {
         return lbl
     }()
     let badge : UIView = {
-       let v = UIView()
+        let v = UIView()
         v.clipsToBounds = true
         v.backgroundColor = .red
         return v
     }()
-   
-
+    
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: "id")
@@ -69,7 +69,7 @@ class NotificaitionCell: UITableViewCell {
         badge.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         badge.layer.cornerRadius = 15 / 2
         badge.isHidden = true
-    
+        
         
         
         
@@ -84,12 +84,22 @@ class NotificaitionCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     
     private func configure(){
         guard let post = model else { return }
         
-        if post.type == NotificationType.home_like.desprition{
+        if post.type == NotificationType.new_food_me.desprition{
+            type.text = Notification_description.new_food_me.desprition
+            print(Notification_description.new_food_me.desprition)
+            
+        }
+        else if post.type == NotificationType.new_camping.desprition{
+            type.text = Notification_description.new_camping.desprition
+            
+        }
+        
+        else if post.type == NotificationType.home_like.desprition{
             type.text = Notification_description.like_home.desprition
             
         }else if post.type == NotificationType.comment_home.desprition{
@@ -123,13 +133,9 @@ class NotificaitionCell: UITableViewCell {
             type.attributedText = notification
         }else if post.type == NotificationType.like_sell_buy.desprition{
             type.text = Notification_description.like_sell_buy.desprition
-        }else if post.type == Notification_description.like_camping.desprition {
+        }else if post.type == NotificationType.like_camping.desprition {
             type.text = Notification_description.like_camping.desprition
-        }else if post.type == Notification_description.new_camping.desprition{
-            type.text = Notification_description.new_camping.desprition
-        }else if post.type == Notification_description.new_food_me.desprition{
-            type.text = Notification_description.new_food_me.desprition
-        }else if post.type == Notification_description.like_food_me.desprition{
+        }else if post.type == NotificationType.like_food_me.desprition{
             type.text = Notification_description.like_food_me.desprition
         }else if post.type == NotificationType.notices_post_like.desprition{
             type.text = Notification_description.notices_post_like.desprition
@@ -139,7 +145,7 @@ class NotificaitionCell: UITableViewCell {
             type.text = Notification_description.notices_replied_comment_like.desprition
         }else if post.type == NotificationType.notices_new_comment.desprition{
             type.text = Notification_description.notices_new_comment.desprition
-
+            
         }else if post.type == NotificationType.notice_mention_comment.desprition{
             notification =  NSMutableAttributedString(string: "\(Notification_description.notice_mention_comment.desprition):", attributes: [NSAttributedString.Key.font : UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray])
             notification.append(NSAttributedString(string: " \(post.text.description)", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 13)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
@@ -158,6 +164,6 @@ class NotificaitionCell: UITableViewCell {
             badge.isHidden = false
         }
     }
-
-
+    
+    
 }
