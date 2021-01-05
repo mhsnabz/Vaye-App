@@ -655,7 +655,32 @@ struct UserService {
             }
         }
     }
-    
+    func removeRequestBadgeCount(currentUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-request")
+            .document(otherUser.uid)
+            .collection("badgeCount")
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else {
+                    completion(true)
+                    return
+                }
+                if snap.isEmpty {
+                    completion(true)
+                }else{
+                    for item in snap.documents{
+                        db.document(item.documentID).delete { (err) in
+                            if err == nil {
+                                completion(true)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     func removeFromRequestList(currenUser : CurrentUser , otherUser : OtherUser , completion:@escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user")
             .document(currenUser.uid)

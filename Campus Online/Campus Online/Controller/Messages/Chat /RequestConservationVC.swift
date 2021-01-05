@@ -168,6 +168,19 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
         super.viewDidDisappear(animated)
         snapShotListener?.remove()
         audioController.stopAnyOngoingPlaying()
+        let setCurrentUserOnline =  Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-request")
+            .document(otherUser.uid)
+        setCurrentUserOnline.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else { return }
+                if snap.exists {
+                    setCurrentUserOnline.setData(["isOnline":false as Bool , "badgeCount":0], merge: true)
+
+                }
+            }
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -454,17 +467,24 @@ class RequestConservationVC:MessagesViewController, InputBarAccessoryViewDelegat
             guard let sself = self else { return }
             
             UserService.shared.addOtherUserOnFriendList(currentUser: sself.currentUser, otherUser: sself.otherUser) { (_) in
-                sself.navigationController?.popViewController(animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.removeRequestBadgeCount(currentUser: sself.currentUser, otherUser: sself.otherUser) { (_) in
+                    sself.navigationController?.popViewController(animated: true)
+                    Utilities.dismissProgress()
+                }
+               
             }
         }
     }
     @objc func deleteClick(){
         Utilities.waitProgress(msg: "İstek Siliniyor")
-        removeRequestList(currentUser: currentUser, otherUser: otherUser.uid) { (_val) in
+        removeRequestList(currentUser: currentUser, otherUser: otherUser.uid) {[weak self] (_val) in
+            guard let sself = self else { return }
             if _val{
-                self.navigationController?.popViewController(animated: true)
-                Utilities.dismissProgress()
+                UserService.shared.removeRequestBadgeCount(currentUser: sself.currentUser, otherUser: sself.otherUser) { (_) in
+                    sself.navigationController?.popViewController(animated: true)
+                    Utilities.dismissProgress()
+                }
+              
             }
         }
     }

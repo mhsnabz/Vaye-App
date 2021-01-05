@@ -127,6 +127,24 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
             }
         })
     }
+    private func getMessagesRequestBadgeCount(){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list").whereField("badgeCount", isGreaterThan: 0 )
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            sself.totalBadgeCount = 0
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    
+                    for item in snap.documents{
+                        sself.totalBadgeCount! += item.get("badgeCount") as! Int
+                    }
+                }
+            }
+        })
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         snapShotListener?.remove()
