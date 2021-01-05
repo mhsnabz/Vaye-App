@@ -12,6 +12,20 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
     weak var homeController : MessagesVC?
     var horizontalBarLeftConstarint : NSLayoutConstraint?
     let indexPath = IndexPath(row: 0, section: 0)
+    let indexPathRequest = IndexPath(row: 2, section: 0)
+    var requestBadgeCount : Int?{
+        didSet{
+            let cell = collecitonView.cellForItem(at: indexPathRequest) as! HomeMenu_Cell
+
+            guard let badge = requestBadgeCount else {
+                cell.badgeCount.isHidden = true
+                return
+            }
+            
+            cell.badgeCount.isHidden = false
+            cell.badgeCount.text = badge.description
+        }
+    }
     var msgBadgeCount : Int?{
         didSet{
             let cell = collecitonView.cellForItem(at: indexPath) as! HomeMenu_Cell
@@ -84,7 +98,15 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
             cell.badgeCount.isHidden = true
         }else if indexPath.item == 2{
             cell.lbl.text = "Sohbet İstekleri"
-            cell.badgeCount.isHidden = true
+            if let count = requestBadgeCount {
+                if count > 0 {
+                    cell.badgeCount.isHidden = false
+                    cell.badgeCount.text = count.description
+                }else{
+                    cell.badgeCount.isHidden = true
+                    
+                }
+            }
         }
         return cell
     }

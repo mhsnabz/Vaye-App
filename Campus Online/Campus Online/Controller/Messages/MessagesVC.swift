@@ -15,9 +15,25 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     func getIndex(indexItem: Int) {
         self.selectedIndex = indexItem
     }
+    var requestBadgeCount : Int?{
+        
+        didSet{
+            guard let badge = requestBadgeCount else {
+                menuBar.requestBadgeCount = nil
+                return }
+            if badge > 0  {
+                menuBar.requestBadgeCount = badge
+            }else{
+                menuBar.requestBadgeCount = nil
+            }
+        }
+        
+    }
     var totalBadgeCount : Int?{
         didSet{
-            guard let badge = totalBadgeCount else { return }
+            guard let badge = totalBadgeCount else {
+                menuBar.msgBadgeCount = nil
+                return }
             if badge > 0  {
                 menuBar.msgBadgeCount = badge
                 self.tabBarController?.tabBar.items?[3].badgeValue = badge.description
@@ -130,16 +146,16 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     private func getMessagesRequestBadgeCount(){
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
-            .collection("msg-list").whereField("badgeCount", isGreaterThan: 0 )
+            .collection("msg-request").whereField("badgeCount", isGreaterThan: 0 )
         notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
             guard let sself = self else { return }
-            sself.totalBadgeCount = 0
+            sself.requestBadgeCount = 0
             if err == nil {
                 guard let snap = querySnap else { return }
                 if !snap.isEmpty {
                     
                     for item in snap.documents{
-                        sself.totalBadgeCount! += item.get("badgeCount") as! Int
+                        sself.requestBadgeCount! += item.get("badgeCount") as! Int
                     }
                 }
             }
@@ -184,7 +200,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         super.viewWillAppear(animated)
         getMessagesBadgeCount()
         getNotificationCount()
-        
+        getMessagesRequestBadgeCount()
         let index = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
             cell.times = 0

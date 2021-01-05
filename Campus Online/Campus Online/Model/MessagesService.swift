@@ -191,10 +191,11 @@ class MessagesService {
                     db.setData(dicGetterLastMessage, merge: true)
                 }
             }
+            getBadgeCount(currentUser: currentUser, target: "msg-request", isOnline: isOnline, otherUser: otherUser)
+            setBadgeCount(currentUser: currentUser, isOnline: isOnline, otherUser: otherUser, target: "msg-request")
             
         }
-        getBadgeCount(currentUser: currentUser, target: "msg-request", isOnline: isOnline, otherUser: otherUser)
-        setBadgeCount(currentUser: currentUser, isOnline: isOnline, otherUser: otherUser, target: "msg-request")
+       
         
     }
     
