@@ -118,7 +118,12 @@ class MessagesService {
         }
         
         var dicSenderLastMessage = Dictionary<String,Any>()
-        dicSenderLastMessage = ["lastMsg":lastMsg, "time":FieldValue.serverTimestamp() , "thumbImage":otherUser.thumb_image!,"username":otherUser.username!, "name":otherUser.name!,"uid":otherUser.uid! ,"type": newMessage.kind.messageKindString]
+        dicSenderLastMessage = ["lastMsg":lastMsg,
+                                "time":FieldValue.serverTimestamp() ,
+                                "thumbImage":otherUser.thumb_image!,
+                                "username":otherUser.username!,
+                                "name":otherUser.name!,
+                                "uid":otherUser.uid! ,"type": newMessage.kind.messageKindString]
         var dicGetterLastMessage = Dictionary<String,Any>()
         dicGetterLastMessage = ["lastMsg":lastMsg,
                                 "time":FieldValue.serverTimestamp() ,

@@ -137,6 +137,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 guard let data = snap.data() else { return }
                 if snap.exists {
                     sself.currentUser = CurrentUser.init(dic: data)
+                    
                 }
             }
         })
