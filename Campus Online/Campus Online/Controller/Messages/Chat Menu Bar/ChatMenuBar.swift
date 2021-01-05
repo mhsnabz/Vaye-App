@@ -11,6 +11,20 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
     weak var delegate : HomeMenuBarSelectedIndex?
     weak var homeController : MessagesVC?
     var horizontalBarLeftConstarint : NSLayoutConstraint?
+    let indexPath = IndexPath(row: 0, section: 0)
+    var msgBadgeCount : Int?{
+        didSet{
+            let cell = collecitonView.cellForItem(at: indexPath) as! HomeMenu_Cell
+
+            guard let badge = msgBadgeCount else {
+                cell.badgeCount.isHidden = true
+                return
+            }
+            
+            cell.badgeCount.isHidden = false
+            cell.badgeCount.text = badge.description
+        }
+    }
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         
@@ -56,10 +70,21 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! HomeMenu_Cell
         if indexPath.item == 0 {
             cell.lbl.text = "Sohbetler"
+            if let count = msgBadgeCount {
+                if count > 0 {
+                    cell.badgeCount.isHidden = false
+                    cell.badgeCount.text = count.description
+                }else{
+                    cell.badgeCount.isHidden = true
+                    
+                }
+            }
         }else if indexPath.item == 1 {
             cell.lbl.text = "Arkadaşlar"
+            cell.badgeCount.isHidden = true
         }else if indexPath.item == 2{
             cell.lbl.text = "Sohbet İstekleri"
+            cell.badgeCount.isHidden = true
         }
         return cell
     }

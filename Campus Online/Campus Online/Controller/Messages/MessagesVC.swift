@@ -15,6 +15,18 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     func getIndex(indexItem: Int) {
         self.selectedIndex = indexItem
     }
+    var totalBadgeCount : Int?{
+        didSet{
+            guard let badge = totalBadgeCount else { return }
+            if badge > 0  {
+                menuBar.msgBadgeCount = badge
+                self.tabBarController?.tabBar.items?[3].badgeValue = badge.description
+            }else{
+                menuBar.msgBadgeCount = nil
+                self.tabBarController?.tabBar.items?[3].badgeValue = nil
+            }
+        }
+    }
     var selectedIndex : Int?{
         didSet{
             setNavBarIcon()
@@ -77,12 +89,48 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
         setNavigationBar()
         setNavBarIcon()
     }
-
-    
-    
+    private func getNotificationCount(){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("notification").whereField("isRead", isEqualTo: false)
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                guard let sself = self else {
+                    self?.tabBarController?.tabBar.items?[2].badgeValue = nil
+                    return
+                }
+                if snap.isEmpty {
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = nil
+                }else{
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = snap.documents.count.description
+                }
+            }
+        })
+    }
+    private func getMessagesBadgeCount(){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list").whereField("badgeCount", isGreaterThan: 0 )
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            sself.totalBadgeCount = 0
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    
+                    for item in snap.documents{
+                        sself.totalBadgeCount! += item.get("badgeCount") as! Int
+                    }
+                }
+            }
+        })
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         snapShotListener?.remove()
+        notificaitonListener?.remove()
         let indexChatList = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: indexChatList) as? ChatListCell{
             cell.snapShotListener?.remove()
@@ -101,6 +149,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidAppear(animated)
         snapShotListener?.remove()
+        notificaitonListener?.remove()
         let indexChatList = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: indexChatList) as? ChatListCell{
             cell.snapShotListener?.remove()
@@ -115,6 +164,9 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        getMessagesBadgeCount()
+        getNotificationCount()
+        
         let index = IndexPath(item: 0, section: 0)
         if  let cell = collectionView(collecitonView, cellForItemAt: index) as? ChatListCell{
             cell.times = 0
