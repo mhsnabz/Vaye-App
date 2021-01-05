@@ -11,8 +11,24 @@ import FirebaseFirestore
 private let home_cell = "Home_cell"
 private let scholl_cell = "scholl_cell"
 class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
+    weak var notificaitonListener : ListenerRegistration?
+    
     func getIndex(indexItem: Int) {
         self.selectedIndex = indexItem
+    }
+    var totalBadgeCount : Int?{
+        didSet{
+            guard let badge = totalBadgeCount else {
+            
+                return }
+            if badge > 0  {
+               
+                self.tabBarController?.tabBar.items?[3].badgeValue = badge.description
+            }else{
+                
+                self.tabBarController?.tabBar.items?[3].badgeValue = nil
+            }
+        }
     }
     var selectedIndex : Int?{
         didSet{
@@ -76,7 +92,19 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        notificaitonListener?.remove()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        notificaitonListener?.remove()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        getNotificationCount()
+        getMessagesBadgeCount()
+    }
     //MARK:--menu bar
     
     lazy var menuBar : HomeMenuBar = {
@@ -159,7 +187,44 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         
         
     }
-    
+    private func getNotificationCount(){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("notification").whereField("isRead", isEqualTo: false)
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                guard let sself = self else {
+                    self?.tabBarController?.tabBar.items?[2].badgeValue = nil
+                    return
+                }
+                if snap.isEmpty {
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = nil
+                }else{
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = snap.documents.count.description
+                }
+            }
+        })
+    }
+    private func getMessagesBadgeCount(){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list").whereField("badgeCount", isGreaterThan: 0 )
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            sself.totalBadgeCount = 0
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    
+                    for item in snap.documents{
+                        sself.totalBadgeCount! += item.get("badgeCount") as! Int
+                    }
+                }
+            }
+        })
+    }
     //MARK:-selecctors
     @objc func schollNotificaitonSetting(){
         let vc = SchoolPostNotificationSetting(currentUser : currentUser)
@@ -169,16 +234,16 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     }
     @objc func menuClick(){
         self.delegate?.handleMenuToggle(forMenuOption: nil)
-        if !isMenuOpen {
-            self.isMenuOpen = true
-            view.addSubview(backView)
-            backView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        }
-        else{
-            self.isMenuOpen = false
-            backView.removeFromSuperview()
-            
-        }
+//        if !isMenuOpen {
+//            self.isMenuOpen = true
+//            view.addSubview(backView)
+//            backView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+//        }
+//        else{
+//            self.isMenuOpen = false
+//            backView.removeFromSuperview()
+//
+//        }
     }
     @objc func setLessons(){
         

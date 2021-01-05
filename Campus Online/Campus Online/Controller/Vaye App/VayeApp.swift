@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 private let mainCell = "mainCell"
 private let foodMeCell = "foodMeCell"
 private let campingCell = "campingCell"
@@ -15,8 +16,21 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
     func getIndex(indexItem: Int) {
         self.selectedIndex = indexItem
     }
-    
-    
+    var totalBadgeCount : Int?{
+        didSet{
+            guard let badge = totalBadgeCount else {
+            
+                return }
+            if badge > 0  {
+               
+                self.tabBarController?.tabBar.items?[3].badgeValue = badge.description
+            }else{
+                
+                self.tabBarController?.tabBar.items?[3].badgeValue = nil
+            }
+        }
+    }
+    weak var notificaitonListener : ListenerRegistration?
     var selectedIndex : Int?{
         didSet{
             guard let index = selectedIndex else{
@@ -72,13 +86,23 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
+        getNotificationCount()
+        getNotificationCount()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        notificaitonListener?.remove()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        notificaitonListener?.remove()
     }
     init(currentUser : CurrentUser){
         self.currentUser = currentUser
         self.mainPostLauncher = MainPostActionSheet(currentUser: currentUser)
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -88,6 +112,45 @@ class VayeApp: UIViewController, MainMenuBarSelectedIndex {
         navigationItem.rightBarButtonItem = rigthBtn
     }
     //MARK:--funcitons
+    private func getNotificationCount(){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("notification").whereField("isRead", isEqualTo: false)
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                guard let sself = self else {
+                    self?.tabBarController?.tabBar.items?[2].badgeValue = nil
+                    return
+                }
+                if snap.isEmpty {
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = nil
+                }else{
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = snap.documents.count.description
+                }
+            }
+        })
+    }
+    private func getMessagesBadgeCount(){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("msg-list").whereField("badgeCount", isGreaterThan: 0 )
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            sself.totalBadgeCount = 0
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if !snap.isEmpty {
+                    
+                    for item in snap.documents{
+                        sself.totalBadgeCount! += item.get("badgeCount") as! Int
+                    }
+                }
+            }
+        })
+    }
+    
     private func  setupMenuBar(){
         navigationItem.title = navBarTitle[0]
         view.addSubview(menuBar)
