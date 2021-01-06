@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66D911CA24EEA9E8002D760A"
-               BuildableName = "Campus Online.app"
-               BlueprintName = "Campus Online"
-               ReferencedContainer = "container:Campus Online.xcodeproj">
+               BuildableName = "VayeApp.app"
+               BlueprintName = "VayeApp"
+               ReferencedContainer = "container:VayeApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66D911E024EEA9EA002D760A"
-               BuildableName = "Campus OnlineTests.xctest"
-               BlueprintName = "Campus OnlineTests"
-               ReferencedContainer = "container:Campus Online.xcodeproj">
+               BuildableName = "VayeAppTests.xctest"
+               BlueprintName = "VayeAppTests"
+               ReferencedContainer = "container:VayeApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66D911EB24EEA9EA002D760A"
-               BuildableName = "Campus OnlineUITests.xctest"
-               BlueprintName = "Campus OnlineUITests"
-               ReferencedContainer = "container:Campus Online.xcodeproj">
+               BuildableName = "VayeAppUITests.xctest"
+               BlueprintName = "VayeAppUITests"
+               ReferencedContainer = "container:VayeApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -67,9 +67,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66D911CA24EEA9E8002D760A"
-            BuildableName = "Campus Online.app"
-            BlueprintName = "Campus Online"
-            ReferencedContainer = "container:Campus Online.xcodeproj">
+            BuildableName = "VayeApp.app"
+            BlueprintName = "VayeApp"
+            ReferencedContainer = "container:VayeApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -95,9 +95,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66D911CA24EEA9E8002D760A"
-            BuildableName = "Campus Online.app"
-            BlueprintName = "Campus Online"
-            ReferencedContainer = "container:Campus Online.xcodeproj">
+            BuildableName = "VayeApp.app"
+            BlueprintName = "VayeApp"
+            ReferencedContainer = "container:VayeApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

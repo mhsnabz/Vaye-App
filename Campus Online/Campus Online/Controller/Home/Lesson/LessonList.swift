@@ -251,21 +251,27 @@ class LessonList: UITableViewController {
                     abc.setData(dict, merge: true) { (err) in
                         if err == nil {
                             self.getAllPost(currentUser: currentUser, lessonName: lessonName) { (val) in
-                                self.addAllPost(postId: val, currentUser: currentUser) { (_val) in
-                                    if _val {
-                                        Utilities.succesProgress(msg : "Ders Eklendi")
-                                        self.tableView.reloadData()
-                                        let dbNoti = Firestore.firestore().collection(currentUser.short_school)
-                                            .document("lesson").collection(currentUser.bolum)
-                                            .document(lessonName!).collection("notification_getter").document(currentUser.uid)
-                                        dbNoti.setData(["uid":currentUser.uid as Any], merge: true) { (err) in
-                                            
+                                if !val.isEmpty{
+                                    self.addAllPost(postId: val, currentUser: currentUser) { (_val) in
+                                        if _val {
+                                            Utilities.succesProgress(msg : "Ders Eklendi")
+                                            self.tableView.reloadData()
+                                            let dbNoti = Firestore.firestore().collection(currentUser.short_school)
+                                                .document("lesson").collection(currentUser.bolum)
+                                                .document(lessonName!).collection("notification_getter").document(currentUser.uid)
+                                            dbNoti.setData(["uid":currentUser.uid as Any], merge: true) { (err) in
+                                                
+                                            }
+                                        }else{
+                                            Utilities.succesProgress(msg : "Ders Eklenemedi")
+                                            self.tableView.reloadData()
                                         }
-                                    }else{
-                                        Utilities.succesProgress(msg : "Ders Eklenemedi")
-                                        self.tableView.reloadData()
                                     }
+                                }else{
+                                    Utilities.succesProgress(msg : "Ders Eklendi")
+                                    self.tableView.reloadData()
                                 }
+                               
                             }
                             
                         }else{
@@ -356,19 +362,25 @@ class LessonList: UITableViewController {
                 abc.delete { (err) in
                     if err == nil {
                         self.getAllPost(currentUser: currentUser, lessonName: lessonName) { (val) in
-                            self.removeAllPost(postId: val, currentUser: currentUser) { (_val) in
-                                if _val{
-                                    Utilities.succesProgress(msg : "Ders Silindi")
-                                    self.tableView.reloadData()
-                                    let dbNoti = Firestore.firestore().collection(currentUser.short_school)
-                                        .document("lesson").collection(currentUser.bolum)
-                                        .document(lessonName!).collection("notification_getter").document(currentUser.uid)
-                                    dbNoti.delete()
-                                    
-                                }else{
-                                    Utilities.errorProgress(msg: "Ders Silinemedi")
+                            if !val.isEmpty{
+                                self.removeAllPost(postId: val, currentUser: currentUser) { (_val) in
+                                    if _val{
+                                        Utilities.succesProgress(msg : "Ders Silindi")
+                                        self.tableView.reloadData()
+                                        let dbNoti = Firestore.firestore().collection(currentUser.short_school)
+                                            .document("lesson").collection(currentUser.bolum)
+                                            .document(lessonName!).collection("notification_getter").document(currentUser.uid)
+                                        dbNoti.delete()
+                                        
+                                    }else{
+                                        Utilities.errorProgress(msg: "Ders Silinemedi")
+                                    }
                                 }
+                            }else{
+                                Utilities.succesProgress(msg : "Ders Silindi")
+                                self.tableView.reloadData()
                             }
+                          
                         }
                         
                     }else{

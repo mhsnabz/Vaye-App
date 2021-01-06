@@ -195,7 +195,6 @@
 		66AF724C251321E9007E96BC /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF724B251321E9007E96BC /* LessonInfoHeaderTwo.swift */; };
 		66AF72C025133019007E96BC /* GoogleAdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72BF25133019007E96BC /* GoogleAdBannerView.swift */; };
 		66AF72C825133096007E96BC /* FieldListLiteAdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72C725133096007E96BC /* FieldListLiteAdCell.swift */; };
-		66AF72D02513353A007E96BC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66AF72CF2513353A007E96BC /* GoogleService-Info.plist */; };
 		66AF72D825134996007E96BC /* GoogleNativeAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AF72D725134996007E96BC /* GoogleNativeAdsView.swift */; };
 		66B2100E251474D4002BD8A3 /* LoadMoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B2100D251474D4002BD8A3 /* LoadMoreCell.swift */; };
 		66B2B4122554B58A0088262E /* ASMainPostOtherUserVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B2B4112554B58A0088262E /* ASMainPostOtherUserVM.swift */; };
@@ -224,6 +223,7 @@
 		66C578572598BE3A006E9756 /* MessagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C578562598BE3A006E9756 /* MessagesService.swift */; };
 		66C5785D2598BFB8006E9756 /* FiriendListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5785C2598BFB8006E9756 /* FiriendListItem.swift */; };
 		66C5786325999462006E9756 /* ConservationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C5786225999462006E9756 /* ConservationVC.swift */; };
+		66C6607C25A5E43500AFEDDF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66C6607B25A5E43500AFEDDF /* GoogleService-Info.plist */; };
 		66CB7535259C9F52000D51BE /* LocaitonPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CB7534259C9F52000D51BE /* LocaitonPicker.swift */; };
 		66CB753D259CE241000D51BE /* RecordSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CB753C259CE241000D51BE /* RecordSheet.swift */; };
 		66CB7552259CF087000D51BE /* record.json in Resources */ = {isa = PBXBuildFile; fileRef = 66CB7551259CF087000D51BE /* record.json */; };
@@ -497,7 +497,6 @@
 		66AF724B251321E9007E96BC /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		66AF72BF25133019007E96BC /* GoogleAdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAdBannerView.swift; sourceTree = "<group>"; };
 		66AF72C725133096007E96BC /* FieldListLiteAdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldListLiteAdCell.swift; sourceTree = "<group>"; };
-		66AF72CF2513353A007E96BC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		66AF72D725134996007E96BC /* GoogleNativeAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleNativeAdsView.swift; sourceTree = "<group>"; };
 		66B2100D251474D4002BD8A3 /* LoadMoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadMoreCell.swift; sourceTree = "<group>"; };
 		66B2B4112554B58A0088262E /* ASMainPostOtherUserVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASMainPostOtherUserVM.swift; sourceTree = "<group>"; };
@@ -526,6 +525,7 @@
 		66C578562598BE3A006E9756 /* MessagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesService.swift; sourceTree = "<group>"; };
 		66C5785C2598BFB8006E9756 /* FiriendListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiriendListItem.swift; sourceTree = "<group>"; };
 		66C5786225999462006E9756 /* ConservationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConservationVC.swift; sourceTree = "<group>"; };
+		66C6607B25A5E43500AFEDDF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		66CB7534259C9F52000D51BE /* LocaitonPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaitonPicker.swift; sourceTree = "<group>"; };
 		66CB753C259CE241000D51BE /* RecordSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSheet.swift; sourceTree = "<group>"; };
 		66CB7551259CF087000D51BE /* record.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = record.json; sourceTree = "<group>"; };
@@ -542,14 +542,14 @@
 		66D7C3E62589AB1E00244D3B /* FoodMe_Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodMe_Cell.swift; sourceTree = "<group>"; };
 		66D7C3EB2589AB2C00244D3B /* Camping_Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camping_Cell.swift; sourceTree = "<group>"; };
 		66D7C3F02589AB3700244D3B /* BuySell_Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuySell_Cell.swift; sourceTree = "<group>"; };
-		66D911CB24EEA9E8002D760A /* Campus Online.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Campus Online.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66D911CB24EEA9E8002D760A /* VayeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VayeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D911CE24EEA9E8002D760A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66D911D724EEA9EA002D760A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		66D911DC24EEA9EA002D760A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		66D911E124EEA9EA002D760A /* Campus OnlineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Campus OnlineTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66D911E124EEA9EA002D760A /* VayeAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VayeAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D911E524EEA9EA002D760A /* Campus_OnlineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campus_OnlineTests.swift; sourceTree = "<group>"; };
 		66D911E724EEA9EA002D760A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		66D911EC24EEA9EA002D760A /* Campus OnlineUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Campus OnlineUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66D911EC24EEA9EA002D760A /* VayeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VayeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D911F024EEA9EA002D760A /* Campus_OnlineUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campus_OnlineUITests.swift; sourceTree = "<group>"; };
 		66D911F224EEA9EA002D760A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66D9120424EEAA5B002D760A /* Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
@@ -1342,9 +1342,9 @@
 		66D911CC24EEA9E8002D760A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				66D911CB24EEA9E8002D760A /* Campus Online.app */,
-				66D911E124EEA9EA002D760A /* Campus OnlineTests.xctest */,
-				66D911EC24EEA9EA002D760A /* Campus OnlineUITests.xctest */,
+				66D911CB24EEA9E8002D760A /* VayeApp.app */,
+				66D911E124EEA9EA002D760A /* VayeAppTests.xctest */,
+				66D911EC24EEA9EA002D760A /* VayeAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1364,7 +1364,7 @@
 				66D9120024EEAA25002D760A /* View */,
 				66D911FF24EEAA1E002D760A /* Controller */,
 				66D911CE24EEA9E8002D760A /* AppDelegate.swift */,
-				66AF72CF2513353A007E96BC /* GoogleService-Info.plist */,
+				66C6607B25A5E43500AFEDDF /* GoogleService-Info.plist */,
 				66D911D724EEA9EA002D760A /* Assets.xcassets */,
 				66D911DC24EEA9EA002D760A /* Info.plist */,
 				6613340324F43813002677AB /* LaunchScreen.storyboard */,
@@ -1689,9 +1689,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		66D911CA24EEA9E8002D760A /* Campus Online */ = {
+		66D911CA24EEA9E8002D760A /* VayeApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 66D911F524EEA9EA002D760A /* Build configuration list for PBXNativeTarget "Campus Online" */;
+			buildConfigurationList = 66D911F524EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeApp" */;
 			buildPhases = (
 				4B3BDB225E1E603C02FC1597 /* [CP] Check Pods Manifest.lock */,
 				66D911C724EEA9E8002D760A /* Sources */,
@@ -1704,14 +1704,14 @@
 			);
 			dependencies = (
 			);
-			name = "Campus Online";
+			name = VayeApp;
 			productName = "Campus Online";
-			productReference = 66D911CB24EEA9E8002D760A /* Campus Online.app */;
+			productReference = 66D911CB24EEA9E8002D760A /* VayeApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		66D911E024EEA9EA002D760A /* Campus OnlineTests */ = {
+		66D911E024EEA9EA002D760A /* VayeAppTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 66D911F824EEA9EA002D760A /* Build configuration list for PBXNativeTarget "Campus OnlineTests" */;
+			buildConfigurationList = 66D911F824EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeAppTests" */;
 			buildPhases = (
 				C544967061CE5A154E8916A6 /* [CP] Check Pods Manifest.lock */,
 				66D911DD24EEA9EA002D760A /* Sources */,
@@ -1723,14 +1723,14 @@
 			dependencies = (
 				66D911E324EEA9EA002D760A /* PBXTargetDependency */,
 			);
-			name = "Campus OnlineTests";
+			name = VayeAppTests;
 			productName = "Campus OnlineTests";
-			productReference = 66D911E124EEA9EA002D760A /* Campus OnlineTests.xctest */;
+			productReference = 66D911E124EEA9EA002D760A /* VayeAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		66D911EB24EEA9EA002D760A /* Campus OnlineUITests */ = {
+		66D911EB24EEA9EA002D760A /* VayeAppUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 66D911FB24EEA9EA002D760A /* Build configuration list for PBXNativeTarget "Campus OnlineUITests" */;
+			buildConfigurationList = 66D911FB24EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeAppUITests" */;
 			buildPhases = (
 				666D0C4D35C1559BBE122AC7 /* [CP] Check Pods Manifest.lock */,
 				66D911E824EEA9EA002D760A /* Sources */,
@@ -1743,9 +1743,9 @@
 			dependencies = (
 				66D911EE24EEA9EA002D760A /* PBXTargetDependency */,
 			);
-			name = "Campus OnlineUITests";
+			name = VayeAppUITests;
 			productName = "Campus OnlineUITests";
-			productReference = 66D911EC24EEA9EA002D760A /* Campus OnlineUITests.xctest */;
+			productReference = 66D911EC24EEA9EA002D760A /* VayeAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -1771,7 +1771,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 66D911C624EEA9E8002D760A /* Build configuration list for PBXProject "Campus Online" */;
+			buildConfigurationList = 66D911C624EEA9E8002D760A /* Build configuration list for PBXProject "VayeApp" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -1785,9 +1785,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				66D911CA24EEA9E8002D760A /* Campus Online */,
-				66D911E024EEA9EA002D760A /* Campus OnlineTests */,
-				66D911EB24EEA9EA002D760A /* Campus OnlineUITests */,
+				66D911CA24EEA9E8002D760A /* VayeApp */,
+				66D911E024EEA9EA002D760A /* VayeAppTests */,
+				66D911EB24EEA9EA002D760A /* VayeAppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -1797,9 +1797,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66C6607C25A5E43500AFEDDF /* GoogleService-Info.plist in Resources */,
 				6613340424F43813002677AB /* LaunchScreen.storyboard in Resources */,
 				66775591252F664D00DBF3CD /* parties.json in Resources */,
-				66AF72D02513353A007E96BC /* GoogleService-Info.plist in Resources */,
 				66CB755A259D0121000D51BE /* play-pause.json in Resources */,
 				6677559B252F68F800DBF3CD /* food.json in Resources */,
 				66775596252F670700DBF3CD /* camping.json in Resources */,
@@ -2239,12 +2239,12 @@
 /* Begin PBXTargetDependency section */
 		66D911E324EEA9EA002D760A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 66D911CA24EEA9E8002D760A /* Campus Online */;
+			target = 66D911CA24EEA9E8002D760A /* VayeApp */;
 			targetProxy = 66D911E224EEA9EA002D760A /* PBXContainerItemProxy */;
 		};
 		66D911EE24EEA9EA002D760A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 66D911CA24EEA9E8002D760A /* Campus Online */;
+			target = 66D911CA24EEA9E8002D760A /* VayeApp */;
 			targetProxy = 66D911ED24EEA9EA002D760A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -2425,7 +2425,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Campus Online.app/Campus Online";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VayeApp.app/VayeApp";
 			};
 			name = Debug;
 		};
@@ -2448,7 +2448,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Campus Online.app/Campus Online";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VayeApp.app/VayeApp";
 			};
 			name = Release;
 		};
@@ -2497,7 +2497,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		66D911C624EEA9E8002D760A /* Build configuration list for PBXProject "Campus Online" */ = {
+		66D911C624EEA9E8002D760A /* Build configuration list for PBXProject "VayeApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66D911F324EEA9EA002D760A /* Debug */,
@@ -2506,7 +2506,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		66D911F524EEA9EA002D760A /* Build configuration list for PBXNativeTarget "Campus Online" */ = {
+		66D911F524EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66D911F624EEA9EA002D760A /* Debug */,
@@ -2515,7 +2515,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		66D911F824EEA9EA002D760A /* Build configuration list for PBXNativeTarget "Campus OnlineTests" */ = {
+		66D911F824EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeAppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66D911F924EEA9EA002D760A /* Debug */,
@@ -2524,7 +2524,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		66D911FB24EEA9EA002D760A /* Build configuration list for PBXNativeTarget "Campus OnlineUITests" */ = {
+		66D911FB24EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeAppUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66D911FC24EEA9EA002D760A /* Debug */,

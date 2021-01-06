@@ -82,6 +82,8 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         setupMenuBar()
         configureUI()
         setNavBarButton()
+        getNotificationCount()
+        getMessagesBadgeCount()
     }
     
     init(currentUser : CurrentUser) {
@@ -102,8 +104,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        getNotificationCount()
-        getMessagesBadgeCount()
+       
     }
     //MARK:--menu bar
     
