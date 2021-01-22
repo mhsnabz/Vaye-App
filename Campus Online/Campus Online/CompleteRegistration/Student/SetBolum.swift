@@ -11,10 +11,18 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 private let cellID = "cellId"
-class SetBolum: UITableViewController {
 
-    var dataSourceFiltred : [String] = []
-    var dataSource = [String]()
+struct BolumName {
+    var key : String
+    var bolumName : String
+}
+
+class SetBolum: UITableViewController {
+    var data_source = [BolumName]()
+    var data_source_filter = [BolumName]()
+    
+
+
     let searchBar = UISearchBar()
     var taskUser : TaskUser
     var isSearching = false
@@ -49,11 +57,13 @@ class SetBolum: UITableViewController {
         db.getDocument { (docSnap, err) in
             if err == nil {
                 let children = docSnap!.data()
-                for (_, value) in children! {
-                    self.dataSource.append(value as! String)
-                    self.dataSource.sort { (val1, val2) -> Bool in
-                        return  val1 < val2
+                for (key, value) in children! {
+                    self.data_source.append(BolumName(key: key, bolumName: value as! String))
+                  
+                    self.data_source.sort { (val1, val2) -> Bool in
+                        return  val1.key < val2.key
                     }
+                   
                     self.tableView.reloadData()
                 }
                 
@@ -70,9 +80,9 @@ class SetBolum: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isSearching {
-            return self.dataSourceFiltred.count
+            return self.data_source_filter.count
         }else{
-            return self.dataSource.count
+            return self.data_source.count
         }
     }
     
@@ -82,10 +92,10 @@ class SetBolum: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! FakulteCell
         if isSearching {
-            cell.lbl.text = dataSourceFiltred[indexPath.row]
+            cell.lbl.text = data_source_filter[indexPath.row].bolumName
             
         }else{
-            cell.lbl.text = dataSource[indexPath.row]
+            cell.lbl.text = data_source[indexPath.row].bolumName
             
         }
         
@@ -96,16 +106,17 @@ class SetBolum: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching
         {
-            taskUser.bolum = dataSourceFiltred[indexPath.row]
-            
-            let vc = CompleteSigingUp(taskUser: taskUser, _bolumName: dataSourceFiltred[indexPath.row], _fakulteName: taskUser.fakulte)
+            taskUser.bolum = data_source_filter[indexPath.row].bolumName
+            taskUser.bolum_key = data_source_filter[indexPath.row].key
+            let vc = CompleteSigingUp(taskUser: taskUser, _bolumName: data_source_filter[indexPath.row].bolumName, _fakulteName: taskUser.fakulte, _bolumKey :  data_source_filter[indexPath.row].key)
       
             self.navigationController?.pushViewController(vc, animated: true)
         }
         else
         {
-            taskUser.bolum = dataSource[indexPath.row]
-            let vc = CompleteSigingUp(taskUser: taskUser, _bolumName: dataSource[indexPath.row], _fakulteName: taskUser.fakulte)
+            taskUser.bolum = data_source[indexPath.row].bolumName
+            taskUser.bolum_key = data_source[indexPath.row].key
+            let vc = CompleteSigingUp(taskUser: taskUser, _bolumName: data_source[indexPath.row].bolumName, _fakulteName: taskUser.fakulte, _bolumKey :  data_source[indexPath.row].key)
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -154,10 +165,10 @@ extension SetBolum : UISearchBarDelegate {
         {
             
             isSearching = true
-            dataSourceFiltred = dataSource
-            dataSourceFiltred = dataSource.filter({ (name) -> Bool in
+            data_source_filter = data_source
+            data_source_filter = data_source.filter({ (name) -> Bool in
                 guard let text = searchBar.text else { return false}
-                return name.contains(text)
+                return name.bolumName.contains(text)
             })
             self.tableView.reloadData()
             

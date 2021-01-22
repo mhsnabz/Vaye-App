@@ -691,7 +691,7 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
 //                self.data.append(SelectedData.init(data: try Data(contentsOf: myURL) , type: DataTypes.doc.description))
 //                self.collectionview.reloadData()
 //                 self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
-                UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
+                UploadDataToDatabase.uploadDataBase(lesson_key : post.lessonName ,postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
                     print(val[0])
                     guard let sself = self else { return }
                     self?.updateData(url: val[0], postId:sself.post.postId, currentUser: sself.currentUser) { (_) in
@@ -713,7 +713,7 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
 //
 //                self.collectionview.reloadData()
 //                self.navigationItem.title = "\( getSizeOfData(data: data)) mb"
-                UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["pdf"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
+                UploadDataToDatabase.uploadDataBase(lesson_key: post.lesson_key, postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["pdf"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
                     print(val[0])
                     guard let sself = self else { return }
                     self?.updateData(url: val[0], postId: sself.post.postId, currentUser: sself.currentUser) { (_) in
@@ -732,7 +732,7 @@ extension StudentEditPost : UIDocumentMenuDelegate,UIDocumentPickerDelegate{
         }else if myURL.uti == "org.openxmlformats.wordprocessingml.document"
         {
             do {
-                UploadDataToDatabase.uploadDataBase(postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
+                UploadDataToDatabase.uploadDataBase(lesson_key: post.lesson_key, postDate: post.postId, currentUser: currentUser, lessonName: post.lessonName, type: ["doc"], data: [try Data(contentsOf: myURL) ]) {[weak self] (val) in
                     print(val[0])
                     guard let sself = self else { return }
                     self?.updateData(url: val[0], postId: sself.post.postId, currentUser: sself.currentUser) { (_) in
@@ -820,7 +820,7 @@ extension StudentEditPost : UIImagePickerControllerDelegate,UINavigationControll
                             let thumbRef = Storage.storage().reference().child(sself.currentUser.short_school + " thumb")
                                 .child(sself.currentUser.bolum).child(sself.post.lessonName).child(sself.currentUser.username).child(sself.post.postId).child(Date().millisecondsSince1970.description + DataTypes.image.mimeType)
                             let image : UIImage = UIImage(data: uploadData)!
-                            guard let thumbData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
+                            guard let thumbData = resizeImage(image: image, targetSize: CGSize(width: 512, height: 512)).jpegData(compressionQuality: 1) else { return }
                             thumbRef.putData(thumbData, metadata: metaDataForImage) { (metaData, err) in
                                 if err == nil {
                                     thumbRef.downloadURL { (url, err) in

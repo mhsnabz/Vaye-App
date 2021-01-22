@@ -20,6 +20,7 @@ class LessonList: UITableViewController {
     var teacherName : String?
     var teacher_id : String?
     var teacher_email : String?
+    var lesson_key : String?
     
     private var actionSheet : ActionSheetLauncher
     //MARK: -lifeCycle
@@ -201,6 +202,7 @@ class LessonList: UITableViewController {
                     self?.teacherName = self?.dataSourceFiltred[indexPath.row].teacherName
                     self?.lesson_name =  self?.dataSourceFiltred[indexPath.row].lessonName
                     self?.teacher_email = self?.dataSourceFiltred[indexPath.row].teacherEmail
+                    self?.lesson_key = self?.dataSourceFiltred[indexPath.row].lesson_key
                 }
             }
             
@@ -209,7 +211,7 @@ class LessonList: UITableViewController {
                 if val {
                     self?.removeLesson(lessonName: self?.dataSource[indexPath.row].lessonName, teacherName: self?.dataSource[indexPath.row].teacherName, teacherID: self?.dataSource[indexPath.row].teacherId, teacherEmail: self?.dataSource[indexPath.row].teacherEmail)
                     
-                    
+                        
                     
                 }else{
                     self?.actionSheet.show()
@@ -218,6 +220,7 @@ class LessonList: UITableViewController {
                     self?.teacherName = self?.dataSource[indexPath.row].teacherName
                     self?.lesson_name =  self?.dataSource[indexPath.row].lessonName
                     self?.teacher_email = self?.dataSource[indexPath.row].teacherEmail
+                    self?.lesson_key = self?.dataSource[indexPath.row].lesson_key
                 }
             }
             
@@ -226,14 +229,14 @@ class LessonList: UITableViewController {
     
     
     //MARK: - functions
-    private func addLesson(lessonName : String! ,teacherName : String!, teacherID : String! , teacherEmail : String! )
+    private func addLesson(lessonName : String! ,teacherName : String!, teacherID : String! , teacherEmail : String!  , lesson_key : String!)
     {
         Utilities.waitProgress(msg: "Ekleniyor")
         guard let currentUser = currentUser else {
             Utilities.errorProgress(msg: "Eklenemedi")
             return }
-        
-        let dic = ["teacherName":teacherName as Any,
+            
+        let dic = ["teacherName":teacherName as Any,"lesson_key":lesson_key as Any,
                    "teacherId":teacherID as Any,
                    "teacherEmail":teacherEmail as Any,
                    "lessonName":lessonName!] as [String:Any]
@@ -252,7 +255,7 @@ class LessonList: UITableViewController {
                         if err == nil {
                             self.getAllPost(currentUser: currentUser, lessonName: lessonName) { (val) in
                                 if !val.isEmpty{
-                                    self.addAllPost(postId: val, currentUser: currentUser) { (_val) in
+                                    self.addAllPost(postId: val, currentUser: currentUser, lessonName: lessonName) { (_val) in
                                         if _val {
                                             Utilities.succesProgress(msg : "Ders Eklendi")
                                             self.tableView.reloadData()
@@ -315,12 +318,12 @@ class LessonList: UITableViewController {
             }
         }
     }
-    private func addAllPost(postId : [String] , currentUser : CurrentUser , completion : @escaping(Bool) -> Void){
+    private func addAllPost(postId : [String] , currentUser : CurrentUser, lessonName : String! , completion : @escaping(Bool) -> Void){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/lesson-post/1599800825321
         for item in postId {
             let db = Firestore.firestore().collection("user")
                 .document(currentUser.uid).collection("lesson-post").document(item)
-            db.setData(["postId":item], merge: true) { (err) in
+            db.setData(["postId":item , "lessonName":lessonName as Any], merge: true) { (err) in
                 if err == nil {
                     completion(true)
                 }else{
@@ -432,7 +435,7 @@ extension LessonList : ActionSheetLauncherDelegate {
         switch option
         {
         case .addLesson(_):
-            addLesson(lessonName: lesson_name!, teacherName: teacherName!, teacherID: teacher_id, teacherEmail: teacher_email!)
+            addLesson(lessonName: lesson_name!, teacherName: teacherName!, teacherID: teacher_id, teacherEmail: teacher_email! , lesson_key : lesson_key)
             break
         case .lessonInfo(_):
             guard let currentUser = currentUser else { return }

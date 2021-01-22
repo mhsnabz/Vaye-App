@@ -10,8 +10,8 @@ import UIKit
 import FirebaseFirestore
 class ChooseLessonTB: UITableViewController {
     var currentUser : CurrentUser
-    var dataSource = [String]()
-    var dataSourceFilter = [String]()
+    var dataSource = [LessonsModel]()
+    var dataSourceFilter = [LessonsModel]()
     var isSearching = false
     let searchBar = UISearchBar()
     var fallower = [LessonFallowerUser]()
@@ -58,9 +58,9 @@ class ChooseLessonTB: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! ChooseLessonCell
         if isSearching {
-         cell.lessonName.text = dataSourceFilter[indexPath.row]
+            cell.lessonName.text = dataSourceFilter[indexPath.row].lessonName
         }else{
-            cell.lessonName.text = dataSource[indexPath.row]
+            cell.lessonName.text = dataSource[indexPath.row].lessonName
         }
        
         return cell
@@ -71,19 +71,21 @@ class ChooseLessonTB: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearching {
             Utilities.waitProgress(msg: nil)
-                   UserService.shared.fetchFallower(currentUser.short_school, currentUser.bolum, dataSourceFilter[indexPath.row]) { [weak self] (item) in
+            UserService.shared.fetchFallower(currentUser.short_school, currentUser.bolum, dataSourceFilter[indexPath.row].lessonName) { [weak self] (item) in
                        guard let self = self else { return }
-                       let vc = StudentNewPost(currentUser: self.currentUser, selectedLesson : self.dataSource[indexPath.row], users: item)
-                       vc.selectedLesson = self.dataSource[indexPath.row]
+                let vc = StudentNewPost(currentUser: self.currentUser, selectedLesson : self.dataSourceFilter[indexPath.row].lessonName, users: item , lesson_key : self.dataSourceFilter[indexPath.row].lesson_key )
+                vc.selectedLesson = self.dataSourceFilter[indexPath.row].lessonName
+                vc.lesson_key = self.dataSourceFilter[indexPath.row].lesson_key
                        self.navigationController?.pushViewController(vc, animated: true)
                        Utilities.dismissProgress()
                    }  
         }else {
             Utilities.waitProgress(msg: nil)
-            UserService.shared.fetchFallower(currentUser.short_school, currentUser.bolum, dataSource[indexPath.row]) { [weak self] (item) in
+            UserService.shared.fetchFallower(currentUser.short_school, currentUser.bolum, dataSource[indexPath.row].lessonName) { [weak self] (item) in
                 guard let self = self else { return }
-                let vc = StudentNewPost(currentUser: self.currentUser, selectedLesson : self.dataSource[indexPath.row], users: item)
-                vc.selectedLesson = self.dataSource[indexPath.row]
+                let vc = StudentNewPost(currentUser: self.currentUser, selectedLesson : self.dataSource[indexPath.row].lessonName, users: item , lesson_key :self.dataSource[indexPath.row].lesson_key )
+                vc.selectedLesson = self.dataSource[indexPath.row].lessonName
+                vc.lesson_key = self.dataSource[indexPath.row].lesson_key
                 self.navigationController?.pushViewController(vc, animated: true)
                 Utilities.dismissProgress()
             }
@@ -134,7 +136,7 @@ class ChooseLessonTB: UITableViewController {
                 if !querySnap!.isEmpty {
                     Utilities.dismissProgress()
                     for doc in querySnap!.documents{
-                        self?.dataSource.append(doc.documentID)
+                        self?.dataSource.append(LessonsModel(dic: doc.data()))
                         self?.tableView.reloadData()
                     }
                 }else{
@@ -206,7 +208,7 @@ extension ChooseLessonTB : UISearchBarDelegate {
             dataSourceFilter = dataSource
             dataSourceFilter = dataSource.filter({ (lessonName) -> Bool in
             guard let text = searchBar.text else {return false}
-                return lessonName.contains(text)
+                return lessonName.lessonName.contains(text)
             })
             self.tableView.reloadData()
             

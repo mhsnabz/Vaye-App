@@ -47,7 +47,7 @@ class MainPostModel {
         if let lessonName = dic?["lessonName"] as? String {
             self.lessonName = lessonName
         }
-        if let postID = dic?["postID"] as? Int64 {
+        if let postID = dic?["post_ID"] as? Int64 {
                    self.postID = postID
                }
         

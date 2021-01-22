@@ -12,10 +12,14 @@ class LessonsModel {
     var teacherId : String!
     var teacherName : String!
     var lessonName : String!
+    var lesson_key : String!
     init( dic : Dictionary<String,Any>) {
        
         if let teacherEmail = dic["teacherEmail"] as? String {
             self.teacherEmail = teacherEmail
+        }
+        if let lesson_key = dic["lesson_key"] as? String {
+            self.lesson_key = lesson_key
         }
         if let teacherId = dic["teacherId"] as? String {
                   self.teacherId = teacherId

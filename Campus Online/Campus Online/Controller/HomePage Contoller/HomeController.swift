@@ -285,7 +285,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
                     let  centerController = UINavigationController(rootViewController: vc)
                     centerController.modalPresentationStyle = .fullScreen
                     self.present(centerController, animated: true, completion: nil)
-                }else{
+                }else if currentUser.priority == "student"{
                     
                     let vc = ChooseLessonTB(currentUser: currentUser)
                     let  centerController = UINavigationController(rootViewController: vc)
@@ -305,7 +305,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             let  centerController = UINavigationController(rootViewController: vc)
             centerController.modalPresentationStyle = .fullScreen
             self.present(centerController, animated: true, completion: nil)
-        }else{
+        }else  if currentUser.priority == "student"{
             
             let vc = ChooseLessonTB(currentUser: currentUser)
             let  centerController = UINavigationController(rootViewController: vc)

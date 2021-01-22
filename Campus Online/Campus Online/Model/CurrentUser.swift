@@ -12,6 +12,7 @@ class CurrentUser {
     var totalBadge : Int!
     var allowRequest : Bool!
     var name : String!
+    var bolum_key : String!
     var number : String!
     var priority : String!
     var profileImage : String!
@@ -38,6 +39,10 @@ class CurrentUser {
         
         if let email = dic["email"] as? String {
             self.email = email
+        }
+        
+        if let bolum_key = dic["bolum_key"] as? String {
+            self.bolum_key = bolum_key
         }
         if let totalBadge = dic["totalBadge"] as? Int {
             self.totalBadge = totalBadge

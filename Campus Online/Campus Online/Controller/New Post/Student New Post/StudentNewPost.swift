@@ -40,6 +40,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     var success = true
     var fallowers = [LessonFallowerUser]()
     var selectedLesson : String
+    var lesson_key : String
     var link : String?
     let lbl = UILabel(frame: .zero)
     var userNames = [String]()
@@ -170,12 +171,13 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
     }()
     
     //MARK:- lifeCycle
-    init(currentUser : CurrentUser ,selectedLesson : String , users : [LessonFallowerUser]) {
+    init(currentUser : CurrentUser ,selectedLesson : String , users : [LessonFallowerUser] , lesson_key : String) {
         self.currentUser = currentUser
         self.actionSheet = ActionSheetLauncher(currentUser: currentUser, target: Target.drive.description)
         self.addUserSheet = AddUserLaunher(currentUser: currentUser)
         self.selectedLesson = selectedLesson
         self.fallowers = users
+        self.lesson_key = lesson_key
         super.init(nibName: nil, bundle: nil)
         self.postDate = Int64(Date().timeIntervalSince1970 * 1000).description
         
@@ -427,7 +429,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
             dataType.append(data[number].type)
         }
         if self.data.isEmpty{
-            PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
+            PostService.shared.setNewLessonPost( type: "post", lesson_key: lesson_key, link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
                 guard let sself = self else { return }
                 sself.navigationController?.popViewController(animated: true)
                 self?.setMyPostOnDatabase(postId: date) { (_) in
@@ -439,8 +441,8 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
         }else {
             
             
-            UploadDataToDatabase.uploadDataBase(postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
-                PostService.shared.setNewLessonPost( link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
+            UploadDataToDatabase.uploadDataBase(lesson_key : lesson_key ,postDate: date, currentUser: self.currentUser, lessonName: self.selectedLesson, type : dataType , data : val) { (url) in
+                PostService.shared.setNewLessonPost( type: "data", lesson_key: self.lesson_key, link: self.link, currentUser: self.currentUser, postId: date, users: self.fallowers, msgText: self.text.text, datas: url, lessonName: self.selectedLesson, short_school: self.currentUser.short_school, major: self.currentUser.bolum) {[weak self] (_) in
                     
                     guard let sself = self else { return }
                     sself.navigationController?.popViewController(animated: true)

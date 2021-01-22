@@ -11,6 +11,7 @@ import FirebaseFirestore
 import GoogleMobileAds
 class LessonPostModel {
     var lessonName : String!
+    var lesson_key : String!
     var postTime : Timestamp?
     var senderName : String!
     var text : String!
@@ -20,7 +21,7 @@ class LessonPostModel {
     var dislike : [String]!
     var link : String!
     var postId  :String!
-    var postID : Int64!
+    var post_ID : Int64!
     var data : [String]!
     var thumbData : [String]!
     var thumb_image : String!
@@ -40,11 +41,14 @@ class LessonPostModel {
             self.lessonName = lessonName
         }
         if let postID = dic?["postID"] as? Int64 {
-                   self.postID = postID
+                   self.post_ID = postID
                }
         
         if let senderName = dic?["senderName"] as? String {
             self.senderName = senderName
+        }
+        if let lesson_key = dic?["lesson_key"] as? String {
+            self.lesson_key = lesson_key
         }
         if let senderUid = dic?["senderUid"] as? String {
                    self.senderUid = senderUid

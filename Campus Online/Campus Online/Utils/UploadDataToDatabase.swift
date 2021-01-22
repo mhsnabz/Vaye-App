@@ -12,13 +12,15 @@ import FirebaseStorage
 import SVProgressHUD
 class UploadDataToDatabase : NSObject {
     
-    static func uploadDataBase(postDate : String ,currentUser : CurrentUser ,lessonName : String, type : [String] , data : [Data] , completion : @escaping([String]) -> Void ){
-        save_datas(date: postDate, currentUser: currentUser, lessonName: lessonName, type: type, datas: data) { (listOfUrl) in
+    static func uploadDataBase(lesson_key : String ,postDate : String ,currentUser : CurrentUser ,lessonName : String, type : [String] , data : [Data] , completion : @escaping([String]) -> Void ){
+        save_datas(lesson_key : lesson_key ,date: postDate, currentUser: currentUser, lessonName: lessonName, type: type, datas: data) { (listOfUrl) in
             print("url \(listOfUrl)")
             completion(listOfUrl)
         }
     }
-    static func save_datas ( date : String ,currentUser : CurrentUser , lessonName : String , type : [String] , datas : [Data] ,completionHandler: @escaping ([String]) -> () ){
+    static func save_datas (lesson_key : String , date : String ,currentUser : CurrentUser
+                            , lessonName : String , type : [String] , datas : [Data]
+                            ,completionHandler: @escaping ([String]) -> () ){
         var uploadedImageUrlsArray = [String]()
         var uploadCount = 0
         let imagesCount = datas.count
@@ -29,7 +31,7 @@ class UploadDataToDatabase : NSObject {
             Utilities.waitProgress(msg: "\(imagesCount) Dosya Yükleniyor\n Lütfen Bekleyiniz")
             DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+5) {
                 semaphore.wait()
-                saveDataToDataBase(date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data], uploadCount, imagesCount) { (url) in
+                saveDataToDataBase(lesson_key: lesson_key, date: date, currentUser: currentUser, lessonName: lessonName, type[data], datas[data], uploadCount, imagesCount) { (url) in
                     uploadedImageUrlsArray.append(url)
                     uploadCount += 1
                     print("Number of images successfully uploaded: \(uploadCount)")
@@ -84,17 +86,17 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
         metaDataForData.contentType = DataTypes.image.contentType
         
         
-        let storageRef = Storage.storage().reference().child(currentUser.short_school + " thumb")
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
+        let storageRef = Storage.storage().reference().child("thumb_datas")
+            .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
         //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
         let image : UIImage = UIImage(data: data)!
-        guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
+        guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 512, height: 512)).jpegData(compressionQuality: 1) else { return }
         uploadTask = storageRef.putData(uploadData, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
-                Storage.storage().reference().child(currentUser.short_school  + " thumb")
-                    .child(currentUser.bolum).child(lessonName ).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                Storage.storage().reference().child("thumb_datas")
+                    .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return
@@ -116,7 +118,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
         
         
         let storageRef = Storage.storage().reference().child(currentUser.short_school  + " thumb")
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType)
+            .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType)
         //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
        
         
@@ -126,7 +128,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
             {  print("err \(err as Any)") }
             else {
                 Storage.storage().reference().child(currentUser.short_school  + " thumb")
-                   .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
+                   .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return
@@ -147,7 +149,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
         
         
         let storageRef = Storage.storage().reference().child(currentUser.short_school  + " thumb")
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
+            .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
         //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
         
         uploadTask = storageRef.putData(UIImage(named: "pdf-holder")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
@@ -155,7 +157,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
             {  print("err \(err as Any)") }
             else {
              Storage.storage().reference().child(currentUser.short_school  + " thumb")
-                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
+                    .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return
@@ -211,7 +213,7 @@ func setDataToSavedTask(currentUser : CurrentUser , url : String,comptletion : @
     }
   
 }
-func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
+func saveDataToDataBase( lesson_key : String ,date : String ,currentUser : CurrentUser , lessonName : String ,_ type : String ,_ data : Data ,_ uploadCount : Int,_ imagesCount : Int, completion : @escaping(String) ->Void){
     let metaDataForData = StorageMetadata()
     let dataName = Date().millisecondsSince1970.description
     
@@ -219,13 +221,13 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
     {
         metaDataForData.contentType = DataTypes.doc.contentType
         let storageRef = Storage.storage().reference().child(currentUser.short_school)
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType)
+            .child(currentUser.bolum_key).child(lesson_key).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType)
         uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
                 Storage.storage().reference().child(currentUser.short_school)
-                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
+                    .child(currentUser.bolum_key).child(lesson_key).child(currentUser.username).child(date).child(dataName + DataTypes.doc.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return
@@ -245,13 +247,13 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
         metaDataForData.contentType = DataTypes.pdf.contentType
        
         let storageRef = Storage.storage().reference().child(currentUser.short_school)
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
+            .child(currentUser.bolum_key).child(lesson_key).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
         uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
                 Storage.storage().reference().child(currentUser.short_school)
-                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
+                    .child(currentUser.bolum_key).child(lesson_key).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return
@@ -276,14 +278,14 @@ func saveDataToDataBase( date : String ,currentUser : CurrentUser , lessonName :
         
         
         let storageRef = Storage.storage().reference().child(currentUser.short_school)
-            .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
+            .child(currentUser.bolum_key).child(lesson_key).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
         
         uploadTask = storageRef.putData(data, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
                 Storage.storage().reference().child(currentUser.short_school)
-                    .child(currentUser.bolum).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
+                    .child(currentUser.bolum_key).child(lesson_key).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType).downloadURL { (url, err) in
                         guard let dataUrl = url?.absoluteString else {
                             print("DEBUG :  Image url is null")
                             return

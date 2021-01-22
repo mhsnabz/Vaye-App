@@ -20,12 +20,13 @@ class CompleteSigingUp: UIViewController {
     var taskUser  : TaskUser
     var _bolumName : String
     var _fakulteName : String
+    var _bolumKey : String
     
-    
-    init(taskUser : TaskUser , _bolumName : String , _fakulteName : String) {
+    init(taskUser : TaskUser , _bolumName : String , _fakulteName : String , _bolumKey : String) {
         self.taskUser = taskUser
         self._bolumName = _bolumName
         self._fakulteName = _fakulteName
+        self._bolumKey = _bolumKey
         super.init(nibName: nil, bundle: nil)
     }
     let schoolSortName : UILabel = {
@@ -144,6 +145,7 @@ class CompleteSigingUp: UIViewController {
                "uid":taskUser.uid!,
                "bolum":_bolumName,
                "fakulte":_fakulteName,
+               "bolum_key":_bolumKey,
                "short_school":taskUser.short_school! ,
                "schoolName":taskUser.schoolName!,
                "username":taskUser.username!,"slientChatUser" : []

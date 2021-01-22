@@ -28,21 +28,23 @@ class PostService{
         
     }
     
-    func setNewLessonPost( link : String?,currentUser : CurrentUser,postId : String ,users : [LessonFallowerUser] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void )
+    func setNewLessonPost( type : String!,lesson_key : String! ,link : String?,currentUser : CurrentUser,postId : String ,users : [LessonFallowerUser] ,msgText : String, datas : [String] , lessonName : String , short_school : String , major : String , completion : @escaping(Bool) ->Void )
     {
         let silent : [String] = []
         var dic = ["lessonName":lessonName,
+                   "lesson_key":lesson_key as Any ,
+                   "type":type as Any,
         "postTime":FieldValue.serverTimestamp(),
         "senderName":currentUser.name as Any,
         "text":msgText,
         "likes":[],
-        "favori":[],
+        "favori":[],"postId":postId as Any,
         "senderUid":currentUser.uid as Any,
         "silent":silent as Any,
         "comment":0,
         "dislike":[],
         "data":datas,
-        "postID":Int64(postId) as Any,
+        "post_ID":Int64(postId) as Any,
         "username" : currentUser.username as Any,
         "thumb_image": currentUser.thumb_image as Any,
         "link":link ?? ""] as [String:Any]
@@ -296,7 +298,7 @@ class PostService{
         "comment":0,
         "dislike":[],
         "data":datas,
-        "postID":Int64(postId) as Any,
+        "post_ID":Int64(postId) as Any,
         "username" : currentUser.username as Any,
         "thumb_image": currentUser.thumb_image as Any,
         "link":link ?? ""] as [String:Any]

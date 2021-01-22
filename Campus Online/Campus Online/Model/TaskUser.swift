@@ -10,6 +10,7 @@ import Foundation
 class TaskUser {
     var email : String!
     var name : String!
+    var bolum_key : String!
     var number : String!
     var priority : String!
     var profileImage : String!
@@ -30,6 +31,9 @@ class TaskUser {
         self.uid = uid
         if let unvan = dic["unvan"] as? String {
             self.unvan = unvan
+        }
+        if let bolum_key = dic["bolum_key"] as? String {
+            self.bolum_key = bolum_key
         }
         if let email = dic["email"] as? String {
             self.email = email

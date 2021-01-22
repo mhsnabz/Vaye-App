@@ -21,7 +21,7 @@ class SellBuyService {
             "senderUid":currentUser.uid as Any,
             "dislike":[],
             "postId":postId,
-            "postID":Int64(postId) as Any,
+            "post_ID":Int64(postId) as Any,
             "data":datas,
             "locationName":locationName ?? "" as Any,
             "thumbData":[],

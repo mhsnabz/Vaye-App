@@ -43,7 +43,7 @@ class NoticesMainModel{
         if let clupName = dic?["clupName"] as? String {
             self.clupName = clupName
         }
-        if let postID = dic?["postID"] as? Int64 {
+        if let postID = dic?["post_ID"] as? Int64 {
                    self.postID = postID
                }
         
