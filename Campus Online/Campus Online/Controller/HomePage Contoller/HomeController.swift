@@ -108,8 +108,8 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     }
     //MARK:--menu bar
     
-    lazy var menuBar : HomeMenuBar = {
-        let mb = HomeMenuBar()
+    lazy var menuBar : HomeMenuView = {
+        let mb = HomeMenuView()
         mb.homeController = self
         return mb
     }()
