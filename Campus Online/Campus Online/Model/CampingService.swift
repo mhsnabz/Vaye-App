@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 class CampingService{
     public static var shared = CampingService()
-    func setNewCamping(currentUser : CurrentUser,currentUserFollower : [String] ,location : GeoPoint?,locationName : String? ,postType: String, postId : String , msgText : String , datas :[String] , short_school : String , completion : @escaping(Bool)->Void){
+    func setNewCamping(type:String,currentUser : CurrentUser,currentUserFollower : [String] ,location : GeoPoint?,locationName : String? ,postType: String, postId : String , msgText : String , datas :[String] , short_school : String , completion : @escaping(Bool)->Void){
         let dic = [
             "postTime":FieldValue.serverTimestamp(),
             "senderName":currentUser.name as Any,
@@ -22,14 +22,14 @@ class CampingService{
             "dislike":[],
             "postId":postId,
             "post_ID":Int64(postId) as Any,
-            "data":datas,
+            "data":datas,"type":type,
             "locationName":locationName ?? "" as Any,
             "thumbData":[],
             "username": currentUser.username as Any,
             "thumb_image": currentUser.thumb_image as Any,
             "silent":[],
             "postType":postType,
-            "geoPoint":location ?? "" ] as [String : Any]
+            "geoPoint":location as Any ] as [String : Any]
         setPostForCurrentUser(postId: postId, currentUser: currentUser)
         add_post_for_universty(uni: currentUser.short_school, postId: postId)
         setPostForCamping(dic: dic, postId: postId) { [weak self ](val) in

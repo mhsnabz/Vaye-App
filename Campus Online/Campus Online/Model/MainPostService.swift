@@ -36,15 +36,16 @@ class MainPostService {
         else{
             post.likes.remove(element: currentUser.uid)
             collectionview.reloadData()
+            let db = Firestore.firestore().collection("main-post")
+                .document("post")
+                .collection("post")
+                .document(post.postId)
+            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
+                completion(true)
+                NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
+            }
             UserService.shared.fetchOtherUser(uid: post.senderUid) {(user) in
-                let db = Firestore.firestore().collection("main-post")
-                    .document("post")
-                    .collection("post")
-                    .document(post.postId)
-                db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
-                    completion(true)
-                    NotificaitonService.shared.mainpost_remove_like_notification(post: post, currentUser: currentUser)
-                }
+               
             }
         }
     }

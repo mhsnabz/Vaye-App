@@ -274,7 +274,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
             dataType.append(data[number].type)
         }
         if self.data.isEmpty  {
-            SellBuyService.shared.setNewBuySellPost(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: total_value, short_school: currentUser.short_school) {[weak self] (_) in
+            SellBuyService.shared.setNewBuySellPost(type : "post",currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.buySell.despription, postId: date, msgText: text.text, datas: url, value: total_value, short_school: currentUser.short_school) {[weak self] (_) in
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
@@ -288,7 +288,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
         {
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.buySell.despription, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
-                SellBuyService.shared.setNewBuySellPost(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
+                SellBuyService.shared.setNewBuySellPost(type : "data",currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.buySell.despription, postId: date, msgText: sself.text.text, datas: url, value: sself.total_value, short_school: sself.currentUser.short_school) { (val) in
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.buySell.despription, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         MainPostService.shared.removeLocation(currentUser: sself.currentUser)

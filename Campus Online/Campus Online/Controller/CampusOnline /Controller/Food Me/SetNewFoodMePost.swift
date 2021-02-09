@@ -385,7 +385,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
             dataType.append(data[number].type)
         }
         if self.data.isEmpty{
-            FoodMeService.shared.setNewFoodMe(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.foodMe.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
+            FoodMeService.shared.setNewFoodMe(type:"post",currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.foodMe.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 MainPostService.shared.removeLocation(currentUser: sself.currentUser)
@@ -398,7 +398,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
         }else{
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.foodMe.despription, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
-                FoodMeService.shared.setNewFoodMe(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.foodMe.despription, postId: date, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
+                FoodMeService.shared.setNewFoodMe(type:"data",currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.foodMe.despription, postId: date, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.foodMe.despription, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         MainPostService.shared.removeLocation(currentUser: sself.currentUser)

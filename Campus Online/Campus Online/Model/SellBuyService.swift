@@ -11,7 +11,7 @@ import FirebaseFirestore
 class SellBuyService {
     static var shared = SellBuyService()
 
-    func setNewBuySellPost(currentUser : CurrentUser,currentUserFollower : [String] ,location : GeoPoint?,locationName : String? ,postType: String, postId : String , msgText : String , datas :[String] ,value : String?, short_school : String , completion : @escaping(Bool)->Void){
+    func setNewBuySellPost(type : String,currentUser : CurrentUser,currentUserFollower : [String] ,location : GeoPoint?,locationName : String? ,postType: String, postId : String , msgText : String , datas :[String] ,value : String?, short_school : String , completion : @escaping(Bool)->Void){
         let dic = [
             "postTime":FieldValue.serverTimestamp(),
             "senderName":currentUser.name as Any,
@@ -29,8 +29,8 @@ class SellBuyService {
             "thumb_image": currentUser.thumb_image as Any,
             "silent":[],
             "postType":postType,
-            "value":value ?? "",
-            "geoPoint":location ?? "" ] as [String : Any]
+            "value":value ?? "",type : type,
+            "geoPoint":location as Any ] as [String : Any]
     
         setPostForCurrentUser(postId: postId, currentUser: currentUser)
         add_post_for_universty(uni: currentUser.short_school, postId: postId)

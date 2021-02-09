@@ -386,7 +386,7 @@ class SetNewCampingPost: UIViewController , LightboxControllerDismissalDelegate,
             dataType.append(data[number].type)
         }
         if self.data.isEmpty{
-            CampingService.shared.setNewCamping(currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.camping.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
+            CampingService.shared.setNewCamping(type:"post",currentUser: currentUser, currentUserFollower: currentUserFollowers, location: geoPoing, locationName: locationName, postType: PostType.camping.despription, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
@@ -399,7 +399,7 @@ class SetNewCampingPost: UIViewController , LightboxControllerDismissalDelegate,
         }else{
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.camping.despription, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
-                CampingService.shared.setNewCamping(currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.camping.despription, postId: date, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
+                CampingService.shared.setNewCamping(type:"data",currentUser: sself.currentUser, currentUserFollower: sself.currentUserFollowers, location: sself.geoPoing, locationName: sself.locationName, postType: PostType.camping.despription, postId: date, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
                     MainPostService.shared.removeLocation(currentUser: sself.currentUser)
 
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.camping.despription, postId: date) { (_) in

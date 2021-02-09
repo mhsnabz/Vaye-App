@@ -225,10 +225,11 @@ struct UserService {
                         user.append(item.documentID)
                         
                     }
+                    completion(user)
                 }else{
                     completion([])
                 }
-                completion(user)
+                
             }
         }
     }
