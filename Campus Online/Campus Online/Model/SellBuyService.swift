@@ -27,9 +27,9 @@ class SellBuyService {
             "thumbData":[],
             "username": currentUser.username as Any,
             "thumb_image": currentUser.thumb_image as Any,
-            "silent":[],
+            "silent":[],"type":type,
             "postType":postType,
-            "value":value ?? "",type : type,
+            "value":value ?? "",
             "geoPoint":location as Any ] as [String : Any]
     
         setPostForCurrentUser(postId: postId, currentUser: currentUser)
@@ -38,7 +38,7 @@ class SellBuyService {
             guard let sself = self else { return }
             if val{
                 completion(true)
-                sself.setPostForFollowers(postId : postId  , followers : currentUserFollower){
+                sself.setPostForFollowers(postId : postId, senderUid: currentUser.uid  , followers : currentUserFollower){
                     (vals) in
                 }
             }
@@ -82,12 +82,12 @@ class SellBuyService {
     ///   - postId: main post ıd
     ///   - followers: current user followers id
     ///   - completion: nil
-    func setPostForFollowers(postId : String , followers : [String] , completion : @escaping(Bool) ->Void){
+    func setPostForFollowers(postId : String,senderUid : String , followers : [String] , completion : @escaping(Bool) ->Void){
         for item in followers{
             let db = Firestore.firestore().collection("user")
                 .document(item)
                 .collection("main-post").document(postId)
-            db.setData(["postId":postId], merge: true)
+            db.setData(["postId":postId,"senderUid":senderUid], merge: true)
         }
         completion(true)
     }

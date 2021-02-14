@@ -146,6 +146,17 @@ class NotificaitonService{
                 }
             }
         }
+      
+       
+    }
+    private func getMention(text : String ,completion : @escaping([String]) ->Void){
+        var userNames = [String]()
+       
+        let val = text.findMentionText()
+        for i in val {
+            userNames.append(i)
+        }
+        completion(userNames)
     }
     
     func set_new_buy_sell_notification(currentUser : CurrentUser ,postId : String , getterUids : [String] , text : String ,type : String, topic : String,notificaitonId : String ,completion : @escaping(Bool) ->Void){
@@ -402,9 +413,11 @@ enum Notification_description {
     case notices_post_like
     case notices_replied_comment_like
     case notice_mention_comment
+    case home_new_mentions_post
     var desprition : String {
         switch self {
-       
+        case .home_new_mentions_post:
+            return "Bir Gönderide Sizden Bahsetti"
         case .like_home:
             return "Gönderini Beğendi"
         case .comment_home:
@@ -454,6 +467,7 @@ enum NotificationType{
     case comment_mention
     case following_you
     case home_new_post
+    case home_new_mentions_post
     case new_ad
     case like_sell_buy
     case new_food_me
@@ -505,6 +519,8 @@ enum NotificationType{
             return "notices_new_comment"
         case .notice_mention_comment:
         return "notice_mention_comment"
+        case .home_new_mentions_post:
+            return "home_new_mentions_post"
         }
     }
 }

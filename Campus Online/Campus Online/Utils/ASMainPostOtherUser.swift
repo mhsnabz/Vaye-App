@@ -181,7 +181,7 @@ class ASMainPostOtherUser : NSObject {
     }
     private func setUserSlient(slientUser : [String], otherUserUid : String ,completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user").document(otherUserUid)
-        db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
+        db.updateData(["slient":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
             guard let sself = self else {
                            Utilities.dismissProgress()
                            return}

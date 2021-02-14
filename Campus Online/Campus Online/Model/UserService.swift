@@ -633,7 +633,13 @@ struct UserService {
             .document(currentUser.uid)
             .collection("friend-list")
             .document(otherUser.uid)
-        let dic = ["userName":otherUser.username as Any ,"uid":otherUser.uid as Any, "name":otherUser.name as Any , "short_school" : otherUser.short_school as Any ,"thumb_image":otherUser.thumb_image as Any,"tarih":FieldValue.serverTimestamp(), "bolum":otherUser.bolum as Any]  as [String : Any]
+        let dic = ["userName":otherUser.username as Any ,
+                   "uid":otherUser.uid as Any,
+                   "name":otherUser.name as Any ,
+                   "short_school" : otherUser.short_school as Any ,
+                   "thumb_image":otherUser.thumb_image as Any
+                   ,"tarih":FieldValue.serverTimestamp(),
+                   "bolum":otherUser.bolum as Any]  as [String : Any]
         db.setData(dic, merge: true) { (err) in
             if err == nil {
                 addCurrenUserOnFriendList(currentUser: currentUser, otherUser: otherUser) { (_) in
@@ -726,6 +732,8 @@ struct UserService {
 //
 //    }
     func removeFromFriendList(currentUserUid : CurrentUser , otherUserUid : OtherUser){
+        
+        removeOtherUserPost(otherUserId: otherUserUid.uid, currentUser: currentUserUid)
         let db = Firestore.firestore().collection("user")
             .document(currentUserUid.uid)
         db.updateData(["friendList":FieldValue.arrayRemove([otherUserUid.uid as String])]) { (err) in
@@ -759,33 +767,20 @@ struct UserService {
           db.delete()
 
     }
-//    func removeRequestList(currentUser : CurrentUser , otherUser : String){
-//        let db = Firestore.firestore().collection("user")
-//            .document(currentUser.uid)
-//            .collection("msg-request")
-//            .document(otherUser)
-//          db.delete()
-//    }
-//    func addOnMsgList(currentUser : CurrentUser , otherUser : String){
-//        let db = Firestore.firestore().collection("user")
-//            .document(currentUser.uid)
-//            .collection("msg-request")
-//            .document(otherUser)
-//        db.getDocument { (docSnap, err) in
-//            if err == nil {
-//                guard let snap = docSnap else { return }
-//                if snap.exists {
-//                    let model = ChatListModel(uid: otherUser, dic: snap.data()!)
-//                    let db = Firestore.firestore().collection("user")
-//                        .document(currentUser.uid)
-//                        .collection("msg-list")
-//                        .document(otherUser)
-//
-//                    let dicSenderLastMessage = ["lastMsg":model.lastMsg as Any, "time":model.time as Any , "thumbImage": model.thumbImage as Any,"isOnline":model.isOnline as Any,"username":model.username as Any, "name":model.name  as Any,"type": model.type as Any, "badgeCount":0 as Any] as [String : Any]
-//                    db.setData(dicSenderLastMessage, merge: true)
-//                    removeRequestList(currentUser: currentUser, otherUser: otherUser)
-//                }
-//            }
-//        }
-//    }
+
+    func removeOtherUserPost(otherUserId : String , currentUser : CurrentUser){
+        let db = Firestore.firestore().collection("user").document(currentUser.uid)
+            .collection("main-post").whereField("senderUid", isEqualTo:otherUserId)
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for id in snap.documents {
+                    let dbDelete = Firestore.firestore().collection("user")
+                        .document(currentUser.uid).collection("main-post").document(id.documentID)
+                    dbDelete.delete()
+                }
+            }
+        }
+    }
+    
 }

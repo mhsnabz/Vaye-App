@@ -478,6 +478,18 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                 NotificaitonService.shared.new_home_post_notification(currentUser: sself.currentUser, postId: postId, getterUids: getterUids,  text: text, type: NotificationType.home_new_post.desprition, lessonName: lessonName, notificaitonId: notificaitonId) { (_) in
                     print("succes")
                 }
+                sself.getMention { (user) in
+                    var uids = [String]()
+                    for item in user {
+                        if  item != sself.currentUser.username {
+                            UserService.shared.getUidBy_Mention(username: item) { (uid) in
+                                uids.append(uid)
+                            }
+                            
+                        }
+                        // FIXME: send mentioned notifications
+                    }
+                }
             }
         }
     }
