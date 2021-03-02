@@ -1,21 +1,26 @@
 //
-//  HomeController.swift
-//  Campus Online
+//  HOMEVC.swift
+//  VayeApp
 //
-//  Created by mahsun abuzeyitoğlu on 19.12.2020.
-//  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
+//  Created by mahsun abuzeyitoğlu on 2.03.2021.
+//  Copyright © 2021 mahsun abuzeyitoğlu. All rights reserved.
 //
 
 import UIKit
 import FirebaseFirestore
 private let home_cell = "Home_cell"
 private let scholl_cell = "scholl_cell"
-class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
-    weak var notificaitonListener : ListenerRegistration?
+class HOMEVC: UIViewController ,HomeMenuBarSelectedIndex{
+    
+    
     
     func getIndex(indexItem: Int) {
         self.selectedIndex = indexItem
     }
+    weak var delegate : HomeControllerDelegate?
+    var isMenuOpen : Bool = false
+    var currentUser : CurrentUser
+    
     var totalBadgeCount : Int?{
         didSet{
             guard let badge = totalBadgeCount else {
@@ -41,17 +46,18 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             }
         }
     }
-    
-    var currentUser : CurrentUser
-    weak var delegate : HomeControllerDelegate?
-    var isMenuOpen : Bool = false
+    lazy var menuBar : HomeMenuView = {
+        let mb = HomeMenuView()
+        mb.controllerDelegate = self
+        return mb
+    }()
     lazy var backView : UIView = {
         let v = UIView()
         v.backgroundColor = UIColor.init(white: 0.95, alpha: 0.5)
         
         return v
     }()
-    
+    weak var notificaitonListener : ListenerRegistration?
     
     //MARK:--properties
     lazy var collecitonView : UICollectionView = {
@@ -74,18 +80,16 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         btn.setBackgroundColor(color: .mainColor(), forState: .normal)
         return btn
     }()
-    //MARK:--lifeCycle
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = false
         setNavigationBar()
         navigationItem.title = "Vaye.App"
-   
         setupMenuBar()
-        configureUI()
         setNavBarButton()
-        getNotificationCount()
-        getMessagesBadgeCount()
+        configureUI()
     }
     
     init(currentUser : CurrentUser) {
@@ -96,69 +100,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        notificaitonListener?.remove()
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        notificaitonListener?.remove()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-       
-    }
-    //MARK:--menu bar
-    
-    lazy var menuBar : HomeMenuView = {
-        let mb = HomeMenuView()
-        mb.homeController = self
-        return mb
-    }()
-    
-    
-    //MARK:--funcitons
-    private func  setupMenuBar(){
-        
-        
-    }
-    func scrollToIndex ( menuIndex : Int) {
-        let index = IndexPath(item: menuIndex, section: 0)
-        
-        self.collecitonView.isPagingEnabled = false
-        self.collecitonView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
-        self.collecitonView.isPagingEnabled = true
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        menuBar.horizontalBarLeftConstarint?.constant = scrollView.contentOffset.x / 2
-    }
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let memoryIndex = targetContentOffset.pointee.x / view.frame.width
-        
-        let index = IndexPath(item: Int(memoryIndex), section: 0)
-        menuBar.collecitonView.selectItem(at: index, animated: true, scrollPosition: .centeredHorizontally)
-        menuBar.delegate?.getIndex(indexItem: Int(memoryIndex))
-    }
-    
-    private func setNavigationContoller(){
-        self.view.backgroundColor = .white
-        if #available(iOS 13.0, *) {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menu")?.withTintColor(.black, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(menuClick))
-            
-        
-            
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "plus")?.withTintColor(.black, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
-        } else {
-            let rigthBtn = UIBarButtonItem(image: UIImage(named: "menu")!, style: .plain, target: self, action: #selector(menuClick))
-            let leftBtn = UIBarButtonItem(image: UIImage(named: "plus")!, style: .plain, target: self, action: #selector(setLessons))
-            navigationItem.leftBarButtonItem = rigthBtn
-            navigationItem.rightBarButtonItem = leftBtn
-        }
-     
-        
-    }
-    
+    //MARK:-functions
     private func setNavBarButton(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "menu").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action:  #selector(menuClick))
         if let index = selectedIndex {
@@ -172,13 +114,18 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(setLessons))
         }
     }
-    
-    private func configureUI(){
+    private func  setupMenuBar(){
         
         view.addSubview(menuBar)
         
         menuBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 44)
-        menuBar.delegate = self
+        menuBar.controllerDelegate = self
+    }
+    
+    
+    private func configureUI(){
+        
+    
         
         view.addSubview(collecitonView)
         collecitonView.anchor(top: menuBar.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
@@ -193,6 +140,7 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
         
         
     }
+    
     private func getNotificationCount(){
         //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
         let db = Firestore.firestore().collection("user")
@@ -231,25 +179,34 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             }
         })
     }
-    //MARK:-selecctors
+    
+    func scrollToIndex ( menuIndex : Int) {
+        let index = IndexPath(item: menuIndex, section: 0)
+        
+        self.collecitonView.isPagingEnabled = false
+        self.collecitonView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+        self.collecitonView.isPagingEnabled = true
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        menuBar.horizontalBarLeftConstarint?.constant = scrollView.contentOffset.x / 2
+    }
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let memoryIndex = targetContentOffset.pointee.x / view.frame.width
+        
+        let index = IndexPath(item: Int(memoryIndex), section: 0)
+        menuBar.collecitonView.selectItem(at: index, animated: true, scrollPosition: .centeredHorizontally)
+        menuBar.delegate?.getIndex(indexItem: Int(memoryIndex))
+    }
+    //MARK:-objc
+    @objc func menuClick(){
+        self.delegate?.handleMenuToggle(forMenuOption: nil)
+
+    }
     @objc func schollNotificaitonSetting(){
         let vc = SchoolPostNotificationSetting(currentUser : currentUser)
         let controller = UINavigationController(rootViewController: vc)
         controller.modalPresentationStyle = .fullScreen
         self.present(controller, animated: true, completion: nil)
-    }
-    @objc func menuClick(){
-        self.delegate?.handleMenuToggle(forMenuOption: nil)
-//        if !isMenuOpen {
-//            self.isMenuOpen = true
-//            view.addSubview(backView)
-//            backView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-//        }
-//        else{
-//            self.isMenuOpen = false
-//            backView.removeFromSuperview()
-//
-//        }
     }
     @objc func setLessons(){
         
@@ -318,14 +275,8 @@ class HomeController: UIViewController  , HomeMenuBarSelectedIndex{
             self.present(centerController, animated: true, completion: nil)
         } }
     }
-
-  
-    
-    
 }
-
-
-extension HomeController  : UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
+extension HOMEVC: UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 2
     }
@@ -336,12 +287,12 @@ extension HomeController  : UICollectionViewDelegate , UICollectionViewDataSourc
             cell.currentUser = currentUser
             cell.actionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
             cell.actionOtherUserSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
-         //   cell.rootController = self
+            cell.rootController = self
             return cell
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: scholl_cell, for: indexPath) as! School_Cell
             cell.currentUser = currentUser
-           // cell.rootController = self
+            cell.rootController = self
             cell.actionSheetOtherUser = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
             cell.actionSheetCurrentUser = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
             return cell
@@ -353,3 +304,4 @@ extension HomeController  : UICollectionViewDelegate , UICollectionViewDataSourc
     }
     
 }
+

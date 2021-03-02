@@ -311,7 +311,7 @@ class NoticesNewPost: UIViewController , LightboxControllerDismissalDelegate, Ga
             dataType.append(data[number].type)
         }
         if self.data.isEmpty {
-            NoticesService.shared.setNewNotice(currentUser: currentUser, postType: PostType.notice.despription, clupName: clup, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
+            NoticesService.shared.setNewNotice(type:"post",currentUser: currentUser, postType: PostType.notice.despription, clupName: clup, postId: date, msgText: text.text, datas: url, short_school: currentUser.short_school) {[weak self] (_) in
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
@@ -319,7 +319,7 @@ class NoticesNewPost: UIViewController , LightboxControllerDismissalDelegate, Ga
         }else{
             NoticesService.shared.uploadToDataBase(postDate: date, clupName: clup, currentUser: currentUser, postType: clup, type: dataType, data: val) {[weak self] (url) in
                 guard let sself = self else { return }
-                NoticesService.shared.setNewNotice(currentUser: sself.currentUser, postType: PostType.notice.despription, clupName: sself.clup, postId: sself.postDate, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
+                NoticesService.shared.setNewNotice(type:"data",currentUser: sself.currentUser, postType: PostType.notice.despription, clupName: sself.clup, postId: sself.postDate, msgText: sself.text.text, datas: url, short_school: sself.currentUser.short_school) { (_) in
                     NoticesService.shared.setThumbDatas(currentUser: sself.currentUser, postId: sself.postDate) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)

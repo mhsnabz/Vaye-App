@@ -102,7 +102,7 @@ class MessagesVC: UIViewController, HomeMenuBarSelectedIndex {
 
         setupMenuBar()
         configureUI()
-        setNavigationBar()
+        //setNavigationBar()
         setNavBarIcon()
     }
     private func getNotificationCount(){

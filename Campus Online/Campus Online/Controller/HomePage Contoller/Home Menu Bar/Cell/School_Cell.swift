@@ -35,7 +35,7 @@ class School_Cell: UICollectionViewCell {
     var selectedPostID : String?
     var mainPost = [NoticesMainModel]()
     let adUnitID = "ca-app-pub-1362663023819993/1801312504"
-    weak var rootController : HomeController?
+    weak var rootController : HOMEVC?
     var currentUser : CurrentUser?{
         didSet{
             getPost()

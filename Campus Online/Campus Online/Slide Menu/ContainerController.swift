@@ -39,7 +39,7 @@ class ContainerController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
     }
     func configureHomeContainerController(){
-        let homeController = HomeController(currentUser: currentUser)
+        let homeController = HOMEVC(currentUser: currentUser)
        
         homeController.delegate = self
 

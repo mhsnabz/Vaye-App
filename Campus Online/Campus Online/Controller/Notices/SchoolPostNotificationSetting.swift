@@ -132,14 +132,16 @@ class SchoolPostNotificationSetting: UITableViewController {
                 cell.switchButton.isOn = false
                 NoticesService.shared.unFollowTopic(id: dataSourceFilter[indexPath.item].id, currentUser: currentUser) { (_) in
                     Utilities.dismissProgress()
-                    
+                   
                 
                 }
             }else{
                 Utilities.waitProgress(msg: nil)
                 cell.switchButton.isOn = true
-                NoticesService.shared.followTopic(id: dataSourceFilter[indexPath.item].id, currentUser: currentUser) { (_) in
-                    
+                NoticesService.shared.followTopic(id: dataSourceFilter[indexPath.item].id, currentUser: currentUser) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    sself.dataSourceFilter[indexPath.row].followers?.append(sself.currentUser.uid)
+                    sself.tableView.reloadData()
                     Utilities.dismissProgress()
                     
                 }
@@ -149,16 +151,21 @@ class SchoolPostNotificationSetting: UITableViewController {
             if cell.switchButton.isOn {
                 Utilities.waitProgress(msg: nil)
                 cell.switchButton.isOn = false
-                NoticesService.shared.unFollowTopic(id: names[indexPath.item].id, currentUser: currentUser) { (_) in
+                NoticesService.shared.unFollowTopic(id: names[indexPath.item].id, currentUser: currentUser) {
+
+                    (_) in
+            
                     Utilities.dismissProgress()
-                    
+                
                 
                 }
             }else{
                 Utilities.waitProgress(msg: nil)
                 cell.switchButton.isOn = true
-                NoticesService.shared.followTopic(id: names[indexPath.item].id, currentUser: currentUser) { (_) in
-                    
+                NoticesService.shared.followTopic(id: names[indexPath.item].id, currentUser: currentUser) {[weak self] (_) in
+                    guard let sself = self else { return }
+                    sself.names[indexPath.row].followers?.append(sself.currentUser.uid)
+                    sself.tableView.reloadData()
                     Utilities.dismissProgress()
                     
                 }

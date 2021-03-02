@@ -60,7 +60,7 @@ class NoticesService {
     }
     
     
-    func setNewNotice(currentUser : CurrentUser,postType: String,clupName : String, postId : String , msgText : String , datas :[String] , short_school : String , completion : @escaping(Bool)->Void){
+    func setNewNotice(type:String,currentUser : CurrentUser,postType: String,clupName : String, postId : String , msgText : String , datas :[String] , short_school : String , completion : @escaping(Bool)->Void){
         let dic = [
             "postTime":FieldValue.serverTimestamp(),
             "senderName":currentUser.name as Any,
@@ -73,7 +73,7 @@ class NoticesService {
             "postId":postId,
             "post_ID":Int64(postId) as Any,
             "data":datas,
-            
+            "type":type,
             "thumbData":[],
             "username": currentUser.username as Any,
             "thumb_image": currentUser.thumb_image as Any,
@@ -93,7 +93,7 @@ class NoticesService {
             .collection(currentUser.short_school)
             .document(postId)
         db.setData(["postId":postId], merge: true, completion: nil)
-        
+   
     }
     
     func setNewNotices( dic : [String : Any] ,currentUser : CurrentUser, postId : String , completion : @escaping(Bool)->Void){

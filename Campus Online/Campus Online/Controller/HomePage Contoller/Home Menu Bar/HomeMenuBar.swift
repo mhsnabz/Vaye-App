@@ -18,6 +18,7 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
         cv.backgroundColor = .white
         cv.dataSource = self
         cv.delegate = self
+  
         return cv
     }()
     override init(frame : CGRect){
@@ -25,7 +26,7 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
 
         addSubview(collecitonView)
         collecitonView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        collecitonView.register(HomeMenu_Cell.self, forCellWithReuseIdentifier: "cell")
+        collecitonView.register(HomeMenuBarFilter.self, forCellWithReuseIdentifier: "cell")
         let selecteIndex = IndexPath(item: 0, section: 0)
         collecitonView.selectItem(at: selecteIndex, animated: false, scrollPosition: .left)
         setUpHorizantalBar()
@@ -58,7 +59,7 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! HomeMenu_Cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! HomeMenuBarFilter
         if indexPath.item == 0 {
             cell.lbl.text = "Bölüm Duyuruları"
         }else if indexPath.item == 1 {
@@ -78,50 +79,4 @@ class HomeMenuBar : UIView ,  UICollectionViewDataSource , UICollectionViewDeleg
     }
     
 }
-class HomeMenu_Cell : UICollectionViewCell {
-    
-    let lbl : UILabel = {
-        let lbl = UILabel()
-        lbl.font = UIFont(name: Utilities.font, size: 11)
-        lbl.textColor = .lightGray 
 
-        return lbl
-    }()
-    lazy var badgeCount : UILabel = {
-        let lbl = UILabel()
-        lbl.clipsToBounds = true
-        lbl.backgroundColor = .red
-        lbl.textColor = .white
-        lbl.font = UIFont(name: Utilities.fontBold, size: 10)
-        lbl.layer.cornerRadius = 15 / 2
-
-        lbl.textAlignment = .center
-        return lbl
-    }()
-    override var isSelected: Bool{
-        didSet{
-            if isSelected {
-                lbl.font = UIFont(name: Utilities.fontBold, size: 13)
-                lbl.textColor = .black
-            }else{
-                lbl.font = UIFont(name: Utilities.font, size: 11)
-                lbl.textColor = .lightGray
-            }
-        }
-    }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        addSubview(lbl)
-        badgeCount.isHidden = true
-        addSubview(badgeCount)
-        badgeCount.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 6, marginBottom: 0, marginRigth: 0, width: 15, heigth: 15)
-        badgeCount.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        lbl.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        lbl.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        lbl.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}

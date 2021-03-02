@@ -121,3 +121,50 @@ class ChatMenuBar : UIView , UICollectionViewDataSource , UICollectionViewDelega
        homeController?.scrollToIndex(menuIndex: indexPath.item)
     }
 }
+class HomeMenu_Cell : UICollectionViewCell {
+    
+    let lbl : UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont(name: Utilities.font, size: 11)
+        lbl.textColor = .lightGray
+
+        return lbl
+    }()
+    lazy var badgeCount : UILabel = {
+        let lbl = UILabel()
+        lbl.clipsToBounds = true
+        lbl.backgroundColor = .red
+        lbl.textColor = .white
+        lbl.font = UIFont(name: Utilities.fontBold, size: 10)
+        lbl.layer.cornerRadius = 15 / 2
+
+        lbl.textAlignment = .center
+        return lbl
+    }()
+    override var isSelected: Bool{
+        didSet{
+            if isSelected {
+                lbl.font = UIFont(name: Utilities.fontBold, size: 13)
+                lbl.textColor = .black
+            }else{
+                lbl.font = UIFont(name: Utilities.font, size: 11)
+                lbl.textColor = .lightGray
+            }
+        }
+    }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(lbl)
+        badgeCount.isHidden = true
+        addSubview(badgeCount)
+        badgeCount.anchor(top: nil, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 6, marginBottom: 0, marginRigth: 0, width: 15, heigth: 15)
+        badgeCount.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        lbl.anchor(top: nil, left: nil, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        lbl.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        lbl.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

@@ -414,8 +414,12 @@ enum Notification_description {
     case notices_replied_comment_like
     case notice_mention_comment
     case home_new_mentions_post
+    case notices_new_post
     var desprition : String {
         switch self {
+        case .notices_new_post:
+            return "Yeni Bir Gönderi Paylaştı"
+            
         case .home_new_mentions_post:
             return "Bir Gönderide Sizden Bahsetti"
         case .like_home:
@@ -479,9 +483,11 @@ enum NotificationType{
     case notices_post_like
     case notices_new_comment
     case notice_mention_comment
+    case notices_new_post
     var desprition : String {
         switch self{
-        
+        case .notices_new_post:
+            return "notices_new_post"
         case .home_like:
             return "like"
         case .comment_home:

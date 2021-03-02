@@ -9,6 +9,7 @@ import UIKit
 class HomeMenuView : UIView ,  UICollectionViewDataSource , UICollectionViewDelegateFlowLayout ,UICollectionViewDelegate{
     weak var delegate : HomeMenuBarSelectedIndex?
     weak var homeController : HomeController?
+    weak var controllerDelegate : HOMEVC?
     var horizontalBarLeftConstarint : NSLayoutConstraint?
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()

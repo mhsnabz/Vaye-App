@@ -32,7 +32,7 @@ class Home_Cell: UICollectionViewCell {
     /// The ad unit ID.
 //    let adUnitID = "ca-app-pub-3940256099942544/2521693316"  // "ca-app-pub-3940256099942544/3986624511"
     var collectionview: UICollectionView!
-    weak var rootController : HomeController?
+    weak var rootController : HOMEVC?
     let adUnitID = "ca-app-pub-1362663023819993/1801312504"
     var nativeAd: GADUnifiedNativeAd?
     var lessonPost = [LessonPostModel]()
