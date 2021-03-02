@@ -12,10 +12,98 @@ import ActiveLabel
 import FirebaseFirestore
 import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
-  lazy var filterView = DataView()
+    lazy var filterView = DataView()
+    lazy var stackView = ImagesStack(frame: CGRect(x: 0, y: 0, width: frame.width - 78, height: 200))
     
     weak var delegate : NewPostHomeVCDataDelegate?
-    weak var currentUser : CurrentUser?
+   weak var currentUser : CurrentUser?
+    
+    lazy var imageLayer_one : UIView = {
+       let v  = UIView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.backgroundColor = .white
+        v.addSubview(image_one)
+        image_one.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        return v
+    }()
+    
+     lazy var imageLayer_two : UIView = {
+       let v  = UIView()
+        v.backgroundColor = .white
+        v.translatesAutoresizingMaskIntoConstraints = false
+        let stack = UIStackView(arrangedSubviews: [image_one,image_two])
+        stack.distribution = .fillEqually
+        stack.alignment = .center
+     //   stack.spacing = 2
+        stack.axis = .horizontal
+        v.addSubview(stack)
+        stack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        return v
+    }()
+    lazy var imageLayer_there : UIView = {
+       let v  = UIView()
+        v.backgroundColor = .white
+        v.translatesAutoresizingMaskIntoConstraints = false
+        let stack = UIStackView(arrangedSubviews: [image_one,image_two])
+        stack.distribution = .fillEqually
+        stack.alignment = .center
+       // stack.spacing = 2
+        stack.axis = .vertical
+         
+        let finalStack = UIStackView(arrangedSubviews: [stack,image_three])
+        finalStack.distribution = .fillEqually
+        finalStack.alignment = .center
+       // finalStack.spacing = 2
+        finalStack.axis = .horizontal
+        
+        v.addSubview(finalStack)
+        finalStack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        return v
+    }()
+    
+    
+   
+    
+    let image_one : UIImageView = {
+       let imageView = UIImageView()
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    let image_two : UIImageView = {
+       let imageView = UIImageView()
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    let image_three : UIImageView = {
+       let imageView = UIImageView()
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    let image_for : UIImageView = {
+       let imageView = UIImageView()
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+
+        return imageView
+    }()
+    
    weak var lessonPostModel : LessonPostModel?{
         didSet {
             
@@ -25,6 +113,35 @@ class NewPostHomeVCData : UICollectionViewCell{
                 filterView.arrayOfUrl = post.thumbData
                 filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
+                stackView.size = post.data.count
+                if post.data.count == 1 {
+                    stackView.imageLayer_one.isHidden = false
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+                    stackView.imageLayer_four.isHidden = true
+
+                }
+                else if post.data.count == 2 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = false
+                    stackView.imageLayer_there.isHidden = true
+                }else if post.data.count == 3 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = false
+                }else if post.data.count >= 4 {
+                    stackView.imageLayer_four.isHidden = false
+                    
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+
+                }
+                
             }
             
             guard let currentUser = currentUser else { return }
@@ -218,7 +335,12 @@ class NewPostHomeVCData : UICollectionViewCell{
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
-        addSubview(filterView)
+//        addSubview(filterView)
+//        addSubview(imageLayer_one)
+//        addSubview(imageLayer_two)
+//        addSubview(imageLayer_there)
+        
+        addSubview(stackView)
         //
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
@@ -243,7 +365,27 @@ class NewPostHomeVCData : UICollectionViewCell{
        
         
     }
-    
+    func textToImage(drawText text: String, inImage image: UIImage, atPoint point: CGPoint) -> UIImage {
+        let textColor = UIColor.white
+        let textFont = UIFont(name: "Helvetica Bold", size: 12)!
+
+        let scale = UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(image.size, false, scale)
+
+        let textFontAttributes = [
+            NSAttributedString.Key.font: textFont,
+            NSAttributedString.Key.foregroundColor: textColor,
+            ] as [NSAttributedString.Key : Any]
+        image.draw(in: CGRect(origin: CGPoint.zero, size: image.size))
+
+        let rect = CGRect(origin: point, size: image.size)
+        text.draw(in: rect, withAttributes: textFontAttributes)
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

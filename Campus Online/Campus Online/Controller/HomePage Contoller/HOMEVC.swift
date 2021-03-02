@@ -37,8 +37,9 @@ class HOMEVC: UIViewController ,HomeMenuBarSelectedIndex{
     }
     var selectedIndex : Int?{
         didSet{
-            setNavBarButton()
+            
             guard let index = selectedIndex else { return }
+            setNavBarButton()
             if index == 0 {
                 navigationItem.title = currentUser.bolum
             }else if index == 1 {
@@ -90,6 +91,7 @@ class HOMEVC: UIViewController ,HomeMenuBarSelectedIndex{
         setupMenuBar()
         setNavBarButton()
         configureUI()
+        menuBar.delegate = self
     }
     
     init(currentUser : CurrentUser) {

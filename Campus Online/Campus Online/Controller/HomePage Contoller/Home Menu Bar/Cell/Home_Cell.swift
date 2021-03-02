@@ -374,8 +374,22 @@ extension Home_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
                 cell.currentUser = currentUser
                 let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: frame.width - 78, height: h + 4)
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+//                if lessonPost[indexPath.row].data.count == 1 {
+//
+//                    cell.imageLayer_one.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
+//                }else if lessonPost[indexPath.row].data.count == 2{
+//                    cell.imageLayer_two.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.rightAnchor, bottom: nil, rigth: cell.msgText.rightAnchor, marginTop:  h, marginLeft:0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 200)
+//                   // cell.imageLayer_two.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
+//                }else if lessonPost[indexPath.row].data.count == 3{
+//
+//                    cell.imageLayer_there.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
+//                }
+//
+//                else{
+//                    cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+//                }
                 
-                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = lessonPost[indexPath.row]
@@ -426,7 +440,8 @@ extension Home_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
                 return CGSize(width: frame.width, height: 60 + 8 + h + 4 + 4 + 30)
             }
             else{
-                return CGSize(width: frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+               
+                return CGSize(width: frame.width, height: 60 + 8 + h + 4 + 4 + 200 + 30)
             }
         }
     }

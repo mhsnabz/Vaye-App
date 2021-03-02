@@ -182,6 +182,7 @@
 		66983A19257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */; };
 		669C897C25EE5FA100E7978D /* HomeMenuBarFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669C897B25EE5FA100E7978D /* HomeMenuBarFilter.swift */; };
 		669C898125EE663B00E7978D /* HOMEVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669C898025EE663B00E7978D /* HOMEVC.swift */; };
+		669C898D25EE908800E7978D /* ImagesStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669C898C25EE908800E7978D /* ImagesStack.swift */; };
 		669E1A8D25A0EF49004E8DF6 /* MessagesVCLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669E1A8C25A0EF49004E8DF6 /* MessagesVCLauncher.swift */; };
 		669E1A9225A0EF8C004E8DF6 /* MessagesVCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669E1A9125A0EF8C004E8DF6 /* MessagesVCViewModel.swift */; };
 		669F3842250DA74400D40371 /* ActionSheetHomeLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */; };
@@ -485,6 +486,7 @@
 		66983A18257D7C6A00100F28 /* ASNoticesPostCurrentUserLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASNoticesPostCurrentUserLaunher.swift; sourceTree = "<group>"; };
 		669C897B25EE5FA100E7978D /* HomeMenuBarFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuBarFilter.swift; sourceTree = "<group>"; };
 		669C898025EE663B00E7978D /* HOMEVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HOMEVC.swift; sourceTree = "<group>"; };
+		669C898C25EE908800E7978D /* ImagesStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesStack.swift; sourceTree = "<group>"; };
 		669E1A8C25A0EF49004E8DF6 /* MessagesVCLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesVCLauncher.swift; sourceTree = "<group>"; };
 		669E1A9125A0EF8C004E8DF6 /* MessagesVCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesVCViewModel.swift; sourceTree = "<group>"; };
 		669F3841250DA74400D40371 /* ActionSheetHomeLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetHomeLauncher.swift; sourceTree = "<group>"; };
@@ -1160,6 +1162,14 @@
 			path = "Image Slider";
 			sourceTree = "<group>";
 		};
+		669C898B25EE907600E7978D /* Images Stack */ = {
+			isa = PBXGroup;
+			children = (
+				669C898C25EE908800E7978D /* ImagesStack.swift */,
+			);
+			path = "Images Stack";
+			sourceTree = "<group>";
+		};
 		66A5F0DB250F04E8005C93B3 /* ActionSheet Other User Cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1440,6 +1450,7 @@
 		66D911FF24EEAA1E002D760A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				669C898B25EE907600E7978D /* Images Stack */,
 				66EAC89A258E5FF6003CF7A3 /* HomePage Contoller */,
 				66D7C3C82589766A00244D3B /* Vaye App */,
 				66D7C3B525882F8300244D3B /* Teacher */,
@@ -2132,6 +2143,7 @@
 				661333E524F395B2002677AB /* HomeMenuController.swift in Sources */,
 				6615FC87250A945700776664 /* NewPostHomeVC.swift in Sources */,
 				664E9F9B2592FA48007EBE52 /* SetTeacherVC.swift in Sources */,
+				669C898D25EE908800E7978D /* ImagesStack.swift in Sources */,
 				66C578572598BE3A006E9756 /* MessagesService.swift in Sources */,
 				668F04AD2520CC94007BD9C7 /* LessonInfoModel.swift in Sources */,
 				66D9121424EEAB49002D760A /* HomeVC.swift in Sources */,
