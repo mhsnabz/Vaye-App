@@ -262,8 +262,6 @@
 		66E326A624F98FE7004CB61D /* LessonsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E326A524F98FE7004CB61D /* LessonsModel.swift */; };
 		66E326A924F991BB004CB61D /* LessonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E326A824F991BB004CB61D /* LessonCell.swift */; };
 		66E326AB24F9C01C004CB61D /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E326AA24F9C01C004CB61D /* UserService.swift */; };
-		66EAC89C258E6015003CF7A3 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC89B258E6015003CF7A3 /* HomeController.swift */; };
-		66EAC8A2258E6234003CF7A3 /* HomeMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8A1258E6234003CF7A3 /* HomeMenuBar.swift */; };
 		66EAC8AB258E64EB003CF7A3 /* School_Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8AA258E64EB003CF7A3 /* School_Cell.swift */; };
 		66EAC8B3258E64FB003CF7A3 /* Home_Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8B2258E64FB003CF7A3 /* Home_Cell.swift */; };
 		66EAC8F2258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8F1258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift */; };
@@ -573,8 +571,6 @@
 		66E326A524F98FE7004CB61D /* LessonsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsModel.swift; sourceTree = "<group>"; };
 		66E326A824F991BB004CB61D /* LessonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonCell.swift; sourceTree = "<group>"; };
 		66E326AA24F9C01C004CB61D /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
-		66EAC89B258E6015003CF7A3 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
-		66EAC8A1258E6234003CF7A3 /* HomeMenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuBar.swift; sourceTree = "<group>"; };
 		66EAC8AA258E64EB003CF7A3 /* School_Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School_Cell.swift; sourceTree = "<group>"; };
 		66EAC8B2258E64FB003CF7A3 /* Home_Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Cell.swift; sourceTree = "<group>"; };
 		66EAC8F1258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolPostNotificationSetting.swift; sourceTree = "<group>"; };
@@ -1628,7 +1624,6 @@
 			children = (
 				66C5781D2595F4A4006E9756 /* TeacherSetLesson */,
 				66EAC8A0258E621C003CF7A3 /* Home Menu Bar */,
-				66EAC89B258E6015003CF7A3 /* HomeController.swift */,
 				669C897B25EE5FA100E7978D /* HomeMenuBarFilter.swift */,
 				669C898025EE663B00E7978D /* HOMEVC.swift */,
 			);
@@ -1639,7 +1634,6 @@
 			isa = PBXGroup;
 			children = (
 				66EAC8A9258E64C9003CF7A3 /* Cell */,
-				66EAC8A1258E6234003CF7A3 /* HomeMenuBar.swift */,
 				6669C51E25D1CF9000AD2AEA /* HomeMenuView.swift */,
 			);
 			path = "Home Menu Bar";
@@ -2102,7 +2096,6 @@
 				662D897D259DA8EE005E83C0 /* BasicAudioController.swift in Sources */,
 				66A5F0D6250EF701005C93B3 /* ActionSheetOtherUserLauncher.swift in Sources */,
 				66C5782C2596D16F006E9756 /* TeacherChooseLesson.swift in Sources */,
-				66EAC8A2258E6234003CF7A3 /* HomeMenuBar.swift in Sources */,
 				664E9FAA25946BE5007EBE52 /* ChangePassword.swift in Sources */,
 				66D9122324EEABEC002D760A /* HomeMenuCell.swift in Sources */,
 				66775539252CCC4100DBF3CD /* COMenuController.swift in Sources */,
@@ -2117,7 +2110,6 @@
 				66C578272596D139006E9756 /* TeacherSetNewPost.swift in Sources */,
 				6628125325171F9D00923F19 /* DatasModel.swift in Sources */,
 				66939978258DD88200525C1A /* MainPostActionSheet.swift in Sources */,
-				66EAC89C258E6015003CF7A3 /* HomeController.swift in Sources */,
 				66E326A424F98C28004CB61D /* LessonList.swift in Sources */,
 				661333EA24F3B44B002677AB /* ProfileHeader.swift in Sources */,
 				6677554A252D23A500DBF3CD /* PartiesVC.swift in Sources */,

@@ -783,4 +783,67 @@ struct UserService {
         }
     }
     
+    func updateAllPost(currentUser : CurrentUser){
+        let mainPostRef = Firestore.firestore().collection("main-post")
+            .document("post")
+            .collection("post")
+            .whereField("senderUid", isEqualTo: currentUser.uid as String)
+        mainPostRef.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documents {
+                    updateMainPost(postId: item.documentID, currentUser: currentUser)
+                }
+            }
+        }
+        
+        let majorPostRef = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post")
+            .collection("post").whereField("senderUid", isEqualTo: currentUser.uid as String)
+        majorPostRef.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documents {
+                    updateMajorPot(postId: item.documentID, currentUser: currentUser)
+                }
+            }
+        }
+        
+        
+        let noticesPostRef = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices")
+            .collection("post")
+            .whereField("senderUid", isEqualTo: currentUser.uid as String)
+        noticesPostRef.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+            for item in snap.documents {
+                updateNoticesPost(postId: item.documentID, currentUser: currentUser)
+            }
+                
+            }
+        }
+        
+    }
+    private func updateMainPost(postId : String , currentUser : CurrentUser){
+        let ref = Firestore.firestore().collection("main-post")
+            .document("post").collection("post").document(postId)
+        let dic  = ["thumb_image":currentUser.thumb_image , "username":currentUser.username] as! [String : String]
+        ref.setData(dic, merge: true)
+        
+    }
+    private func updateMajorPot(postId : String , currentUser : CurrentUser){
+        let ref = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post").collection("post").document(postId)
+        let dic  = ["thumb_image":currentUser.thumb_image , "username":currentUser.username] as! [String : String]
+        ref.setData(dic, merge: true)
+    }
+    private func updateNoticesPost(postId : String , currentUser : CurrentUser){
+        let ref = Firestore.firestore().collection(currentUser.short_school)
+            .document("notices").collection("post").document(postId)
+        let dic  = ["thumb_image":currentUser.thumb_image , "username":currentUser.username] as! [String : String]
+        ref.setData(dic, merge: true)
+    }
+    
+    
 }

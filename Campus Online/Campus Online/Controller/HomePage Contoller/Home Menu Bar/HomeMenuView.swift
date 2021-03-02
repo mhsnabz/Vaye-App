@@ -8,7 +8,7 @@
 import UIKit
 class HomeMenuView : UIView ,  UICollectionViewDataSource , UICollectionViewDelegateFlowLayout ,UICollectionViewDelegate{
     weak var delegate : HomeMenuBarSelectedIndex?
-    weak var homeController : HomeController?
+   
     weak var controllerDelegate : HOMEVC?
     var horizontalBarLeftConstarint : NSLayoutConstraint?
     lazy var collecitonView : UICollectionView = {
@@ -74,7 +74,7 @@ class HomeMenuView : UIView ,  UICollectionViewDataSource , UICollectionViewDele
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.getIndex(indexItem: indexPath.item)
-       homeController?.scrollToIndex(menuIndex: indexPath.item)
+        controllerDelegate?.scrollToIndex(menuIndex: indexPath.item)
     }
     
 }

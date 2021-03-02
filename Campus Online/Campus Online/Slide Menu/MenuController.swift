@@ -232,6 +232,7 @@ extension MenuController : ActionSheetLauncherDelegate {
                                     self.currentUser.profileImage = ""
                                     self.currentUser.thumb_image = ""
                                     self.tableView.reloadData()
+                                    UserService.shared.updateAllPost(currentUser: self.currentUser)
                                     Utilities.succesProgress(msg: "Resim Silindi")
                                 }else{
                                     Utilities.errorProgress(msg: "hata")
@@ -335,6 +336,7 @@ extension MenuController : UIImagePickerControllerDelegate,UINavigationControlle
                                     return
                                 }
                                 Storage.storage().reference().child("thumb_image").child(filename).downloadURL { [weak self](downloadUrl, err) in
+                                    guard let sself = self else { return }
                                     guard let thumb_image = downloadUrl?.absoluteString else {
                                         print("DEBUG : profile Image url is null")
                                         return
@@ -343,11 +345,13 @@ extension MenuController : UIImagePickerControllerDelegate,UINavigationControlle
                                         if err == nil {
                                             Utilities.dismissProgress()
                                             Utilities.succesProgress(msg: "Resim Yüklendi")
-                                            self?.tableView.reloadData()
+                                            sself.tableView.reloadData()
+                                            sself.currentUser.thumb_image = thumb_image
+                                            sself.currentUser.profileImage = profileImageUrl
+                                            UserService.shared.updateAllPost(currentUser: sself.currentUser)
                                             vc.profileImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
                                             vc.profileImage.sd_setImage(with: URL(string: thumb_image), placeholderImage: UIImage(named: "holder_img")!)
-                                            self?.currentUser.thumb_image = thumb_image
-                                            self?.currentUser.profileImage = profileImageUrl
+                                            
                                         }}}}}
                     }
                 func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
