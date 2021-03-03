@@ -351,3 +351,7 @@ protocol MainMenuBarSelectedIndex : class {
 protocol HomeMenuBarSelectedIndex : class {
     func getIndex ( indexItem : Int)
 }
+
+protocol ShowAllDatas : class {
+    func onClickListener(for cell : NewPostHomeVCData)
+}

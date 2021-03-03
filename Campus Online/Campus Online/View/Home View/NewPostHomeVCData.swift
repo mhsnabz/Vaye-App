@@ -12,97 +12,14 @@ import ActiveLabel
 import FirebaseFirestore
 import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
+  
     lazy var filterView = DataView()
     lazy var stackView = ImagesStack(frame: CGRect(x: 0, y: 0, width: frame.width - 78, height: 200))
     
     weak var delegate : NewPostHomeVCDataDelegate?
-   weak var currentUser : CurrentUser?
-    
-    lazy var imageLayer_one : UIView = {
-       let v  = UIView()
-        v.translatesAutoresizingMaskIntoConstraints = false
-        v.backgroundColor = .white
-        v.addSubview(image_one)
-        image_one.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        return v
-    }()
-    
-     lazy var imageLayer_two : UIView = {
-       let v  = UIView()
-        v.backgroundColor = .white
-        v.translatesAutoresizingMaskIntoConstraints = false
-        let stack = UIStackView(arrangedSubviews: [image_one,image_two])
-        stack.distribution = .fillEqually
-        stack.alignment = .center
-     //   stack.spacing = 2
-        stack.axis = .horizontal
-        v.addSubview(stack)
-        stack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        return v
-    }()
-    lazy var imageLayer_there : UIView = {
-       let v  = UIView()
-        v.backgroundColor = .white
-        v.translatesAutoresizingMaskIntoConstraints = false
-        let stack = UIStackView(arrangedSubviews: [image_one,image_two])
-        stack.distribution = .fillEqually
-        stack.alignment = .center
-       // stack.spacing = 2
-        stack.axis = .vertical
-         
-        let finalStack = UIStackView(arrangedSubviews: [stack,image_three])
-        finalStack.distribution = .fillEqually
-        finalStack.alignment = .center
-       // finalStack.spacing = 2
-        finalStack.axis = .horizontal
-        
-        v.addSubview(finalStack)
-        finalStack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        return v
-    }()
-    
-    
-   
-    
-    let image_one : UIImageView = {
-       let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    let image_two : UIImageView = {
-       let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    let image_three : UIImageView = {
-       let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    let image_for : UIImageView = {
-       let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.white.cgColor
-
-        return imageView
-    }()
+    weak var currentUser : CurrentUser?
+    weak var onClickListener : ShowAllDatas?
+ 
     
    weak var lessonPostModel : LessonPostModel?{
         didSet {
@@ -114,6 +31,7 @@ class NewPostHomeVCData : UICollectionViewCell{
                 filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
                 stackView.imagesData = post.thumbData
+                
                 if post.data.count == 1 {
                     stackView.imageLayer_one.isHidden = false
                     stackView.imageLayer_two.isHidden = true
@@ -335,20 +253,16 @@ class NewPostHomeVCData : UICollectionViewCell{
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
-//        addSubview(filterView)
-//        addSubview(imageLayer_one)
-//        addSubview(imageLayer_two)
-//        addSubview(imageLayer_there)
-        
         addSubview(stackView)
-        //
+
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
         addfav.addTarget(self, action: #selector(addFavClick), for: .touchUpInside)
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
-//        filterView.isUserInteractionEnabled = true
-//        filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
+
+        stackView.isUserInteractionEnabled = true
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showData)))
         addSubview(linkBtn)
         linkBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         
@@ -392,6 +306,8 @@ class NewPostHomeVCData : UICollectionViewCell{
     }
     //MARK:-selectors
     @objc func showData(){
+        onClickListener?.onClickListener(for : self)
+        
     }
     
     @objc func commentClick() {

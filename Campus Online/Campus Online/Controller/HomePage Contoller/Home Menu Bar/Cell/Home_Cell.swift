@@ -19,6 +19,8 @@ import SDWebImage
 import FirebaseStorage
 
 class Home_Cell: UICollectionViewCell {
+   
+    
     //MARK: -variables
     var page : DocumentSnapshot? = nil
     var loadMore : Bool = false
@@ -375,6 +377,7 @@ extension Home_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
                 let h = lessonPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: frame.width - 78, height: h + 4)
                 cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+                cell.onClickListener = self
 //                if lessonPost[indexPath.row].data.count == 1 {
 //
 //                    cell.imageLayer_one.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
@@ -973,4 +976,18 @@ extension Home_Cell : NewPostHomeVCDelegate {
     }
     
    
+}
+extension Home_Cell : ShowAllDatas {
+    func onClickListener(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
+        print("images :\(post.thumbData)")
+        guard let currentUser = currentUser else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.rootController?.modalPresentationStyle = .fullScreen
+        self.rootController?.present(vc, animated: true, completion: nil)
+        
+    }
+    
+    
 }

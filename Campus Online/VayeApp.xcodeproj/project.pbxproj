@@ -19,6 +19,8 @@
 		6608990D24FD70B60023E53B /* NewPostImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6608990C24FD70B60023E53B /* NewPostImageCell.swift */; };
 		660BC46C2515AD0B005D0EF8 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660BC46B2515AD0B005D0EF8 /* MenuController.swift */; };
 		660BC4B225162752005D0EF8 /* OtherUserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660BC4B125162751005D0EF8 /* OtherUserProfileHeader.swift */; };
+		660D153525EF753800AC1DA8 /* AllDatasVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660D153425EF753800AC1DA8 /* AllDatasVC.swift */; };
+		660D153D25EF851900AC1DA8 /* DataViewDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660D153C25EF851900AC1DA8 /* DataViewDocument.swift */; };
 		660F5AC82502A4F500F72558 /* newton.json in Resources */ = {isa = PBXBuildFile; fileRef = 660F5AC72502A4F500F72558 /* newton.json */; };
 		660F5ACA2502C98200F72558 /* AddUserLaunher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F5AC92502C98200F72558 /* AddUserLaunher.swift */; };
 		660F5ACD2502D06C00F72558 /* AddUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F5ACC2502D06C00F72558 /* AddUserCell.swift */; };
@@ -323,6 +325,8 @@
 		6608990C24FD70B60023E53B /* NewPostImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostImageCell.swift; sourceTree = "<group>"; };
 		660BC46B2515AD0B005D0EF8 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		660BC4B125162751005D0EF8 /* OtherUserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfileHeader.swift; sourceTree = "<group>"; };
+		660D153425EF753800AC1DA8 /* AllDatasVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDatasVC.swift; sourceTree = "<group>"; };
+		660D153C25EF851900AC1DA8 /* DataViewDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewDocument.swift; sourceTree = "<group>"; };
 		660F5AC72502A4F500F72558 /* newton.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = newton.json; sourceTree = "<group>"; };
 		660F5AC92502C98200F72558 /* AddUserLaunher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserLaunher.swift; sourceTree = "<group>"; };
 		660F5ACC2502D06C00F72558 /* AddUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserCell.swift; sourceTree = "<group>"; };
@@ -697,6 +701,14 @@
 				665E5CD124FEF3EB00B5B5E3 /* NewPostDocCell.swift */,
 			);
 			path = "Student New Post View";
+			sourceTree = "<group>";
+		};
+		660D153325EF751C00AC1DA8 /* All Datas Controller */ = {
+			isa = PBXGroup;
+			children = (
+				660D153425EF753800AC1DA8 /* AllDatasVC.swift */,
+			);
+			path = "All Datas Controller";
 			sourceTree = "<group>";
 		};
 		660F5ACB2502D04D00F72558 /* Add User View */ = {
@@ -1227,6 +1239,7 @@
 				66C4A6ED250C1FA200259322 /* DataViewImage.swift */,
 				66C4A6EF250C355700259322 /* DataViewPDF.swift */,
 				66C4A6F1250C3CCB00259322 /* DataViewDoc.swift */,
+				660D153C25EF851900AC1DA8 /* DataViewDocument.swift */,
 			);
 			path = "Data View";
 			sourceTree = "<group>";
@@ -1450,6 +1463,7 @@
 		66D911FF24EEAA1E002D760A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				660D153325EF751C00AC1DA8 /* All Datas Controller */,
 				669C898B25EE907600E7978D /* Images Stack */,
 				66EAC89A258E5FF6003CF7A3 /* HomePage Contoller */,
 				66D7C3C82589766A00244D3B /* Vaye App */,
@@ -2044,6 +2058,7 @@
 				6690A681253F684900E88BC0 /* ActionSheetMainPost.swift in Sources */,
 				6615FC91250B39F500776664 /* DataViewImageCell.swift in Sources */,
 				669839E7257BC84C00100F28 /* NoticesModel.swift in Sources */,
+				660D153D25EF851900AC1DA8 /* DataViewDocument.swift in Sources */,
 				66C578522598BD55006E9756 /* FriendListModel.swift in Sources */,
 				6687921424FB0AA500A43A41 /* ActionSheetCell.swift in Sources */,
 				66D9122524EEAC1B002D760A /* Utilities.swift in Sources */,
@@ -2173,6 +2188,7 @@
 				669F3846250DABBD00D40371 /* ActionSheetHomeCell.swift in Sources */,
 				66D911CF24EEA9E8002D760A /* AppDelegate.swift in Sources */,
 				661333FA24F3FDF2002677AB /* ForgetPasswordVC.swift in Sources */,
+				660D153525EF753800AC1DA8 /* AllDatasVC.swift in Sources */,
 				660F5AD12502F65300F72558 /* LessonFallowerUser.swift in Sources */,
 				66EF86CE25260E3200282FD4 /* CommentVCDataHeader.swift in Sources */,
 				66D9120524EEAA5B002D760A /* Enum.swift in Sources */,

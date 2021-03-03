@@ -9,7 +9,6 @@
 import UIKit
 import SDWebImage
 class ImagesStack : UIView {
-    
     var imagesData : [String]?{
         didSet{
             guard let url = imagesData else { return }
@@ -18,73 +17,77 @@ class ImagesStack : UIView {
         }
     }
     
-    
+    lazy var tap = UIGestureRecognizer(target: self, action: #selector(onClick))
     lazy var imageLayer_one : UIView = {
        let v  = UIView()
-//        v.translatesAutoresizingMaskIntoConstraints = false
         v.backgroundColor = .white
         v.addSubview(image_1_1)
+       
         image_1_1.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+       
         return v
     }()
     
      lazy var imageLayer_two : UIView = {
        let v  = UIView()
         v.backgroundColor = .white
-//        v.translatesAutoresizingMaskIntoConstraints = false
         let stack = UIStackView(arrangedSubviews: [image_2_1,image_2_2])
         stack.distribution = .fillEqually
         stack.alignment = .center
-     //   stack.spacing = 2
+
         stack.axis = .horizontal
         v.addSubview(stack)
         stack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+   
         return v
     }()
     lazy var imageLayer_there : UIView = {
        let v  = UIView()
         v.backgroundColor = .white
-//        v.translatesAutoresizingMaskIntoConstraints = false
+
         let stack = UIStackView(arrangedSubviews: [image_3_1,image_3_2])
         stack.distribution = .fillEqually
         stack.alignment = .center
-       // stack.spacing = 2
+
         stack.axis = .vertical
          
         let finalStack = UIStackView(arrangedSubviews: [stack,image_3_3])
         finalStack.distribution = .fillEqually
         finalStack.alignment = .center
-       // finalStack.spacing = 2
+
         finalStack.axis = .horizontal
         
         v.addSubview(finalStack)
         finalStack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+  
         return v
     }()
     lazy var imageLayer_four : UIView = {
        let v  = UIView()
         v.backgroundColor = .white
-//        v.translatesAutoresizingMaskIntoConstraints = false
+
         let stack = UIStackView(arrangedSubviews: [image_4_1,image_4_2])
         stack.distribution = .fillEqually
         stack.alignment = .center
-       // stack.spacing = 2
+
         stack.axis = .vertical
          
         let stack2 = UIStackView(arrangedSubviews: [image_4_3,transparentImage4_4])
         stack2.distribution = .fillEqually
         stack2.alignment = .center
-       // finalStack.spacing = 2
+
         stack2.axis = .vertical
         
         let finalStack = UIStackView(arrangedSubviews: [stack,stack2])
         finalStack.distribution = .fillEqually
         finalStack.alignment = .center
-       // finalStack.spacing = 2
+
         finalStack.axis = .horizontal
         
         v.addSubview(finalStack)
         finalStack.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+ 
+        
         return v
     }()
     
@@ -217,6 +220,7 @@ class ImagesStack : UIView {
         
         v.addSubview(totalImage)
         totalImage.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, rigth: v.rightAnchor, marginTop: 10, marginLeft: 10, marginBottom: 10, marginRigth: 10, width: 0, heigth: 0)
+        v.addGestureRecognizer(tap)
         return v
     }()
     
@@ -243,13 +247,15 @@ class ImagesStack : UIView {
         imageLayer_two.isHidden = true
         imageLayer_there.isHidden = true
         imageLayer_four.isHidden = true
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    @objc func onClick(){
+        
+    }
     private func setThumbImage(urlDatas : [String]){
         if urlDatas.count == 1 {
             image_1_1.sd_imageIndicator = SDWebImageActivityIndicator.white

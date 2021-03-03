@@ -62,9 +62,6 @@ class DataViewImage: UICollectionViewCell, UIScrollViewDelegate {
         super.init(frame: frame)
         scrollView.maximumZoomScale = 4
         scrollView.minimumZoomScale = 1
-      
-//        img.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(imageClick)))
-//        img.enableZoom()
         addSubview(scrollView)
         scrollView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
     }
