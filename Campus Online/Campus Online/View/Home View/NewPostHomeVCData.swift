@@ -113,7 +113,7 @@ class NewPostHomeVCData : UICollectionViewCell{
                 filterView.arrayOfUrl = post.thumbData
                 filterView.datasUrl = post.data
                 filterView.collectionView.reloadData()
-                stackView.size = post.data.count
+                stackView.imagesData = post.thumbData
                 if post.data.count == 1 {
                     stackView.imageLayer_one.isHidden = false
                     stackView.imageLayer_two.isHidden = true

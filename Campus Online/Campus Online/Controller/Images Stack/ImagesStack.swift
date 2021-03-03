@@ -7,18 +7,17 @@
 //
 
 import UIKit
+import SDWebImage
 class ImagesStack : UIView {
     
-    var size : Int?{
+    var imagesData : [String]?{
         didSet{
-            if let size = size {
-                if size > 4 {
-                    totalImage.text = "+\(size - 3)"
-                }
-            }
+            guard let url = imagesData else { return }
+            setThumbImage(urlDatas: url)
+            totalImage.text = "+\(url.count - 3)"
         }
     }
-
+    
     
     lazy var imageLayer_one : UIView = {
        let v  = UIView()
@@ -97,7 +96,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+        
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -107,7 +106,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -117,7 +116,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -127,7 +126,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -137,7 +136,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -149,7 +148,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+        
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -160,7 +159,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.addSubview(transparentView)
         transparentView.frame = imageView.frame
         imageView.contentMode = .scaleAspectFill
@@ -172,7 +171,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -182,7 +181,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -192,7 +191,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.image = #imageLiteral(resourceName: "m").withRenderingMode(.alwaysOriginal)
+       
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -249,5 +248,40 @@ class ImagesStack : UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setThumbImage(urlDatas : [String]){
+        if urlDatas.count == 1 {
+            image_1_1.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_1_1.sd_setImage(with: URL(string: urlDatas[0]))
+        }else if urlDatas.count == 2 {
+            image_2_1.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_2_1.sd_setImage(with: URL(string: urlDatas[0]))
+            
+            image_2_2.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_2_2.sd_setImage(with: URL(string: urlDatas[1]))
+        }else if urlDatas.count == 3 {
+            image_3_1.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_3_1.sd_setImage(with: URL(string: urlDatas[0]))
+            
+            image_3_2.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_3_2.sd_setImage(with: URL(string: urlDatas[1]))
+            
+            image_3_3.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_3_3.sd_setImage(with: URL(string: urlDatas[2]))
+            
+        }else{
+            image_4_1.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_4_1.sd_setImage(with: URL(string: urlDatas[0]))
+            
+            image_4_2.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_4_2.sd_setImage(with: URL(string: urlDatas[1]))
+            
+            image_4_3.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_4_3.sd_setImage(with: URL(string: urlDatas[2]))
+            
+            image_4_4.sd_imageIndicator = SDWebImageActivityIndicator.white
+            image_4_4.sd_setImage(with: URL(string: urlDatas[3]))
+        }
     }
 }

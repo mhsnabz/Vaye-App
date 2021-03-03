@@ -123,7 +123,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
        
         
 
-        uploadTask = storageRef.putData(UIImage(named: "doc-holder")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
+        uploadTask = storageRef.putData(UIImage(named: "doc_holder_1")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
@@ -152,7 +152,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
             .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.pdf.mimeType)
         //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
         
-        uploadTask = storageRef.putData(UIImage(named: "pdf-holder")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
+        uploadTask = storageRef.putData(UIImage(named: "pdf-holder-1")!.pngData()!, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }
             else {
