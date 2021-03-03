@@ -378,22 +378,6 @@ extension Home_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: frame.width - 78, height: h + 4)
                 cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
                 cell.onClickListener = self
-//                if lessonPost[indexPath.row].data.count == 1 {
-//
-//                    cell.imageLayer_one.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
-//                }else if lessonPost[indexPath.row].data.count == 2{
-//                    cell.imageLayer_two.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.rightAnchor, bottom: nil, rigth: cell.msgText.rightAnchor, marginTop:  h, marginLeft:0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 200)
-//                   // cell.imageLayer_two.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
-//                }else if lessonPost[indexPath.row].data.count == 3{
-//
-//                    cell.imageLayer_there.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 200)
-//                }
-//
-//                else{
-//                    cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
-//                }
-                
-                
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = lessonPost[indexPath.row]
                 
@@ -474,7 +458,7 @@ extension Home_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let currentUser = currentUser else { return }
-        let vc = CommentVC(currentUser: currentUser, post: lessonPost[indexPath.row])
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: lessonPost[indexPath.row].postId)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -980,7 +964,7 @@ extension Home_Cell : NewPostHomeVCDelegate {
 extension Home_Cell : ShowAllDatas {
     func onClickListener(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
-        print("images :\(post.thumbData)")
+
         guard let currentUser = currentUser else { return }
         guard let data = post.data else { return }
         let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)

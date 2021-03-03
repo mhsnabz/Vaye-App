@@ -13,7 +13,7 @@ import FirebaseFirestore
 import SDWebImage
 class NewPostHomeVCData : UICollectionViewCell{
   
-    lazy var filterView = DataView()
+
     lazy var stackView = ImagesStack(frame: CGRect(x: 0, y: 0, width: frame.width - 78, height: 200))
     
     weak var delegate : NewPostHomeVCDataDelegate?
@@ -27,9 +27,7 @@ class NewPostHomeVCData : UICollectionViewCell{
             configure()
             guard let post = lessonPostModel else { return }
             if !post.data.isEmpty{
-                filterView.arrayOfUrl = post.thumbData
-                filterView.datasUrl = post.data
-                filterView.collectionView.reloadData()
+              
                 stackView.imagesData = post.thumbData
                 
                 if post.data.count == 1 {

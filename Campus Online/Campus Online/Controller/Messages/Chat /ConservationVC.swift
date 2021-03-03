@@ -384,6 +384,9 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         let next = Firestore.firestore().collection("messages")
             .document(currentUser.uid)
             .collection(otherUser.uid).order(by: "id").start(afterDocument: page).limit(to: 1)
+        
+       
+        
         snapShotListener = next.addSnapshotListener {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             
@@ -1032,6 +1035,8 @@ extension ConservationVC : MessagesDataSource , MessagesLayoutDelegate , Message
             break
         case .custom(_):
             break
+        case .linkPreview(_):
+        break
         }
     }
     
@@ -1083,6 +1088,8 @@ extension ConservationVC : MessageCellDelegate {
                         break
                     case .custom(_):
                         break
+                    case .linkPreview(_):
+                        break
                     }
                 }
                 let vc = ImageSliderVC()
@@ -1109,6 +1116,8 @@ extension ConservationVC : MessageCellDelegate {
         case .contact(_):
             break
         case .custom(_):
+            break
+        case .linkPreview(_):
             break
         }
     }
@@ -1139,6 +1148,8 @@ extension ConservationVC : MessageCellDelegate {
         case .contact(_):
             break
         case .custom(_):
+            break
+        case .linkPreview(_):
             break
         }
     }
@@ -1214,8 +1225,8 @@ class MessageDateReusableView: MessageReusableView {
         label.backgroundColor = .lightGray
         label.snp.makeConstraints { (make) in
             make.center.equalTo(self.center)
-            make.top.equalTo(self.snp.top).offset(2)
-            make.bottom.equalTo(self.snp.bottom).offset(-2)
+            make.top.equalTo(self.snp.top).offset(1)
+            make.bottom.equalTo(self.snp.bottom).offset(-1)
         }
     }
     

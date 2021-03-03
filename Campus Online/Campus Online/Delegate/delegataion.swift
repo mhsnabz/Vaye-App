@@ -344,6 +344,14 @@ protocol CommentDelegate : class {
     func clickMention(username : String)
 }
 
+protocol SwipeCommentCellDelegate : class {
+    func likeClik(cell : SwipeCommentCell)
+    func replyClick(cell : SwipeCommentCell)
+    func seeAllReplies(cell :  SwipeCommentCell)
+    func goProfile(cell : SwipeCommentCell)
+    func clickMention(username : String)
+}
+
 protocol MainMenuBarSelectedIndex : class {
     func getIndex(indexItem : Int) 
 }

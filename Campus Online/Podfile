@@ -1,11 +1,12 @@
-  # Uncomment the next line to define a global platform for your project
-  platform :ios, '10.0'
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
 
-  target 'Campus Online' do
+target 'VayeApp' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  
-  pod 'RevealingSplashView'
+
+  # Pods for VayeApp
+ pod 'RevealingSplashView'
   
   pod 'TweeTextField'
   
@@ -58,15 +59,15 @@
   pod 'MessageKit'
   pod 'Alamofire', '~> 5.2'
   pod 'RealmSwift'
-  # Pods for Campus Online
-  target 'Campus OnlineTests' do
-    
+  pod 'SwipeCellKit'
+
+  target 'VayeAppTests' do
     inherit! :search_paths
     # Pods for testing
   end
-  
-  target 'Campus OnlineUITests' do
+
+  target 'VayeAppUITests' do
     # Pods for testing
   end
-  
+
 end

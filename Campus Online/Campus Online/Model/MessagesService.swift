@@ -74,6 +74,8 @@ class MessagesService {
             break
         case .emoji(_):
             break
+        case .linkPreview(_):
+            break
         case .audio(let item):
             msg = item.url.absoluteString
             duration = item.duration

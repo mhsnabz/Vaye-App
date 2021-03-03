@@ -52,7 +52,15 @@ extension OtherUserProfile : ASMainOtherUserDelegate {
     
 }
 
-class OtherUserProfile: UIViewController     {
+class OtherUserProfile: UIViewController, ShowAllDatas     {
+    func onClickListener(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
     lazy var lessonPostModel = [LessonPostModel]()
     lazy var mainPost = [MainPostModel]()
    
@@ -1232,7 +1240,9 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
                 
-                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                cell.onClickListener = self
+                
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = lessonPostModel[indexPath.row]
@@ -1417,7 +1427,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     
                     return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
                 }else{
-                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 200 + 30)
                 }
             }
             

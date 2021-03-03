@@ -17,9 +17,6 @@ class CommentVC: UIViewController, DismisDelegate {
     func dismisMenu() {
         inputAccessoryView?.isHidden = false
     }
-    
-    
-    
     //MARK:- variables
     
     private  var actionSheet : ActionSheetHomeLauncher
@@ -77,12 +74,12 @@ class CommentVC: UIViewController, DismisDelegate {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
         messagesListener?.remove()
-//        navigationController?.navigationBar.isHidden = true
+
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         messagesListener?.remove()
-//        navigationController?.navigationBar.isHidden = true
+
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

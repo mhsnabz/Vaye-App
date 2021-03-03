@@ -613,7 +613,10 @@ extension RequestConservationVC : MessageCellDelegate {
                         break
                     case .custom(_):
                         break
+                    case .linkPreview(_):
+                    break
                     }
+                    
                 }
                 let vc = ImageSliderVC()
                 vc.modalPresentationStyle = .fullScreen
@@ -639,6 +642,8 @@ extension RequestConservationVC : MessageCellDelegate {
         case .contact(_):
             break
         case .custom(_):
+            break
+        case .linkPreview(_):
             break
         }
     }
@@ -669,6 +674,8 @@ extension RequestConservationVC : MessageCellDelegate {
         case .contact(_):
             break
         case .custom(_):
+            break
+        case .linkPreview(_):
             break
         }
     }
@@ -846,6 +853,8 @@ extension RequestConservationVC : MessagesDataSource , MessagesLayoutDelegate , 
         case .contact(_):
             break
         case .custom(_):
+            break
+        case .linkPreview(_):
             break
         }
     }

@@ -34,7 +34,16 @@ import GoogleMobileAds
 import MapKit
 import CoreLocation
 
-class ProfileVC: UIViewController  , UIScrollViewDelegate{
+class ProfileVC: UIViewController  , UIScrollViewDelegate, ShowAllDatas{
+    func onClickListener(for cell: NewPostHomeVCData) {
+        guard let post = cell.lessonPostModel else { return }
+    
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
    
     
     lazy var lessonPostModel = [LessonPostModel]()
@@ -74,9 +83,7 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate{
     var isLoadMoreSchoolPost : Bool = false
     var isLoadMoreVayeAppPost : Bool = false
     var isLoadMoreFavPost : Bool = false
-    
-    
-    
+
     //MARK:-school launcher
     private var schoolLauncher : ASNoticesPostLaunher
     private var schoolLauncherCurrentUser : ASNoticesPostCurrentUserLaunher
@@ -1178,7 +1185,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 let h = lessonPostModel[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
                 
-                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                cell.onClickListener = self
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = lessonPostModel[indexPath.row]
@@ -1353,7 +1361,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 let h = favPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
                 
-                cell.filterView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: cell.msgText.frame.width, height: 100)
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                cell.onClickListener = self
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.lessonPostModel = favPost[indexPath.row]
@@ -1400,7 +1409,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     
                     return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
                 }else{
-                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 200 + 30)
                 }
             }
             
@@ -1462,7 +1471,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     
                     return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30)
                 }else{
-                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 200 + 30)
                 }
             }
         }else if isSchoolPost{
