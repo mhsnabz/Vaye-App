@@ -11,7 +11,10 @@ private let commentCell = "commentCell"
 private let headerCell = "headerCell"
 import FirebaseFirestore
 import SwipeCellKit
-class MajorPostCommentController: UIViewController {
+class MajorPostCommentController: UIViewController ,DismisDelegate {
+    func dismisMenu() {
+        inputAccessoryView?.isHidden = false
+    }
     var buttonStyle: ButtonStyle = .backgroundColor
      var currentUser : CurrentUser
     var postId : String
@@ -21,19 +24,24 @@ class MajorPostCommentController: UIViewController {
     var page : DocumentSnapshot? = nil
     var commentModel = [CommentModel]()
     var firstPage : DocumentSnapshot? = nil
+    var customInputView: UIView!
+    var sendButton: UIButton!
+    let textField = FlexibleTextView()
+    var addMediaButtom: UIButton!
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
     
         layout.minimumLineSpacing = .zero
-        layout.sectionHeadersPinToVisibleBounds = true
+      
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .white
         cv.dataSource = self
         cv.delegate = self
- 
+        cv.keyboardDismissMode = .onDrag
         return cv
     }()
     
+    //MARK:-lifeCycle
     init(currentUser : CurrentUser , postId : String) {
         self.currentUser = currentUser
         self.postId = postId
@@ -50,8 +58,57 @@ class MajorPostCommentController: UIViewController {
         navigationItem.title = "Yorumlar"
         configureUI()
         getAllComment(postId: postId)
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+
     }
-    
+    @objc func adjustForKeyboard(notification: Notification) {
+        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            collecitonView.contentInset = .zero
+        } else {
+            collecitonView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+        }
+
+        textField.scrollIndicatorInsets = textField.contentInset
+
+        if commentModel.count > 0  {
+            let indexPath = IndexPath(item: commentModel.count - 1, section: 0)
+            collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+        navigationController?.navigationBar.isHidden = false
+       
+        
+        print("appaer")
+
+    }
+  
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
+      
+        snapShotListener?.remove()
+
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        snapShotListener?.remove()
+
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        snapShotListener?.remove()
+    }
+
     private func getAllComment(postId : String ){
         let db = Firestore.firestore().collection("comment")
             .document(postId)
@@ -96,14 +153,116 @@ class MajorPostCommentController: UIViewController {
        
         
     }
+
     
+    //MARK:-keyboard
+    override var inputAccessoryView: UIView?{
+        if customInputView == nil {
+            customInputView = CustomView()
+            customInputView.backgroundColor = .white
+            textField.placeholder = "Yeni Bir Yorum Yap..."
+            textField.font = UIFont(name: Utilities.font, size: 14)
+            textField.layer.cornerRadius = 5
+            customInputView.autoresizingMask = .flexibleHeight
+        
+            customInputView.addSubview(textField)
+            
+            sendButton = UIButton()
+            sendButton.isEnabled = true
+            sendButton.setImage(UIImage(named: "send")!.withRenderingMode(.alwaysOriginal), for: .normal)
+            sendButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+                               sendButton.addTarget(self, action: #selector(sendMsg), for: .touchUpInside)
+            customInputView?.addSubview(sendButton)
+            addMediaButtom = UIButton()
+            addMediaButtom.setImage(#imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), for: .normal)
+            addMediaButtom.isEnabled = true
+            addMediaButtom.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
+           // addMediaButtom.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+            customInputView?.addSubview(addMediaButtom)
+            
+            textField.translatesAutoresizingMaskIntoConstraints = false
+            sendButton.translatesAutoresizingMaskIntoConstraints = false
+            addMediaButtom.translatesAutoresizingMaskIntoConstraints = false
+            sendButton.setContentHuggingPriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            sendButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            
+            addMediaButtom.setContentHuggingPriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            addMediaButtom.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: NSLayoutConstraint.Axis.horizontal)
+            
+            textField.maxHeight = 80
+            
+            addMediaButtom.leadingAnchor.constraint(
+                equalTo: customInputView.leadingAnchor,
+                constant: 8
+            ).isActive = true
+            
+            addMediaButtom.trailingAnchor.constraint(
+                equalTo: textField.leadingAnchor,
+                constant: -8
+            ).isActive = true
+            
+            addMediaButtom.topAnchor.constraint(
+                equalTo: customInputView.topAnchor,
+                constant: 8
+            ).isActive = true
+            
+            addMediaButtom.bottomAnchor.constraint(
+                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+                constant: -8
+            ).isActive = true
+            
+            textField.trailingAnchor.constraint(
+                equalTo: sendButton.leadingAnchor,
+                constant: 0
+            ).isActive = true
+            
+            textField.topAnchor.constraint(
+                equalTo: customInputView.topAnchor,
+                constant: 8
+            ).isActive = true
+            
+            textField.bottomAnchor.constraint(
+                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+                constant: -8
+            ).isActive = true
+            
+            sendButton.leadingAnchor.constraint(
+                equalTo: textField.trailingAnchor,
+                constant: 0
+            ).isActive = true
+            
+            sendButton.trailingAnchor.constraint(
+                equalTo: customInputView.trailingAnchor,
+                constant: -8
+            ).isActive = true
+            
+            sendButton.bottomAnchor.constraint(
+                equalTo: customInputView.layoutMarginsGuide.bottomAnchor,
+                constant: -8
+            ).isActive = true
+        }
+        return customInputView
+    }
     //MARK:-functions
-    
+
     private func configureUI(){
         view.addSubview(collecitonView)
         collecitonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
         collecitonView.register(SwipeCommentCell.self, forCellWithReuseIdentifier: commentCell)
         collecitonView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerCell)
+    }
+    //MARK:-objc
+   
+  
+    @objc func sendMsg(){
+        
+    }
+  
+    var shouldBecomeFirstResponder:Bool = true
+
+    override var canBecomeFirstResponder: Bool {
+     
+    return shouldBecomeFirstResponder
     }
     
 }
@@ -168,48 +327,26 @@ extension MajorPostCommentController :  UICollectionViewDelegate , UICollectionV
 }
 
 extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
-    
-    func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-            var options = SwipeOptions()
-        options.expansionStyle = orientation == .left ? .fill : .selection
-        options.backgroundColor = defaultOptions.backgroundColor
-
-            switch buttonStyle {
-            case .backgroundColor:
-                options.buttonSpacing = 11
-            case .circular:
-                options.buttonSpacing = 4
-            #if canImport(Combine)
-                if #available(iOS 13.0, *) {
-                    options.backgroundColor = UIColor.systemGray6
-                } else {
-                    options.backgroundColor = #colorLiteral(red: 0.2327457368, green: 0.5623961091, blue: 0.9373269677, alpha: 1)
-                }
-            #else
-                options.backgroundColor = #colorLiteral(red: 0.009416126646, green: 0.562579155, blue: 0.9707954526, alpha: 1)
-            #endif
-            }
         
-        return options
-    }
-    
     func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         
-        if currentUser.uid == currentUser.uid {
+        if commentModel[indexPath.row].senderUid == currentUser.uid {
             if orientation == .right {
                 let deleteAction = SwipeAction(style: .destructive, title: "Sil") { action, indexPath in
                     // handle action by updating model with deletion
                 }
-                configure(action: deleteAction, with: .trash)
+                deleteAction.image = #imageLiteral(resourceName: "remove")
                 return [deleteAction]
             }
             else{
                 
-                let read = SwipeAction(style: .default, title: nil) { action, indexPath in }
+                let read = SwipeAction(style: .default, title: "Cevapla") { action, indexPath in }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
                 read.hidesWhenSelected = true
                 read.accessibilityLabel = "cevapla"
-                configure(action: read, with: .flag)
+                read.backgroundColor = .mainColor()
+                read.fulfill(with: .reset)
+             //   configure(action: read, with: .flag)
                 return [read]
             }
         }else{
@@ -219,7 +356,7 @@ extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
                 read.hidesWhenSelected = true
                 read.accessibilityLabel = "cevapla"
-                configure(action: read, with: .read)
+               // configure(action: read, with: .read)
                 return [read]
             }else{
                 return nil

@@ -13,8 +13,10 @@ import SDWebImage
 import ActiveLabel
 class SwipeCommentCell: SwipeCollectionViewCell {
     
-   
-    
+    var customViewInsideYourCustomCell : UIView = {
+       let v = UIView()
+        return v
+    }()
     weak var currentUser : CurrentUser?
     weak var commentDelegate : SwipeCommentCellDelegate?
     weak var comment : CommentModel?{
@@ -33,7 +35,7 @@ class SwipeCommentCell: SwipeCollectionViewCell {
             }
         }
     }
-    
+   
     let profile_image : UIImageView = {
        let img = UIImageView()
         img.clipsToBounds = true
@@ -162,6 +164,8 @@ class SwipeCommentCell: SwipeCollectionViewCell {
         
         addSubview(lineView)
         lineView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 0.4)
+        contentView.addSubview(customViewInsideYourCustomCell)
+        customViewInsideYourCustomCell.frame = frame
     }
     
     required init?(coder aDecoder: NSCoder) {
