@@ -63,32 +63,12 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
     }
-    @objc func adjustForKeyboard(notification: Notification) {
-        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-
-        let keyboardScreenEndFrame = keyboardValue.cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-
-        if notification.name == UIResponder.keyboardWillHideNotification {
-            collecitonView.contentInset = .zero
-        } else {
-            collecitonView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
-        }
-
-        textField.scrollIndicatorInsets = textField.contentInset
-
-        if commentModel.count > 0  {
-            let indexPath = IndexPath(item: commentModel.count - 1, section: 0)
-            collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
-        }
-    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = false
-       
-        
-        print("appaer")
+   
 
     }
   
@@ -109,50 +89,7 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         snapShotListener?.remove()
     }
 
-    private func getAllComment(postId : String ){
-        let db = Firestore.firestore().collection("comment")
-            .document(postId)
-            .collection("comment")
-            .limit(toLast: 10).order(by: "commentId")
-        
-        snapShotListener = db.addSnapshotListener{[weak self] (querySnap, err) in
-            guard let sself = self else { return }
-            if err == nil {
-                guard let snap = querySnap else { return }
-                for item in snap.documentChanges {
-                    if item.type == .added {
-                        sself.commentModel.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
-                      
-                    }
-                    sself.collecitonView.reloadData()
-                    sself.page = snap.documents.last
-                    sself.firstPage = snap.documents.first
-                }
-            }
-        }
-        guard let page = self.page else { return }
-        let next = Firestore.firestore().collection("comment")
-            .document(postId)
-            .collection("comment").order(by: "commentId")
-            .start(atDocument: page)
-            .limit(to: 1)
-        next.addSnapshotListener { [weak self] (querySnap, err) in
-            guard let sself = self else { return }
-            if err == nil {
-                guard let snap = querySnap else { return }
-                for item in snap.documentChanges {
-                    if item.type == .added {
-                        sself.commentModel.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
-                    }
-                    sself.collecitonView.reloadData()
-                    sself.page = snap.documents.last
-                    sself.firstPage = snap.documents.first
-                }
-            }
-        }
-       
-        
-    }
+ 
 
     
     //MARK:-keyboard
@@ -251,8 +188,71 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         collecitonView.register(SwipeCommentCell.self, forCellWithReuseIdentifier: commentCell)
         collecitonView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerCell)
     }
+    
+    private func getAllComment(postId : String ){
+        let db = Firestore.firestore().collection("comment")
+            .document(postId)
+            .collection("comment")
+            .limit(toLast: 10).order(by: "commentId")
+        
+        snapShotListener = db.addSnapshotListener{[weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documentChanges {
+                    if item.type == .added {
+                        sself.commentModel.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
+                      
+                    }
+                    sself.collecitonView.reloadData()
+                    sself.page = snap.documents.last
+                    sself.firstPage = snap.documents.first
+                }
+            }
+        }
+        guard let page = self.page else { return }
+        let next = Firestore.firestore().collection("comment")
+            .document(postId)
+            .collection("comment").order(by: "commentId")
+            .start(atDocument: page)
+            .limit(to: 1)
+        next.addSnapshotListener { [weak self] (querySnap, err) in
+            guard let sself = self else { return }
+            if err == nil {
+                guard let snap = querySnap else { return }
+                for item in snap.documentChanges {
+                    if item.type == .added {
+                        sself.commentModel.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
+                    }
+                    sself.collecitonView.reloadData()
+                    sself.page = snap.documents.last
+                    sself.firstPage = snap.documents.first
+                }
+            }
+        }
+       
+        
+    }
     //MARK:-objc
-   
+    @objc func adjustForKeyboard(notification: Notification) {
+        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            collecitonView.contentInset = .zero
+        } else {
+            collecitonView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+        }
+
+        textField.scrollIndicatorInsets = textField.contentInset
+
+        if commentModel.count > 0  {
+            let indexPath = IndexPath(item: commentModel.count - 1, section: 0)
+            collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
+    }
   
     @objc func sendMsg(){
         

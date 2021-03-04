@@ -13,10 +13,7 @@ import SDWebImage
 import ActiveLabel
 class SwipeCommentCell: SwipeCollectionViewCell {
     
-    var customViewInsideYourCustomCell : UIView = {
-       let v = UIView()
-        return v
-    }()
+    
     weak var currentUser : CurrentUser?
     weak var commentDelegate : SwipeCommentCellDelegate?
     weak var comment : CommentModel?{
@@ -133,25 +130,25 @@ class SwipeCommentCell: SwipeCollectionViewCell {
         backgroundColor = .white
        
         
-        addSubview(headerView)
-        headerView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 4, width: 0, heigth: 40)
+      contentView.addSubview(headerView)
+        headerView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: nil, rigth: contentView.rightAnchor, marginTop: 0, marginLeft: 12, marginBottom: 0, marginRigth: 4, width: 0, heigth: 40)
 
-        addSubview(msgText)
-        addSubview(likeCount)
+        contentView.addSubview(msgText)
+        contentView.addSubview(likeCount)
         likeCount.anchor(top: msgText.bottomAnchor, left: msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
-        addSubview(lblReply)
+        contentView.addSubview(lblReply)
         lblReply.anchor(top: msgText.bottomAnchor, left: likeCount.rightAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 10, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
         
-        addSubview(likeButton)
+        contentView.addSubview(likeButton)
         likeButton.anchor(top: nil, left: nil, bottom: nil, rigth: rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 10, width: 15, heigth: 15)
         likeButton.centerYAnchor.constraint(equalTo: msgText.centerYAnchor).isActive = true
 
         
-        addSubview(line)
+        contentView.addSubview(line)
         line.anchor(top: likeCount.bottomAnchor, left: nil, bottom: nil, rigth: nil, marginTop: 16, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 30, heigth: 2)
         line.centerXAnchor.constraint(equalTo: likeCount.centerXAnchor).isActive = true
         
-        addSubview(totalRepliedCount)
+        contentView.addSubview(totalRepliedCount)
         totalRepliedCount.anchor(top: nil, left: line.rightAnchor, bottom: nil, rigth: nil, marginTop: 0, marginLeft: 4, marginBottom: 0, marginRigth: 0, width: 150, heigth: 30)
         totalRepliedCount.centerYAnchor.constraint(equalTo: line.centerYAnchor).isActive = true
         
@@ -162,10 +159,9 @@ class SwipeCommentCell: SwipeCollectionViewCell {
         likeButton.addTarget(self, action: #selector(likeMsg), for: .touchUpInside)
         
         
-        addSubview(lineView)
-        lineView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, rigth: rightAnchor, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 0.4)
-        contentView.addSubview(customViewInsideYourCustomCell)
-        customViewInsideYourCustomCell.frame = frame
+        contentView.addSubview(lineView)
+        lineView.anchor(top: nil, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, rigth: contentView.rightAnchor, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 0.4)
+       
     }
     
     required init?(coder aDecoder: NSCoder) {
