@@ -334,16 +334,27 @@ class RepliyCommentVC: UIViewController {
         if textField.hasText {
             textField.text = ""
             let commentId = Int64(Date().timeIntervalSince1970 * 1000).description
-            
+            if let post = lessonPost {
             CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: self.currentUser, commentId: commentId) {[weak self] (_val) in
                 guard let sself = self else { return }
-                if let post = sself.lessonPost {
+                
                     CommentNotificationService.shared.sendNewLessonPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
                 
                     for item in text.findMentionText(){
                         CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
                     }
                 }
+            }else if let noticesPost = noticesPost {
+                CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: self.currentUser, commentId: commentId) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    
+           
+                        CommentNotificationService.shared.sendNewNoticesPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
+                    
+                        for item in text.findMentionText(){
+                            CommentNotificationService.shared.newNoticesMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                        }
+                    }
             }
         }
     }
