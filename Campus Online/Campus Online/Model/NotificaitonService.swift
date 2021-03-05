@@ -406,7 +406,7 @@ enum PostName {
         case .MainPost:
         return "main-post"
         case .NoticesPost:
-        return "noties"
+        return "notices"
         }
     }
 }

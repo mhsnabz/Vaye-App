@@ -330,20 +330,37 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         if textField.hasText {
             textField.text = ""
             let commentId = Int64(Date().timeIntervalSince1970 * 1000).description
+            
+            if let post = self.lessonPost {
             CommentService.shared.sendNewComment(postType : PostName.lessonPost.name,currentUser: currentUser, commentText: text, postId: postId, commentId: commentId) {[weak self] (_val) in
                 guard let sself = self else { return }
                 //FIXME:- send notification
-                if let post = sself.lessonPost {
+              
                     CommentNotificationService.shared.newLessonPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
                     for item in text.findMentionText(){
                         CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
                     }
+                
                 }
                 
-         
+                let indexPath = IndexPath(item: self.commentModel.count - 1, section: 0)
+                self.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
 
-                let indexPath = IndexPath(item: sself.commentModel.count - 1, section: 0)
-                sself.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+               
+            }else if let post = self.noticesPost {
+                CommentService.shared.sendNewComment(postType : PostName.NoticesPost.name,currentUser: currentUser, commentText: text, postId: postId, commentId: commentId) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    //FIXME:- send notification
+                  
+                        CommentNotificationService.shared.newNoticesPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                        for item in text.findMentionText(){
+                            CommentNotificationService.shared.newNoticesPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                        }
+                    
+                    }
+                    
+                    let indexPath = IndexPath(item: self.commentModel.count - 1, section: 0)
+                    self.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
             }
         }
         
