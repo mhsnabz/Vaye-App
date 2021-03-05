@@ -1866,7 +1866,7 @@ extension OtherUserProfile : NewPostHomeVCDelegate {
     
     func comment(for cell: NewPostHomeVC) {
         guard let post = cell.lessonPostModel else { return }
-        let vc = CommentVC(currentUser: currentUser, post : post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: post, noticesPost: nil, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -1943,7 +1943,7 @@ extension OtherUserProfile : NewPostHomeVCDataDelegate {
     
     func comment(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
-        let vc = CommentVC(currentUser: currentUser, post : post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: post, noticesPost: nil, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
             
     }

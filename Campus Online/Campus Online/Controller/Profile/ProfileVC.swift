@@ -1605,7 +1605,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if isHomePost{
-            let vc = CommentVC(currentUser: currentUser, post: lessonPostModel[indexPath.row])
+            let vc = MajorPostCommentController(currentUser: currentUser, postId:lessonPostModel[indexPath.row].postId, lessonPost: lessonPostModel[indexPath.row], noticesPost: nil, mainPost: nil)
+          
             self.navigationController?.pushViewController(vc, animated: true)
         }else if isVayeAppPost{
             let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
@@ -1924,7 +1925,7 @@ extension ProfileVC : NewPostHomeVCDelegate{
     
     func comment(for cell: NewPostHomeVC) {
         guard let post = cell.lessonPostModel else { return }
-        let vc = CommentVC(currentUser: currentUser, post : post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: post, noticesPost: nil, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -1989,7 +1990,7 @@ extension ProfileVC : NewPostHomeVCDataDelegate {
     
     func comment(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
-        let vc = CommentVC(currentUser: currentUser, post : post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: post, noticesPost: nil, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
             
     }

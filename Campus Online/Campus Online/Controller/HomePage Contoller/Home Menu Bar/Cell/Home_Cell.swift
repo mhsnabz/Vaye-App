@@ -602,7 +602,7 @@ extension Home_Cell : NewPostHomeVCDataDelegate {
     func comment(for cell: NewPostHomeVCData) {
         guard let currentUser = currentUser else { return }
         guard let post = cell.lessonPostModel else { return }
-        let vc = CommentVC(currentUser: currentUser, post : post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: post, noticesPost: nil, mainPost: nil)
         rootController?.navigationController?.pushViewController(vc, animated: true)
             
     }
@@ -955,7 +955,7 @@ extension Home_Cell : NewPostHomeVCDelegate {
     func comment(for cell: NewPostHomeVC) {
         guard let post = cell.lessonPostModel else { return }
         guard let currentUser = currentUser else { return }
-        let vc = CommentVC(currentUser: currentUser, post : post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: post, noticesPost: nil, mainPost: nil)
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     

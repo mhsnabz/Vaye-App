@@ -308,8 +308,8 @@ class NotificationController: UIViewController {
                     guard let post = postModel else {
                         Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
                         return }
-                    let vc = CommentVC(currentUser: sself.currentUser, post: post)
-                    sself.navigationController?.pushViewController(vc, animated: true)
+//                    let vc = CommentVC(currentUser: sself.currentUser, post: post)
+//                    sself.navigationController?.pushViewController(vc, animated: true)
                     sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                         sself.model[indexPath.row].isRead = true
                         sself.tableView.reloadData()
@@ -525,8 +525,8 @@ extension NotificationController : UITableViewDelegate, UITableViewDataSource{
                 guard let post = postModel else {
                     Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
                     return }
-                let vc = CommentVC(currentUser: sself.currentUser, post: post)
-                sself.navigationController?.pushViewController(vc, animated: true)
+//                let vc = CommentVC(currentUser: sself.currentUser, post: post)
+//                sself.navigationController?.pushViewController(vc, animated: true)
                 sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                     sself.model[indexPath.row].isRead = true
                     sself.tableView.reloadData()

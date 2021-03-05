@@ -59,15 +59,7 @@ extension COMenuController : UITableViewDataSource , UITableViewDelegate {
 
         return cell
     }
-//     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-////        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: CoMenuHeader.reuseIdentifier) as! CoMenuHeader
-////        header.delegate = self
-////        return header
-//    }
-//     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-//    {
-////        return 175
-//    }
+
     
      func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
