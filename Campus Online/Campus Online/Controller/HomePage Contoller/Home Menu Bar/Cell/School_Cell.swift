@@ -399,8 +399,7 @@ extension School_Cell : NewPostNoticesVCDelegate {
     func comment(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
         guard let currentUser = currentUser else { return }
-
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -580,7 +579,7 @@ extension School_Cell : NewPostNoticesDataVCDelegate{
         guard let post = cell.noticesPost else { return }
         guard let currentUser = currentUser else { return }
 
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -349,8 +349,9 @@ extension BuySell_Cell  : UICollectionViewDelegate , UICollectionViewDelegateFlo
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
-        rootController?.navigationController?.pushViewController(vc, animated: true)
+        
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
+        self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -455,7 +456,8 @@ extension BuySell_Cell : BuySellVCDelegate{
     func comment(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post , target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+        self.rootController?.navigationController?.pushViewController(vc, animated: true)
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -604,7 +606,9 @@ extension BuySell_Cell : BuySellVCDataDelegate {
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+
+        
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     

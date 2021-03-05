@@ -361,7 +361,8 @@ extension NoticesVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = NoticeVCComment(currentUser: currentUser, post: mainPost[indexPath.row])
+
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: mainPost[indexPath.row], mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -436,7 +437,7 @@ extension NoticesVC : NewPostNoticesVCDelegate {
     
     func comment(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -602,7 +603,7 @@ extension NoticesVC : NewPostNoticesDataVCDelegate{
     
     func comment(for cell: NoticesDataCell) {
         guard let post = cell.noticesPost else { return }
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     

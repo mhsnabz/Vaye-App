@@ -361,6 +361,18 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                     
                     let indexPath = IndexPath(item: self.commentModel.count - 1, section: 0)
                     self.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            }else if let post = self.mainPost {
+                CommentService.shared.setNewComment(currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (_val) in
+                    if _val{
+                        guard let sself = self else { return }
+                        //FIXME:- send notification
+                        CommentNotificationService.shared.newMainPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                        for item in text.findMentionText(){
+                            CommentNotificationService.shared.newMainPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                        }
+                        
+                    }
+                }
             }
         }
         

@@ -487,7 +487,7 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row], target: mainPost[indexPath.row].postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
         rootController?.navigationController?.pushViewController(vc, animated: true)
         
     }
@@ -601,7 +601,7 @@ extension MainCell :  BuySellVCDelegate{
     func comment(for cell: BuyAndSellView) {
         guard let currentUser = currentUser else { return }
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -759,7 +759,7 @@ extension MainCell : BuySellVCDataDelegate {
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -960,8 +960,7 @@ extension MainCell : FoodMeVCDelegate{
     func comment(for cell: FoodMeView) {
         guard let post = cell.mainPost else { return }
         guard let currentUser = currentUser else { return }
-
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -1084,7 +1083,7 @@ extension MainCell : FoodMeVCDataDelegate {
         guard  let currentUser = currentUser  else {
             return
         }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -1206,7 +1205,7 @@ extension MainCell : CampingVCDelegate {
         guard  let currentUser = currentUser  else {
             return
         }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -1330,7 +1329,7 @@ extension MainCell : CampingVCDataDelegate {
         guard  let currentUser = currentUser  else {
             return
         }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     

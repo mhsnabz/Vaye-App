@@ -1608,13 +1608,15 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
             let vc = CommentVC(currentUser: currentUser, post: lessonPostModel[indexPath.row])
             self.navigationController?.pushViewController(vc, animated: true)
         }else if isVayeAppPost{
-            let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row], target: mainPost[indexPath.row].postType)
+            let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
             navigationController?.pushViewController(vc, animated: true)
         }else if isFavPost{
-            let vc = CommentVC(currentUser: currentUser, post: favPost[indexPath.row])
+           
+            let vc = MajorPostCommentController(currentUser: currentUser, postId: favPost[indexPath.row].postId, lessonPost: favPost[indexPath.row], noticesPost: nil, mainPost: nil)
             self.navigationController?.pushViewController(vc, animated: true)
         }else if isSchoolPost{
-            let vc = NoticeVCComment(currentUser: currentUser, post: schoolPost[indexPath.row])
+            let vc = MajorPostCommentController(currentUser: currentUser, postId: schoolPost[indexPath.row].postId, lessonPost: nil, noticesPost: schoolPost[indexPath.row], mainPost: nil)
+            
             navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -2034,7 +2036,7 @@ extension ProfileVC : NewPostNoticesVCDelegate {
     
     func comment(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2259,7 +2261,7 @@ extension ProfileVC : BuySellVCDelegate {
     
     func comment(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2307,7 +2309,7 @@ extension ProfileVC : NewPostNoticesDataVCDelegate {
     
     func comment(for cell: NoticesDataCell) {
         guard let post = cell.noticesPost else { return }
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2369,7 +2371,7 @@ extension ProfileVC : BuySellVCDataDelegate {
     
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2428,7 +2430,8 @@ extension ProfileVC : FoodMeVCDelegate {
     
     func comment(for cell: FoodMeView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+        
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2495,7 +2498,8 @@ extension ProfileVC : FoodMeVCDataDelegate {
     
     func comment(for cell: FoodMeViewData) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+        
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2560,7 +2564,7 @@ extension ProfileVC : CampingVCDelegate {
     
     func comment(for cell: CampingView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2626,7 +2630,7 @@ extension ProfileVC : CampingVCDataDelegate {
     
     func comment(for cell: CampingDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     

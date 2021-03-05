@@ -343,7 +343,8 @@ extension Camping_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
+         let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
+
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -521,7 +522,7 @@ extension Camping_Cell : CampingVCDataDelegate {
     func comment(for cell: CampingDataView) {
         guard let post = cell.mainPost else { return }
         guard let currentUser = currentUser else {return}
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -641,7 +642,7 @@ extension Camping_Cell : CampingVCDelegate{
     func comment(for cell: CampingView) {
         guard let post = cell.mainPost else { return }
         guard let currentUser = currentUser else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         rootController?.navigationController?.pushViewController(vc, animated: true)
     }
     

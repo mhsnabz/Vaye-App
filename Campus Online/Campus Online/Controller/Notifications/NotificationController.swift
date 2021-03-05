@@ -324,8 +324,8 @@ class NotificationController: UIViewController {
                         Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
                         return
                     }
-                    let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
-                    self?.navigationController?.pushViewController(vc, animated: true)
+//                    let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
+//                    self?.navigationController?.pushViewController(vc, animated: true)
                     sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                         sself.model[indexPath.row].isRead = true
                         sself.tableView.reloadData()
@@ -544,7 +544,8 @@ extension NotificationController : UITableViewDelegate, UITableViewDataSource{
                 guard let post = post else {
                     Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
                     return }
-                sself.navigationController?.pushViewController(NoticeVCComment(currentUser: sself.currentUser, post: post), animated: true)
+                let vc = MajorPostCommentController(currentUser: sself.currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
+                sself.navigationController?.pushViewController(vc, animated: true)
                 sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                     sself.model[indexPath.row].isRead = true
                     sself.tableView.reloadData()
@@ -561,8 +562,8 @@ extension NotificationController : UITableViewDelegate, UITableViewDataSource{
                     Utilities.errorProgress(msg: "Gönderi Kaldırılmış veya Silinmiş")
                     return
                 }
-                let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
-                self?.navigationController?.pushViewController(vc, animated: true)
+//                let vc = MainPostCommentVC(currentUser: sself.currentUser, post: post, target: post.postType)
+//                self?.navigationController?.pushViewController(vc, animated: true)
                 sself.makeReadNotificaiton(not_id: sself.model[indexPath.row].not_id) { (_) in
                     sself.model[indexPath.row].isRead = true
                     sself.tableView.reloadData()

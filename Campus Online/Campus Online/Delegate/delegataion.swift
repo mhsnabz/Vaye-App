@@ -245,62 +245,13 @@ protocol CommentVCHeaderDelegate : class {
     func clickMention(username : String)
 }
 
-protocol SellBuyCommentHeaderDelegate : class {
-    func like (for header : SellBuyCommentHeader)
-    func dislike (for header : SellBuyCommentHeader)
-    func showProfile(for header : SellBuyCommentHeader)
-    func clickMention(username : String)
-    func mapClik(for header : SellBuyCommentHeader)
-}
-protocol FoodMeCommentHeaderDelegate : class {
-    func like (for header : FoodMeCommentHeader)
-    func dislike (for header : FoodMeCommentHeader)
-    func showProfile(for header : FoodMeCommentHeader)
-    func clickMention(username : String)
-    func mapClik(for header : FoodMeCommentHeader)
-}
 
-protocol NoticesCommenHeaderDelegate : class {
-    func like (for header : NoticesCommentHeader)
-    func dislike (for header : NoticesCommentHeader)
-    func showProfile(for header : NoticesCommentHeader)
-    func clickMention(username : String)
-   
-}
-protocol NoticesCommenDataHeaderDelegate : class {
-    func like (for header : NoticesCommentDataHeader)
-    func dislike (for header : NoticesCommentDataHeader)
-    func showProfile(for header : NoticesCommentDataHeader)
-    func clickMention(username : String)
-}
-protocol CampingCommentHeaderDelegate : class {
-    func like (for header : CampingCommentHeader)
-    func dislike (for header : CampingCommentHeader)
-    func showProfile(for header : CampingCommentHeader)
-    func clickMention(username : String)
-    func mapClik(for header : CampingCommentHeader)
-}
-protocol SellBuyDataCommentHeaderDelegate : class {
-    func like (for header : SellBuyDataCommentHeader)
-    func dislike (for header : SellBuyDataCommentHeader)
-    func showProfile(for header : SellBuyDataCommentHeader)
-    func clickMention(username : String)
-    func mapClik(for header : SellBuyDataCommentHeader)
-}
-protocol FoodMeDataCommentHeaderDelegate : class {
-    func like (for header : FoodMeDataCommentHeader)
-    func dislike (for header : FoodMeDataCommentHeader)
-    func showProfile(for header : FoodMeDataCommentHeader)
-    func clickMention(username : String)
-    func mapClik(for header : FoodMeDataCommentHeader)
-}
-protocol CampingDataCommentHeaderDelegate : class {
-    func like (for header : CampingDataCommentHeader)
-    func dislike (for header : CampingDataCommentHeader)
-    func showProfile(for header : CampingDataCommentHeader)
-    func clickMention(username : String)
-    func mapClik(for header : CampingDataCommentHeader)
-}
+
+
+
+
+
+
 protocol DataViewClick : class {
     
     func imageClik ( for cell : DataViewImageCell)

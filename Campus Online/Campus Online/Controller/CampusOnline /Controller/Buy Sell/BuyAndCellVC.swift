@@ -521,8 +521,12 @@ extension BuyAndCellVC : UICollectionViewDelegate , UICollectionViewDelegateFlow
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
+       
+       
+        
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
         navigationController?.pushViewController(vc, animated: true)
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -597,7 +601,7 @@ extension BuyAndCellVC : BuySellVCDelegate{
     
     func comment(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post , target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -739,7 +743,8 @@ extension BuyAndCellVC : BuySellVCDataDelegate {
     }
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+       
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     

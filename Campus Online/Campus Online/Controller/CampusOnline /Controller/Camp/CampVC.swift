@@ -460,7 +460,10 @@ extension CampVC : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = MainPostCommentVC(currentUser: currentUser, post : mainPost[indexPath.row] , target: mainPost[indexPath.row].postType)
+       
+        
+        
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: mainPost[indexPath.row].postId, lessonPost: nil, noticesPost: nil, mainPost: mainPost[indexPath.row])
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -527,7 +530,7 @@ extension CampVC : CampingVCDataDelegate {
     
     func comment(for cell: CampingDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -637,8 +640,10 @@ extension CampVC : CampingVCDelegate{
     
     func comment(for cell: CampingView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
-        navigationController?.pushViewController(vc, animated: true)
+        
+         let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+         navigationController?.pushViewController(vc, animated: true)
+
     }
     
     func linkClick(for cell: CampingView) {

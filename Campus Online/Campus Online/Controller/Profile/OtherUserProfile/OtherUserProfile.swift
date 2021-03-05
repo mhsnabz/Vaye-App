@@ -2018,7 +2018,9 @@ extension OtherUserProfile : BuySellVCDelegate {
     
     func comment(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+      
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2245,7 +2247,7 @@ extension OtherUserProfile : BuySellVCDataDelegate {
     
     func comment(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2345,7 +2347,7 @@ extension OtherUserProfile : FoodMeVCDelegate {
     
     func comment(for cell: FoodMeView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2451,7 +2453,7 @@ extension OtherUserProfile :FoodMeVCDataDelegate{
     
     func comment(for cell: FoodMeViewData) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2558,7 +2560,7 @@ extension OtherUserProfile :CampingVCDataDelegate{
     
     func comment(for cell: CampingDataView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2665,7 +2667,7 @@ extension OtherUserProfile :CampingVCDelegate{
     
     func comment(for cell: CampingView) {
         guard let post = cell.mainPost else { return }
-        let vc = MainPostCommentVC(currentUser: currentUser, post : post, target: post.postType)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2772,7 +2774,7 @@ extension OtherUserProfile :NewPostNoticesVCDelegate{
     
     func comment(for cell: NoticesCell) {
         guard let post = cell.noticesPost else { return }
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -2937,7 +2939,7 @@ extension OtherUserProfile :NewPostNoticesDataVCDelegate{
     
     func comment(for cell: NoticesDataCell) {
         guard let post = cell.noticesPost else { return }
-        let vc = NoticeVCComment(currentUser: currentUser, post: post)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: post, mainPost: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
