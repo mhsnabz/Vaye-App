@@ -34,7 +34,16 @@ import GoogleMobileAds
 import MapKit
 import CoreLocation
 
-class ProfileVC: UIViewController  , UIScrollViewDelegate, ShowAllDatas{
+class ProfileVC: UIViewController  , UIScrollViewDelegate, ShowAllDatas, ShowNoticesAllDatas{
+    func onClickListener(for cell: NoticesDataCell) {
+        guard let post = cell.noticesPost else { return }
+    
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
     func onClickListener(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
     
@@ -1223,8 +1232,8 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 let h = schoolPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 11)!)
                 cell.msgText.frame = CGRect(x: 70, y: 58, width: view.frame.width - 78, height: h + 4)
 
-                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 12 , width: cell.msgText.frame.width, height: 100)
-
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                cell.onClickListener = self
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.noticesPost = schoolPost[indexPath.row]
                 return cell
@@ -1430,7 +1439,7 @@ extension ProfileVC : UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 50 + 5)
                 }
             }
             else if mainPost[indexPath.row].postType == PostType.foodMe.despription{

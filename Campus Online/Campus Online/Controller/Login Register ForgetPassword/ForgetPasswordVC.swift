@@ -10,7 +10,7 @@ import UIKit
 import TweeTextField
 import FirebaseAuth
 import SVProgressHUD
-
+import PopupDialog
 class ForgetPasswordVC: UIViewController {
     
     

@@ -11,18 +11,46 @@ import SDWebImage
 import ActiveLabel
 import FirebaseFirestore
 class NoticesDataCell: UICollectionViewCell {
-    lazy var filterView = ImageDataView()
+
     weak var delegate : NewPostNoticesDataVCDelegate?
-    
+    lazy var stackView = ImagesStack(frame: CGRect(x: 0, y: 0, width: frame.width - 78, height: 200))
+    weak var onClickListener : ShowNoticesAllDatas?
+
     weak var currentUser : CurrentUser?
     weak var noticesPost : NoticesMainModel?{
          didSet {
              configure()
              guard let post = noticesPost else { return }
              if !post.data.isEmpty{
-                 filterView.arrayOfUrl = post.thumbData
-                 filterView.datasUrl = post.data
-                 filterView.collectionView.reloadData()
+                stackView.imagesData = post.thumbData
+               
+                if post.data.count == 1 {
+                    stackView.imageLayer_one.isHidden = false
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+                    stackView.imageLayer_four.isHidden = true
+
+                }
+                else if post.data.count == 2 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = false
+                    stackView.imageLayer_there.isHidden = true
+                }else if post.data.count == 3 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = false
+                }else if post.data.count >= 4 {
+                    stackView.imageLayer_four.isHidden = false
+                    
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+
+                }
              }
              
              guard let currentUser = currentUser else { return }
@@ -189,7 +217,7 @@ class NoticesDataCell: UICollectionViewCell {
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
-        addSubview(filterView)
+        addSubview(stackView)
         //
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
@@ -200,6 +228,8 @@ class NoticesDataCell: UICollectionViewCell {
         
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
+        stackView.isUserInteractionEnabled = true
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showData)))
        
         
     }
@@ -209,6 +239,7 @@ class NoticesDataCell: UICollectionViewCell {
     }
     //MARK:-selectors
     @objc func showData(){
+        onClickListener?.onClickListener(for : self)
     }
     
     @objc func commentClick() {
@@ -276,4 +307,5 @@ class NoticesDataCell: UICollectionViewCell {
             sself.delegate?.goProfileByMention(userName : username)
         }
     }
+    
 }

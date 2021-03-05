@@ -363,3 +363,6 @@ protocol HomeMenuBarSelectedIndex : class {
 protocol ShowAllDatas : class {
     func onClickListener(for cell : NewPostHomeVCData)
 }
+protocol ShowNoticesAllDatas : class {
+    func onClickListener(for cell : NoticesDataCell)
+}

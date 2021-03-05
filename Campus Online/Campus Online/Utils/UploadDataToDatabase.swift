@@ -90,7 +90,7 @@ func getThumbİmage( date : String ,currentUser : CurrentUser , lessonName : Str
             .child(currentUser.bolum_key).child(lessonName).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
         //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
         let image : UIImage = UIImage(data: data)!
-        guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 512, height: 512)).jpegData(compressionQuality: 1) else { return }
+        guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 512, height: 512)).jpegData(compressionQuality: 0.6) else { return }
         uploadTask = storageRef.putData(uploadData, metadata: metaDataForData) { (metaData, err) in
             if err != nil
             {  print("err \(err as Any)") }

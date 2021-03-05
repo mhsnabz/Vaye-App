@@ -19,6 +19,7 @@ import SVProgressHUD
 import Lottie
 import MobileCoreServices
 import MapKit
+import SnapKit
 import AVFoundation
 class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate,sendAudioProtocol, GetCoordiant {
     func getCoordinat(locaiton: GeoPoint) {
