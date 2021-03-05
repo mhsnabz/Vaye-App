@@ -366,3 +366,13 @@ protocol ShowAllDatas : class {
 protocol ShowNoticesAllDatas : class {
     func onClickListener(for cell : NoticesDataCell)
 }
+protocol ShowBuySellData : class {
+    func onClickListener(for cell : BuyAndSellDataView)
+    
+}
+protocol ShowAllFoodMeData : class {
+    func onClickListener(for cell : FoodMeViewData)
+}
+protocol ShowAllCampingData : class {
+    func onClickListener(for cell : CampingDataView)
+}

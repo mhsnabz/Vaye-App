@@ -19,7 +19,11 @@ private let cellID = "cellID"
 private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
 private let cellAds = "cellAds"
-class FoodMe: UIViewController {
+class FoodMe: UIViewController, ShowAllFoodMeData {
+    func onClickListener(for cell: FoodMeViewData) {
+        
+    }
+    
     var topic : String =  "food-me"
     var currentUser : CurrentUser
     var waitAnimation = AnimationView()
@@ -425,7 +429,8 @@ extension FoodMe : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
                 
-                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                cell.onClickListener = self
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.mainPost = mainPost[indexPath.row]
@@ -462,7 +467,7 @@ extension FoodMe : UICollectionViewDelegate , UICollectionViewDelegateFlowLayout
                 return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
             }
             else{
-                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
             }
         }
     }

@@ -12,7 +12,9 @@ import ActiveLabel
 import FirebaseFirestore
 class CampingDataView: UICollectionViewCell {
     weak var delegate : CampingVCDataDelegate?
-    lazy var filterView = ImageDataView()
+    lazy var stackView = ImagesStack(frame: CGRect(x: 0, y: 0, width: frame.width - 78, height: 200))
+    weak var onClickListener : ShowAllCampingData?
+
     var currentUser : CurrentUser?
     weak var mainPost : MainPostModel?{
         didSet{
@@ -21,11 +23,39 @@ class CampingDataView: UICollectionViewCell {
             guard let currentUser = currentUser else { return }
             guard let post = mainPost else { return }
             if !post.data.isEmpty{
-                filterView.arrayOfUrl = post.thumbData
-                filterView.datasUrl = post.data
-                filterView.collectionView.reloadData()
+              
+                stackView.imagesData = post.thumbData
+                
+                if post.data.count == 1 {
+                    stackView.imageLayer_one.isHidden = false
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+                    stackView.imageLayer_four.isHidden = true
+
+                }
+                else if post.data.count == 2 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = false
+                    stackView.imageLayer_there.isHidden = true
+                }else if post.data.count == 3 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = false
+                }else if post.data.count >= 4 {
+                    stackView.imageLayer_four.isHidden = false
+                    
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+
+                }
                 
             }
+
             checkIsDisliked(user: currentUser, post: mainPost) {[weak self] (_val) in
                 guard let s = self else { return }
                 if _val {
@@ -200,15 +230,15 @@ class CampingDataView: UICollectionViewCell {
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
-        addSubview(filterView)
+        addSubview(stackView)
         //
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
         dislike.addTarget(self, action: #selector(dislikeClick), for: .touchUpInside)
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
-        filterView.isUserInteractionEnabled = true
+        stackView.isUserInteractionEnabled = true
         
-        filterView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
+        stackView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
         addSubview(mapBtn)
         mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         
@@ -231,7 +261,8 @@ class CampingDataView: UICollectionViewCell {
     
     //MARK:-selectors
     @objc func showData(){
-        
+        onClickListener?.onClickListener(for : self)
+
     }
     @objc func commentClick() {
         delegate?.comment(for: self)

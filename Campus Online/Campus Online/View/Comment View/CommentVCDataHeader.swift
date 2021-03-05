@@ -13,16 +13,14 @@ import Firebase
 class CommentVCDataHeader : UITableViewHeaderFooterView{
     
     weak var delegate : CommentVCDataDelegate?
-    lazy var filterView = ImageDataView()
+    lazy var filterView = UIView()
     weak var currentUser : CurrentUser?
     weak var post : LessonPostModel?{
          didSet {
              configure()
              guard let post = post else { return }
              if !post.data.isEmpty{
-                filterView.arrayOfUrl = post.thumbData
-                filterView.datasUrl = post.data
-                filterView.collectionView.reloadData()
+                
              }
              
              guard let currentUser = currentUser else { return }

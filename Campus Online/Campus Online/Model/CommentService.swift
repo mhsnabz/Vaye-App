@@ -160,7 +160,7 @@ class CommentService {
                 
                 let db = Firestore.firestore().collection("comment")
                     .document(postId).collection("comment").document(targetComment)
-                db.setData(["replies":FieldValue.arrayUnion([commentId])], merge: true, completion: nil)
+                db.updateData(["replies":FieldValue.arrayUnion([commentId])],  completion: nil)
                 completion(true)
                 
             }
@@ -174,7 +174,7 @@ class CommentService {
             .document(commentModel.commentId!)
       
         let dic = ["likes":FieldValue.arrayUnion([currentUser.uid as Any])] as [String : Any]
-        db.setData(dic, merge: true) { (err) in
+        db.updateData(dic) { (err) in
             if err == nil {
                 completion(true)
             }
@@ -189,7 +189,7 @@ class CommentService {
             .document(commentModel.commentId!)
       
         let dic = ["likes":FieldValue.arrayRemove([currentUser.uid as Any])] as [String : Any]
-        db.setData(dic, merge: true) 
+        db.updateData(dic)
     }
     
     func likeRepliedComment(commentModel : CommentModel ,targetComment : String ,currentUser : CurrentUser ,completion : @escaping(Bool) ->Void){
@@ -201,7 +201,7 @@ class CommentService {
             .collection(targetComment)
             .document(commentModel.commentId!)
         let dic = ["likes":FieldValue.arrayUnion([currentUser.uid as Any])] as [String : Any]
-        db.setData(dic, merge: true) { (err) in
+        db.updateData(dic) { (err) in
             if err == nil {
                 completion(true)
             }
@@ -216,7 +216,7 @@ class CommentService {
             .collection(targetComment)
             .document(commentModel.commentId!)
         let dic = ["likes":FieldValue.arrayRemove([currentUser.uid as Any])] as [String : Any]
-        db.setData(dic, merge: true)
+        db.updateData(dic)
     }
     
     

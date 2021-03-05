@@ -11,7 +11,7 @@ import ActiveLabel
 import SDWebImage
 class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
     weak var delegate : SellBuyDataCommentHeaderDelegate?
-    lazy var filterView = ImageDataView()
+    lazy var filterView = UIView()
 
     var currentUser : CurrentUser?
     weak var post : MainPostModel?{
@@ -307,9 +307,9 @@ class SellBuyDataCommentHeader : UITableViewHeaderFooterView {
             mapBtn.isHidden = true
         }
         if !post.data.isEmpty{
-            filterView.arrayOfUrl = post.thumbData
-            filterView.datasUrl = post.data
-            filterView.collectionView.reloadData()
+//            filterView.arrayOfUrl = post.thumbData
+//            filterView.datasUrl = post.data
+//            filterView.collectionView.reloadData()
         }
         let dateFormatterGet = DateFormatter()
         dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"

@@ -14,7 +14,9 @@ import FirebaseFirestore
 class FoodMeViewData: UICollectionViewCell {
     //MARK: - variables
     weak var delegate : FoodMeVCDataDelegate?
-    lazy var filterView = ImageDataView()
+    lazy var stackView = ImagesStack(frame: CGRect(x: 0, y: 0, width: frame.width - 78, height: 200))
+    weak var onClickListener : ShowAllFoodMeData?
+
     var currentUser : CurrentUser?
     weak var mainPost : MainPostModel?{
         didSet{
@@ -24,9 +26,36 @@ class FoodMeViewData: UICollectionViewCell {
             guard let post = mainPost else { return }
             if !post.data.isEmpty{
               
-                filterView.arrayOfUrl = post.thumbData
-                filterView.datasUrl = post.data
-                filterView.collectionView.reloadData()
+                stackView.imagesData = post.thumbData
+                
+                if post.data.count == 1 {
+                    stackView.imageLayer_one.isHidden = false
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+                    stackView.imageLayer_four.isHidden = true
+
+                }
+                else if post.data.count == 2 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = false
+                    stackView.imageLayer_there.isHidden = true
+                }else if post.data.count == 3 {
+                    stackView.imageLayer_four.isHidden = true
+
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = false
+                }else if post.data.count >= 4 {
+                    stackView.imageLayer_four.isHidden = false
+                    
+                    stackView.imageLayer_one.isHidden = true
+                    stackView.imageLayer_two.isHidden = true
+                    stackView.imageLayer_there.isHidden = true
+
+                }
+                
             }
             checkIsDisliked(user: currentUser, post: mainPost) {[weak self] (_val) in
                 guard let s = self else { return }
@@ -202,7 +231,7 @@ class FoodMeViewData: UICollectionViewCell {
         configure()
         addSubview(msgText)
         addSubview(bottomBar)
-        addSubview(filterView)
+        addSubview(stackView)
         //
         comment.addTarget(self, action: #selector(commentClick), for: .touchUpInside)
         like.addTarget(self, action: #selector(likeClick), for: .touchUpInside)
@@ -223,6 +252,8 @@ class FoodMeViewData: UICollectionViewCell {
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showProfile)))
         profileImage.isUserInteractionEnabled = true
         mapBtn.addTarget(self, action: #selector(mapClick), for: .touchUpInside)
+        stackView.isUserInteractionEnabled = true
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showData)))
     }
     
     required init?(coder: NSCoder) {
@@ -231,7 +262,7 @@ class FoodMeViewData: UICollectionViewCell {
     
     //MARK:-selectors
     @objc func showData(){
-        
+        onClickListener?.onClickListener(for : self)
     }
     @objc func commentClick() {
         delegate?.comment(for: self)

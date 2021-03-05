@@ -52,7 +52,19 @@ extension OtherUserProfile : ASMainOtherUserDelegate {
     
 }
 
-class OtherUserProfile: UIViewController, ShowAllDatas, ShowNoticesAllDatas     {
+class OtherUserProfile: UIViewController, ShowAllDatas, ShowNoticesAllDatas, ShowAllFoodMeData, ShowAllCampingData, ShowBuySellData     {
+    func onClickListener(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    func onClickListener(for cell: CampingDataView) {
+        
+    }
+    
+    func onClickListener(for cell: FoodMeViewData) {
+        
+    }
+    
     func onClickListener(for cell: NoticesDataCell) {
         
     }
@@ -1326,7 +1338,8 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
                         cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-                        cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                        cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                        cell.onClickListener = self
                         
                         cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                         cell.mainPost = mainPost[indexPath.row]
@@ -1354,7 +1367,8 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
                         
-                        cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                        cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                        cell.onClickListener = self
                         
                         cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                         cell.mainPost = mainPost[indexPath.row]
@@ -1382,7 +1396,8 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
                         
-                        cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                        cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                        cell.onClickListener = self
                         
                         cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                         cell.mainPost = mainPost[indexPath.row]
@@ -1474,7 +1489,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 50 + 5)
                 }
             }
             else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
@@ -1484,7 +1499,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
                 }
             }
             else if mainPost[indexPath.row].postType == PostType.camping.despription{
@@ -1494,7 +1509,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
                 }
             }
             else{
@@ -1518,7 +1533,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 30 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 100 + 30)
+                    return CGSize(width: view.frame.width, height: 60 + 8 + h + 4 + 4 + 200 + 30)
                 }
             }
         }

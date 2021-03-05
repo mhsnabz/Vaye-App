@@ -25,8 +25,38 @@ private let cell_foodme_data_id = "cell_foodme_data_id"
 private let cell_camp_id = "cell_camp_id"
 private let cell_camp_data_id = "cell_camp_data_id"
 
-class MainCell: UICollectionViewCell
+class MainCell: UICollectionViewCell, ShowBuySellData, ShowAllFoodMeData, ShowAllCampingData
 {
+    func onClickListener(for cell: CampingDataView) {
+        guard let post = cell.mainPost else { return }
+
+        guard let currentUser = currentUser else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.rootController?.modalPresentationStyle = .fullScreen
+        self.rootController?.present(vc, animated: true, completion: nil)
+    }
+    
+    func onClickListener(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+
+        guard let currentUser = currentUser else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.rootController?.modalPresentationStyle = .fullScreen
+        self.rootController?.present(vc, animated: true, completion: nil)
+    }
+    
+    func onClickListener(for cell: FoodMeViewData) {
+        guard let post = cell.mainPost else { return }
+
+        guard let currentUser = currentUser else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.rootController?.modalPresentationStyle = .fullScreen
+        self.rootController?.present(vc, animated: true, completion: nil)
+    }
+    
      var currentUser : CurrentUser?{
         didSet{
             getPost()
@@ -317,7 +347,8 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
                     let h = mainPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                     cell.msgText.frame = CGRect(x: 70, y: 38, width: frame.width - 78, height: h + 4)
                     cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-                    cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                    cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+                    cell.onClickListener = self
                     
                     cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                     cell.mainPost = mainPost[indexPath.row]
@@ -345,7 +376,8 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
                     let h = mainPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                     cell.msgText.frame = CGRect(x: 70, y: 38, width: frame.width - 78, height: h + 4)
                     
-                    cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                    cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+                    cell.onClickListener = self
                     
                     cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                     cell.mainPost = mainPost[indexPath.row]
@@ -373,7 +405,8 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
                     let h = mainPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                     cell.msgText.frame = CGRect(x: 70, y: 38, width: frame.width - 78, height: h + 4)
                     
-                    cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4  + 4 , width: cell.msgText.frame.width, height: 100)
+                    cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+                    cell.onClickListener = self
                     
                     cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                     cell.mainPost = mainPost[indexPath.row]
@@ -416,7 +449,7 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
                     return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
                 }
                 else{
-                    return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+                    return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 50 + 5)
                 }
             }
             else if mainPost[indexPath.row].postType == PostType.foodMe.despription{
@@ -426,7 +459,7 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
                     return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
                 }
                 else{
-                    return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                    return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
                 }
             }
             else if mainPost[indexPath.row].postType == PostType.camping.despription{
@@ -436,7 +469,7 @@ extension MainCell : UICollectionViewDataSource, UICollectionViewDelegate , UICo
                     return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
                 }
                 else{
-                    return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 30 + 5)
+                    return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
                 }
             }
             else{

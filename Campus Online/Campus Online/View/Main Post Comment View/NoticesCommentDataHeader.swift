@@ -11,7 +11,7 @@ import ActiveLabel
 import SDWebImage
 class NoticesCommentDataHeader: UITableViewHeaderFooterView {
     weak var delegate :  NoticesCommenDataHeaderDelegate?
-    lazy var filterView = ImageDataView()
+    lazy var filterView = UIView()
     var currentUser : CurrentUser?
     weak var post : NoticesMainModel?{
         didSet{
@@ -267,9 +267,9 @@ class NoticesCommentDataHeader: UITableViewHeaderFooterView {
         
      
         if !post.data.isEmpty{
-            filterView.arrayOfUrl = post.thumbData
-            filterView.datasUrl = post.data
-            filterView.collectionView.reloadData()
+//            filterView.arrayOfUrl = post.thumbData
+//            filterView.datasUrl = post.data
+//            filterView.collectionView.reloadData()
         }
         let dateFormatterGet = DateFormatter()
         dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"

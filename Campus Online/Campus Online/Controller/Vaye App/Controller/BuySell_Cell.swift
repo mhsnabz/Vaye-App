@@ -17,6 +17,15 @@ private let cellID = "cellID"
 private let cellData = "cellData"
 private let loadMoreCell = "loadmorecell"
 private let cellAds = "cellAds"
+
+extension BuySell_Cell : ShowBuySellData{
+    func onClickListener(for cell: BuyAndSellDataView) {
+        
+    }
+    
+    
+}
+
 class BuySell_Cell: UICollectionViewCell {
     var currentUser : CurrentUser?{
         didSet{
@@ -286,7 +295,9 @@ extension BuySell_Cell  : UICollectionViewDelegate , UICollectionViewDelegateFlo
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 cell.msgText.frame = CGRect(x: 70, y: 38, width: frame.width - 78, height: h + 4)
                 cell.priceLbl.anchor(top: cell.msgText.bottomAnchor, left: cell.msgText.leftAnchor, bottom: nil, rigth: nil, marginTop: 4, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 20)
-                cell.filterView.frame = CGRect(x: 70, y: 40 + 8 + h + 4 + 20 + 4 , width: cell.msgText.frame.width, height: 100)
+                
+                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+                cell.onClickListener = self
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
                 cell.mainPost = mainPost[indexPath.row]
@@ -324,7 +335,7 @@ extension BuySell_Cell  : UICollectionViewDelegate , UICollectionViewDelegateFlo
                 return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 50 + 5 )
             }
             else{
-                return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 100 + 50 + 5)
+                return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 50 + 5)
             }
         }
     }
