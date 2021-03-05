@@ -10,7 +10,6 @@
 import UIKit
 import AVFoundation
 import MessageKit
-import Alamofire
 import FirebaseStorage
 /// The `PlayerState` indicates the current audio controller state
 public enum PlayerState {

@@ -1,0 +1,6 @@
+framework module Pods_VayeApp_VayeAppUITests {
+  umbrella header "Pods-VayeApp-VayeAppUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

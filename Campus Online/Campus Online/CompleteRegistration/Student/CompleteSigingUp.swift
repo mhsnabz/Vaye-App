@@ -12,7 +12,6 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 import SVProgressHUD
-import PopupDialog
 
 class CompleteSigingUp: UIViewController {
 

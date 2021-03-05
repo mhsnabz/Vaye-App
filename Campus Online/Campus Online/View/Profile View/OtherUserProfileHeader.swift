@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import SDWebImage
-import SnapKit
 import GoogleMobileAds
 import FirebaseFirestore
 class OtherUserProfileHeader: UICollectionViewCell {

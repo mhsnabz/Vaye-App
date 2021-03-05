@@ -121,6 +121,10 @@ class CommentService {
     }
 
     
+    //MARK:- new instance
+    
+    
+    
     func checkLike(commentModel : CommentModel ,  currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         guard let likes = commentModel.likes else { return }
         if likes.contains(currentUser.uid) {
@@ -130,6 +134,39 @@ class CommentService {
         }
     }
 
+    
+    func sendNewRepliedComment(postId : String , targetComment : String , commentText : String ,currentUser : CurrentUser,commentId : String ,completion : @escaping(Bool) ->Void){
+
+        let db = Firestore.firestore().collection("comment")
+            .document(postId)
+            .collection("comment-replied")
+            .document("comment")
+            .collection(targetComment)
+            .document(commentId)
+    let dic = ["senderName" : currentUser.name as Any,
+               "senderUid" : currentUser.uid as Any,
+               "username" : currentUser.username as Any,
+               "time":FieldValue.serverTimestamp() ,
+               "comment":commentText ,
+               "commentId":commentId,
+               "postId":postId,
+               "likes":[],"replies" : [] ,
+               "senderImage" : currentUser.thumb_image as Any] as [String : Any]
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                ///comment/1614762780585/comment-replied/comment/1614797540332/1614929630215
+                
+               
+                
+                let db = Firestore.firestore().collection("comment")
+                    .document(postId).collection("comment").document(targetComment)
+                db.setData(["replies":FieldValue.arrayUnion([commentId])], merge: true, completion: nil)
+                completion(true)
+                
+            }
+        }
+    }
+    
     func likeMainComment(commentModel : CommentModel!  , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("comment")
             .document(commentModel.postId!)
@@ -183,7 +220,7 @@ class CommentService {
     }
     
     
-    func sendNewComment(currentUser : CurrentUser , commentText : String , postId : String , commentId : String , completion:@escaping(Bool) ->Void){
+    func sendNewComment(postType : String,currentUser : CurrentUser , commentText : String , postId : String , commentId : String , completion:@escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("comment")
             .document(postId)
             .collection("comment")
@@ -202,7 +239,8 @@ class CommentService {
             guard let sself = self else { return }
             if err == nil {
                 sself.getTotalCommentCount(postId: postId) { (count) in
-                    sself.setTotolCommentCount(currentUser: currentUser, postId: postId, count: count)
+                    sself.setTotolCommentCount(postType : postType,currentUser: currentUser, postId: postId, count: count)
+                    completion(true)
                 }
             }
         }
@@ -225,15 +263,35 @@ class CommentService {
             }
         }
     }
-    private func setTotolCommentCount(currentUser : CurrentUser,postId : String , count : Int ){
-
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post")
-            .collection("post")
-            .document(postId)
-        db.setData(["comment":count] as [String : Int], merge: true, completion: nil)
+    private func setTotolCommentCount( postType: String,currentUser : CurrentUser,postId : String , count : Int ){
         
+        if postType == PostName.lessonPost.name {
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(postId)
+            db.setData(["comment":count] as [String : Int], merge: true, completion: nil)
+        }else if postType == PostName.MainPost.name{
+            ///main-post/post/post/1613340868602
+            let db = Firestore.firestore().collection(PostName.MainPost.name)
+                .document("post")
+                .collection("post")
+                .document(postId)
+            db.setData(["comment":count] as [String : Int], merge: true, completion: nil)
+            
+        }else if postType == PostName.NoticesPost.name{
+            ///İSTE/notices/post/1613759937578
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document(PostName.NoticesPost.name)
+                .collection("post")
+                .document(postId)
+            db.setData(["comment":count] as [String : Int], merge: true, completion: nil)
+            
+        }
         
-        
+       
     }
+    
+    
+    
 }

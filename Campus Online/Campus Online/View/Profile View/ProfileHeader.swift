@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import SDWebImage
-import SnapKit
 import FirebaseFirestore
 class ProfileHeader : UICollectionReusableView {
     var controller : OtherUserProfile?

@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import SDWebImage
-import SnapKit
 import FirebaseFirestore
 import GoogleMobileAds
 

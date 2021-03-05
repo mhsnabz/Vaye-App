@@ -330,9 +330,18 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         if textField.hasText {
             textField.text = ""
             let commentId = Int64(Date().timeIntervalSince1970 * 1000).description
-            CommentService.shared.sendNewComment(currentUser: currentUser, commentText: text, postId: postId, commentId: commentId) {[weak self] (_val) in
-                //FIXME:- send notification
+            CommentService.shared.sendNewComment(postType : PostName.lessonPost.name,currentUser: currentUser, commentText: text, postId: postId, commentId: commentId) {[weak self] (_val) in
                 guard let sself = self else { return }
+                //FIXME:- send notification
+                if let post = sself.lessonPost {
+                    CommentNotificationService.shared.newLessonPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                    for item in text.findMentionText(){
+                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                    }
+                }
+                
+         
+
                 let indexPath = IndexPath(item: sself.commentModel.count - 1, section: 0)
                 sself.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
             }
@@ -434,7 +443,7 @@ extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
                 
                 let read = SwipeAction(style: .default, title: "Cevapla") { [weak self] action, indexPath in
                     guard let sself = self else { return }
-                    let vc = RepliyCommentVC(currentUser: sself.currentUser, postId: sself.commentModel[indexPath.row].postId!, commentId: sself.commentModel[indexPath.row].commentId!)
+                    let vc = RepliyCommentVC(targetCommentModel:sself.commentModel[indexPath.row],currentUser: sself.currentUser, postId: sself.commentModel[indexPath.row].postId!, commentId: sself.commentModel[indexPath.row].commentId!,lessonPost: sself.lessonPost,noticesPost: sself.noticesPost,mainPost: sself.mainPost)
                     sself.navigationController?.pushViewController(vc, animated: true)
 
                 }
@@ -451,7 +460,7 @@ extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
             if orientation == .left {
                 let read = SwipeAction(style: .default, title: "Cevapla") {[weak self] action, indexPath in
                     guard let sself = self else { return }
-                    let vc = RepliyCommentVC(currentUser: sself.currentUser, postId: sself.commentModel[indexPath.row].postId!, commentId: sself.commentModel[indexPath.row].commentId!)
+                  let vc =  RepliyCommentVC(targetCommentModel:sself.commentModel[indexPath.row],currentUser: sself.currentUser, postId: sself.commentModel[indexPath.row].postId!, commentId: sself.commentModel[indexPath.row].commentId!,lessonPost: sself.lessonPost,noticesPost: sself.noticesPost,mainPost: sself.mainPost)
                     sself.navigationController?.pushViewController(vc, animated: true)
                 }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
@@ -510,10 +519,19 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
                     }
                     
                     
-                }else if let noticesPost = sself.noticesPost {
-                    
+                }else if let noticesPost = sself.noticesPost
+                {
+                    CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
+                        if val{
+                            CommentNotificationService.shared.likeNoticesComment(post: noticesPost, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                        }
+                    }
                 }else if let mainPost = sself.mainPost {
-                    
+                    CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
+                        if val{
+                            CommentNotificationService.shared.likeMainPostComment(post: mainPost, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                        }
+                    }
                 }
 
                     
@@ -534,7 +552,8 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
     func replyClick(cell: SwipeCommentCell) {
         guard let commentModel = cell.comment else { return }
         
-        let vc = RepliyCommentVC(currentUser: currentUser, postId: commentModel.postId!, commentId:  commentModel.commentId! )
+        
+        let vc = RepliyCommentVC(targetCommentModel:commentModel,currentUser: self.currentUser, postId: commentModel.postId!, commentId: commentModel.commentId!,lessonPost: self.lessonPost,noticesPost: self.noticesPost,mainPost: self.mainPost)
         navigationController?.pushViewController(vc, animated: true)
     }
     

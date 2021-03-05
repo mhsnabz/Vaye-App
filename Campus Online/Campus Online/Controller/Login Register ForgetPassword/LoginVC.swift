@@ -12,7 +12,6 @@ import TweeTextField
 import Firebase
 import JDropDownAlert
 import SVProgressHUD
-import PopupDialog
 import FirebaseAuth
 import FirebaseFirestore
 class LoginVC: UIViewController {

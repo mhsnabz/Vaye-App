@@ -56,7 +56,6 @@ open class AudioMessageCell: MessageContentCell {
 
     public lazy var progressView: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .default)
-        progressView.tintColor = .white
         progressView.progress = 0.0
         return progressView
     }()

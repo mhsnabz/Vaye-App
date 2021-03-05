@@ -17,6 +17,7 @@ This is lightweight library that provides different types of Text Fields based o
 - [Requirements](#requirements)
 - [Installation](#installation)
     - [CocoaPods](#cocoapods)
+    - [Swift Package Manager](#swift-package-manager)
     - [Carthage](#carthage)
     - [Manually](#manually)
 - [Usage](#usage)
@@ -39,7 +40,7 @@ This is lightweight library that provides different types of Text Fields based o
 ## Requirements
 
 - iOS 10.0+
-- Xcode 10.0+
+- Xcode 11.0+
 - Swift 5.0+
 
 ## Installation 
@@ -52,6 +53,23 @@ pod 'TweeTextField'
 ```
 
 Then run `pod install` to integrate the library in your project.
+
+#### Swift Package Manager
+Adding TweeTextField to the dependencies value of your `Package.swift` file.
+```swift
+// swift-tools-version:5.0
+
+import PackageDescription
+
+let package = Package(
+    name: "YOUR_PROJECT_NAME",
+    dependencies: [
+        .package(url: "https://github.com/oleghnidets/TweeTextField.git", from: "1.6.1"),
+    ]
+)
+```
+
+Or you may use Xcode. `File`->`Swift Packages`->`Add Package Dependency`. Then put link to the [repository](https://github.com/oleghnidets/TweeTextField.git).
 
 #### Carthage
 To integrate `TweeTextField` into your Xcode project using Carthage, specify it in your Cartfile:
@@ -87,11 +105,23 @@ Check out sample project for more information.
 ![Attributes Inspector](/docs/attributes.png)
 
 ```swift
-emailTextField.infoTextColor = .yellow
-emailTextField.showInfo("Hello World!", animated: true)
-		
-usernameTextField.lineColor = .green
-usernameTextField.lineWidth = 2
+emailTextField.infoAnimationDuration = 0.7
+emailTextField.infoTextColor = .systemRed
+emailTextField.infoFontSize = 13
+        
+emailTextField.activeLineColor = .systemBlue
+emailTextField.activeLineWidth = 1
+emailTextField.animationDuration = 0.3
+        
+emailTextField.lineColor = .lightGray
+emailTextField.lineWidth = 1
+        
+emailTextField.minimumPlaceholderFontSize = 10
+emailTextField.originalPlaceholderFontSize = 13
+emailTextField.placeholderDuration = 0.3
+emailTextField.placeholderColor = .systemGray2
+emailTextField.tweePlaceholder = "Email address"
+emailTextField.placeholderLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
 ```
 
 ## Communication

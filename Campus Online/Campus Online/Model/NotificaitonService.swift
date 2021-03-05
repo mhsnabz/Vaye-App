@@ -394,6 +394,23 @@ class NotificaitonService{
 struct NotificationGetter {
     let uid : String
 }
+
+enum PostName {
+    case lessonPost
+    case MainPost
+    case NoticesPost
+    var name : String{
+        switch self {
+        case .lessonPost:
+        return "lesson-post"
+        case .MainPost:
+        return "main-post"
+        case .NoticesPost:
+        return "noties"
+        }
+    }
+}
+
 enum Notification_description {
     case like_home
     case comment_home

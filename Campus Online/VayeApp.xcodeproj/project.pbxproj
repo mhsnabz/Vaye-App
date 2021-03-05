@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5D0FE7ED85B9850171B990DD /* Pods_Campus_OnlineTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E94D3F655BFAA559064463 /* Pods_Campus_OnlineTests.framework */; };
+		4F82269F05B7836B12FE0782 /* Pods_VayeAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E535F3A6A5BC5269BEB2804 /* Pods_VayeAppTests.framework */; };
 		66024C22251CEFF3009E8A7E /* CommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66024C21251CEFF3009E8A7E /* CommentService.swift */; };
 		66024C27251D0C77009E8A7E /* CommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66024C26251D0C77009E8A7E /* CommentModel.swift */; };
 		66024C2D251D4E51009E8A7E /* RepliesComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66024C2C251D4E51009E8A7E /* RepliesComment.swift */; };
@@ -210,6 +210,8 @@
 		66B9E432259E297D003709C9 /* RequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B9E431259E297D003709C9 /* RequestCell.swift */; };
 		66B9E437259E2A73003709C9 /* RequestConservationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B9E436259E2A73003709C9 /* RequestConservationVC.swift */; };
 		66B9E43C259E37FC003709C9 /* ChatListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B9E43B259E37FC003709C9 /* ChatListModel.swift */; };
+		66BC617925F1FAFD00D545A4 /* CommentNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BC617825F1FAFD00D545A4 /* CommentNotificationService.swift */; };
+		66BC618125F1FB2D00D545A4 /* PushNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BC618025F1FB2D00D545A4 /* PushNotificationService.swift */; };
 		66C032852570CE6F004DC40A /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C032842570CE6F004DC40A /* MenuBar.swift */; };
 		66C0328D2570D216004DC40A /* MenuBarFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C0328C2570D216004DC40A /* MenuBarFilter.swift */; };
 		66C0329A25711066004DC40A /* OtherUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C0329925711066004DC40A /* OtherUserProfile.swift */; };
@@ -252,7 +254,6 @@
 		66D911F124EEA9EA002D760A /* Campus_OnlineUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D911F024EEA9EA002D760A /* Campus_OnlineUITests.swift */; };
 		66D9120524EEAA5B002D760A /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D9120424EEAA5B002D760A /* Enum.swift */; };
 		66D9120924EEAA85002D760A /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D9120824EEAA85002D760A /* ContainerController.swift */; };
-		66D9121424EEAB49002D760A /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D9121324EEAB49002D760A /* HomeVC.swift */; };
 		66D9121724EEAB60002D760A /* NoticesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D9121624EEAB60002D760A /* NoticesVC.swift */; };
 		66D9121924EEAB74002D760A /* CampusOnlineVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D9121824EEAB74002D760A /* CampusOnlineVC.swift */; };
 		66D9121B24EEAB85002D760A /* NotificationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D9121A24EEAB85002D760A /* NotificationVC.swift */; };
@@ -269,6 +270,9 @@
 		66EAC8B3258E64FB003CF7A3 /* Home_Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8B2258E64FB003CF7A3 /* Home_Cell.swift */; };
 		66EAC8F2258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8F1258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift */; };
 		66EAC8F7258EED95003CF7A3 /* ClupNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EAC8F6258EED95003CF7A3 /* ClupNames.swift */; };
+		66EC9D0C25EFCA5100ECBA22 /* MajorPostCommentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EC9D0B25EFCA5100ECBA22 /* MajorPostCommentController.swift */; };
+		66EC9D1225EFCA7A00ECBA22 /* SwipeCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EC9D1125EFCA7A00ECBA22 /* SwipeCommentCell.swift */; };
+		66EC9D2225F130FC00ECBA22 /* RepliyCommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EC9D2125F130FC00ECBA22 /* RepliyCommentVC.swift */; };
 		66EF86C92525EACC00282FD4 /* CommentVCHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF86C82525EACC00282FD4 /* CommentVCHeader.swift */; };
 		66EF86CE25260E3200282FD4 /* CommentVCDataHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF86CD25260E3100282FD4 /* CommentVCDataHeader.swift */; };
 		66F0AFF42599DF7100C030E6 /* MessagesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F0AFF32599DF7100C030E6 /* MessagesModel.swift */; };
@@ -286,8 +290,8 @@
 		66FA4ACA257E93E200E8F35B /* NoticesCommentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FA4AC9257E93E200E8F35B /* NoticesCommentHeader.swift */; };
 		66FA4ACF257E93F200E8F35B /* NoticesCommentDataHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FA4ACE257E93F200E8F35B /* NoticesCommentDataHeader.swift */; };
 		66FA4AD4257ED7F000E8F35B /* NoticesReplyCommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FA4AD3257ED7F000E8F35B /* NoticesReplyCommentVC.swift */; };
-		7808E9842CFD1C28A88C8BB9 /* Pods_Campus_Online_Campus_OnlineUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B2BD60C8533B5B3EDE74C03 /* Pods_Campus_Online_Campus_OnlineUITests.framework */; };
-		A2AD482B5D3C803477411377 /* Pods_Campus_Online.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C9FCD30C7E3F42E37CC7EAA /* Pods_Campus_Online.framework */; };
+		BAD3AD4F0DFD909BEDF2289B /* Pods_VayeApp_VayeAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2487923B0979A5C3FE3084 /* Pods_VayeApp_VayeAppUITests.framework */; };
+		CD5EB06665B30FA7C364AA6E /* Pods_VayeApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060EDE76D744DF3E84ACC360 /* Pods_VayeApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -308,12 +312,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		11E94D3F655BFAA559064463 /* Pods_Campus_OnlineTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Campus_OnlineTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B2BD60C8533B5B3EDE74C03 /* Pods_Campus_Online_Campus_OnlineUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Campus_Online_Campus_OnlineUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DF1EFFCEE99E21A5BE1915B /* Pods-Campus OnlineTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus OnlineTests.debug.xcconfig"; path = "Target Support Files/Pods-Campus OnlineTests/Pods-Campus OnlineTests.debug.xcconfig"; sourceTree = "<group>"; };
-		49604E7D227B97E12EC3BB52 /* Pods-Campus OnlineTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus OnlineTests.release.xcconfig"; path = "Target Support Files/Pods-Campus OnlineTests/Pods-Campus OnlineTests.release.xcconfig"; sourceTree = "<group>"; };
-		5C9FCD30C7E3F42E37CC7EAA /* Pods_Campus_Online.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Campus_Online.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		623A35EDE107A4A79EC2E453 /* Pods-Campus Online.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus Online.release.xcconfig"; path = "Target Support Files/Pods-Campus Online/Pods-Campus Online.release.xcconfig"; sourceTree = "<group>"; };
+		060EDE76D744DF3E84ACC360 /* Pods_VayeApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VayeApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D9EE462C16BC7D8D77FE29 /* Pods-VayeAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VayeAppTests.debug.xcconfig"; path = "Target Support Files/Pods-VayeAppTests/Pods-VayeAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		2E535F3A6A5BC5269BEB2804 /* Pods_VayeAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VayeAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B2487923B0979A5C3FE3084 /* Pods_VayeApp_VayeAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VayeApp_VayeAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		52106F0378AFCC8501255BC4 /* Pods-VayeAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VayeAppTests.release.xcconfig"; path = "Target Support Files/Pods-VayeAppTests/Pods-VayeAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		66024C21251CEFF3009E8A7E /* CommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentService.swift; sourceTree = "<group>"; };
 		66024C26251D0C77009E8A7E /* CommentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentModel.swift; sourceTree = "<group>"; };
 		66024C2C251D4E51009E8A7E /* RepliesComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliesComment.swift; sourceTree = "<group>"; };
@@ -516,6 +519,8 @@
 		66B9E431259E297D003709C9 /* RequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestCell.swift; sourceTree = "<group>"; };
 		66B9E436259E2A73003709C9 /* RequestConservationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConservationVC.swift; sourceTree = "<group>"; };
 		66B9E43B259E37FC003709C9 /* ChatListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListModel.swift; sourceTree = "<group>"; };
+		66BC617825F1FAFD00D545A4 /* CommentNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentNotificationService.swift; sourceTree = "<group>"; };
+		66BC618025F1FB2D00D545A4 /* PushNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationService.swift; sourceTree = "<group>"; };
 		66C032842570CE6F004DC40A /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		66C0328C2570D216004DC40A /* MenuBarFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarFilter.swift; sourceTree = "<group>"; };
 		66C0329925711066004DC40A /* OtherUserProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherUserProfile.swift; sourceTree = "<group>"; };
@@ -564,7 +569,6 @@
 		66D911F224EEA9EA002D760A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66D9120424EEAA5B002D760A /* Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		66D9120824EEAA85002D760A /* ContainerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerController.swift; sourceTree = "<group>"; };
-		66D9121324EEAB49002D760A /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
 		66D9121624EEAB60002D760A /* NoticesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesVC.swift; sourceTree = "<group>"; };
 		66D9121824EEAB74002D760A /* CampusOnlineVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampusOnlineVC.swift; sourceTree = "<group>"; };
 		66D9121A24EEAB85002D760A /* NotificationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationVC.swift; sourceTree = "<group>"; };
@@ -581,6 +585,9 @@
 		66EAC8B2258E64FB003CF7A3 /* Home_Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Cell.swift; sourceTree = "<group>"; };
 		66EAC8F1258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolPostNotificationSetting.swift; sourceTree = "<group>"; };
 		66EAC8F6258EED95003CF7A3 /* ClupNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClupNames.swift; sourceTree = "<group>"; };
+		66EC9D0B25EFCA5100ECBA22 /* MajorPostCommentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MajorPostCommentController.swift; sourceTree = "<group>"; };
+		66EC9D1125EFCA7A00ECBA22 /* SwipeCommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCommentCell.swift; sourceTree = "<group>"; };
+		66EC9D2125F130FC00ECBA22 /* RepliyCommentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliyCommentVC.swift; sourceTree = "<group>"; };
 		66EF86C82525EACC00282FD4 /* CommentVCHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentVCHeader.swift; sourceTree = "<group>"; };
 		66EF86CD25260E3100282FD4 /* CommentVCDataHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentVCDataHeader.swift; sourceTree = "<group>"; };
 		66F0AFF32599DF7100C030E6 /* MessagesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesModel.swift; sourceTree = "<group>"; };
@@ -598,9 +605,10 @@
 		66FA4AC9257E93E200E8F35B /* NoticesCommentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesCommentHeader.swift; sourceTree = "<group>"; };
 		66FA4ACE257E93F200E8F35B /* NoticesCommentDataHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesCommentDataHeader.swift; sourceTree = "<group>"; };
 		66FA4AD3257ED7F000E8F35B /* NoticesReplyCommentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesReplyCommentVC.swift; sourceTree = "<group>"; };
-		886D38C2E641BD1B3DB5619E /* Pods-Campus Online-Campus OnlineUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus Online-Campus OnlineUITests.debug.xcconfig"; path = "Target Support Files/Pods-Campus Online-Campus OnlineUITests/Pods-Campus Online-Campus OnlineUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		AE8344006004D47FACE36AC6 /* Pods-Campus Online.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus Online.debug.xcconfig"; path = "Target Support Files/Pods-Campus Online/Pods-Campus Online.debug.xcconfig"; sourceTree = "<group>"; };
-		C7EEA7A802EC5A0FEC30070C /* Pods-Campus Online-Campus OnlineUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Campus Online-Campus OnlineUITests.release.xcconfig"; path = "Target Support Files/Pods-Campus Online-Campus OnlineUITests/Pods-Campus Online-Campus OnlineUITests.release.xcconfig"; sourceTree = "<group>"; };
+		7BD258833E06533145BDA685 /* Pods-VayeApp-VayeAppUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VayeApp-VayeAppUITests.debug.xcconfig"; path = "Target Support Files/Pods-VayeApp-VayeAppUITests/Pods-VayeApp-VayeAppUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		88A45E121CB14C39C7BEDE25 /* Pods-VayeApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VayeApp.release.xcconfig"; path = "Target Support Files/Pods-VayeApp/Pods-VayeApp.release.xcconfig"; sourceTree = "<group>"; };
+		98BC1A25FF0394907C878BD2 /* Pods-VayeApp-VayeAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VayeApp-VayeAppUITests.release.xcconfig"; path = "Target Support Files/Pods-VayeApp-VayeAppUITests/Pods-VayeApp-VayeAppUITests.release.xcconfig"; sourceTree = "<group>"; };
+		E82C3D96DF02A15127A11497 /* Pods-VayeApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VayeApp.debug.xcconfig"; path = "Target Support Files/Pods-VayeApp/Pods-VayeApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -608,7 +616,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2AD482B5D3C803477411377 /* Pods_Campus_Online.framework in Frameworks */,
+				CD5EB06665B30FA7C364AA6E /* Pods_VayeApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,7 +624,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D0FE7ED85B9850171B990DD /* Pods_Campus_OnlineTests.framework in Frameworks */,
+				4F82269F05B7836B12FE0782 /* Pods_VayeAppTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,7 +632,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7808E9842CFD1C28A88C8BB9 /* Pods_Campus_Online_Campus_OnlineUITests.framework in Frameworks */,
+				BAD3AD4F0DFD909BEDF2289B /* Pods_VayeApp_VayeAppUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1089,8 +1097,11 @@
 		668B6A1B251BAB7C00A8902F /* Comments */ = {
 			isa = PBXGroup;
 			children = (
+				66EC9D1025EFCA5C00ECBA22 /* CommentViews */,
 				66024C2B251D4E14009E8A7E /* Replies */,
 				668B6A27251BAC1800A8902F /* CommentVC.swift */,
+				66EC9D0B25EFCA5100ECBA22 /* MajorPostCommentController.swift */,
+				66EC9D2125F130FC00ECBA22 /* RepliyCommentVC.swift */,
 			);
 			path = Comments;
 			sourceTree = "<group>";
@@ -1214,6 +1225,15 @@
 				66AF72D725134996007E96BC /* GoogleNativeAdsView.swift */,
 			);
 			path = "Google AdMob View";
+			sourceTree = "<group>";
+		};
+		66BC617725F1FAE500D545A4 /* NotificaitonService */ = {
+			isa = PBXGroup;
+			children = (
+				66BC617825F1FAFD00D545A4 /* CommentNotificationService.swift */,
+				66BC618025F1FB2D00D545A4 /* PushNotificationService.swift */,
+			);
+			path = NotificaitonService;
 			sourceTree = "<group>";
 		};
 		66C032832570CE5E004DC40A /* Profile Menu Bar */ = {
@@ -1360,7 +1380,7 @@
 				66D911EF24EEA9EA002D760A /* Campus OnlineUITests */,
 				66D911CC24EEA9E8002D760A /* Products */,
 				90B010950375723A5E2B06DE /* Pods */,
-				9C3644D825437F12FEC3809B /* Frameworks */,
+				86DECE10C34CDF0368924BEE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1377,6 +1397,7 @@
 		66D911CD24EEA9E8002D760A /* Campus Online */ = {
 			isa = PBXGroup;
 			children = (
+				66BC617725F1FAE500D545A4 /* NotificaitonService */,
 				6608990024FC724C0023E53B /* anim */,
 				6687921524FBB95300A43A41 /* ViewModel */,
 				6687920F24FABC0B00A43A41 /* Utils */,
@@ -1604,7 +1625,6 @@
 				668B6A1B251BAB7C00A8902F /* Comments */,
 				66C4A6E9250BFB5A00259322 /* DataController */,
 				66E326A224F98C0D004CB61D /* Lesson */,
-				66D9121324EEAB49002D760A /* HomeVC.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1673,6 +1693,14 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
+		66EC9D1025EFCA5C00ECBA22 /* CommentViews */ = {
+			isa = PBXGroup;
+			children = (
+				66EC9D1125EFCA7A00ECBA22 /* SwipeCommentCell.swift */,
+			);
+			path = CommentViews;
+			sourceTree = "<group>";
+		};
 		66F25F1324F6E8CE005B0591 /* Fakulte&Bolum cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1691,27 +1719,27 @@
 			path = "Student Edit Post View";
 			sourceTree = "<group>";
 		};
+		86DECE10C34CDF0368924BEE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				060EDE76D744DF3E84ACC360 /* Pods_VayeApp.framework */,
+				4B2487923B0979A5C3FE3084 /* Pods_VayeApp_VayeAppUITests.framework */,
+				2E535F3A6A5BC5269BEB2804 /* Pods_VayeAppTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		90B010950375723A5E2B06DE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				AE8344006004D47FACE36AC6 /* Pods-Campus Online.debug.xcconfig */,
-				623A35EDE107A4A79EC2E453 /* Pods-Campus Online.release.xcconfig */,
-				886D38C2E641BD1B3DB5619E /* Pods-Campus Online-Campus OnlineUITests.debug.xcconfig */,
-				C7EEA7A802EC5A0FEC30070C /* Pods-Campus Online-Campus OnlineUITests.release.xcconfig */,
-				3DF1EFFCEE99E21A5BE1915B /* Pods-Campus OnlineTests.debug.xcconfig */,
-				49604E7D227B97E12EC3BB52 /* Pods-Campus OnlineTests.release.xcconfig */,
+				E82C3D96DF02A15127A11497 /* Pods-VayeApp.debug.xcconfig */,
+				88A45E121CB14C39C7BEDE25 /* Pods-VayeApp.release.xcconfig */,
+				7BD258833E06533145BDA685 /* Pods-VayeApp-VayeAppUITests.debug.xcconfig */,
+				98BC1A25FF0394907C878BD2 /* Pods-VayeApp-VayeAppUITests.release.xcconfig */,
+				26D9EE462C16BC7D8D77FE29 /* Pods-VayeAppTests.debug.xcconfig */,
+				52106F0378AFCC8501255BC4 /* Pods-VayeAppTests.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		9C3644D825437F12FEC3809B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				5C9FCD30C7E3F42E37CC7EAA /* Pods_Campus_Online.framework */,
-				3B2BD60C8533B5B3EDE74C03 /* Pods_Campus_Online_Campus_OnlineUITests.framework */,
-				11E94D3F655BFAA559064463 /* Pods_Campus_OnlineTests.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1721,12 +1749,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 66D911F524EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeApp" */;
 			buildPhases = (
-				4B3BDB225E1E603C02FC1597 /* [CP] Check Pods Manifest.lock */,
+				1C210246D3271EDBF061AB52 /* [CP] Check Pods Manifest.lock */,
 				66D911C724EEA9E8002D760A /* Sources */,
 				66D911C824EEA9E8002D760A /* Frameworks */,
 				66D911C924EEA9E8002D760A /* Resources */,
 				66F25F1224F6DEC3005B0591 /* ShellScript */,
-				FFA8A36D43DC46008EE940F6 /* [CP] Embed Pods Frameworks */,
+				3E6CAF1047E5C4B0EBB4EAE7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1741,7 +1769,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 66D911F824EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeAppTests" */;
 			buildPhases = (
-				C544967061CE5A154E8916A6 /* [CP] Check Pods Manifest.lock */,
+				C41612C88441F72F18C66A54 /* [CP] Check Pods Manifest.lock */,
 				66D911DD24EEA9EA002D760A /* Sources */,
 				66D911DE24EEA9EA002D760A /* Frameworks */,
 				66D911DF24EEA9EA002D760A /* Resources */,
@@ -1760,11 +1788,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 66D911FB24EEA9EA002D760A /* Build configuration list for PBXNativeTarget "VayeAppUITests" */;
 			buildPhases = (
-				666D0C4D35C1559BBE122AC7 /* [CP] Check Pods Manifest.lock */,
+				FD9FB5182237290A776E910F /* [CP] Check Pods Manifest.lock */,
 				66D911E824EEA9EA002D760A /* Sources */,
 				66D911E924EEA9EA002D760A /* Frameworks */,
 				66D911EA24EEA9EA002D760A /* Resources */,
-				8881CFC74FCA122B4120D606 /* [CP] Embed Pods Frameworks */,
+				53851634E9B34D9F1E16B240 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1859,7 +1887,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4B3BDB225E1E603C02FC1597 /* [CP] Check Pods Manifest.lock */ = {
+		1C210246D3271EDBF061AB52 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1874,33 +1902,45 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Campus Online-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-VayeApp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		666D0C4D35C1559BBE122AC7 /* [CP] Check Pods Manifest.lock */ = {
+		3E6CAF1047E5C4B0EBB4EAE7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VayeApp/Pods-VayeApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Campus Online-Campus OnlineUITests-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-VayeApp/Pods-VayeApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VayeApp/Pods-VayeApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53851634E9B34D9F1E16B240 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VayeApp-VayeAppUITests/Pods-VayeApp-VayeAppUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VayeApp-VayeAppUITests/Pods-VayeApp-VayeAppUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VayeApp-VayeAppUITests/Pods-VayeApp-VayeAppUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		66F25F1224F6DEC3005B0591 /* ShellScript */ = {
@@ -1922,24 +1962,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n\n";
 		};
-		8881CFC74FCA122B4120D606 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Campus Online-Campus OnlineUITests/Pods-Campus Online-Campus OnlineUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Campus Online-Campus OnlineUITests/Pods-Campus Online-Campus OnlineUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Campus Online-Campus OnlineUITests/Pods-Campus Online-Campus OnlineUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C544967061CE5A154E8916A6 /* [CP] Check Pods Manifest.lock */ = {
+		C41612C88441F72F18C66A54 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1954,28 +1977,33 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Campus OnlineTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-VayeAppTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FFA8A36D43DC46008EE940F6 /* [CP] Embed Pods Frameworks */ = {
+		FD9FB5182237290A776E910F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Campus Online/Pods-Campus Online-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Campus Online/Pods-Campus Online-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VayeApp-VayeAppUITests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Campus Online/Pods-Campus Online-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1995,6 +2023,7 @@
 				66D7C3B725882F9900244D3B /* TeacherVC.swift in Sources */,
 				6608990624FD0BD60023E53B /* ChooseLessonTB.swift in Sources */,
 				663B27332576759900A3CABB /* HeaderView.swift in Sources */,
+				66BC618125F1FB2D00D545A4 /* PushNotificationService.swift in Sources */,
 				66D9122024EEABA3002D760A /* ProfileVC.swift in Sources */,
 				668B6A37251BBE6900A8902F /* CommentMsgCell.swift in Sources */,
 				6622C23D2505CE2200E3B3F0 /* LessonInfo.swift in Sources */,
@@ -2098,6 +2127,7 @@
 				6690A677253B995A00E88BC0 /* BuyAndSellDataView.swift in Sources */,
 				66F0AFFE259B2D5B00C030E6 /* MessagesItemViewModel.swift in Sources */,
 				660FB98325652BEF0014D406 /* FoodMeService.swift in Sources */,
+				66EC9D2225F130FC00ECBA22 /* RepliyCommentVC.swift in Sources */,
 				6646AFE32574DC1C00B42590 /* CurrentUserProfileHeader.swift in Sources */,
 				660F5ADA2503DB0800F72558 /* LicenceCell.swift in Sources */,
 				66EAC8F2258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift in Sources */,
@@ -2113,6 +2143,7 @@
 				66D7C3F12589AB3700244D3B /* BuySell_Cell.swift in Sources */,
 				660F5ACF2502E3ED00F72558 /* AddUserTB.swift in Sources */,
 				6613340D24F51294002677AB /* GizlilikPolitikasi.swift in Sources */,
+				66EC9D0C25EFCA5100ECBA22 /* MajorPostCommentController.swift in Sources */,
 				66024C22251CEFF3009E8A7E /* CommentService.swift in Sources */,
 				66C5783C259856F7006E9756 /* ChatMenuBar.swift in Sources */,
 				6622C2402505D1DD00E3B3F0 /* LessonInfoCell.swift in Sources */,
@@ -2161,7 +2192,6 @@
 				669C898D25EE908800E7978D /* ImagesStack.swift in Sources */,
 				66C578572598BE3A006E9756 /* MessagesService.swift in Sources */,
 				668F04AD2520CC94007BD9C7 /* LessonInfoModel.swift in Sources */,
-				66D9121424EEAB49002D760A /* HomeVC.swift in Sources */,
 				6608990D24FD70B60023E53B /* NewPostImageCell.swift in Sources */,
 				6690A67C253CCF3900E88BC0 /* MainPostService.swift in Sources */,
 				66F4CD44250E80200076D12E /* StudentEditPostImageCell.swift in Sources */,
@@ -2192,6 +2222,7 @@
 				660F5AD12502F65300F72558 /* LessonFallowerUser.swift in Sources */,
 				66EF86CE25260E3200282FD4 /* CommentVCDataHeader.swift in Sources */,
 				66D9120524EEAA5B002D760A /* Enum.swift in Sources */,
+				66EC9D1225EFCA7A00ECBA22 /* SwipeCommentCell.swift in Sources */,
 				661333F124F3F858002677AB /* SplashScreen.swift in Sources */,
 				6686447C257B0A05003483D8 /* ChooseHastagCell.swift in Sources */,
 				66C0329A25711066004DC40A /* OtherUserProfile.swift in Sources */,
@@ -2207,6 +2238,7 @@
 				66F4CD48250E803F0076D12E /* StudentEditPostDocCell.swift in Sources */,
 				66FA4ACF257E93F200E8F35B /* NoticesCommentDataHeader.swift in Sources */,
 				664E9F5F259017B7007EBE52 /* SignUp.swift in Sources */,
+				66BC617925F1FAFD00D545A4 /* CommentNotificationService.swift in Sources */,
 				6615FC93250B3AAE00776664 /* DataViewPdfCell.swift in Sources */,
 				660BC46C2515AD0B005D0EF8 /* MenuController.swift in Sources */,
 				6615FC8B250AF67B00776664 /* LottieRefreshControl.swift in Sources */,
@@ -2400,7 +2432,7 @@
 		};
 		66D911F624EEA9EA002D760A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AE8344006004D47FACE36AC6 /* Pods-Campus Online.debug.xcconfig */;
+			baseConfigurationReference = E82C3D96DF02A15127A11497 /* Pods-VayeApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -2420,7 +2452,7 @@
 		};
 		66D911F724EEA9EA002D760A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 623A35EDE107A4A79EC2E453 /* Pods-Campus Online.release.xcconfig */;
+			baseConfigurationReference = 88A45E121CB14C39C7BEDE25 /* Pods-VayeApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -2440,7 +2472,7 @@
 		};
 		66D911F924EEA9EA002D760A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3DF1EFFCEE99E21A5BE1915B /* Pods-Campus OnlineTests.debug.xcconfig */;
+			baseConfigurationReference = 26D9EE462C16BC7D8D77FE29 /* Pods-VayeAppTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -2463,7 +2495,7 @@
 		};
 		66D911FA24EEA9EA002D760A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 49604E7D227B97E12EC3BB52 /* Pods-Campus OnlineTests.release.xcconfig */;
+			baseConfigurationReference = 52106F0378AFCC8501255BC4 /* Pods-VayeAppTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -2486,7 +2518,7 @@
 		};
 		66D911FC24EEA9EA002D760A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 886D38C2E641BD1B3DB5619E /* Pods-Campus Online-Campus OnlineUITests.debug.xcconfig */;
+			baseConfigurationReference = 7BD258833E06533145BDA685 /* Pods-VayeApp-VayeAppUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -2507,7 +2539,7 @@
 		};
 		66D911FD24EEA9EA002D760A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C7EEA7A802EC5A0FEC30070C /* Pods-Campus Online-Campus OnlineUITests.release.xcconfig */;
+			baseConfigurationReference = 98BC1A25FF0394907C878BD2 /* Pods-VayeApp-VayeAppUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

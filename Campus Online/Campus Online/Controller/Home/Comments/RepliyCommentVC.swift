@@ -33,7 +33,10 @@ class RepliyCommentVC: UIViewController {
     var sendButton: UIButton!
     let textField = FlexibleTextView()
     var addMediaButtom: UIButton!
- 
+    var lessonPost : LessonPostModel?
+    var noticesPost : NoticesMainModel?
+    var mainPost : MainPostModel?
+    var commentTargetCommentModel : CommentModel
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = .zero
@@ -79,10 +82,14 @@ class RepliyCommentVC: UIViewController {
         super.viewDidAppear(animated)
         snapShotListener?.remove()
     }
-    init(currentUser : CurrentUser , postId : String , commentId : String) {
+    init(targetCommentModel : CommentModel,currentUser : CurrentUser , postId : String , commentId : String , lessonPost : LessonPostModel? , noticesPost : NoticesMainModel? , mainPost : MainPostModel?) {
         self.commentId = commentId
         self.postId = postId
         self.currentUser = currentUser
+        self.noticesPost = noticesPost
+        self.lessonPost = lessonPost
+        self.mainPost = mainPost
+        self.commentTargetCommentModel = targetCommentModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -323,7 +330,22 @@ class RepliyCommentVC: UIViewController {
     }
   
     @objc func sendMsg(){
-        
+        guard let text = textField.text else { return }
+        if textField.hasText {
+            textField.text = ""
+            let commentId = Int64(Date().timeIntervalSince1970 * 1000).description
+            
+            CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: self.currentUser, commentId: commentId) {[weak self] (_val) in
+                guard let sself = self else { return }
+                if let post = sself.lessonPost {
+                    CommentNotificationService.shared.sendNewLessonPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
+                
+                    for item in text.findMentionText(){
+                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                    }
+                }
+            }
+        }
     }
     @objc func loadData(){
         loadBeforePage()

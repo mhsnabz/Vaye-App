@@ -1,0 +1,6 @@
+framework module Pods_VayeApp {
+  umbrella header "Pods-VayeApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

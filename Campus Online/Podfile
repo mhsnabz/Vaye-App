@@ -28,7 +28,7 @@ target 'VayeApp' do
   
   pod 'SDWebImage', '~> 5.0'
   
-  pod 'JJFloatingActionButton'
+#  pod 'JJFloatingActionButton'
   
   pod "JDropDownAlert"
   
@@ -52,13 +52,13 @@ target 'VayeApp' do
   
   pod 'SnapKit', '~> 5.0.0'
   
-  pod 'EFImageViewZoom'
+ # pod 'EFImageViewZoom'
   
-  pod 'WMSegmentControl'
+ # pod 'WMSegmentControl'
   
   pod 'MessageKit'
-  pod 'Alamofire', '~> 5.2'
-  pod 'RealmSwift'
+#  pod 'Alamofire', '~> 5.2'
+#  pod 'RealmSwift'
   pod 'SwipeCellKit'
 
   target 'VayeAppTests' do

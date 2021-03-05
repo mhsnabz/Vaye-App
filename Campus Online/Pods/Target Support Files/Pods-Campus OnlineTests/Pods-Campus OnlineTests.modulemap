@@ -1,6 +1,0 @@
-framework module Pods_Campus_OnlineTests {
-  umbrella header "Pods-Campus OnlineTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
