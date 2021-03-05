@@ -120,6 +120,120 @@ class CommentService {
         }
     }
 
-
     
+    func checkLike(commentModel : CommentModel ,  currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        guard let likes = commentModel.likes else { return }
+        if likes.contains(currentUser.uid) {
+            completion(false)
+        }else{
+            completion(true)
+        }
+    }
+
+    func likeMainComment(commentModel : CommentModel!  , currentUser : CurrentUser , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("comment")
+            .document(commentModel.postId!)
+            .collection("comment")
+            .document(commentModel.commentId!)
+      
+        let dic = ["likes":FieldValue.arrayUnion([currentUser.uid as Any])] as [String : Any]
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+        
+    }
+    
+    func removeMainLikeComment(commentModel : CommentModel , currentUser : CurrentUser){
+        let db = Firestore.firestore().collection("comment")
+            .document(commentModel.postId!)
+            .collection("comment")
+            .document(commentModel.commentId!)
+      
+        let dic = ["likes":FieldValue.arrayRemove([currentUser.uid as Any])] as [String : Any]
+        db.setData(dic, merge: true) 
+    }
+    
+    func likeRepliedComment(commentModel : CommentModel ,targetComment : String ,currentUser : CurrentUser ,completion : @escaping(Bool) ->Void){
+        ///comment/1614762780585/comment-replied/comment/1614796174703/1614796206876
+        let db = Firestore.firestore().collection("comment")
+            .document(commentModel.postId!)
+            .collection("comment-replied")
+            .document("comment")
+            .collection(targetComment)
+            .document(commentModel.commentId!)
+        let dic = ["likes":FieldValue.arrayUnion([currentUser.uid as Any])] as [String : Any]
+        db.setData(dic, merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
+    
+    func removeLikeRepliedComment(commentModel : CommentModel ,targetComment : String ,currentUser : CurrentUser){
+        let db = Firestore.firestore().collection("comment")
+            .document(commentModel.postId!)
+            .collection("comment-replied")
+            .document("comment")
+            .collection(targetComment)
+            .document(commentModel.commentId!)
+        let dic = ["likes":FieldValue.arrayRemove([currentUser.uid as Any])] as [String : Any]
+        db.setData(dic, merge: true)
+    }
+    
+    
+    func sendNewComment(currentUser : CurrentUser , commentText : String , postId : String , commentId : String , completion:@escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("comment")
+            .document(postId)
+            .collection("comment")
+            .document(commentId)
+        let dic = ["senderName" : currentUser.name as Any,
+                   "senderUid" : currentUser.uid as Any,
+                   "username" : currentUser.username as Any,
+                   "time":FieldValue.serverTimestamp() ,
+                   "comment":commentText ,
+                   "commentId":commentId,
+                   "postId":postId,
+                   "likes":[],"replies" : [] ,
+                   "senderImage" : currentUser.thumb_image as Any] as [String : Any]
+        
+        db.setData(dic, merge: true) {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil {
+                sself.getTotalCommentCount(postId: postId) { (count) in
+                    sself.setTotolCommentCount(currentUser: currentUser, postId: postId, count: count)
+                }
+            }
+        }
+    }
+    
+    private func getTotalCommentCount(postId : String , completion : @escaping(Int) ->Void){
+
+        let db = Firestore.firestore().collection("comment")
+            .document(postId)
+            .collection("comment")
+        
+        db.getDocuments { (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                if snap.isEmpty {
+                    completion(0)
+                }else{
+                    completion(snap.documents.count)
+                }
+            }
+        }
+    }
+    private func setTotolCommentCount(currentUser : CurrentUser,postId : String , count : Int ){
+
+        let db = Firestore.firestore().collection(currentUser.short_school)
+            .document("lesson-post")
+            .collection("post")
+            .document(postId)
+        db.setData(["comment":count] as [String : Int], merge: true, completion: nil)
+        
+        
+        
+    }
 }

@@ -458,7 +458,7 @@ extension Home_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowLay
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let currentUser = currentUser else { return }
-        let vc = MajorPostCommentController(currentUser: currentUser, postId: lessonPost[indexPath.row].postId)
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: lessonPost[indexPath.row].postId, lessonPost: lessonPost[indexPath.row], noticesPost: nil, mainPost: nil)
         self.rootController?.navigationController?.pushViewController(vc, animated: true)
     }
 }

@@ -21,15 +21,25 @@ class SwipeCommentCell: SwipeCollectionViewCell {
             configure()
             
             guard let currentUser = currentUser else { return }
-            checkIsLiked(user: currentUser, post: comment) {[weak self] (val) in
+            guard let comment = comment else { return }
+            CommentService.shared.checkLike(commentModel: comment, currentUser: currentUser) {[weak self] (_val) in
                 guard let sself = self else { return }
-                if val {
-                    sself.likeButton.setImage(#imageLiteral(resourceName: "like").withRenderingMode(.alwaysOriginal), for: .normal)
-                }else{
+                if _val{
                     sself.likeButton.setImage(#imageLiteral(resourceName: "like-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+                }else{
+                    sself.likeButton.setImage(#imageLiteral(resourceName: "like").withRenderingMode(.alwaysOriginal), for: .normal)
 
                 }
             }
+//            checkIsLiked(user: currentUser, post: comment) {[weak self] (val) in
+//                guard let sself = self else { return }
+//                if val {
+//                    sself.likeButton.setImage(#imageLiteral(resourceName: "like").withRenderingMode(.alwaysOriginal), for: .normal)
+//                }else{
+//                    sself.likeButton.setImage(#imageLiteral(resourceName: "like-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+//
+//                }
+//            }
         }
     }
    
@@ -161,6 +171,7 @@ class SwipeCommentCell: SwipeCollectionViewCell {
         
         contentView.addSubview(lineView)
         lineView.anchor(top: nil, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, rigth: contentView.rightAnchor, marginTop: 0, marginLeft: 8, marginBottom: 0, marginRigth: 8, width: 0, heigth: 0.4)
+        self.contentView.isUserInteractionEnabled = false
        
     }
     
@@ -169,11 +180,11 @@ class SwipeCommentCell: SwipeCollectionViewCell {
     }
     //MARK: -selector
     @objc func likeMsg(){
-        print("like msg")
+
         commentDelegate?.likeClik(cell: self)
     }
     @objc func replyMsg(){
-        print("reply msg")
+    
         commentDelegate?.replyClick(cell: self)
     }
     @objc func seeAllReplies(){

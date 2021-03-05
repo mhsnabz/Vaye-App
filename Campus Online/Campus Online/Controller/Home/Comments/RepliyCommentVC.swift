@@ -1,8 +1,8 @@
 //
-//  MajorPostCommentController.swift
+//  RepliyCommentVC.swift
 //  VayeApp
 //
-//  Created by mahsun abuzeyitoğlu on 3.03.2021.
+//  Created by mahsun abuzeyitoğlu on 4.03.2021.
 //  Copyright © 2021 mahsun abuzeyitoğlu. All rights reserved.
 //
 
@@ -11,11 +11,8 @@ private let commentCell = "commentCell"
 private let headerCell = "headerCell"
 import FirebaseFirestore
 import SwipeCellKit
-class MajorPostCommentController: UIViewController ,DismisDelegate {
-    func dismisMenu() {
-        inputAccessoryView?.isHidden = false
-    }
-    
+class RepliyCommentVC: UIViewController {
+
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -25,6 +22,7 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
     var buttonStyle: ButtonStyle = .backgroundColor
      var currentUser : CurrentUser
     var postId : String
+    var commentId : String
     var defaultOptions = SwipeOptions()
     var buttonDisplayMode: ButtonDisplayMode = .titleAndImage
     weak var snapShotListener : ListenerRegistration?
@@ -35,14 +33,10 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
     var sendButton: UIButton!
     let textField = FlexibleTextView()
     var addMediaButtom: UIButton!
-    var lessonPost : LessonPostModel?
-    var noticesPost : NoticesMainModel?
-    var mainPost : MainPostModel?
+ 
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-    
         layout.minimumLineSpacing = .zero
-      
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .white
         cv.dataSource = self
@@ -51,24 +45,11 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         return cv
     }()
     
-    //MARK:-lifeCycle
-    init(currentUser : CurrentUser , postId : String   ,lessonPost : LessonPostModel? , noticesPost : NoticesMainModel? , mainPost : MainPostModel?) {
-        self.currentUser = currentUser
-        self.postId = postId
-        self.noticesPost = noticesPost
-        self.lessonPost = lessonPost
-        self.mainPost = mainPost
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    //MARK:-lifeCycler
     override func viewDidLoad() {
         super.viewDidLoad()
         setNavigationBar()
-        navigationItem.title = "Yorumlar"
+        navigationItem.title = "Cevaplar"
         configureUI()
         getAllComment(postId: postId)
         let notificationCenter = NotificationCenter.default
@@ -76,13 +57,10 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.isHidden = false
-   
-
     }
   
     override func viewWillDisappear(_ animated: Bool) {
@@ -101,11 +79,24 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         super.viewDidAppear(animated)
         snapShotListener?.remove()
     }
-
- 
-
+    init(currentUser : CurrentUser , postId : String , commentId : String) {
+        self.commentId = commentId
+        self.postId = postId
+        self.currentUser = currentUser
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     //MARK:-keyboard
+    var shouldBecomeFirstResponder:Bool = true
+    override var canBecomeFirstResponder: Bool {
+     
+    return shouldBecomeFirstResponder
+    }
     override var inputAccessoryView: UIView?{
         if customInputView == nil {
             customInputView = CustomView()
@@ -194,14 +185,7 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         return customInputView
     }
     //MARK:-functions
-
-    private func configureUI(){
-        view.addSubview(collecitonView)
-        collecitonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
-        collecitonView.register(SwipeCommentCell.self, forCellWithReuseIdentifier: commentCell)
-        collecitonView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerCell)
-        collecitonView.refreshControl = refreshControl
-    }
+    
     private func loadBeforePage(){
         guard let page = firstPage else {
             refreshControl.endRefreshing()
@@ -211,7 +195,9 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         }
         let db = Firestore.firestore().collection("comment")
             .document(postId)
-            .collection("comment")
+            .collection("comment-replied")
+            .document("comment")
+            .collection(commentId)
             .order(by: "commentId")
             .end(beforeDocument: page)
             .limit(toLast: 5)
@@ -258,9 +244,13 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
         
     }
     private func getAllComment(postId : String ){
+        
+        
         let db = Firestore.firestore().collection("comment")
             .document(postId)
-            .collection("comment")
+            .collection("comment-replied")
+            .document("comment")
+            .collection(commentId)
             .limit(toLast: 5).order(by: "commentId")
         
         snapShotListener = db.addSnapshotListener{[weak self] (querySnap, err) in
@@ -269,21 +259,21 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                 guard let snap = querySnap else { return }
                 for item in snap.documentChanges {
                     if item.type == .added {
-                        
                         sself.commentModel.append(CommentModel.init(ID: item.document.documentID, dic: item.document.data()))
-    
+                      
                     }
                     sself.collecitonView.reloadData()
                     sself.page = snap.documents.last
                     sself.firstPage = snap.documents.first
-                    
                 }
             }
         }
         guard let page = self.page else { return }
         let next = Firestore.firestore().collection("comment")
             .document(postId)
-            .collection("comment").order(by: "commentId")
+            .collection("comment-replied")
+            .document("comment")
+            .collection(commentId).order(by: "commentId")
             .start(atDocument: page)
             .limit(to: 1)
         next.addSnapshotListener { [weak self] (querySnap, err) in
@@ -297,12 +287,19 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                     sself.collecitonView.reloadData()
                     sself.page = snap.documents.last
                     sself.firstPage = snap.documents.first
-                   
                 }
             }
         }
        
         
+    }
+    
+    private func configureUI(){
+        view.addSubview(collecitonView)
+        collecitonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 0)
+        collecitonView.register(SwipeCommentCell.self, forCellWithReuseIdentifier: commentCell)
+        collecitonView.register(MessageDateReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerCell)
+        collecitonView.refreshControl = refreshControl
     }
     //MARK:-objc
     @objc func adjustForKeyboard(notification: Notification) {
@@ -326,37 +323,18 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
     }
   
     @objc func sendMsg(){
-        guard let text = textField.text else { return }
-        if textField.hasText {
-            textField.text = ""
-            let commentId = Int64(Date().timeIntervalSince1970 * 1000).description
-            CommentService.shared.sendNewComment(currentUser: currentUser, commentText: text, postId: postId, commentId: commentId) {[weak self] (_val) in
-                //FIXME:- send notification
-                guard let sself = self else { return }
-                let indexPath = IndexPath(item: sself.commentModel.count - 1, section: 0)
-                sself.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
-            }
-        }
         
     }
     @objc func loadData(){
         loadBeforePage()
     }
   
-    var shouldBecomeFirstResponder:Bool = true
-
-    override var canBecomeFirstResponder: Bool {
-     
-    return shouldBecomeFirstResponder
-    }
     
 }
-
-extension MajorPostCommentController :  UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
+extension RepliyCommentVC :  UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return commentModel.count
     }
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: commentCell, for: indexPath) as! SwipeCommentCell
         cell.currentUser = currentUser
@@ -372,7 +350,6 @@ extension MajorPostCommentController :  UICollectionViewDelegate , UICollectionV
             cell.contentView.isUserInteractionEnabled = true
             cell.currentUser  = currentUser
             cell.commentDelegate = self
-        
             return cell
         }else{
             cell.comment = commentModel[indexPath.row]
@@ -387,8 +364,6 @@ extension MajorPostCommentController :  UICollectionViewDelegate , UICollectionV
             cell.delegate = self
             return cell
         }
-     
-
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -401,7 +376,6 @@ extension MajorPostCommentController :  UICollectionViewDelegate , UICollectionV
             
         }
     }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if isLoadMore {
             return CGSize(width: view.frame.width, height: 20)
@@ -415,11 +389,9 @@ extension MajorPostCommentController :  UICollectionViewDelegate , UICollectionV
         header.label.text = "Önceki Yorumları Yükle"
         return header
     }
-    
 }
-
-extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
-        
+extension RepliyCommentVC : SwipeCollectionViewCellDelegate {
+    
     func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         
         if commentModel[indexPath.row].senderUid == currentUser.uid {
@@ -432,12 +404,7 @@ extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
             }
             else{
                 
-                let read = SwipeAction(style: .default, title: "Cevapla") { [weak self] action, indexPath in
-                    guard let sself = self else { return }
-                    let vc = RepliyCommentVC(currentUser: sself.currentUser, postId: sself.commentModel[indexPath.row].postId!, commentId: sself.commentModel[indexPath.row].commentId!)
-                    sself.navigationController?.pushViewController(vc, animated: true)
-
-                }
+                let read = SwipeAction(style: .default, title: "Cevapla") { action, indexPath in }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
                 read.hidesWhenSelected = true
                 read.accessibilityLabel = "cevapla"
@@ -449,11 +416,7 @@ extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
         }else{
             
             if orientation == .left {
-                let read = SwipeAction(style: .default, title: "Cevapla") {[weak self] action, indexPath in
-                    guard let sself = self else { return }
-                    let vc = RepliyCommentVC(currentUser: sself.currentUser, postId: sself.commentModel[indexPath.row].postId!, commentId: sself.commentModel[indexPath.row].commentId!)
-                    sself.navigationController?.pushViewController(vc, animated: true)
-                }
+                let read = SwipeAction(style: .default, title: "Cevapla") { action, indexPath in }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
                 read.hidesWhenSelected = true
                 read.accessibilityLabel = "cevapla"
@@ -490,10 +453,8 @@ extension MajorPostCommentController : SwipeCollectionViewCellDelegate {
   
 }
 
-
-extension MajorPostCommentController : SwipeCommentCellDelegate {
+extension RepliyCommentVC : SwipeCommentCellDelegate {
     func likeClik(cell: SwipeCommentCell) {
-
         guard let commentModel = cell.comment else { return }
         CommentService.shared.checkLike(commentModel: commentModel, currentUser: currentUser) {[weak self] (_val) in
             guard let sself = self else { return }
@@ -501,41 +462,25 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
           
                 commentModel.likes?.append(sself.currentUser.uid)
                 sself.collecitonView.reloadData()
-               
-                if let post = sself.lessonPost {
-                    CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
-                        if val{
-                            CommentNotificationService.shared.likeLessonPostComment(post: post, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
-                        }
-                    }
-                    
-                    
-                }else if let noticesPost = sself.noticesPost {
-                    
-                }else if let mainPost = sself.mainPost {
-                    
-                }
-
-                    
+                CommentService.shared.likeRepliedComment(commentModel: commentModel, targetComment: sself.commentId, currentUser: sself.currentUser) { (_val) in
                     //FIXME:- send notificaiton and push notificaiton
+                }
                 
+               
             }else{
                
                 //removeLike
                 commentModel.likes?.remove(element: sself.currentUser.uid)
                 sself.collecitonView.reloadData()
                 
-                CommentService.shared.removeMainLikeComment(commentModel: commentModel, currentUser: sself.currentUser)
+                CommentService.shared.removeLikeRepliedComment(commentModel: commentModel, targetComment: sself.commentId, currentUser: sself.currentUser)
             }
         }
         
     }
     
     func replyClick(cell: SwipeCommentCell) {
-        guard let commentModel = cell.comment else { return }
         
-        let vc = RepliyCommentVC(currentUser: currentUser, postId: commentModel.postId!, commentId:  commentModel.commentId! )
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     func seeAllReplies(cell: SwipeCommentCell) {
@@ -543,45 +488,49 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
     }
     
     func goProfile(cell: SwipeCommentCell) {
-        Utilities.waitProgress(msg: nil)
-        guard let comment = cell.comment else { return }
-        if comment.senderUid == currentUser.uid {
-            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
-                guard let self = self else { return }
-                if val{
-                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
-                    self.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
-                }else{
-                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
-                    self.navigationController?.pushViewController(vc, animated: true)
-                    Utilities.dismissProgress()
-                }
-            }
+       Utilities.waitProgress(msg: nil)
+       guard let comment = cell.comment else { return }
+       if comment.senderUid == currentUser.uid {
+           UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+               guard let self = self else { return }
+               if val{
+                   let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                   self.navigationController?.pushViewController(vc, animated: true)
+                   Utilities.dismissProgress()
+               }else{
+                   let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                   self.navigationController?.pushViewController(vc, animated: true)
+                   Utilities.dismissProgress()
+               }
+           }
            
-            
-        }else{
-            UserService.shared.fetchOtherUser(uid: comment.senderUid!) {[weak self] (user) in
-                guard let sself = self else { return }
-                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
-                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
-                        if val {
-                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                           
-                            sself.navigationController?.pushViewController(vc, animated: true)
-                            Utilities.dismissProgress()
-                        }else{
-                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-                
-                            sself.navigationController?.pushViewController(vc, animated: true)
-                            Utilities.dismissProgress()
-                        }
-                        
-                    }
-                }
-            }
-        }
-    }
+       }else{
+           UserService.shared.fetchOtherUser(uid: comment.senderUid!) { (user) in
+               
+               UserService.shared.getProfileModel(otherUser: user, currentUser: self.currentUser) { (model) in
+                   UserService.shared.checkOtherUserSocialMedia(otherUser: user) {[weak self] (val) in
+                       guard let sself = self else { return }
+                       if val {
+                           let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                          
+                           sself.navigationController?.pushViewController(vc, animated: true)
+                           Utilities.dismissProgress()
+                       }else{
+                           let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+               
+                           sself.navigationController?.pushViewController(vc, animated: true)
+                           Utilities.dismissProgress()
+                       }
+                       
+                   }
+               }
+               
+             
+               
+           }
+       }
+
+   }
     
     func clickMention(username: String) {
         if "@\(username)" == currentUser.username {
@@ -614,10 +563,9 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
                         
                     }
                 }
-               
+                
             }
         }
     }
-    
     
 }
