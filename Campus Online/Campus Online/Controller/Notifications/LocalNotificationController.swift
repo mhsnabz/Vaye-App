@@ -197,6 +197,167 @@ class LocalNotificationController: UIViewController  {
         
         return ""
     }
+    
+    func getNotificationType (type : String) ->String {
+        if type == NotificationType.home_like.desprition {
+            return NotificationType.home_like.desprition
+        }
+        else if type == NotificationType.comment_home.desprition {
+            return NotificationType.comment_home.desprition
+        }
+        else if type == NotificationType.reply_comment.desprition {
+            return NotificationType.reply_comment.desprition
+        }
+        else if type == NotificationType.comment_like.desprition {
+            return NotificationType.comment_like.desprition
+        }
+        else if type == NotificationType.comment_mention.desprition {
+            return NotificationType.comment_mention.desprition
+        }
+        else if type == NotificationType.following_you.desprition {
+            return NotificationType.following_you.desprition
+        }
+        else if type == NotificationType.home_new_post.desprition {
+            return NotificationType.home_new_post.desprition
+        }
+        else if type == NotificationType.home_new_mentions_post.desprition {
+            return NotificationType.home_new_mentions_post.desprition
+        }
+        else if type == NotificationType.new_ad.desprition {
+            return NotificationType.new_ad.desprition
+        }
+        else if type == NotificationType.like_sell_buy.desprition {
+            return NotificationType.like_sell_buy.desprition
+        }
+        else if type == NotificationType.new_food_me.desprition {
+            return NotificationType.new_food_me.desprition
+        }
+        else if type == NotificationType.like_food_me.desprition {
+            return NotificationType.like_food_me.desprition
+        }
+        else if type == NotificationType.new_camping.desprition {
+            return NotificationType.new_camping.desprition
+        }
+        else if type == NotificationType.like_camping.desprition {
+            return NotificationType.like_camping.desprition
+        }
+        else if type == NotificationType.notices_comment_like.desprition {
+            return NotificationType.notices_comment_like.desprition
+        }
+        
+        else if type == NotificationType.notices_replied_comment_like.desprition{
+            return NotificationType.notices_replied_comment_like.desprition
+        }
+        
+        else if type == NotificationType.notices_post_like.desprition {
+            return NotificationType.notices_post_like.desprition
+        }
+        
+        else if type == NotificationType.notices_new_comment.desprition {
+            return NotificationType.notices_new_comment.desprition
+        }
+        
+        else if type == NotificationType.notice_mention_comment.desprition {
+            return NotificationType.notice_mention_comment.desprition
+        }
+        
+        else if type == NotificationType.notices_new_post.desprition {
+            return NotificationType.notices_new_post.desprition
+        }
+        
+        
+        return ""
+    }
+    
+    
+    //MARK:-notificaiton deep linking
+    
+    private func showComment(model : NotificationModel){
+ 
+        if model.postType == NotificationPostType.notices.name {
+           
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument { [weak self](docSnap, err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    guard let snap = docSnap else {
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return }
+                    if snap.exists {
+                        let vc = MajorPostCommentController(currentUser: sself.currentUser, postId: model.postId, lessonPost: nil, noticesPost: NoticesMainModel.init(postId: snap.documentID, dic: snap.data()), mainPost: nil)
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                        
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        }else if model.postType == NotificationPostType.lessonPost.name {
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument {[weak self] (docSnap, err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    guard let snap = docSnap else {
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                    if snap.exists {
+                        let vc = MajorPostCommentController(currentUser: sself.currentUser, postId: model.postId, lessonPost: LessonPostModel.init(postId: snap.documentID, dic: snap.data()), noticesPost: nil, mainPost: nil)
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        }
+        else
+        {
+            
+            let db = Firestore.firestore().collection("main-post")
+                .document("post").collection("post")
+                .document(model.postId)
+            db.getDocument {[weak self] (docSnap, err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    guard let snap = docSnap else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                    if snap.exists {
+                        let vc = MajorPostCommentController(currentUser: sself.currentUser, postId: model.postId, lessonPost: nil, noticesPost: nil, mainPost: MainPostModel.init(postId: snap.documentID, dic: snap.data()))
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        }
+    }
+    
     //MARK:-objc
     @objc func showLauncher(){
         notificationLauncher.show()
@@ -205,6 +366,8 @@ class LocalNotificationController: UIViewController  {
     @objc func loadData(){
         getAllPost()
     }
+    
+    
     
 }
 extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate{
@@ -234,10 +397,6 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
             let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
             cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
         }
-        
-        
-        
-        
         if model[indexPath.row].isRead {
             cell.contentView.backgroundColor = .white
         }else{
@@ -252,7 +411,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         if   getTypeDescribing(type: model[indexPath.row].type) == Notification_description.comment_home.desprition ||
                 getTypeDescribing(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition ||
                 getTypeDescribing(type: model[indexPath.row].type) == Notification_description.notice_mention_comment.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == Notification_description.reply_comment.desprition{
+                getTypeDescribing(type: model[indexPath.row].type) == Notification_description.reply_comment.desprition || getTypeDescribing(type: model[indexPath.row].type) == Notification_description.comment_mention_reply.desprition {
             
             let text = model[indexPath.row].senderName + model[indexPath.row].username +
                 model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text +  getTypeDescribing(type: model[indexPath.row].type)
@@ -273,11 +432,6 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 return CGSize(width: view.frame.width, height: 50)
             }
         }
-        
-        
-        
-        
-        
         
     }
     
@@ -306,7 +460,19 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         
     }
     
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        Utilities.waitProgress(msg: nil)
+        if getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_home.desprition ||
+            getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition {
+            showComment(model : model[indexPath.row])
+        
+        }
+    }
+    
 }
+
+
 extension LocalNotificationController : NotificationLauncherDelegate {
     func didSelect(option: NotificationOptions) {
         switch option {

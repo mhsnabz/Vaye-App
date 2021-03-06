@@ -21,7 +21,7 @@ class NotificationModel {
     var type : String!
     var text : String!
     var username : String!
-    
+    var postType : String!
     init(not_id : String , dic : Dictionary<String,Any>){
         self.not_id = not_id
         if let isRead = dic["isRead"] as? Bool {
@@ -29,6 +29,9 @@ class NotificationModel {
         }
         if let text = dic["text"] as? String{
             self.text = text
+        }
+        if let postType = dic["postType"] as? String{
+            self.postType = postType
         }
         if let lessonName = dic["lessonName"] as? String{
             self.lessonName = lessonName

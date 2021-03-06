@@ -40,14 +40,14 @@ class Utilities  {
             SVProgressHUD.setBorderColor(.white)
             SVProgressHUD.showSuccess(withStatus: msg)
             SVProgressHUD.setForegroundColor(.white)
-            SVProgressHUD.dismiss(withDelay: 1500)
+            SVProgressHUD.dismiss(withDelay: 1000)
         }else{
             SVProgressHUD.setBackgroundColor(.black)
             SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
             SVProgressHUD.setBorderColor(.white)
             SVProgressHUD.showSuccess(withStatus: nil)
             SVProgressHUD.setForegroundColor(.white)
-            SVProgressHUD.dismiss(withDelay: 1500)
+            SVProgressHUD.dismiss(withDelay: 1000)
         }
         
     }
@@ -63,7 +63,7 @@ class Utilities  {
             
             SVProgressHUD.showError(withStatus: nil)
             SVProgressHUD.setForegroundColor(.white)
-            SVProgressHUD.dismiss(withDelay: 1500)
+            SVProgressHUD.dismiss(withDelay: 1000)
         }else{
             SVProgressHUD.setBackgroundColor(.black)
             SVProgressHUD.setFont(UIFont(name: Utilities.font, size: 12)!)
@@ -72,7 +72,7 @@ class Utilities  {
             
             SVProgressHUD.showError(withStatus: msg)
             SVProgressHUD.setForegroundColor(.white)
-            SVProgressHUD.dismiss(withDelay: 1500)
+            SVProgressHUD.dismiss(withDelay: 1000)
         }
         
     }

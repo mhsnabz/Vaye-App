@@ -552,7 +552,7 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
                 {
                     CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
                         if val{
-                            CommentNotificationService.shared.likeNoticesComment(post: noticesPost, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                            CommentNotificationService.shared.likeNoticesComment(post: noticesPost, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.notices_comment_like.desprition, type: NotificationType.notices_comment_like.desprition)
                         }
                     }
                 }else if let mainPost = sself.mainPost {

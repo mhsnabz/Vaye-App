@@ -341,7 +341,7 @@ class RepliyCommentVC: UIViewController {
                     CommentNotificationService.shared.sendNewLessonPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
                 
                     for item in text.findMentionText(){
-                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention_reply.desprition)
                     }
                 }
             }else if let noticesPost = noticesPost {
@@ -352,9 +352,20 @@ class RepliyCommentVC: UIViewController {
                         CommentNotificationService.shared.sendNewNoticesPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
                     
                         for item in text.findMentionText(){
-                            CommentNotificationService.shared.newNoticesMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                            CommentNotificationService.shared.newNoticesMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention_reply.desprition)
                         }
                     }
+            }else if let mainPost = mainPost {
+                CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: currentUser, commentId: commentId) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    CommentNotificationService.shared.sendNewMainPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: mainPost, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
+                
+                    for item in text.findMentionText(){
+                        
+                        CommentNotificationService.shared.newMainPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: mainPost, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention_reply.desprition)
+                       
+                    }
+                }
             }
         }
     }
@@ -602,3 +613,5 @@ extension RepliyCommentVC : SwipeCommentCellDelegate {
     }
     
 }
+
+

@@ -186,4 +186,22 @@ enum socialMeadialink{
     }
 }
 
+enum NotificationPostType {
+    case lessonPost
+    case mainPost
+    case notices
+    
+    var name : String {
+        switch self{
+        case .lessonPost:
+        return "lesson-post"
+        case .mainPost:
+            return ""
+            
+        case .notices:
+            return "notices-post"
+        }
+    }
+}
+
 
