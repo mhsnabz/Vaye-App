@@ -303,6 +303,9 @@ extension UIColor {
     static func unselectedColor () -> UIColor {
         return UIColor.init(red: 112/255, green: 112/255, blue: 112/255, alpha: 0.5)
     }
+    static func notificationNotRead() -> UIColor {
+        return  UIColor.init(red: 80/255, green: 145/255, blue: 233/255, alpha: 0.1)
+    }
     
 }
 extension Date {

@@ -33,7 +33,7 @@ class MainTabbar: UITabBarController,UITabBarControllerDelegate  {
     func configureViewControler(user : CurrentUser){
         let homeVC = setNavigationController(title: "Ana Sayfa", unselectedImage: UIImage(named: "home")!, selectedImage: UIImage(named: "home-selected")!,rootViewController: ContainerController(currentUser: user))
         let vaye_app = setNavigationController(title: "VayeApp",unselectedImage: #imageLiteral(resourceName: "c-unselected").withRenderingMode(.alwaysOriginal), selectedImage: #imageLiteral(resourceName: "c-selected").withRenderingMode(.alwaysOriginal),rootViewController: VayeApp(currentUser: user))
-        let notificationVC = setNavigationController(title: "Bildirimler",unselectedImage: UIImage(named: "not")!, selectedImage: UIImage(named: "not-selected")!,rootViewController: NotificationController(currentUser: user))
+        let notificationVC = setNavigationController(title: "Bildirimler",unselectedImage: UIImage(named: "not")!, selectedImage: UIImage(named: "not-selected")!,rootViewController: LocalNotificationController(currentUser: user))
         let chatVC = setNavigationController(title: "Sohbet",unselectedImage: UIImage(named: "chat")!, selectedImage: UIImage(named: "chat-selected")!,rootViewController: MessagesVC(currentUser: user))
         
         viewControllers = [homeVC,vaye_app,notificationVC,chatVC]

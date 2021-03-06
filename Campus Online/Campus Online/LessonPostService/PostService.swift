@@ -213,7 +213,6 @@ class PostService{
                 .document("lesson-post").collection("post").document(post.postId)
             db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
 
-                NotificaitonService.shared.send_home_remove_like_notification(post: post, currentUser: currentUser)
                 completion(true)
             }
         }

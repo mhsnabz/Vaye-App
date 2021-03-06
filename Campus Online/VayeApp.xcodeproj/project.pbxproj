@@ -77,6 +77,8 @@
 		6622C2422505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */; };
 		6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */; };
 		6622D78E25F2E58F008366B6 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D78D25F2E58F008366B6 /* CustomView.swift */; };
+		6622D7D825F2EC44008366B6 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D7D725F2EC44008366B6 /* NotificationCell.swift */; };
+		6622D7DD25F2F86B008366B6 /* LocalNotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */; };
 		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
 		662D897D259DA8EE005E83C0 /* BasicAudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662D897C259DA8EE005E83C0 /* BasicAudioController.swift */; };
 		663B27332576759900A3CABB /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27322576759900A3CABB /* HeaderView.swift */; };
@@ -368,6 +370,8 @@
 		6622C2412505EA8B00E3B3F0 /* LessonInfoHeaderOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonInfoHeaderOne.swift; sourceTree = "<group>"; };
 		6622C2432505F80100E3B3F0 /* LessonInfoHeaderTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LessonInfoHeaderTwo.swift; path = "/Users/mhsnabz/Desktop/online-campus-ios/Campus Online/Campus Online/View/Lesson Info View/LessonInfoHeaderTwo.swift"; sourceTree = "<absolute>"; };
 		6622D78D25F2E58F008366B6 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
+		6622D7D725F2EC44008366B6 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
+		6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationController.swift; sourceTree = "<group>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
 		662D897C259DA8EE005E83C0 /* BasicAudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		663B27322576759900A3CABB /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -861,6 +865,14 @@
 			path = "Lesson Info View";
 			sourceTree = "<group>";
 		};
+		6622D7CE25F2EAC8008366B6 /* LessonPostService */ = {
+			isa = PBXGroup;
+			children = (
+				6615FC802509B9D600776664 /* PostService.swift */,
+			);
+			path = LessonPostService;
+			sourceTree = "<group>";
+		};
 		6649DD7124F13D5B000532B2 /* TabBar Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -1316,6 +1328,7 @@
 		66D911CD24EEA9E8002D760A /* Campus Online */ = {
 			isa = PBXGroup;
 			children = (
+				6622D7CE25F2EAC8008366B6 /* LessonPostService */,
 				66BC617725F1FAE500D545A4 /* NotificaitonService */,
 				6608990024FC724C0023E53B /* anim */,
 				6687921524FBB95300A43A41 /* ViewModel */,
@@ -1363,7 +1376,6 @@
 				6613341224F68DFF002677AB /* CurrentUser.swift */,
 				66E326A524F98FE7004CB61D /* LessonsModel.swift */,
 				66E326AA24F9C01C004CB61D /* UserService.swift */,
-				6615FC802509B9D600776664 /* PostService.swift */,
 				665E5CCD24FE7FD300B5B5E3 /* SelectedData.swift */,
 				6615FC88250AE46E00776664 /* LessonPostModel.swift */,
 				66A5F0D9250F02F1005C93B3 /* OtherUser.swift */,
@@ -1507,6 +1519,8 @@
 			children = (
 				66D9121A24EEAB85002D760A /* NotificationVC.swift */,
 				6685142325A2644200A99AC8 /* NotificationController.swift */,
+				6622D7D725F2EC44008366B6 /* NotificationCell.swift */,
+				6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -2139,6 +2153,7 @@
 				6649DD7724F1BC55000532B2 /* SlideMenuFooter.swift in Sources */,
 				660FB996256903B80014D406 /* EmptyCell.swift in Sources */,
 				66F0B003259B69F200C030E6 /* MessageGalleryModel.swift in Sources */,
+				6622D7D825F2EC44008366B6 /* NotificationCell.swift in Sources */,
 				6615FC8F250B398800776664 /* DataView.swift in Sources */,
 				66AF724C251321E9007E96BC /* LessonInfoHeaderTwo.swift in Sources */,
 				665E5CD024FEEC5D00B5B5E3 /* NewPostPdfCell.swift in Sources */,
@@ -2150,6 +2165,7 @@
 				660F5ADC2503DB5800F72558 /* SingleLisans.swift in Sources */,
 				660FB975256470300014D406 /* FoodMeModel.swift in Sources */,
 				66CB753D259CE241000D51BE /* RecordSheet.swift in Sources */,
+				6622D7DD25F2F86B008366B6 /* LocalNotificationController.swift in Sources */,
 				6687921724FBB96800A43A41 /* ActionSheetViewModel.swift in Sources */,
 				66836A012531CE9F00AB73AE /* SearchInputView.swift in Sources */,
 				66E326A624F98FE7004CB61D /* LessonsModel.swift in Sources */,

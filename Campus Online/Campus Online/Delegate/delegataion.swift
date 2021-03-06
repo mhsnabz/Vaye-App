@@ -258,6 +258,10 @@ protocol DataViewClick : class {
     func pdfClick( for cell : DataViewPdfCell)
 
 }
+protocol NotificationActionDelegate : class {
+    func imageClick(for cell : NotificationCell)
+   
+}
 protocol ProfileHeaderDelegate : class {
   
     func getMajorPost()

@@ -411,7 +411,7 @@ enum PostName {
     }
 }
 
-enum Notification_description {
+enum Notification_description   {
     case like_home
     case comment_home
     case reply_comment
@@ -479,6 +479,7 @@ enum Notification_description {
             return "Bir Yorumda Sizden Bahsetti"
         }
     }
+    
 }
 enum NotificationType{
     case home_like

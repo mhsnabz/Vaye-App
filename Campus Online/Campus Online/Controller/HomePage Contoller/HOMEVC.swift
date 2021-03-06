@@ -92,6 +92,7 @@ class HOMEVC: UIViewController ,HomeMenuBarSelectedIndex{
         setNavBarButton()
         configureUI()
         menuBar.delegate = self
+        
     }
     
     init(currentUser : CurrentUser) {

@@ -31,15 +31,7 @@ class SwipeCommentCell: SwipeCollectionViewCell {
 
                 }
             }
-//            checkIsLiked(user: currentUser, post: comment) {[weak self] (val) in
-//                guard let sself = self else { return }
-//                if val {
-//                    sself.likeButton.setImage(#imageLiteral(resourceName: "like").withRenderingMode(.alwaysOriginal), for: .normal)
-//                }else{
-//                    sself.likeButton.setImage(#imageLiteral(resourceName: "like-unselected").withRenderingMode(.alwaysOriginal), for: .normal)
-//
-//                }
-//            }
+
         }
     }
    
