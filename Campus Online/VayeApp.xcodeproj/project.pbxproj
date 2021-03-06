@@ -79,6 +79,7 @@
 		6622D78E25F2E58F008366B6 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D78D25F2E58F008366B6 /* CustomView.swift */; };
 		6622D7D825F2EC44008366B6 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D7D725F2EC44008366B6 /* NotificationCell.swift */; };
 		6622D7DD25F2F86B008366B6 /* LocalNotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */; };
+		6622D81D25F3F0F4008366B6 /* SinglePostVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D81C25F3F0F4008366B6 /* SinglePostVC.swift */; };
 		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
 		662D897D259DA8EE005E83C0 /* BasicAudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662D897C259DA8EE005E83C0 /* BasicAudioController.swift */; };
 		663B27332576759900A3CABB /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27322576759900A3CABB /* HeaderView.swift */; };
@@ -372,6 +373,7 @@
 		6622D78D25F2E58F008366B6 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
 		6622D7D725F2EC44008366B6 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationController.swift; sourceTree = "<group>"; };
+		6622D81C25F3F0F4008366B6 /* SinglePostVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SinglePostVC.swift; sourceTree = "<group>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
 		662D897C259DA8EE005E83C0 /* BasicAudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		663B27322576759900A3CABB /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -1521,6 +1523,7 @@
 				6685142325A2644200A99AC8 /* NotificationController.swift */,
 				6622D7D725F2EC44008366B6 /* NotificationCell.swift */,
 				6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */,
+				6622D81C25F3F0F4008366B6 /* SinglePostVC.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -2138,6 +2141,7 @@
 				66EF86C92525EACC00282FD4 /* CommentVCHeader.swift in Sources */,
 				6622C2442505F80100E3B3F0 /* LessonInfoHeaderTwo.swift in Sources */,
 				66D9120924EEAA85002D760A /* ContainerController.swift in Sources */,
+				6622D81D25F3F0F4008366B6 /* SinglePostVC.swift in Sources */,
 				6690A68F253F6A7400E88BC0 /* ASMainPostCell.swift in Sources */,
 				661333DF24F36C85002677AB /* Setting.swift in Sources */,
 				669C897C25EE5FA100E7978D /* HomeMenuBarFilter.swift in Sources */,

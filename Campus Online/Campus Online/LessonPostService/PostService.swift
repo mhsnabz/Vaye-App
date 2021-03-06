@@ -203,7 +203,7 @@ class PostService{
                     
                     completion(true)
      
-                    NotificaitonService.shared.send_post_like_comment_notification(post: post, currentUser: currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
+                    NotificaitonService.shared.send_post_like_comment_notification(postType: NotificationPostType.lessonPost.name, post: post, currentUser: currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
                 }
             }
         }else{

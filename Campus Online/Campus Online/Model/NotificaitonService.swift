@@ -9,7 +9,7 @@
 import FirebaseFirestore
 class NotificaitonService{
    static let shared = NotificaitonService()
-    func send_post_like_comment_notification(post : LessonPostModel , currentUser : CurrentUser, text : String , type : String){
+    func send_post_like_comment_notification(postType : String,post : LessonPostModel , currentUser : CurrentUser, text : String , type : String){
         if post.senderUid == currentUser.uid{
             return
         }else{
@@ -20,6 +20,7 @@ class NotificaitonService{
                     .document(post.senderUid).collection("notification").document(notificaitonId)
                 let dic = ["type":type ,
                            "text" : text,
+                           "postType":postType,
                            "senderUid" : currentUser.uid as Any,
                            "time":FieldValue.serverTimestamp(),
                            "senderImage":currentUser.thumb_image as Any ,
@@ -34,39 +35,7 @@ class NotificaitonService{
             }
             }
     }
-    func send_home_remove_like_notification(post : LessonPostModel , currentUser : CurrentUser){
-   
-        let db = Firestore.firestore().collection("user")
-            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.home_like.desprition)
-        db.getDocuments { (querySnap, err) in
-            if err == nil {
-                guard let snap = querySnap else { return }
-                if !snap.isEmpty {
-                    for item in snap.documents{
-                        let db = Firestore.firestore().collection("user")
-                            .document(post.senderUid).collection("notification").document(item.documentID)
-                        db.delete()
-                    }
-                }
-            }
-        }
-    }
-    func remove_comment_like(post : LessonPostModel , currentUser : CurrentUser){
-        let db = Firestore.firestore().collection("user")
-            .document(post.senderUid).collection("notification").whereField("postId", isEqualTo: post.postId as Any).whereField("senderUid", isEqualTo: currentUser.uid as Any).whereField("type", isEqualTo: NotificationType.comment_like.desprition)
-        db.getDocuments { (querySnap, err) in
-            if err == nil {
-                guard let snap = querySnap else { return }
-                if !snap.isEmpty {
-                    for item in snap.documents{
-                        let db = Firestore.firestore().collection("user")
-                            .document(post.senderUid).collection("notification").document(item.documentID)
-                        db.delete()
-                    }
-                }
-            }
-        }
-    }
+    
     
     
     func send_replied_comment_bymention(username : String ,currentUser : CurrentUser, text : String , type : String , post : LessonPostModel){
@@ -196,7 +165,7 @@ class NotificaitonService{
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
                 let dic = ["type":type ,
-                           "text" : text,
+                           "text" : text,"postType":post.postType as Any,
                            "senderUid" : currentUser.uid as Any,
                            "time":FieldValue.serverTimestamp(),
                            "senderImage":currentUser.thumb_image as Any ,
@@ -268,7 +237,7 @@ class NotificaitonService{
         }
     }
     
-    func notice_post_like_notification(post : NoticesMainModel, currentUser : CurrentUser, text : String , type : String){
+    func notice_post_like_notification(postType:String,post : NoticesMainModel, currentUser : CurrentUser, text : String , type : String){
         if post.senderUid == currentUser.uid{
             return
         }else{
@@ -278,7 +247,7 @@ class NotificaitonService{
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid!).collection("notification").document(notificaitonId)
                 let dic = ["type":type ,
-                           "text" : text,
+                           "text" : text,postType : postType,
                            "senderUid" : currentUser.uid as Any,
                            "time":FieldValue.serverTimestamp(),
                            "senderImage":currentUser.thumb_image as Any ,

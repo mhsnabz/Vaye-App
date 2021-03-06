@@ -316,7 +316,7 @@ class NoticesService {
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                             completion(true)
-                            NotificaitonService.shared.notice_post_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
+                            NotificaitonService.shared.notice_post_like_notification(postType: NotificationPostType.notices.name, post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
                         }
                     }
                 }
@@ -386,7 +386,7 @@ class NoticesService {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                             completion(true)
                             
-                            NotificaitonService.shared.notice_post_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
+                            NotificaitonService.shared.notice_post_like_notification(postType : NotificationPostType.notices.name,post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
                             
                         }
                     }
@@ -443,49 +443,7 @@ class NoticesService {
                 }}}
     }
     
-    
-    /// Description : comment like
-    func setCommentLike(comment : CommentModel,tableView : UITableView , currentUser : CurrentUser, post : NoticesMainModel,  completion : @escaping(Bool) ->Void){
-        if !(comment.likes?.contains(currentUser.uid))!{
-            comment.likes?.append(currentUser.uid)
-            tableView.reloadData()
-            
-            let db = Firestore.firestore().collection(currentUser.short_school)
-                .document("notices")
-                .collection("post")
-                .document(post.postId)
-                .collection("comment").document(comment.commentId!)
-            db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
-                
-                if err != nil{
-                    print("like err \(err?.localizedDescription as Any)")
-                }else{
-                    NotificaitonService.shared.notice_comment_like_notification(post: post, comment: comment, currentUser: currentUser, text: comment.comment!, type: Notification_description.notices_comment_like.desprition)
-                }
-            }
-        }else{
-            comment.likes?.remove(element: currentUser.uid)
-            tableView.reloadData()
-            let db = Firestore.firestore().collection("main-post")
-                .document("post")
-                .collection("post")
-                .document(post.postId)
-                .collection("comment").document(comment.commentId!)
-            db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as Any])]) {
-                (err) in
-                
-                if err != nil{
-                    
-                    print("like err \(err?.localizedDescription as Any)")
-                }else{
-                   
-                }
-            }}
-    }
-  
-    
-    
-    
+
     func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
         if data.count == 0{
             completion(true)

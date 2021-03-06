@@ -26,15 +26,12 @@ class LocalNotificationController: UIViewController  {
     }()
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        
         layout.minimumLineSpacing = .zero
-        
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .white
         cv.dataSource = self
         cv.delegate = self
         cv.refreshControl = refreshControl
-        
         return cv
     }()
     override func viewDidLoad() {
@@ -272,6 +269,42 @@ class LocalNotificationController: UIViewController  {
     
     //MARK:-notificaiton deep linking
     
+    
+    private func showPost(model : NotificationModel){
+        
+        if model.postType == NotificationPostType.lessonPost.name {
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument {[weak self] (docSnap, err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    guard let snap = docSnap else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                    if snap.exists {
+                        let post = LessonPostModel.init(postId: snap.documentID, dic: snap.data())
+                        
+                        let vc = SinglePostVC(currentUser: sself.currentUser)
+                        vc.lessonPost = post
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        }
+        
+    }
+    
     private func showComment(model : NotificationModel){
  
         if model.postType == NotificationPostType.notices.name {
@@ -462,11 +495,14 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
         Utilities.waitProgress(msg: nil)
         if getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_home.desprition ||
             getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition {
             showComment(model : model[indexPath.row])
         
+        }else if model[indexPath.row].postType == NotificationPostType.lessonPost.name{
+            showPost(model: model[indexPath.row])
         }
     }
     
