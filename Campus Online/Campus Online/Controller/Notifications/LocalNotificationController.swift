@@ -301,14 +301,73 @@ class LocalNotificationController: UIViewController  {
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }
+        }else if model.postType == NotificationPostType.notices.name{
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument {[weak self] (docSnap, err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    guard let snap = docSnap else {
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                        
+                    }
+                    if snap.exists {
+                        let post = NoticesMainModel.init(postId: snap.documentID, dic: snap.data())
+                        let vc = SinglePostVC(currentUser: sself.currentUser)
+                        vc.noticesPost = post
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        
+                    }
+                    
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+        }else if model.postType == PostType.buySell.despription || model.postType == PostType.camping.despription ||  model.postType == PostType.foodMe.despription {
+            let db = Firestore.firestore().collection("main-post")
+                .document("post").collection("post")
+                .document(model.postId)
+            db.getDocument {[weak self] (docSnap, err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    guard let snap  = docSnap else {
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return }
+                    if snap.exists {
+                        let post = MainPostModel.init(postId: snap.documentID, dic: snap.data())
+                        let vc = SinglePostVC(currentUser: sself.currentUser)
+                        vc.mainPost = post
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                    }
+                    
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+            
         }
         
     }
     
     private func showComment(model : NotificationModel){
- 
+        
         if model.postType == NotificationPostType.notices.name {
-           
+            
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("notices")
                 .collection("post")
@@ -495,13 +554,19 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
+        
         Utilities.waitProgress(msg: nil)
         if getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_home.desprition ||
             getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition {
             showComment(model : model[indexPath.row])
-        
+            
         }else if model[indexPath.row].postType == NotificationPostType.lessonPost.name{
+            showPost(model: model[indexPath.row])
+        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
+            showPost(model: model[indexPath.row])
+        }else if model[indexPath.row].postType == PostType.buySell.despription ||
+                    model[indexPath.row].postType == PostType.camping.despription ||
+                    model[indexPath.row].postType == PostType.foodMe.despription{
             showPost(model: model[indexPath.row])
         }
     }
@@ -546,8 +611,8 @@ extension LocalNotificationController : SwipeCollectionViewCellDelegate {
             
             return [read]
         }
-
-        }
+        
+    }
     
 }
 
@@ -561,12 +626,12 @@ extension LocalNotificationController : NotificationActionDelegate {
                 UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
                     if val {
                         let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
-                       
+                        
                         sself.navigationController?.pushViewController(vc, animated: true)
                         Utilities.dismissProgress()
                     }else{
                         let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
-            
+                        
                         sself.navigationController?.pushViewController(vc, animated: true)
                         Utilities.dismissProgress()
                     }
