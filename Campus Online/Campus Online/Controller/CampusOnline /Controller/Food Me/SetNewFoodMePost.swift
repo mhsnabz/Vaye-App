@@ -391,9 +391,7 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
                 MainPostService.shared.removeLocation(currentUser: sself.currentUser)
 
                 sself.navigationController?.popViewController(animated: true)
-                FoodMeService.shared.getTopicFollowers { (user) in
-                    FoodMeService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_food_me.desprition, postId: date)
-                }
+               
             }
         }else{
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.foodMe.despription, type: dataType, data: val) {[weak self] (url) in
@@ -403,13 +401,12 @@ class SetNewFoodMePost: UIViewController, LightboxControllerDismissalDelegate, G
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         MainPostService.shared.removeLocation(currentUser: sself.currentUser)
                         sself.navigationController?.popViewController(animated: true)
-                        FoodMeService.shared.getTopicFollowers { (user) in
-                            FoodMeService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_food_me.desprition, postId: date)
-                        }
+                       
                     }
                 }
             }
         }
+        MainPostNotificationService.shared.setNewPostMentionedNotification( postType: NotificationPostType.mainPost.name, currentUser: currentUser, text: self.text.text!, type: MainPostNotification.new_mentioned_post.type, postId: date)
     }
     
     @objc func removeValue(){

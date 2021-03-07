@@ -279,9 +279,7 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
                 MainPostService.shared.removeLocation(currentUser: sself.currentUser)
-                SellBuyService.shared.getTopicFollowers { (user) in
-                    SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
-                }
+                
             }
         }
         else
@@ -294,13 +292,12 @@ class SetNewBuySellVC: UIViewController , LightboxControllerDismissalDelegate ,G
                         MainPostService.shared.removeLocation(currentUser: sself.currentUser)
 
                         sself.navigationController?.popViewController(animated: true)
-                        SellBuyService.shared.getTopicFollowers { (user) in
-                            SellBuyService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_ad.desprition, postId: date)
-                        }
+                       
                     }
                 }
             }
         }
+        MainPostNotificationService.shared.setNewPostMentionedNotification( postType: NotificationPostType.mainPost.name, currentUser: currentUser, text: self.text.text!, type: MainPostNotification.new_mentioned_post.type, postId: date)
     }
     @objc func _addImage(){
         Config.Camera.recordLocation = false

@@ -228,147 +228,50 @@ class LocalNotificationController: UIViewController  {
             }
         }
     }
-    func getTypeDescribing(type : String) -> String {
-        if type == NotificationType.home_like.desprition {
-            return Notification_description.like_home.desprition
-        }
-        else if type == NotificationType.comment_home.desprition {
-            return Notification_description.comment_home.desprition
-        }
-        else if type == NotificationType.reply_comment.desprition {
-            return Notification_description.reply_comment.desprition
-        }
-        else if type == NotificationType.comment_like.desprition {
-            return Notification_description.comment_like.desprition
-        }
-        else if type == NotificationType.comment_mention.desprition {
-            return Notification_description.comment_mention.desprition
-        }
-        else if type == NotificationType.following_you.desprition {
-            return Notification_description.following_you.desprition
-        }
-        else if type == NotificationType.home_new_post.desprition {
-            return Notification_description.home_new_post.desprition
-        }
-        else if type == NotificationType.home_new_mentions_post.desprition {
-            return Notification_description.home_new_mentions_post.desprition
-        }
-        else if type == NotificationType.new_ad.desprition {
-            return Notification_description.new_ad.desprition
-        }
-        else if type == NotificationType.like_sell_buy.desprition {
-            return Notification_description.like_sell_buy.desprition
-        }
-        else if type == NotificationType.new_food_me.desprition {
-            return Notification_description.new_food_me.desprition
-        }
-        else if type == NotificationType.like_food_me.desprition {
-            return Notification_description.like_food_me.desprition
-        }
-        else if type == NotificationType.new_camping.desprition {
-            return Notification_description.new_camping.desprition
-        }
-        else if type == NotificationType.like_camping.desprition {
-            return Notification_description.like_camping.desprition
-        }
-        else if type == NotificationType.notices_comment_like.desprition {
-            return Notification_description.notices_comment_like.desprition
+    private func getMainText(model : NotificationModel) ->String {
+        var text : String = ""
+        if model.postType == NotificationPostType.lessonPost.name {
+            if model.type == MajorPostNotification.comment_like.type{
+                text = MajorPostNotification.comment_like.descp
+            }else if model.type == MajorPostNotification.new_comment.type{
+                text = MajorPostNotification.new_comment.descp
+            }else if model.type == MajorPostNotification.new_mentioned_comment.type{
+                text = MajorPostNotification.new_mentioned_comment.descp
+            }else if model.type == MajorPostNotification.new_post.type{
+                text = MajorPostNotification.new_post.descp
+            }else if model.type ==  MajorPostNotification.new_mentioned_post.type{
+                text = MajorPostNotification.new_mentioned_post.descp
+            }else if model.type == MajorPostNotification.post_like.type{
+                text = MajorPostNotification.post_like.descp
+            }else if model.type == MajorPostNotification.new_replied_comment.type{
+                text = MajorPostNotification.new_replied_comment.descp
+            }else if model.type == MajorPostNotification.new_replied_mentioned_comment.type{
+                text = MajorPostNotification.new_replied_mentioned_comment.type
+            }
+        }else if model.postType == NotificationPostType.notices.name{
+            if model.type == NoticesPostNotification.comment_like.type{
+                text = NoticesPostNotification.comment_like.descp
+            }else if model.type == NoticesPostNotification.new_comment.type{
+                text = NoticesPostNotification.new_comment.descp
+            }else if model.type == NoticesPostNotification.new_mentioned_comment.type{
+                text = NoticesPostNotification.new_mentioned_comment.descp
+            }else if model.type == NoticesPostNotification.new_post.type{
+                text = NoticesPostNotification.new_post.descp
+            }else if model.type ==  NoticesPostNotification.new_mentioned_post.type{
+                text = NoticesPostNotification.new_mentioned_post.descp
+            }else if model.type == NoticesPostNotification.post_like.type{
+                text = NoticesPostNotification.post_like.descp
+            }else if model.type == NoticesPostNotification.new_replied_comment.type{
+                text = NoticesPostNotification.new_replied_comment.descp
+            }else if model.type == NoticesPostNotification.new_replied_mentioned_comment.type{
+                text = NoticesPostNotification.new_replied_mentioned_comment.type
+            }
         }
         
-        else if type == NotificationType.notices_replied_comment_like.desprition{
-            return Notification_description.notices_replied_comment_like.desprition
-        }
-        
-        else if type == NotificationType.notices_post_like.desprition {
-            return Notification_description.notices_post_like.desprition
-        }
-        
-        else if type == NotificationType.notices_new_comment.desprition {
-            return Notification_description.notices_new_comment.desprition
-        }
-        
-        else if type == NotificationType.notice_mention_comment.desprition {
-            return Notification_description.notice_mention_comment.desprition
-        }
-        
-        else if type == NotificationType.notices_new_post.desprition {
-            return Notification_description.notices_new_post.desprition
-        }
-        
-        
-        return ""
+        return text
     }
     
-    func getNotificationType (type : String) ->String {
-        if type == NotificationType.home_like.desprition {
-            return NotificationType.home_like.desprition
-        }
-        else if type == NotificationType.comment_home.desprition {
-            return NotificationType.comment_home.desprition
-        }
-        else if type == NotificationType.reply_comment.desprition {
-            return NotificationType.reply_comment.desprition
-        }
-        else if type == NotificationType.comment_like.desprition {
-            return NotificationType.comment_like.desprition
-        }
-        else if type == NotificationType.comment_mention.desprition {
-            return NotificationType.comment_mention.desprition
-        }
-        else if type == NotificationType.following_you.desprition {
-            return NotificationType.following_you.desprition
-        }
-        else if type == NotificationType.home_new_post.desprition {
-            return NotificationType.home_new_post.desprition
-        }
-        else if type == NotificationType.home_new_mentions_post.desprition {
-            return NotificationType.home_new_mentions_post.desprition
-        }
-        else if type == NotificationType.new_ad.desprition {
-            return NotificationType.new_ad.desprition
-        }
-        else if type == NotificationType.like_sell_buy.desprition {
-            return NotificationType.like_sell_buy.desprition
-        }
-        else if type == NotificationType.new_food_me.desprition {
-            return NotificationType.new_food_me.desprition
-        }
-        else if type == NotificationType.like_food_me.desprition {
-            return NotificationType.like_food_me.desprition
-        }
-        else if type == NotificationType.new_camping.desprition {
-            return NotificationType.new_camping.desprition
-        }
-        else if type == NotificationType.like_camping.desprition {
-            return NotificationType.like_camping.desprition
-        }
-        else if type == NotificationType.notices_comment_like.desprition {
-            return NotificationType.notices_comment_like.desprition
-        }
-        
-        else if type == NotificationType.notices_replied_comment_like.desprition{
-            return NotificationType.notices_replied_comment_like.desprition
-        }
-        
-        else if type == NotificationType.notices_post_like.desprition {
-            return NotificationType.notices_post_like.desprition
-        }
-        
-        else if type == NotificationType.notices_new_comment.desprition {
-            return NotificationType.notices_new_comment.desprition
-        }
-        
-        else if type == NotificationType.notice_mention_comment.desprition {
-            return NotificationType.notice_mention_comment.desprition
-        }
-        
-        else if type == NotificationType.notices_new_post.desprition {
-            return NotificationType.notices_new_post.desprition
-        }
-        
-        
-        return ""
-    }
+
     
     
     //MARK:-notificaiton deep linking
@@ -607,7 +510,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         cell.actionDelegate = self
         cell.delegate = self
         let text =  model[indexPath.row].senderName + model[indexPath.row].username +
-            model[indexPath.row].time.dateValue().timeAgoDisplay() + getTypeDescribing(type: model[indexPath.row].type) + "\n" + model[indexPath.row].text
+            model[indexPath.row].time.dateValue().timeAgoDisplay() + getMainText(model: model[indexPath.row]) + "\n" + model[indexPath.row].text
         let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
         cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
         if model[indexPath.row].isRead {
@@ -615,39 +518,14 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         }else{
             cell.contentView.backgroundColor = .notificationNotRead()
         }
-        //        if model[indexPath.row].postType == NotificationPostType.mainPost.name {
-//
-//        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
-//
-//        }
-//       else{
-//            let text =  model[indexPath.row].senderName + model[indexPath.row].username +
-//                model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text
-//            let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
-//            cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
-//        }
-//        if model[indexPath.row].isRead {
-//            cell.contentView.backgroundColor = .white
-//        }else{
-//            cell.contentView.backgroundColor = .notificationNotRead()
-//        }
+
         
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        if model[indexPath.row].postType == NotificationPostType.lessonPost.name {
-//
-//        }else if model[indexPath.row].postType == NotificationPostType.mainPost.name{
-//            return .zero
-//        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
-//            return .zero
-//        }
-//        else
-//        {
-//            return .zero
-//        }
+
         let text = model[indexPath.row].senderName + model[indexPath.row].username +
-            model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text +  getTypeDescribing(type: model[indexPath.row].type)
+            model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text +  getMainText(model: model[indexPath.row])
         let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
         
         if h > 41 {
@@ -828,47 +706,7 @@ extension LocalNotificationController : SwipeCollectionViewCellDelegate {
             let read = SwipeAction(style: .destructive, title: "Görüntüle") {[weak self] (action, indexPath) in
                 guard let sself = self else { return }
                 Utilities.waitProgress(msg: nil)
-                if sself.getNotificationType(type: sself.model[indexPath.row].type) == NotificationType.comment_home.desprition ||
-                    sself.getNotificationType(type: sself.model[indexPath.row].type) == NotificationType.comment_mention.desprition {
-                    sself.showComment(model : sself.model[indexPath.row])
-                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {(_val) in
-                        
-                        sself.model[indexPath.row].isRead = true
-                        sself.collecitonView.reloadData()
-                    }
-                    
-                }else if sself.model[indexPath.row].postType == NotificationPostType.lessonPost.name{
-                    sself.showPost(model: sself.model[indexPath.row])
-                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {(_val) in
-                        
-                        sself.model[indexPath.row].isRead = true
-                        sself.collecitonView.reloadData()
-                    }
-                }else if sself.model[indexPath.row].postType == NotificationPostType.notices.name{
-                    sself.showPost(model: sself.model[indexPath.row])
-                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) { (_val) in
-                  
-                        sself.model[indexPath.row].isRead = true
-                        sself.collecitonView.reloadData()
-                    }
-                }else if sself.model[indexPath.row].postType == PostType.buySell.despription ||
-                            sself.model[indexPath.row].postType == PostType.camping.despription ||
-                            sself.model[indexPath.row].postType == PostType.foodMe.despription{
-                    sself.showPost(model: sself.model[indexPath.row])
-                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) { (_val) in
-                      
-                        sself.model[indexPath.row].isRead = true
-                        sself.collecitonView.reloadData()
-                    }
-                }else if sself.model[indexPath.row].postType == NotificationPostType.follow.name {
-                    sself.showProfile(model: sself.model[indexPath.row])
-                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {[weak self] (_val) in
-                        guard let sself = self else { return }
-                        sself.model[indexPath.row].isRead = true
-                        sself.collecitonView.reloadData()
-                    }
-
-                }
+               
             }
             read.image = #imageLiteral(resourceName: "seen").withRenderingMode(.alwaysOriginal)
             read.hidesWhenSelected = true

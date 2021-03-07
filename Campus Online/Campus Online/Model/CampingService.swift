@@ -100,33 +100,6 @@ class CampingService{
         completion(true)
     }
  
-    func getTopicFollowers(completion : @escaping([String])->Void){
-        var user = [String]()
-        let db = Firestore.firestore().collection("main-post")
-            .document("camping").collection("followers")
-       
-        db.getDocuments { (querySnap, err) in
-            if err == nil {
-                guard let snap = querySnap else { return }
-                if !snap.isEmpty{
-                    for item in snap.documents{
-                        user.append(item.documentID)
-                        
-                    }
-                }else{
-                    completion([])
-                }
-                completion(user)
-            }
-        }
-    }
-    
-    
-    func sendNotificaiton(currentUser : CurrentUser ,user : [String] ,text : String , type : String , postId : String){
-        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        NotificaitonService.shared.set_new_buy_sell_notification(currentUser: currentUser, postId: postId, getterUids: user, text: text, type: NotificationType.new_camping.desprition, topic: Notification_description.new_camping.desprition, notificaitonId: notificaitonId) { (_) in
-                print("succes")
-          
-        }
-    }
+  
+
 }

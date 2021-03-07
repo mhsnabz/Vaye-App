@@ -298,9 +298,8 @@ class ASMainPostOtherUser : NSObject {
                         if err == nil{
                             UserService.shared.addAsMessagesFriend(currentUserUid: sself.currentUser, otherUserUid: sself.otherUser! )
                             Utilities.succesProgress(msg: "Takip Ediliyor")
-                            NotificaitonService.shared.start_following_you(currentUser: sself.currentUser, otherUser: sself.otherUser!, text: Notification_description.following_you.desprition, type: NotificationType.following_you.desprition) { (_) in
-                                
-                            }
+                            FollowNotificationService.shared.followingNotification(postType: NotificationPostType.follow.name, currentUser: sself.currentUser, otherUser: sself.otherUser!, text: FollowNotification.follow_you.desp, type: FollowNotification.follow_you.type)
+                          
                         }else{
                             Utilities.errorProgress(msg: nil)
                         }

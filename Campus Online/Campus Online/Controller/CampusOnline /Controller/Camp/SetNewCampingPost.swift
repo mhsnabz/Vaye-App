@@ -392,9 +392,7 @@ class SetNewCampingPost: UIViewController , LightboxControllerDismissalDelegate,
                 sself.navigationController?.popViewController(animated: true)
                 MainPostService.shared.removeLocation(currentUser: sself.currentUser)
 
-                CampingService.shared.getTopicFollowers { (user) in
-                    CampingService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_camping.desprition, postId: date)
-                }
+               
             }
         }else{
             MainPostUploadService.shareed.uploadDataBase(postDate: date, currentUser: currentUser,   postType: PostType.camping.despription, type: dataType, data: val) {[weak self] (url) in
@@ -405,13 +403,12 @@ class SetNewCampingPost: UIViewController , LightboxControllerDismissalDelegate,
                     MainPostUploadService.shareed.setThumbDatas(currentUser: sself.currentUser, postType: PostType.camping.despription, postId: date) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)
-                        CampingService.shared.getTopicFollowers { (user) in
-                            CampingService.shared.sendNotificaiton(currentUser: sself.currentUser, user: user, text: sself.text.text, type: NotificationType.new_camping.desprition, postId: date)
-                        }
+                        
                     }
                 }
             }
         }
+        MainPostNotificationService.shared.setNewPostMentionedNotification( postType: NotificationPostType.mainPost.name, currentUser: currentUser, text: self.text.text!, type: MainPostNotification.new_mentioned_post.type, postId: date)
     }
     
     @objc func removeValue(){

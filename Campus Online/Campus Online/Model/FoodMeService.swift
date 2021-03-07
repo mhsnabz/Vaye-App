@@ -122,11 +122,11 @@ class FoodMeService{
     }
     
     
-    func sendNotificaiton(currentUser : CurrentUser ,user : [String] ,text : String , type : String , postId : String){
-        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        NotificaitonService.shared.set_new_buy_sell_notification(currentUser: currentUser, postId: postId, getterUids: user, text: text, type: NotificationType.new_food_me.desprition, topic: Notification_description.new_food_me.desprition, notificaitonId: notificaitonId) { (_) in
-                print("succes")
-          
-        }
-    }
+//    func sendNotificaiton(currentUser : CurrentUser ,user : [String] ,text : String , type : String , postId : String){
+//        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+//        NotificaitonService.shared.set_new_buy_sell_notification(currentUser: currentUser, postId: postId, getterUids: user, text: text, type: NotificationType.new_food_me.desprition, topic: Notification_description.new_food_me.desprition, notificaitonId: notificaitonId) { (_) in
+//                print("succes")
+//          
+//        }
+//    }
 }

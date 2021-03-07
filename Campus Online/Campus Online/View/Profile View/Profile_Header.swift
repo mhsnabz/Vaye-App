@@ -300,9 +300,7 @@ class Profile_Header: UICollectionReusableView
                     db.setData(["user":user.uid as Any], merge: true) { (err) in
                         if err == nil{
                             Utilities.succesProgress(msg: "Takip Ediliyor")
-                            NotificaitonService.shared.start_following_you(currentUser: currentUser, otherUser: user, text: Notification_description.following_you.desprition, type: NotificationType.following_you.desprition) { (_) in
-                                
-                            }
+                            FollowNotificationService.shared.followingNotification(postType: NotificationPostType.follow.name, currentUser: sself.currentUser, otherUser: sself.user!, text: FollowNotification.follow_you.desp, type: FollowNotification.follow_you.type)
                         }else{
                             Utilities.errorProgress(msg: nil)
                         }

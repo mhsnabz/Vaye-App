@@ -369,18 +369,21 @@ class TeacherSetNewPost: UIViewController , LightboxControllerDismissalDelegate 
             }
             if selectedLesson == "Genel Duyuru"{
                 let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-                var notificaitonGetter = [NotificationGetter]()
+
+                var getterUid  = [String]()
                 for item in fallowers {
-                    notificaitonGetter.append(NotificationGetter(uid: item))
-                }
-                
-                NotificaitonService.shared.new_home_post_notification(currentUser: currentUser, postId: date, getterUids: notificaitonGetter, text: text.text, type: NotificationType.home_new_post.desprition, lessonName: "Genel Duyuru", notificaitonId: notificaitonId) { (_) in
+                    getterUid.append(item)
                     
                 }
+                
+                MajorPostNotificationService.shared.setNewTeacherPostNotification(getterUid: getterUid, lessonName: selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text: text.text!, type: MajorPostNotification.new_post.type, postId:date )
+                
+                
                     
                 
             }else{
-                self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
+                MajorPostNotificationService.shared.setNewPostNotification(lessonName: selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text: self.text.text!, type: MajorPostNotification.new_post.type, postId: date)
+           
             }
           
         }else{
@@ -401,19 +404,19 @@ class TeacherSetNewPost: UIViewController , LightboxControllerDismissalDelegate 
                     
                 }
                 if self.selectedLesson == "Genel Duyuru"{
-                    let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-                    var notificaitonGetter = [NotificationGetter]()
+                    var getterUid  = [String]()
                     for item in self.fallowers {
-                        notificaitonGetter.append(NotificationGetter(uid: item))
-                    }
-                    
-                    NotificaitonService.shared.new_home_post_notification(currentUser: self.currentUser, postId: date, getterUids: notificaitonGetter, text: self.text.text, type: NotificationType.home_new_post.desprition, lessonName: "Genel Duyuru", notificaitonId: notificaitonId) { (_) in
+                        getterUid.append(item)
                         
                     }
+                    
+                    MajorPostNotificationService.shared.setNewTeacherPostNotification(getterUid: getterUid, lessonName: self.selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: self.currentUser, text: self.text.text!, type: MajorPostNotification.new_post.type, postId:date )
+                   
                         
                     
                 }else{
-                    self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
+                    
+                    MajorPostNotificationService.shared.setNewPostNotification(lessonName: self.selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: self.currentUser, text: self.text.text!, type: MajorPostNotification.new_post.type, postId: date)
                 }
             }
         }
@@ -428,26 +431,7 @@ class TeacherSetNewPost: UIViewController , LightboxControllerDismissalDelegate 
             }
         }
     }
-    private func sendNotification(lessonName : String ,text : String , type : String , postId : String){
-        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        var getterUids = [NotificationGetter]()
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter")
-        db.getDocuments {[weak self] (querySnap, err) in
-            guard let sself = self else { return }
-            guard let snap = querySnap else { return }
-            if snap.isEmpty{
-                
-            }else{
-                for item in snap.documents{
-                    getterUids.append(NotificationGetter(uid: item.get("uid") as! String))
-                }
-                NotificaitonService.shared.new_home_post_notification(currentUser: sself.currentUser, postId: postId, getterUids: getterUids,  text: text, type: NotificationType.home_new_post.desprition, lessonName: lessonName, notificaitonId: notificaitonId) { (_) in
-                    print("succes")
-                }
-            }
-        }
-    }
+    
     //MARK:--helper functions
     private func goToLink(_ target : String)
     {  if let url = URL(string: target){

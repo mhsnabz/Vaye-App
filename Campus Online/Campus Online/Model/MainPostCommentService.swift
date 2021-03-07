@@ -180,7 +180,7 @@ class MainPostCommentService {
                 if err != nil{
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, comment: comment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+//                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, comment: comment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
             }
         }else{
@@ -198,7 +198,7 @@ class MainPostCommentService {
                     
                     print("like err \(err?.localizedDescription as Any)")
                 }else{
-                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, comment: comment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+//                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, comment: comment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
             }}
     }
@@ -349,7 +349,7 @@ class MainPostCommentService {
             db.updateData(["likes":FieldValue.arrayUnion([currentUser.uid as Any])]) { (err) in
                 if err == nil {
                     completion(true)
-                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+//                    NotificaitonService.shared.mainpost_replied_comment_like_notification(post: post, comment: repliedComment, currentUser: currentUser, text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }else{
                     print("err \(err?.localizedDescription as Any)")
                 }
@@ -361,7 +361,7 @@ class MainPostCommentService {
                 if err == nil {
                     
                     completion(true)
-                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, comment: repliedComment, currentUser: currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+//                    NotificaitonService.shared.mainpost_remove_replied_comment_like_notificaiton(post: post, comment: repliedComment, currentUser: currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
                 }
                 else{
                     print("err \(err?.localizedDescription as Any)")
