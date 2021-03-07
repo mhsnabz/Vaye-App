@@ -606,48 +606,55 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         cell.model = model[indexPath.row]
         cell.actionDelegate = self
         cell.delegate = self
-        
-        if model[indexPath.row].postType == NotificationPostType.mainPost.name {
-            let text =  model[indexPath.row].senderName + model[indexPath.row].username +
-                model[indexPath.row].time.dateValue().timeAgoDisplay() + getTypeDescribing(type: model[indexPath.row].type) + "\n" + model[indexPath.row].text
-            let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
-            cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
-        }
-       else{
-            let text =  model[indexPath.row].senderName + model[indexPath.row].username +
-                model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text
-            let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
-            cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
-        }
+        let text =  model[indexPath.row].senderName + model[indexPath.row].username +
+            model[indexPath.row].time.dateValue().timeAgoDisplay() + getTypeDescribing(type: model[indexPath.row].type) + "\n" + model[indexPath.row].text
+        let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
+        cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
         if model[indexPath.row].isRead {
             cell.contentView.backgroundColor = .white
         }else{
             cell.contentView.backgroundColor = .notificationNotRead()
         }
+        //        if model[indexPath.row].postType == NotificationPostType.mainPost.name {
+//
+//        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
+//
+//        }
+//       else{
+//            let text =  model[indexPath.row].senderName + model[indexPath.row].username +
+//                model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text
+//            let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
+//            cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
+//        }
+//        if model[indexPath.row].isRead {
+//            cell.contentView.backgroundColor = .white
+//        }else{
+//            cell.contentView.backgroundColor = .notificationNotRead()
+//        }
         
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if model[indexPath.row].postType == NotificationPostType.lessonPost.name {
-            let text = model[indexPath.row].senderName + model[indexPath.row].username +
-                model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text +  getTypeDescribing(type: model[indexPath.row].type)
-            let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
-            
-            if h > 41 {
-                return CGSize(width: view.frame.width, height: 12 + h + 15)
-            }else{
-                return CGSize(width: view.frame.width, height: 50)
-            }
-        }else if model[indexPath.row].postType == NotificationPostType.mainPost.name{
-            return .zero
-        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
-            return .zero
-        }
-        else
-        {
-            return .zero
-        }
+//        if model[indexPath.row].postType == NotificationPostType.lessonPost.name {
+//
+//        }else if model[indexPath.row].postType == NotificationPostType.mainPost.name{
+//            return .zero
+//        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
+//            return .zero
+//        }
+//        else
+//        {
+//            return .zero
+//        }
+        let text = model[indexPath.row].senderName + model[indexPath.row].username +
+            model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text +  getTypeDescribing(type: model[indexPath.row].type)
+        let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
         
+        if h > 41 {
+            return CGSize(width: view.frame.width, height: 12 + h + 15)
+        }else{
+            return CGSize(width: view.frame.width, height: 50)
+        }
        
         
     }

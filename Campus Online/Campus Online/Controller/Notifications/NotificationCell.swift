@@ -111,6 +111,24 @@ class NotificationCell: SwipeCollectionViewCell {
             }else if model.type == MajorPostNotification.new_replied_mentioned_comment.type{
                 text = MajorPostNotification.new_replied_mentioned_comment.type
             }
+        }else if model.postType == NotificationPostType.notices.name{
+            if model.type == NoticesPostNotification.comment_like.type{
+                text = NoticesPostNotification.comment_like.descp
+            }else if model.type == NoticesPostNotification.new_comment.type{
+                text = NoticesPostNotification.new_comment.descp
+            }else if model.type == NoticesPostNotification.new_mentioned_comment.type{
+                text = NoticesPostNotification.new_mentioned_comment.descp
+            }else if model.type == NoticesPostNotification.new_post.type{
+                text = NoticesPostNotification.new_post.descp
+            }else if model.type ==  NoticesPostNotification.new_mentioned_post.type{
+                text = NoticesPostNotification.new_mentioned_post.descp
+            }else if model.type == NoticesPostNotification.post_like.type{
+                text = NoticesPostNotification.post_like.descp
+            }else if model.type == NoticesPostNotification.new_replied_comment.type{
+                text = NoticesPostNotification.new_replied_comment.descp
+            }else if model.type == NoticesPostNotification.new_replied_mentioned_comment.type{
+                text = NoticesPostNotification.new_replied_mentioned_comment.type
+            }
         }
         
         return text
