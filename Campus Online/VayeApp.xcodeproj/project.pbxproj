@@ -80,6 +80,8 @@
 		6622D7D825F2EC44008366B6 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D7D725F2EC44008366B6 /* NotificationCell.swift */; };
 		6622D7DD25F2F86B008366B6 /* LocalNotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */; };
 		6622D81D25F3F0F4008366B6 /* SinglePostVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D81C25F3F0F4008366B6 /* SinglePostVC.swift */; };
+		6622D82225F4FAF3008366B6 /* MajorPostNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D82125F4FAF3008366B6 /* MajorPostNotificationService.swift */; };
+		6622D82B25F56956008366B6 /* NoticesNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6622D82A25F56956008366B6 /* NoticesNotificationService.swift */; };
 		6628125325171F9D00923F19 /* DatasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6628125225171F9D00923F19 /* DatasModel.swift */; };
 		662D897D259DA8EE005E83C0 /* BasicAudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662D897C259DA8EE005E83C0 /* BasicAudioController.swift */; };
 		663B27332576759900A3CABB /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663B27322576759900A3CABB /* HeaderView.swift */; };
@@ -374,6 +376,8 @@
 		6622D7D725F2EC44008366B6 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		6622D7DC25F2F86B008366B6 /* LocalNotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationController.swift; sourceTree = "<group>"; };
 		6622D81C25F3F0F4008366B6 /* SinglePostVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SinglePostVC.swift; sourceTree = "<group>"; };
+		6622D82125F4FAF3008366B6 /* MajorPostNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MajorPostNotificationService.swift; sourceTree = "<group>"; };
+		6622D82A25F56956008366B6 /* NoticesNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesNotificationService.swift; sourceTree = "<group>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
 		662D897C259DA8EE005E83C0 /* BasicAudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		663B27322576759900A3CABB /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -871,8 +875,17 @@
 			isa = PBXGroup;
 			children = (
 				6615FC802509B9D600776664 /* PostService.swift */,
+				6622D82125F4FAF3008366B6 /* MajorPostNotificationService.swift */,
 			);
 			path = LessonPostService;
+			sourceTree = "<group>";
+		};
+		6622D82925F56940008366B6 /* NoticesPostService */ = {
+			isa = PBXGroup;
+			children = (
+				6622D82A25F56956008366B6 /* NoticesNotificationService.swift */,
+			);
+			path = NoticesPostService;
 			sourceTree = "<group>";
 		};
 		6649DD7124F13D5B000532B2 /* TabBar Controller */ = {
@@ -1330,6 +1343,7 @@
 		66D911CD24EEA9E8002D760A /* Campus Online */ = {
 			isa = PBXGroup;
 			children = (
+				6622D82925F56940008366B6 /* NoticesPostService */,
 				6622D7CE25F2EAC8008366B6 /* LessonPostService */,
 				66BC617725F1FAE500D545A4 /* NotificaitonService */,
 				6608990024FC724C0023E53B /* anim */,
@@ -1978,6 +1992,7 @@
 				660F5AD425033E9600F72558 /* SettingCell.swift in Sources */,
 				6649DD7324F13D7E000532B2 /* MainTabBarController.swift in Sources */,
 				6608990824FD15DB0023E53B /* StudentNewPost.swift in Sources */,
+				6622D82B25F56956008366B6 /* NoticesNotificationService.swift in Sources */,
 				6686446C257B07FE003483D8 /* NoticesService.swift in Sources */,
 				6613340B24F51272002677AB /* KullanımKosulları.swift in Sources */,
 				6622D78E25F2E58F008366B6 /* CustomView.swift in Sources */,
@@ -2045,6 +2060,7 @@
 				660FB98325652BEF0014D406 /* FoodMeService.swift in Sources */,
 				66EC9D2225F130FC00ECBA22 /* RepliyCommentVC.swift in Sources */,
 				6646AFE32574DC1C00B42590 /* CurrentUserProfileHeader.swift in Sources */,
+				6622D82225F4FAF3008366B6 /* MajorPostNotificationService.swift in Sources */,
 				660F5ADA2503DB0800F72558 /* LicenceCell.swift in Sources */,
 				66EAC8F2258E91C8003CF7A3 /* SchoolPostNotificationSetting.swift in Sources */,
 				665E5CD424FFB5BE00B5B5E3 /* CaptionText.swift in Sources */,

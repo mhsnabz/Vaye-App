@@ -381,6 +381,162 @@ enum PostName {
     }
 }
 
+enum MajorPostNotification{
+    case post_like
+    case comment_like
+    case new_post
+    case new_comment
+    case new_mentioned_post
+    case new_mentioned_comment
+    case new_replied_comment
+    case new_replied_mentioned_comment
+    var descp : String{
+        switch self{
+        case .post_like:
+            return "Gönderinizi Beğendi"
+        case .comment_like:
+            return "Yorumunuzu Beğendi"
+        case .new_post:
+            return "Yeni Bir Gönderi Paylaştı"
+        case .new_comment:
+            return "Gönderinize Yorum Yaptı"
+        case .new_mentioned_post:
+            return "Bir Gönderide Sizden Bahsetti"
+        case .new_mentioned_comment:
+            return "Bir Yorumda Sizden Bahsetti"
+        case.new_replied_comment:
+            return "Yorumunuza Cevap Verdi"
+        case .new_replied_mentioned_comment:
+            return "Bir Yorumda Sizden Bahsetti"
+        }
+    }
+    var type : String{
+        switch self{
+        case .post_like:
+            return "post_like"
+        case .comment_like:
+            return "comment_like"
+        case .new_post:
+            return "new_post"
+        case .new_comment:
+            return "new_comment"
+        case .new_mentioned_post:
+            return "new_mentioned_post"
+        case .new_mentioned_comment:
+            return "new_mentioned_comment"
+        case.new_replied_comment:
+            return "new_replied_comment"
+        case .new_replied_mentioned_comment:
+            return "new_replied_mentioned_comment"
+        }
+    }
+}
+
+
+enum NoticesPostNotification{
+    case post_like
+    case comment_like
+    case new_post
+    case new_comment
+
+    case new_mentioned_post
+    case new_mentioned_comment
+    case new_replied_comment
+    case new_replied_mentioned_comment
+    var descp : String{
+        switch self{
+        case .post_like:
+            return "Gönderinizi Beğendi"
+        case .comment_like:
+            return "Yorumunuzu Beğendi"
+        case .new_post:
+            return "Yeni Bir Gönderi Paylaştı"
+        case .new_comment:
+            return "Gönderinize Yorum Yaptı"
+        case .new_mentioned_post:
+            return "Bir Gönderide Sizden Bahsetti"
+        case .new_mentioned_comment:
+            return "Bir Yorumda Sizden Bahsetti"
+        case.new_replied_comment:
+            return "Yorumunuza Cevap Verdi"
+        case .new_replied_mentioned_comment:
+            return "Bir Yorumda Sizden Bahsetti"
+        }
+    }
+    var type : String{
+        switch self{
+        case .post_like:
+            return "post_like"
+        case .comment_like:
+            return "comment_like"
+        case .new_post:
+            return "new_post"
+        case .new_comment:
+            return "new_comment"
+        case .new_mentioned_post:
+            return "new_mentioned_post"
+        case .new_mentioned_comment:
+            return "new_mentioned_comment"
+        case.new_replied_comment:
+            return "new_replied_comment"
+        case .new_replied_mentioned_comment:
+            return "new_replied_mentioned_comment"
+            
+        }
+    }
+}
+
+enum MainPostNotification{
+    case post_like
+    case comment_like
+    case new_post
+    case new_comment
+    case new_mentioned_post
+    case new_mentioned_comment
+    case new_replied_comment
+    case new_replied_mentioned_comment
+    var descp : String{
+        switch self{
+        case .post_like:
+            return "Gönderinizi Beğendi"
+        case .comment_like:
+            return "Yorumunuzu Beğendi"
+        case .new_post:
+            return "Yeni Bir Gönderi Paylaştı"
+        case .new_comment:
+            return "Gönderinize Yorum Yaptı"
+        case .new_mentioned_post:
+            return "Bir Gönderide Sizden Bahsetti"
+        case .new_mentioned_comment:
+            return "Bir Yorumda Sizden Bahsetti"
+        case.new_replied_comment:
+            return "Yorumunuza Cevap Verdi"
+        case .new_replied_mentioned_comment:
+            return "Gönderinize Yorum Yaptı"
+        }
+    }
+    var type : String{
+        switch self{
+        case .post_like:
+            return "post_like"
+        case .comment_like:
+            return "comment_like"
+        case .new_post:
+            return "new_post"
+        case .new_comment:
+            return "new_comment"
+        case .new_mentioned_post:
+            return "new_mentioned_post"
+        case .new_mentioned_comment:
+            return "new_mentioned_comment"
+        case.new_replied_comment:
+            return "new_replied_comment"
+        case .new_replied_mentioned_comment:
+            return "new_replied_mentioned_comment"
+        }
+    }
+}
+
 enum Notification_description   {
     case like_home
     case comment_home

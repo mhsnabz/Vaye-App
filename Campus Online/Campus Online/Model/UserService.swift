@@ -175,6 +175,41 @@ struct UserService {
             
         }
     }
+    
+    
+     func getUserIdByMention(username : String , completion : @escaping(String) ->Void){
+    
+        //username/@deneme
+        let db = Firestore.firestore().collection("username").document(username)
+        db.getDocument { (docSnap, err) in
+            if err == nil {
+                guard let snap = docSnap else {
+                    completion("")
+                    return
+                }
+                if snap.exists {
+                    Utilities.dismissProgress()
+                    completion(docSnap?.get("uid") as! String)
+                }else{
+                    completion("")
+                }
+            }
+        }
+        
+    }
+    func getOtherUserByMention(username : String , completion : @escaping(OtherUser?)->Void){
+        getUserIdByMention(username: username) { (uid) in
+            if uid != ""{
+                fetchOtherUser(uid: uid) { (user) in
+                    completion(user)
+                }
+            }else{
+                completion(nil)
+            }
+            
+        }
+    }
+
      func checkFollowers(currentUser : CurrentUser , otherUser : String, completion : @escaping(Bool) -> Void ){
         let db = Firestore.firestore().collection("user")
             .document(otherUser).collection("fallowers").document(currentUser.uid)

@@ -437,7 +437,8 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                     
                 }
             }
-            self.sendNotification(lessonName: self.selectedLesson, text: self.text.text, type: NotificationType.home_new_post.desprition, postId: date)
+            MajorPostNotificationService.shared.setNewPostNotification(lessonName: self.selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text:  self.text.text, type: MajorPostNotification.new_post.type, postId: date)
+           
         }else {
             
             
@@ -454,57 +455,22 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                         }
                     }
                     
-                }  }
+                }
+                
+            }
+            MajorPostNotificationService.shared.setNewPostNotification(lessonName: self.selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text:  self.text.text, type: MajorPostNotification.new_post.type, postId: date)
         }
         
     }
     
     
     
-    private func sendNotification(lessonName : String ,text : String , type : String , postId : String){
-        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        var getterUids = [NotificationGetter]()
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter")
-        db.getDocuments {[weak self] (querySnap, err) in
-            guard let sself = self else { return }
-            guard let snap = querySnap else { return }
-            if snap.isEmpty{
-                
-            }else{
-                for item in snap.documents{
-                    getterUids.append(NotificationGetter(uid: item.get("uid") as! String))
-                }
-                NotificaitonService.shared.new_home_post_notification(currentUser: sself.currentUser, postId: postId, getterUids: getterUids,  text: text, type: NotificationType.home_new_post.desprition, lessonName: lessonName, notificaitonId: notificaitonId) { (_) in
-                    print("succes")
-                }
-                sself.getMention { (user) in
-                    var uids = [String]()
-                    for item in user {
-                        if  item != sself.currentUser.username {
-                            UserService.shared.getUidBy_Mention(username: item) { (uid) in
-                                uids.append(uid)
-                            }
-                            
-                        }
-                        // FIXME: send mentioned notifications
-                    }
-                }
-            }
-        }
-    }
+  
     
     
     
     //MARK: - getMentions
-    private func getMention(completion : @escaping([String]) ->Void){
-        guard let text = text.text else { return }
-        let val = text.findMentionText()
-        for i in val {
-            userNames.append(i)
-        }
-        completion(userNames)
-    }
+    
     
     func setMyPostOnDatabase(postId : String , completion : @escaping(Bool) ->Void){
         let db = Firestore.firestore().collection("user")

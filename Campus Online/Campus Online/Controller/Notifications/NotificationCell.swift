@@ -82,22 +82,39 @@ class NotificationCell: SwipeCollectionViewCell {
             msgText.append(NSAttributedString(string: " şimdi \n", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
 
         }
-        if getTypeDescribing(type: model.type) == Notification_description.comment_home.desprition ||
-            getTypeDescribing(type: model.type) == NotificationType.comment_mention.desprition ||
-            getTypeDescribing(type: model.type) == Notification_description.notice_mention_comment.desprition ||
-            getTypeDescribing(type: model.type) == Notification_description.reply_comment.desprition {
-            msgText.append(NSAttributedString(string:"\(getTypeDescribing(type: model.type)) : ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+            msgText.append(NSAttributedString(string:"\(getMainText(model: model)) : ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
             msgText.append(NSAttributedString(string: model.text, attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
-            
-        }else{
-            msgText.append(NSAttributedString(string: getTypeDescribing(type: model.type), attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
-        }
+        
+    
         mainText.attributedText = msgText
         profile_image.sd_imageIndicator = SDWebImageActivityIndicator.white
         profile_image.sd_setImage(with: URL(string: model.senderImage!))
         
     }
-    
+    private func getMainText(model : NotificationModel) ->String {
+        var text : String = ""
+        if model.postType == NotificationPostType.lessonPost.name {
+            if model.type == MajorPostNotification.comment_like.type{
+                text = MajorPostNotification.comment_like.descp
+            }else if model.type == MajorPostNotification.new_comment.type{
+                text = MajorPostNotification.new_comment.descp
+            }else if model.type == MajorPostNotification.new_mentioned_comment.type{
+                text = MajorPostNotification.new_mentioned_comment.descp
+            }else if model.type == MajorPostNotification.new_post.type{
+                text = MajorPostNotification.new_post.descp
+            }else if model.type ==  MajorPostNotification.new_mentioned_post.type{
+                text = MajorPostNotification.new_mentioned_post.descp
+            }else if model.type == MajorPostNotification.post_like.type{
+                text = MajorPostNotification.post_like.descp
+            }else if model.type == MajorPostNotification.new_replied_comment.type{
+                text = MajorPostNotification.new_replied_comment.descp
+            }else if model.type == MajorPostNotification.new_replied_mentioned_comment.type{
+                text = MajorPostNotification.new_replied_mentioned_comment.type
+            }
+        }
+        
+        return text
+    }
     
     func getTypeDescribing(type : String) -> String {
         if type == NotificationType.home_like.desprition {

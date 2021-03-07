@@ -336,9 +336,9 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                 guard let sself = self else { return }
                 //FIXME:- send notification
               
-                    CommentNotificationService.shared.newLessonPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                CommentNotificationService.shared.newLessonPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: MajorPostNotification.new_comment.type)
                     for item in text.findMentionText(){
-                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: MajorPostNotification.new_mentioned_comment.type)
                     }
                 
                 }
@@ -352,9 +352,9 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                     guard let sself = self else { return }
                     //FIXME:- send notification
                   
-                        CommentNotificationService.shared.newNoticesPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                        CommentNotificationService.shared.newNoticesPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NoticesPostNotification.new_comment.type)
                         for item in text.findMentionText(){
-                            CommentNotificationService.shared.newNoticesPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                            CommentNotificationService.shared.newNoticesPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NoticesPostNotification.new_mentioned_comment.type)
                         }
                     
                     }
@@ -366,9 +366,9 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                     if _val{
                         guard let sself = self else { return }
                         //FIXME:- send notification
-                        CommentNotificationService.shared.newMainPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_home.desprition)
+                        CommentNotificationService.shared.newMainPostCommentNotification(post: post, currentUser: sself.currentUser, text: text, type: MainPostNotification.new_comment.type)
                         for item in text.findMentionText(){
-                            CommentNotificationService.shared.newMainPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention.desprition)
+                            CommentNotificationService.shared.newMainPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: MainPostNotification.new_mentioned_comment.type)
                         }
                         
                     }
@@ -387,6 +387,11 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
      
     return shouldBecomeFirstResponder
     }
+    
+    
+    
+ 
+    
     
 }
 
@@ -543,7 +548,7 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
                 if let post = sself.lessonPost {
                     CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
                         if val{
-                            CommentNotificationService.shared.likeLessonPostComment(post: post, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                            CommentNotificationService.shared.likeLessonPostComment(post: post, commentModel: commentModel, currentUser: sself.currentUser,text: commentModel.comment!, type: MajorPostNotification.comment_like.type)
                         }
                     }
                     
@@ -552,13 +557,13 @@ extension MajorPostCommentController : SwipeCommentCellDelegate {
                 {
                     CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
                         if val{
-                            CommentNotificationService.shared.likeNoticesComment(post: noticesPost, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.notices_comment_like.desprition, type: NotificationType.notices_comment_like.desprition)
+                            CommentNotificationService.shared.likeNoticesComment(post: noticesPost, commentModel: commentModel, currentUser: sself.currentUser,text:  commentModel.comment!, type: NoticesPostNotification.comment_like.type)
                         }
                     }
                 }else if let mainPost = sself.mainPost {
                     CommentService.shared.likeMainComment(commentModel: commentModel, currentUser: sself.currentUser) { (val) in
                         if val{
-                            CommentNotificationService.shared.likeMainPostComment(post: mainPost, commentModel: commentModel, currentUser: sself.currentUser,text: Notification_description.comment_like.desprition, type: NotificationType.comment_like.desprition)
+                            CommentNotificationService.shared.likeMainPostComment(post: mainPost, commentModel: commentModel, currentUser: sself.currentUser,text: commentModel.comment!, type: MainPostNotification.comment_like.type)
                         }
                     }
                 }

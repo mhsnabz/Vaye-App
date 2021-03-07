@@ -42,7 +42,7 @@ class CommentNotificationService{
     
     func likeNoticesComment(post : NoticesMainModel ,commentModel : CommentModel, currentUser : CurrentUser , text : String , type : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-
+        
         if commentModel.senderUid == currentUser.uid {
             return
         }else{
@@ -70,7 +70,7 @@ class CommentNotificationService{
             }
         }
     }
-   
+    
     func newNoticesPostCommentNotification(post : NoticesMainModel , currentUser : CurrentUser , text : String , type : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
         if post.senderUid == currentUser.uid {
@@ -150,15 +150,19 @@ class CommentNotificationService{
             guard let sself = self else { return }
             let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
             if username == currentUser.username{
-            return
-            }else if currentUser.mention{
-                if !currentUser.slientUser.contains(otherUser.uid) {
-                    let db = Firestore.firestore().collection("user")
-                        .document(otherUser.uid).collection("notification").document(notificaitonId)
-                    db.setData(sself.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                return
+            }else if otherUser.mention{
+                if currentUser.short_school == otherUser.short_school {
+                    if currentUser.bolum == otherUser.bolum {
+                        if !currentUser.slientUser.contains(otherUser.uid) {
+                            let db = Firestore.firestore().collection("user")
+                                .document(otherUser.uid).collection("notification").document(notificaitonId)
+                            db.setData(sself.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                        }
+                    }
                 }
             }
-    }
+        }
     }
     func newNoticesMentionedComment(username : String ,post : NoticesMainModel , currentUser : CurrentUser , text : String , type : String){
         UserService.shared.getUserBy_Mention(username: username) {[weak self] (otherUser) in
@@ -192,7 +196,7 @@ class CommentNotificationService{
         }
     }
     
-
+    
     func newNoticesPostMentionedComment(username : String ,post : NoticesMainModel , currentUser : CurrentUser , text : String , type : String){
         UserService.shared.getUserBy_Mention(username: username) {[weak self] (otherUser) in
             guard let sself = self else { return }
@@ -209,7 +213,7 @@ class CommentNotificationService{
         }
     }
     
- 
+    
     
     
     func getDictionary(postType : String,type : String , text : String , currentUser : CurrentUser
@@ -220,7 +224,7 @@ class CommentNotificationService{
             "text":text ,
             "postType": postType,
             "senderUid":currentUser.uid as Any,
-             "time":FieldValue.serverTimestamp(),
+            "time":FieldValue.serverTimestamp(),
             "senderImage":currentUser.thumb_image ?? "",
             "not_id":not_id,
             "isRead":false,
@@ -230,6 +234,6 @@ class CommentNotificationService{
             "lessonName":lessonName ?? vayeAppPostName ?? clupName as Any ] as [String : Any]
         
         return dic
-      
+        
     }
 }

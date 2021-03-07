@@ -315,6 +315,7 @@ class NoticesNewPost: UIViewController , LightboxControllerDismissalDelegate, Ga
                 guard let sself = self else { return }
                 Utilities.succesProgress(msg: "Gönderi Paylaşıldı")
                 sself.navigationController?.popViewController(animated: true)
+                NoticesNotificationService.shared.setNewPostNotification(clupName: sself.clup, postType: NotificationPostType.notices.name, currentUser: sself.currentUser, text: sself.text.text, type: NoticesPostNotification.new_post.type, postId: date)
             }
         }else{
             NoticesService.shared.uploadToDataBase(postDate: date, clupName: clup, currentUser: currentUser, postType: clup, type: dataType, data: val) {[weak self] (url) in
@@ -323,6 +324,7 @@ class NoticesNewPost: UIViewController , LightboxControllerDismissalDelegate, Ga
                     NoticesService.shared.setThumbDatas(currentUser: sself.currentUser, postId: sself.postDate) { (_) in
                         Utilities.succesProgress(msg: "Paylaşıldı")
                         sself.navigationController?.popViewController(animated: true)
+                        NoticesNotificationService.shared.setNewPostNotification(clupName: sself.clup, postType: NotificationPostType.notices.name, currentUser: sself.currentUser, text: sself.text.text, type: NoticesPostNotification.new_post.type, postId: date)
                     }
                    
                 }

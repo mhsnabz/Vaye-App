@@ -202,8 +202,7 @@ class PostService{
                 db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                     
                     completion(true)
-     
-                    NotificaitonService.shared.send_post_like_comment_notification(postType: NotificationPostType.lessonPost.name, post: post, currentUser: currentUser, text: Notification_description.like_home.desprition, type: NotificationType.home_like.desprition)
+                    MajorPostNotificationService.shared.setPotLike(postType: NotificationPostType.lessonPost.name, post: post, currentUser: currentUser, text: post.text, type: MajorPostNotification.post_like.type)
                 }
             }
         }else{

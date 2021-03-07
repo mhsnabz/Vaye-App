@@ -497,7 +497,9 @@ class LocalNotificationController: UIViewController  {
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }
-        }else if model.postType == NotificationPostType.lessonPost.name {
+        }else if model.postType == NotificationPostType.lessonPost.name  {
+            
+            
             let db = Firestore.firestore().collection(currentUser.short_school)
                 .document("lesson-post")
                 .collection("post")
@@ -585,6 +587,12 @@ class LocalNotificationController: UIViewController  {
     }
     
     
+    private func getMainText(currentUser : CurrentUser ,model : NotificationModel) ->String {
+        
+        
+        return ""
+    }
+    
     
 }
 extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate{
@@ -598,17 +606,14 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         cell.model = model[indexPath.row]
         cell.actionDelegate = self
         cell.delegate = self
-        if   getTypeDescribing(type: model[indexPath.row].type) == Notification_description.comment_home.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == Notification_description.notice_mention_comment.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == Notification_description.reply_comment.desprition{
-            
+        
+        if model[indexPath.row].postType == NotificationPostType.mainPost.name {
             let text =  model[indexPath.row].senderName + model[indexPath.row].username +
                 model[indexPath.row].time.dateValue().timeAgoDisplay() + getTypeDescribing(type: model[indexPath.row].type) + "\n" + model[indexPath.row].text
             let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
             cell.mainText.frame = CGRect(x: 44, y: 6, width: view.frame.width - 50, height: h + 5)
-            
-        }else{
+        }
+       else{
             let text =  model[indexPath.row].senderName + model[indexPath.row].username +
                 model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text
             let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
@@ -623,13 +628,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        
-        if   getTypeDescribing(type: model[indexPath.row].type) == Notification_description.comment_home.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == Notification_description.notice_mention_comment.desprition ||
-                getTypeDescribing(type: model[indexPath.row].type) == Notification_description.reply_comment.desprition || getTypeDescribing(type: model[indexPath.row].type) == Notification_description.comment_mention_reply.desprition {
-            
+        if model[indexPath.row].postType == NotificationPostType.lessonPost.name {
             let text = model[indexPath.row].senderName + model[indexPath.row].username +
                 model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text +  getTypeDescribing(type: model[indexPath.row].type)
             let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
@@ -639,16 +638,17 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
             }else{
                 return CGSize(width: view.frame.width, height: 50)
             }
-        }else{
-            let text =  model[indexPath.row].senderName + model[indexPath.row].username +
-                model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text
-            let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
-            if h > 41 {
-                return CGSize(width: view.frame.width, height: 12 + h + 15)
-            }else{
-                return CGSize(width: view.frame.width, height: 50)
-            }
+        }else if model[indexPath.row].postType == NotificationPostType.mainPost.name{
+            return .zero
+        }else if model[indexPath.row].postType == NotificationPostType.notices.name{
+            return .zero
         }
+        else
+        {
+            return .zero
+        }
+        
+       
         
     }
     
@@ -681,47 +681,90 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         Utilities.waitProgress(msg: nil)
-        if getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_home.desprition ||
-            getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition {
-            showComment(model : model[indexPath.row])
-            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
-                guard let sself = self else { return }
-                sself.model[indexPath.row].isRead = true
-                sself.collecitonView.reloadData()
+        
+       
+        if model[indexPath.row].postType == NotificationPostType.lessonPost.name {
+            if model[indexPath.row].type == MajorPostNotification.comment_like.type ||
+                model[indexPath.row].type == MajorPostNotification.new_comment.type ||
+                model[indexPath.row].type == MajorPostNotification.new_mentioned_comment.type
+            {
+                showComment(model : model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
+            }else if model[indexPath.row].type == MajorPostNotification.new_post.type ||
+                        model[indexPath.row].type == MajorPostNotification.new_mentioned_post.type ||
+                        model[indexPath.row].type  == MajorPostNotification.post_like.type  {
+                showPost(model: model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
+                
+            }else if model[indexPath.row].type == MajorPostNotification.new_replied_comment.type ||
+                        model[indexPath.row].type == MajorPostNotification.new_replied_mentioned_comment.type{
+                //show_replied_comment
             }
             
-        }else if model[indexPath.row].postType == NotificationPostType.lessonPost.name{
-            showPost(model: model[indexPath.row])
-            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
-                guard let sself = self else { return }
-                sself.model[indexPath.row].isRead = true
-                sself.collecitonView.reloadData()
-            }
         }else if model[indexPath.row].postType == NotificationPostType.notices.name{
-            showPost(model: model[indexPath.row])
-            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
-                guard let sself = self else { return }
-                sself.model[indexPath.row].isRead = true
-                sself.collecitonView.reloadData()
+            if model[indexPath.row].type == NoticesPostNotification.comment_like.type ||
+                model[indexPath.row].type == NoticesPostNotification.new_comment.type ||
+                model[indexPath.row].type == NoticesPostNotification.new_mentioned_comment.type
+            {
+                showComment(model : model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
+            }else if model[indexPath.row].type == NoticesPostNotification.new_post.type ||
+                        model[indexPath.row].type == NoticesPostNotification.new_mentioned_post.type ||
+                        model[indexPath.row].type  == NoticesPostNotification.post_like.type  {
+                showPost(model: model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
+                
+            }else if model[indexPath.row].type == NoticesPostNotification.new_replied_comment.type ||
+                        model[indexPath.row].type == NoticesPostNotification.new_replied_mentioned_comment.type{
+                //show_replied_comment
             }
-        }else if model[indexPath.row].postType == PostType.buySell.despription ||
-                    model[indexPath.row].postType == PostType.camping.despription ||
-                    model[indexPath.row].postType == PostType.foodMe.despription{
-            showPost(model: model[indexPath.row])
-            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
-                guard let sself = self else { return }
-                sself.model[indexPath.row].isRead = true
-                sself.collecitonView.reloadData()
+        }else if model[indexPath.row].type == NotificationPostType.mainPost.name{
+            if model[indexPath.row].type == MainPostNotification.comment_like.type ||
+                model[indexPath.row].type == MainPostNotification.new_comment.type ||
+                model[indexPath.row].type == MainPostNotification.new_mentioned_comment.type
+            {
+                showComment(model : model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
+            }else if model[indexPath.row].type == MainPostNotification.new_post.type ||
+                        model[indexPath.row].type == MainPostNotification.new_mentioned_post.type ||
+                        model[indexPath.row].type  == MainPostNotification.post_like.type  {
+                showPost(model: model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
+                
+            }else if model[indexPath.row].type == MainPostNotification.new_replied_comment.type ||
+                        model[indexPath.row].type == MainPostNotification.new_replied_mentioned_comment.type{
+                //show_replied_comment
             }
-        }else if model[indexPath.row].postType == NotificationPostType.follow.name {
-            showProfile(model: model[indexPath.row])
-            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
-                guard let sself = self else { return }
-                sself.model[indexPath.row].isRead = true
-                sself.collecitonView.reloadData()
-            }
-
         }
+        
+        
+        
+        
+
     }
     
 }

@@ -385,9 +385,7 @@ class NoticesService {
                     if err == nil {
                         db.updateData(["dislike":FieldValue.arrayRemove([currentUser.uid as String])]) { (err) in
                             completion(true)
-                            
-                            NotificaitonService.shared.notice_post_like_notification(postType : NotificationPostType.notices.name,post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
-                            
+                            NoticesNotificationService.shared.setPostLike(postType: NotificationPostType.notices.name, post: post, currentUser: currentUser, text: post.text, type: NoticesPostNotification.post_like.type)
                         }
                     }
                 }
@@ -403,8 +401,6 @@ class NoticesService {
                     .document(post.postId)
                 db.updateData(["likes":FieldValue.arrayRemove([currentUser.uid as String])]) {(err) in
                     completion(true)
-                    
-                    NotificaitonService.shared.notice_post_remove_like_notification(post: post, currentUser: currentUser, text: Notification_description.notices_post_like.desprition, type: NotificationType.notices_post_like.desprition)
                 }
             }
         }
