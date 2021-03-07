@@ -16,7 +16,7 @@ class LocalNotificationController: UIViewController  {
     var model = [NotificationModel]()
     var loadMore : Bool = false
     var page : DocumentSnapshot? = nil
-    
+    weak var notificaitonListener : ListenerRegistration?
     private lazy var notificationLauncher = NotificationLaunher(currentUser: currentUser, target: NotifictionTarget.notification.descriptions)
     
     private(set) lazy var refreshControl: UIRefreshControl = {
@@ -52,8 +52,41 @@ class LocalNotificationController: UIViewController  {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        notificaitonListener?.remove()
+        
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        notificaitonListener?.remove()
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getNotificationCount()
+    }
     //MARK:-functions
-    
+    private func getNotificationCount(){
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid)
+            .collection("notification").whereField("isRead", isEqualTo: false)
+        notificaitonListener = db.addSnapshotListener({[weak self] (querySnap, err) in
+            if err == nil {
+                guard let snap = querySnap else { return }
+                guard let sself = self else {
+                    self?.tabBarController?.tabBar.items?[2].badgeValue = nil
+                    return
+                }
+                if snap.isEmpty {
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = nil
+                }else{
+                    sself.tabBarController?.tabBar.items?[2].badgeValue = snap.documents.count.description
+                }
+            }
+        })
+    }
     private func configureUI(){
         view.addSubview(collecitonView)
         collecitonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, rigth: view.rightAnchor, marginTop: 0, marginLeft: 0, marginBottom: 0, marginRigth: 0 , width: 0, heigth: 0)
@@ -123,6 +156,77 @@ class LocalNotificationController: UIViewController  {
             }
         }
         
+    }
+    
+    
+    private func makeReadNotification(not_id : String , completion : @escaping(Bool) ->Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").document(not_id)
+        db.setData(["isRead":true], merge: true) { (err) in
+            if err == nil {
+                completion(true)
+            }
+        }
+    }
+    private func setNotificationRead(completion : @escaping(Bool)->Void){
+        Utilities.succesProgress(msg: nil)
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").whereField("isRead", isEqualTo: false)
+        db.getDocuments {[weak self] (querySnap, err) in
+            if err == nil{
+                guard let snap = querySnap else { return }
+                guard let sself = self else { return }
+                if !snap.isEmpty{
+                    for item in snap.documents{
+                        sself.makeReadNotification(not_id: item.documentID) { (_) in
+                            completion(true)
+                        }
+                    }
+                }else{
+                    completion(true)
+                }
+                
+            }
+        }
+    }
+    private func getAllNotificationForDelete(completion : @escaping(Bool) ->Void){
+        Utilities.succesProgress(msg: nil)
+        //user/2YZzIIAdcUfMFHnreosXZOTLZat1/notification/1601502870421
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification")
+        db.getDocuments {[weak self] (querySnap, err) in
+            if err == nil{
+                guard let snap = querySnap else { return }
+                guard let sself = self else { return }
+                if !snap.isEmpty{
+                    for item in snap.documents{
+                        sself.deleteNotification(not_id: item.documentID) { (_) in
+                            completion(true)
+                        }
+                    }
+                }else{
+                    completion(true)
+                }
+                
+            }
+        }
+    }
+    private func deleteNotification(not_id : String ,completion : @escaping(Bool) -> Void){
+        let db = Firestore.firestore().collection("user")
+            .document(currentUser.uid).collection("notification").document(not_id)
+        db.delete {[weak self] (err) in
+            guard let sself = self else { return }
+            if err == nil{
+                Utilities.dismissProgress()
+                if let index = sself.model.firstIndex(where: {$0.not_id == not_id}) {
+                    sself.model.remove(at: index)
+                    sself.collecitonView.reloadData()
+                }
+                
+                completion(true)
+            }
+        }
     }
     func getTypeDescribing(type : String) -> String {
         if type == NotificationType.home_like.desprition {
@@ -450,6 +554,27 @@ class LocalNotificationController: UIViewController  {
         }
     }
     
+    private func showProfile(model : NotificationModel){
+        UserService.shared.fetchOtherUser(uid: model.senderUid) {[weak self](user) in
+            guard let sself = self else { return }
+            UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                    if val {
+                        let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                       
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }else{
+                        let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+            
+                        sself.navigationController?.pushViewController(vc, animated: true)
+                        Utilities.dismissProgress()
+                    }
+                    
+                }
+            }
+        }
+    }
     //MARK:-objc
     @objc func showLauncher(){
         notificationLauncher.show()
@@ -510,7 +635,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
             let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
             
             if h > 41 {
-                return CGSize(width: view.frame.width, height: 12 + h + 5)
+                return CGSize(width: view.frame.width, height: 12 + h + 15)
             }else{
                 return CGSize(width: view.frame.width, height: 50)
             }
@@ -519,7 +644,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 model[indexPath.row].time.dateValue().timeAgoDisplay() + "\n" + model[indexPath.row].text
             let h = text.height(withConstrainedWidth: view.frame.width - 44, font: UIFont(name: Utilities.font, size: 12)!)
             if h > 41 {
-                return CGSize(width: view.frame.width, height: 12 + h + 5)
+                return CGSize(width: view.frame.width, height: 12 + h + 15)
             }else{
                 return CGSize(width: view.frame.width, height: 50)
             }
@@ -559,15 +684,43 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
         if getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_home.desprition ||
             getNotificationType(type: model[indexPath.row].type) == NotificationType.comment_mention.desprition {
             showComment(model : model[indexPath.row])
+            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.model[indexPath.row].isRead = true
+                sself.collecitonView.reloadData()
+            }
             
         }else if model[indexPath.row].postType == NotificationPostType.lessonPost.name{
             showPost(model: model[indexPath.row])
+            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.model[indexPath.row].isRead = true
+                sself.collecitonView.reloadData()
+            }
         }else if model[indexPath.row].postType == NotificationPostType.notices.name{
             showPost(model: model[indexPath.row])
+            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.model[indexPath.row].isRead = true
+                sself.collecitonView.reloadData()
+            }
         }else if model[indexPath.row].postType == PostType.buySell.despription ||
                     model[indexPath.row].postType == PostType.camping.despription ||
                     model[indexPath.row].postType == PostType.foodMe.despription{
             showPost(model: model[indexPath.row])
+            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.model[indexPath.row].isRead = true
+                sself.collecitonView.reloadData()
+            }
+        }else if model[indexPath.row].postType == NotificationPostType.follow.name {
+            showProfile(model: model[indexPath.row])
+            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.model[indexPath.row].isRead = true
+                sself.collecitonView.reloadData()
+            }
+
         }
     }
     
@@ -579,8 +732,22 @@ extension LocalNotificationController : NotificationLauncherDelegate {
         switch option {
         
         case .makeAllRead(_):
+            setNotificationRead {[weak self] (_) in
+                guard let sself = self else { return }
+                for item in sself.model{
+                    item.isRead = true
+                }
+                sself.collecitonView.reloadData()
+                Utilities.dismissProgress()
+            }
             break
         case .deleteAll(_):
+            getAllNotificationForDelete {[weak self] (_) in
+                guard let sself = self else { return }
+                sself.model = [NotificationModel]()
+                sself.collecitonView.reloadData()
+                Utilities.dismissProgress()
+            }
             break
         }
     }
@@ -592,7 +759,15 @@ extension LocalNotificationController : SwipeCollectionViewCellDelegate {
         
         
         if orientation == .right {
-            let deleteAction = SwipeAction(style: .destructive, title: "Sil") { (action, indexPat) in
+            let deleteAction = SwipeAction(style: .destructive, title: "Sil") {[weak self] (action, indexPat) in
+                guard let sself = self else { return }
+                Utilities.waitProgress(msg: nil)
+                sself.deleteNotification(not_id: sself.model[indexPath.row].not_id) { (_val) in
+                    if _val{
+                        sself.collecitonView.reloadData()
+                        Utilities.dismissProgress()
+                    }
+                }
                 
             }
             
@@ -600,8 +775,50 @@ extension LocalNotificationController : SwipeCollectionViewCellDelegate {
             deleteAction.font = UIFont(name: Utilities.font, size: 11)
             return [deleteAction]
         }else {
-            let read = SwipeAction(style: .destructive, title: "Görüntüle") { (action, indexPath) in
-                
+            let read = SwipeAction(style: .destructive, title: "Görüntüle") {[weak self] (action, indexPath) in
+                guard let sself = self else { return }
+                Utilities.waitProgress(msg: nil)
+                if sself.getNotificationType(type: sself.model[indexPath.row].type) == NotificationType.comment_home.desprition ||
+                    sself.getNotificationType(type: sself.model[indexPath.row].type) == NotificationType.comment_mention.desprition {
+                    sself.showComment(model : sself.model[indexPath.row])
+                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {(_val) in
+                        
+                        sself.model[indexPath.row].isRead = true
+                        sself.collecitonView.reloadData()
+                    }
+                    
+                }else if sself.model[indexPath.row].postType == NotificationPostType.lessonPost.name{
+                    sself.showPost(model: sself.model[indexPath.row])
+                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {(_val) in
+                        
+                        sself.model[indexPath.row].isRead = true
+                        sself.collecitonView.reloadData()
+                    }
+                }else if sself.model[indexPath.row].postType == NotificationPostType.notices.name{
+                    sself.showPost(model: sself.model[indexPath.row])
+                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) { (_val) in
+                  
+                        sself.model[indexPath.row].isRead = true
+                        sself.collecitonView.reloadData()
+                    }
+                }else if sself.model[indexPath.row].postType == PostType.buySell.despription ||
+                            sself.model[indexPath.row].postType == PostType.camping.despription ||
+                            sself.model[indexPath.row].postType == PostType.foodMe.despription{
+                    sself.showPost(model: sself.model[indexPath.row])
+                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) { (_val) in
+                      
+                        sself.model[indexPath.row].isRead = true
+                        sself.collecitonView.reloadData()
+                    }
+                }else if sself.model[indexPath.row].postType == NotificationPostType.follow.name {
+                    sself.showProfile(model: sself.model[indexPath.row])
+                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {[weak self] (_val) in
+                        guard let sself = self else { return }
+                        sself.model[indexPath.row].isRead = true
+                        sself.collecitonView.reloadData()
+                    }
+
+                }
             }
             read.image = #imageLiteral(resourceName: "seen").withRenderingMode(.alwaysOriginal)
             read.hidesWhenSelected = true

@@ -71,7 +71,7 @@ class NotificaitonService{
         let db = Firestore.firestore().collection("user")
             .document(otherUser.uid).collection("notification").document(notificaitonId)
         let dic = ["type":type ,
-                   "text" : text,
+                   "text" : text,"postType":NotificationPostType.follow.name,
                    "senderUid" : currentUser.uid as Any,
                    "time":FieldValue.serverTimestamp(),
                    "senderImage":currentUser.thumb_image as Any ,

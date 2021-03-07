@@ -190,6 +190,7 @@ enum NotificationPostType {
     case lessonPost
     case mainPost
     case notices
+    case follow
     
     var name : String {
         switch self{
@@ -197,9 +198,10 @@ enum NotificationPostType {
         return "lesson-post"
         case .mainPost:
             return ""
-            
         case .notices:
             return "notices-post"
+        case .follow:
+            return "follow"
         }
     }
 }

@@ -109,8 +109,8 @@ class SinglePostVC: UIViewController {
         collecitonView.register(NoticesCell.self, forCellWithReuseIdentifier: school_post_cell)
         collecitonView.register(NoticesDataCell.self, forCellWithReuseIdentifier: school_post_data_cell)
         
-        collecitonView.register(FoodMeView.self, forCellWithReuseIdentifier: buy_sell_post)
-        collecitonView.register(FoodMeViewData.self , forCellWithReuseIdentifier: buy_sell_post_data)
+        collecitonView.register(BuyAndSellView.self, forCellWithReuseIdentifier: buy_sell_post)
+        collecitonView.register(BuyAndSellDataView.self , forCellWithReuseIdentifier: buy_sell_post_data)
         
         collecitonView.register(FoodMeView.self, forCellWithReuseIdentifier: foodme_post)
         collecitonView.register(FoodMeViewData.self , forCellWithReuseIdentifier: foodme_post_data)
@@ -1350,63 +1350,199 @@ extension SinglePostVC : ShowAllCampingData {
 }
 extension SinglePostVC : BuySellVCDelegate {
     func options(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetOtherUser  else { return }
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+         
+        }
+      
     }
-    
-    func like(for cell: BuyAndSellView) {
-        
-    }
-    
     func mapClick(for cell: BuyAndSellView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
         
+    }
+    func like(for cell: BuyAndSellView)
+    {
+        guard let post = cell.mainPost else { return }
+   
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collecitonView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collecitonView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
+    
+    
     func comment(for cell: BuyAndSellView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: BuyAndSellView) {
-        
+     
     }
     
     func showProfile(for cell: BuyAndSellView) {
-        
+        guard  let post = cell.mainPost else {
+            return
+        }
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+               
+                
+                
+            }
+        }
     }
+    
+   
     
 }
 extension SinglePostVC : BuySellVCDataDelegate {
+    func mapClick(for cell: BuyAndSellDataView) {
+        guard let lat = cell.mainPost?.geoPoint.latitude else { return }
+        guard let long = cell.mainPost?.geoPoint.longitude else { return }
+        let coordinate = CLLocationCoordinate2DMake(lat, long)
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate, addressDictionary:nil))
+        if let name = cell.mainPost?.locationName {
+            mapItem.name = name
+        }
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving])
+    }
     func options(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
+
+        if post.senderUid == currentUser.uid
+        {
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+           
+        }
         
     }
     
     func like(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setLikePost(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collecitonView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
     
     func dislike(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        MainPostService.shared.setDislike(target: MainPostLikeTarget.buy_sell.description, collectionview: self.collecitonView, currentUser: currentUser, post: post) { (_) in
+            print("succes")
+        }
     }
-    
     func comment(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+        let vc = MajorPostCommentController(currentUser: currentUser, postId: post.postId, lessonPost: nil, noticesPost: nil, mainPost: post)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func linkClick(for cell: BuyAndSellDataView) {
-        
-    }
-    
-    func mapClick(for cell: BuyAndSellDataView) {
-        
+        guard let url = URL(string: (cell.mainPost?.link)!) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func showProfile(for cell: BuyAndSellDataView) {
-        
+        guard  let post = cell.mainPost else {
+            return
+        }
+
+        if post.senderUid == currentUser.uid{
+            UserService.shared.checkCurrentUserSocialMedia(currentUser: currentUser) {[weak self] (val) in
+                guard let self = self else { return }
+                if val{
+                    let vc = ProfileVC(currentUser: self.currentUser, width: 285)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    let vc = ProfileVC(currentUser:self.currentUser, width: 235)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }else{
+            Utilities.waitProgress(msg: nil)
+            UserService.shared.getOtherUser(userId: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return }
+                
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+                
+                
+                
+            }
+        }
     }
-    
     
 }
 extension SinglePostVC : ShowBuySellData {
