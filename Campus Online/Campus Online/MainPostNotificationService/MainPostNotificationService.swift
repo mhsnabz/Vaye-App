@@ -19,7 +19,7 @@ class MainPostNotificationService {
                 let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
-                db.setData(self.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil, clupName: nil, vayeAppPostName: post.postType), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil, clupName: nil, vayeAppPostName: post.postType), merge: true)
             }
         }
         
@@ -34,7 +34,7 @@ class MainPostNotificationService {
                         if user.uid != currentUser.uid {
                             let db = Firestore.firestore().collection("user")
                                 .document(user.uid).collection("notification").document(notificaitonId)
-                            db.setData(self.getDictionary(postType: postType, type: MainPostNotification.new_mentioned_post.type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: postId, lessonName: nil, clupName: postType, vayeAppPostName: nil), merge: true)
+                            db.setData(Utilities.shared.getDictionary(postType: postType, type: MainPostNotification.new_mentioned_post.type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: postId, lessonName: nil, clupName: postType, vayeAppPostName: nil), merge: true)
                             if user.mention {
                                 //FIXME:- send push notificaiton
                             }
@@ -46,23 +46,5 @@ class MainPostNotificationService {
         }
         
     }
-    func getDictionary(postType : String,type : String , text : String , currentUser : CurrentUser,not_id : String , postId : String , lessonName : String? , clupName : String? , vayeAppPostName : String?) -> [String:Any] {
-        
-        let dic = [
-            "type":type,
-            "text":text ,
-            "postType": postType,
-            "senderUid":currentUser.uid as Any,
-            "time":FieldValue.serverTimestamp(),
-            "senderImage":currentUser.thumb_image ?? "",
-            "not_id":not_id,
-            "isRead":false,
-            "postId":postId,
-            "username":currentUser.username as Any,
-            "senderName" : currentUser.name as Any,
-            "lessonName":lessonName ?? vayeAppPostName ?? clupName as Any ] as [String : Any]
-        
-        return dic
-        
-    }
+   
 }

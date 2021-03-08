@@ -11,8 +11,27 @@ import UIKit
 import FirebaseFirestore
 import SVProgressHUD
 class Utilities  {
-    
-    
+        static let shared = Utilities()
+    func getDictionary(postType : String,type : String , text : String , currentUser : CurrentUser
+                       ,not_id : String , targetCommentId : String?,postId : String , lessonName : String? , clupName : String? , vayeAppPostName : String?) -> [String:Any] {
+        let dic = [
+            "type":type,
+            "text":text ,
+            "targetCommentId":targetCommentId ?? "",
+            "postType": postType,
+            "senderUid":currentUser.uid as Any,
+            "time":FieldValue.serverTimestamp(),
+            "senderImage":currentUser.thumb_image ?? "",
+            "not_id":not_id,
+            "isRead":false,
+            "postId":postId,
+            "username":currentUser.username as Any,
+            "senderName" : currentUser.name as Any,
+            "lessonName":lessonName ?? vayeAppPostName ?? clupName as Any ] as [String : Any]
+        
+        return dic
+        
+    }
     static func waitProgress(msg : String?){
         if msg != nil{
             SVProgressHUD.setBackgroundColor(.black)

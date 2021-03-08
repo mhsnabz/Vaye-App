@@ -337,35 +337,37 @@ class RepliyCommentVC: UIViewController {
             if let post = lessonPost {
             CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: self.currentUser, commentId: commentId) {[weak self] (_val) in
                 guard let sself = self else { return }
+              
                 
-//                    CommentNotificationService.shared.sendNewLessonPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
-//
-//                    for item in text.findMentionText(){
-//                        CommentNotificationService.shared.newLessonPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention_reply.desprition)
-//                    }
+                CommentNotificationService.shared.sendNewLessonPostRepliedCommentNotification(targetCommentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: text, type: MajorPostNotification.new_replied_comment.type)
+                
+                for item in text.findMentionText(){
+                    CommentNotificationService.shared.newLessonPostMentionedRepliedComment(targetComment: sself.commentTargetCommentModel, username: item.trimmingCharacters(in: .whitespaces), post: post, currentUser: sself.currentUser, text: text, type: MajorPostNotification.new_replied_mentioned_comment.type)
+                }
+                
                 }
             }else if let noticesPost = noticesPost {
                 CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: self.currentUser, commentId: commentId) {[weak self] (_val) in
                     guard let sself = self else { return }
                     
-//
-//                        CommentNotificationService.shared.sendNewNoticesPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
-//
-//                        for item in text.findMentionText(){
-//                            CommentNotificationService.shared.newNoticesMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: noticesPost, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention_reply.desprition)
-//                        }
+
+                    CommentNotificationService.shared.sendNewNoticesPostRepliedCommentNotification(targetCommentModel: sself.commentTargetCommentModel, post: noticesPost, currentUser: sself.currentUser, text: text, type: NoticesPostNotification.new_replied_comment.type)
+
+                        for item in text.findMentionText(){
+                            CommentNotificationService.shared.newNoticesMentionedRepliedComment(targetCommnet: sself.commentTargetCommentModel, username: item.trimmingCharacters(in: .whitespaces), post: noticesPost, currentUser: sself.currentUser, text: text, type: NoticesPostNotification.new_replied_mentioned_comment.type)
+                        }
                     }
             }else if let mainPost = mainPost {
-//                CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: currentUser, commentId: commentId) {[weak self] (_val) in
-//                    guard let sself = self else { return }
-//                    CommentNotificationService.shared.sendNewMainPostRepliedCommentNotification(commentModel: sself.commentTargetCommentModel, post: mainPost, currentUser: sself.currentUser, text: text, type: NotificationType.reply_comment.desprition)
-//                
-//                    for item in text.findMentionText(){
-//                        
-//                        CommentNotificationService.shared.newMainPostMentionedComment(username: item.trimmingCharacters(in: .whitespaces), post: mainPost, currentUser: sself.currentUser, text: text, type: NotificationType.comment_mention_reply.desprition)
-//                       
-//                    }
-//                }
+                CommentService.shared.sendNewRepliedComment(postId: postId, targetComment: self.commentId, commentText: text, currentUser: currentUser, commentId: commentId) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    CommentNotificationService.shared.sendNewMainPostRepliedCommentNotification(targetCommentModel: sself.commentTargetCommentModel, post: mainPost, currentUser: sself.currentUser, text: text, type: MainPostNotification.new_replied_comment.type)
+                
+                    for item in text.findMentionText(){
+                        
+                        CommentNotificationService.shared.newMainPostMentionedRepliedComment(targetComment: sself.commentTargetCommentModel, username: item.trimmingCharacters(in: .whitespaces), post: mainPost, currentUser: sself.currentUser, text: text, type: MainPostNotification.new_replied_mentioned_comment.type)
+                       
+                    }
+                }
             }
         }
     }

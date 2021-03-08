@@ -22,10 +22,14 @@ class NotificationModel {
     var text : String!
     var username : String!
     var postType : String!
+    var targetCommentId : String?
     init(not_id : String , dic : Dictionary<String,Any>){
         self.not_id = not_id
         if let isRead = dic["isRead"] as? Bool {
             self.isRead = isRead
+        }
+        if let targetCommentId = dic["targetCommentId"] as? String{
+            self.targetCommentId = targetCommentId
         }
         if let text = dic["text"] as? String{
             self.text = text

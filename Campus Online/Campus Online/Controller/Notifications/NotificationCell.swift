@@ -109,7 +109,7 @@ class NotificationCell: SwipeCollectionViewCell {
             }else if model.type == MajorPostNotification.new_replied_comment.type{
                 text = MajorPostNotification.new_replied_comment.descp
             }else if model.type == MajorPostNotification.new_replied_mentioned_comment.type{
-                text = MajorPostNotification.new_replied_mentioned_comment.type
+                text = MajorPostNotification.new_replied_mentioned_comment.descp
             }
         }else if model.postType == NotificationPostType.notices.name{
             if model.type == NoticesPostNotification.comment_like.type{
@@ -127,7 +127,29 @@ class NotificationCell: SwipeCollectionViewCell {
             }else if model.type == NoticesPostNotification.new_replied_comment.type{
                 text = NoticesPostNotification.new_replied_comment.descp
             }else if model.type == NoticesPostNotification.new_replied_mentioned_comment.type{
-                text = NoticesPostNotification.new_replied_mentioned_comment.type
+                text = NoticesPostNotification.new_replied_mentioned_comment.descp
+            }
+        }else if model.postType == NotificationPostType.mainPost.name{
+            if model.type == MainPostNotification.comment_like.type{
+                text = MainPostNotification.comment_like.descp
+            }else if model.type == MainPostNotification.new_comment.type{
+                text = MainPostNotification.new_comment.descp
+            }else if model.type == MainPostNotification.new_mentioned_comment.type{
+                text = MainPostNotification.new_mentioned_comment.descp
+            }else if model.type == MainPostNotification.new_post.type{
+                text = MainPostNotification.new_post.descp
+            }else if model.type ==  MainPostNotification.new_mentioned_post.type{
+                text = MainPostNotification.new_mentioned_post.descp
+            }else if model.type == MainPostNotification.post_like.type{
+                text = MainPostNotification.post_like.descp
+            }else if model.type == MainPostNotification.new_replied_comment.type{
+                text = MainPostNotification.new_replied_comment.descp
+            }else if model.type == MainPostNotification.new_replied_mentioned_comment.type{
+                text = MainPostNotification.new_replied_mentioned_comment.type
+            }
+        }else if model.postType == NotificationPostType.follow.name{
+            if model.type == FollowNotification.follow_you.type {
+                text = FollowNotification.follow_you.desp
             }
         }
         

@@ -20,7 +20,7 @@ class CommentNotificationService{
                     .document(commentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser,  not_id: notificaitonId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser,  not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
             }
         }
     }
@@ -35,7 +35,7 @@ class CommentNotificationService{
                     .document(commentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.lessonName), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.lessonName), merge: true)
             }
         }
     }
@@ -51,7 +51,7 @@ class CommentNotificationService{
                     .document(commentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
             }
         }
     }
@@ -66,7 +66,8 @@ class CommentNotificationService{
                     .document(post.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                
             }
         }
     }
@@ -81,21 +82,21 @@ class CommentNotificationService{
                     .document(post.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
             }
         }
     }
-    func sendNewLessonPostRepliedCommentNotification(commentModel : CommentModel ,post : LessonPostModel, currentUser : CurrentUser , text : String , type : String){
+    func sendNewLessonPostRepliedCommentNotification(targetCommentModel : CommentModel ,post : LessonPostModel, currentUser : CurrentUser , text : String , type : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        if commentModel.senderUid == currentUser.uid {
+        if targetCommentModel.senderUid == currentUser.uid {
             return
         }else{
             if !currentUser.slientUser.contains(post.senderUid) {
                 let db = Firestore.firestore().collection("user")
-                    .document(commentModel.senderUid!)
+                    .document(targetCommentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
             }
         }
     }
@@ -111,43 +112,43 @@ class CommentNotificationService{
                     .document(post.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
             }
         }
     }
     
-    func sendNewNoticesPostRepliedCommentNotification(commentModel : CommentModel ,post : NoticesMainModel, currentUser : CurrentUser , text : String , type : String){
+    func sendNewNoticesPostRepliedCommentNotification(targetCommentModel : CommentModel ,post : NoticesMainModel, currentUser : CurrentUser , text : String , type : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        if commentModel.senderUid == currentUser.uid {
+        if targetCommentModel.senderUid == currentUser.uid {
             return
         }else{
             if !currentUser.slientUser.contains(post.senderUid) {
                 let db = Firestore.firestore().collection("user")
-                    .document(commentModel.senderUid!)
+                    .document(targetCommentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil, clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: post.clupName , vayeAppPostName: nil), merge: true)
             }
         }
     }
     
-    func sendNewMainPostRepliedCommentNotification(commentModel : CommentModel ,post : MainPostModel, currentUser : CurrentUser , text : String , type : String){
+    func sendNewMainPostRepliedCommentNotification(targetCommentModel : CommentModel ,post : MainPostModel, currentUser : CurrentUser , text : String , type : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-        if commentModel.senderUid == currentUser.uid {
+        if targetCommentModel.senderUid == currentUser.uid {
             return
         }else{
             if !currentUser.slientUser.contains(post.senderUid) {
                 let db = Firestore.firestore().collection("user")
-                    .document(commentModel.senderUid!)
+                    .document(targetCommentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil, clupName: nil , vayeAppPostName: post.postType), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: nil , vayeAppPostName: post.postType), merge: true)
             }
         }
     }
     func newLessonPostMentionedComment(username : String ,post : LessonPostModel , currentUser : CurrentUser , text : String , type : String){
-        UserService.shared.getUserBy_Mention(username: username) {[weak self] (otherUser) in
-            guard let sself = self else { return }
+        UserService.shared.getUserBy_Mention(username: username) {(otherUser) in
+           
             let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
             if username == currentUser.username{
                 return
@@ -157,7 +158,26 @@ class CommentNotificationService{
                         if !currentUser.slientUser.contains(otherUser.uid) {
                             let db = Firestore.firestore().collection("user")
                                 .document(otherUser.uid).collection("notification").document(notificaitonId)
-                            db.setData(sself.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                            db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    func newLessonPostMentionedRepliedComment(targetComment : CommentModel,username : String ,post : LessonPostModel , currentUser : CurrentUser , text : String , type : String){
+        UserService.shared.getUserBy_Mention(username: username) {(otherUser) in
+           
+            let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+            if username == currentUser.username{
+                return
+            }else if otherUser.mention{
+                if currentUser.short_school == otherUser.short_school {
+                    if currentUser.bolum == otherUser.bolum {
+                        if !currentUser.slientUser.contains(otherUser.uid) {
+                            let db = Firestore.firestore().collection("user")
+                                .document(otherUser.uid).collection("notification").document(notificaitonId)
+                            db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetComment.commentId!, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
                         }
                     }
                 }
@@ -165,8 +185,7 @@ class CommentNotificationService{
         }
     }
     func newNoticesMentionedComment(username : String ,post : NoticesMainModel , currentUser : CurrentUser , text : String , type : String){
-        UserService.shared.getUserBy_Mention(username: username) {[weak self] (otherUser) in
-            guard let sself = self else { return }
+        UserService.shared.getUserBy_Mention(username: username) {(otherUser) in
             let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
             if username == currentUser.username{
                 return
@@ -174,15 +193,28 @@ class CommentNotificationService{
                 if !currentUser.slientUser.contains(otherUser.uid) {
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
-                    db.setData(sself.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                    db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                }
+            }
+        }
+    }
+    func newNoticesMentionedRepliedComment(targetCommnet : CommentModel,username : String ,post : NoticesMainModel , currentUser : CurrentUser , text : String , type : String){
+        UserService.shared.getUserBy_Mention(username: username) {(otherUser) in
+            let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+            if username == currentUser.username{
+                return
+            }else if currentUser.mention{
+                if !currentUser.slientUser.contains(otherUser.uid) {
+                    let db = Firestore.firestore().collection("user")
+                        .document(otherUser.uid).collection("notification").document(notificaitonId)
+                    db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommnet.commentId, postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
                 }
             }
         }
     }
     
     func newMainPostMentionedComment(username : String ,post : MainPostModel , currentUser : CurrentUser , text : String , type : String){
-        UserService.shared.getUserBy_Mention(username: username) {[weak self] (otherUser) in
-            guard let sself = self else { return }
+        UserService.shared.getUserBy_Mention(username: username) { (otherUser) in
             let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
             if username == currentUser.username{
                 return
@@ -190,16 +222,28 @@ class CommentNotificationService{
                 if !currentUser.slientUser.contains(otherUser.uid) {
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
-                    db.setData(sself.getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                    db.setData(Utilities.shared.getDictionary(postType:NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
                 }
             }
         }
     }
-    
+    func newMainPostMentionedRepliedComment(targetComment : CommentModel,username : String ,post : MainPostModel , currentUser : CurrentUser , text : String , type : String){
+        UserService.shared.getUserBy_Mention(username: username) { (otherUser) in
+            let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+            if username == currentUser.username{
+                return
+            }else if currentUser.mention{
+                if !currentUser.slientUser.contains(otherUser.uid) {
+                    let db = Firestore.firestore().collection("user")
+                        .document(otherUser.uid).collection("notification").document(notificaitonId)
+                    db.setData(Utilities.shared.getDictionary(postType:NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetComment.commentId!, postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                }
+            }
+        }
+    }
     
     func newNoticesPostMentionedComment(username : String ,post : NoticesMainModel , currentUser : CurrentUser , text : String , type : String){
-        UserService.shared.getUserBy_Mention(username: username) {[weak self] (otherUser) in
-            guard let sself = self else { return }
+        UserService.shared.getUserBy_Mention(username: username) {(otherUser) in
             let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
             if username == currentUser.username{
                 return
@@ -207,7 +251,7 @@ class CommentNotificationService{
                 if !currentUser.slientUser.contains(otherUser.uid) {
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
-                    db.setData(sself.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                    db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
                 }
             }
         }
@@ -216,24 +260,6 @@ class CommentNotificationService{
     
     
     
-    func getDictionary(postType : String,type : String , text : String , currentUser : CurrentUser
-                       ,not_id : String , postId : String , lessonName : String? , clupName : String? , vayeAppPostName : String?) -> [String:Any] {
-        
-        let dic = [
-            "type":type,
-            "text":text ,
-            "postType": postType,
-            "senderUid":currentUser.uid as Any,
-            "time":FieldValue.serverTimestamp(),
-            "senderImage":currentUser.thumb_image ?? "",
-            "not_id":not_id,
-            "isRead":false,
-            "postId":postId,
-            "username":currentUser.username as Any,
-            "senderName" : currentUser.name as Any,
-            "lessonName":lessonName ?? vayeAppPostName ?? clupName as Any ] as [String : Any]
-        
-        return dic
-        
-    }
+    
+    
 }

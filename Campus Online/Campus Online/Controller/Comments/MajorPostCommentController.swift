@@ -362,7 +362,7 @@ class MajorPostCommentController: UIViewController ,DismisDelegate {
                     let indexPath = IndexPath(item: self.commentModel.count - 1, section: 0)
                     self.collecitonView.scrollToItem(at: indexPath, at: .bottom, animated: true)
             }else if let post = self.mainPost {
-                CommentService.shared.setNewComment(currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (_val) in
+                CommentService.shared.sendNewComment(postType: PostName.MainPost.name, currentUser: currentUser, commentText: text, postId: post.postId, commentId: commentId) {[weak self] (_val) in
                     if _val{
                         guard let sself = self else { return }
                         //FIXME:- send notification

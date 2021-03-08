@@ -108,7 +108,12 @@ class LocalNotificationController: UIViewController  {
         db.getDocuments {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             if err == nil {
-                guard let snap = querySnap else { return }
+                guard let snap = querySnap else {
+                    sself.collecitonView.refreshControl?.endRefreshing()
+                    sself.loadMore = false
+                    return
+                    
+                }
                 if snap.isEmpty {
                     sself.collecitonView.refreshControl?.endRefreshing()
                     sself.loadMore = false
@@ -117,6 +122,8 @@ class LocalNotificationController: UIViewController  {
                     for item in snap.documents{
                         if item.exists {
                             sself.model.append(NotificationModel.init(not_id: item.documentID, dic: item.data()))
+                        }else{
+                            sself.loadMore = false
                         }
                     }
                     sself.page = snap.documents.last
@@ -266,6 +273,28 @@ class LocalNotificationController: UIViewController  {
             }else if model.type == NoticesPostNotification.new_replied_mentioned_comment.type{
                 text = NoticesPostNotification.new_replied_mentioned_comment.type
             }
+        }else if model.postType == NotificationPostType.mainPost.name{
+            if model.type == MainPostNotification.comment_like.type{
+                text = MainPostNotification.comment_like.descp
+            }else if model.type == MainPostNotification.new_comment.type{
+                text = MainPostNotification.new_comment.descp
+            }else if model.type == MainPostNotification.new_mentioned_comment.type{
+                text = MainPostNotification.new_mentioned_comment.descp
+            }else if model.type == MainPostNotification.new_post.type{
+                text = MainPostNotification.new_post.descp
+            }else if model.type ==  MainPostNotification.new_mentioned_post.type{
+                text = MainPostNotification.new_mentioned_post.descp
+            }else if model.type == MainPostNotification.post_like.type{
+                text = MainPostNotification.post_like.descp
+            }else if model.type == MainPostNotification.new_replied_comment.type{
+                text = MainPostNotification.new_replied_comment.descp
+            }else if model.type == MainPostNotification.new_replied_mentioned_comment.type{
+                text = MainPostNotification.new_replied_mentioned_comment.type
+            }
+        }else if model.postType == NotificationPostType.follow.name{
+            if model.type == FollowNotification.follow_you.type {
+                text = FollowNotification.follow_you.desp
+            }
         }
         
         return text
@@ -339,7 +368,7 @@ class LocalNotificationController: UIViewController  {
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }
-        }else if model.postType == PostType.buySell.despription || model.postType == PostType.camping.despription ||  model.postType == PostType.foodMe.despription {
+        }else if model.postType == NotificationPostType.mainPost.name{
             let db = Firestore.firestore().collection("main-post")
                 .document("post").collection("post")
                 .document(model.postId)
@@ -369,6 +398,201 @@ class LocalNotificationController: UIViewController  {
             
         }
         
+    }
+    
+    private func showRepliedComment(model : NotificationModel){
+        if model.postType == NotificationPostType.mainPost.name {
+            guard let targetComment = model.targetCommentId else {
+                Utilities.dismissProgress()
+                Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                return }
+            guard let postID = model.postId else {
+                Utilities.dismissProgress()
+                Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                return
+            }
+            
+            let db = Firestore.firestore().collection("main-post")
+                .document("post")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument { (docSnap,err) in
+                if err == nil {
+                    guard let snap = docSnap else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                    if snap.exists {
+                        let mainPost = MainPostModel.init(postId: snap.documentID, dic: snap.data())
+                        let commentData = Firestore.firestore().collection("comment")
+                            .document(postID)
+                            .collection("comment")
+                            .document(targetComment)
+                        commentData.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let commentSnap = docSnap else{
+                                    Utilities.dismissProgress()
+                                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                                    return
+                                }
+                                if commentSnap.exists {
+                                    let commentModel = CommentModel.init(ID: commentSnap.documentID, dic: commentSnap.data()!)
+                                    let vc = RepliyCommentVC(targetCommentModel: commentModel, currentUser: self.currentUser, postId: postID, commentId: targetComment, lessonPost: nil, noticesPost: nil, mainPost: mainPost)
+                                    self.navigationController?.pushViewController(vc, animated: true)
+                                    Utilities.dismissProgress()
+                                }else{
+                                    Utilities.dismissProgress()
+                                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                                    return
+                                }
+                            }else{
+                                Utilities.dismissProgress()
+                                Utilities.errorProgress(msg: "Hata Oluştu")
+                                return
+                            }
+                        }
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                    return
+                }
+            }
+            
+        
+        }else if model.postType == NotificationPostType.lessonPost.name{
+            guard let targetComment = model.targetCommentId else {
+                Utilities.dismissProgress()
+                Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                return }
+            guard let postID = model.postId else {
+                Utilities.dismissProgress()
+                Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                return
+            }
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument { (docSnap,err) in
+                if err == nil {
+                    guard let snap = docSnap else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                    if snap.exists {
+                        let lessonPost = LessonPostModel.init(postId: snap.documentID, dic: snap.data())
+                        let commentData = Firestore.firestore().collection("comment")
+                            .document(postID)
+                            .collection("comment")
+                            .document(targetComment)
+                        commentData.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let commentSnap = docSnap else{
+                                    Utilities.dismissProgress()
+                                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                                    return
+                                }
+                                if commentSnap.exists {
+                                    let commentModel = CommentModel.init(ID: commentSnap.documentID, dic: commentSnap.data()!)
+                                    let vc = RepliyCommentVC(targetCommentModel: commentModel, currentUser: self.currentUser, postId: postID, commentId: targetComment, lessonPost: lessonPost, noticesPost: nil, mainPost: nil)
+                                    self.navigationController?.pushViewController(vc, animated: true)
+                                    Utilities.dismissProgress()
+                                }else{
+                                    Utilities.dismissProgress()
+                                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                                    return
+                                }
+                            }else{
+                                Utilities.dismissProgress()
+                                Utilities.errorProgress(msg: "Hata Oluştu")
+                                return
+                            }
+                        }
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                    return
+                }
+            }
+            
+            
+        }else if model.postType == NotificationPostType.notices.name{
+            guard let targetComment = model.targetCommentId else {
+                Utilities.dismissProgress()
+                Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                return }
+            guard let postID = model.postId else {
+                Utilities.dismissProgress()
+                Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                return
+            }
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("notices")
+                .collection("post")
+                .document(model.postId)
+            db.getDocument { (docSnap,err) in
+                if err == nil {
+                    guard let snap = docSnap else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                    if snap.exists {
+                        let noticesPost = NoticesMainModel.init(postId: snap.documentID, dic: snap.data())
+                        ///comment/1611176191370/comment/1615023519925
+                        let commentData = Firestore.firestore().collection("comment")
+                            .document(postID)
+                            .collection("comment")
+                            .document(targetComment)
+                        
+                        commentData.getDocument { (docSnap, err) in
+                            if err == nil {
+                                guard let commentSnap = docSnap else{
+                                    Utilities.dismissProgress()
+                                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                                    return
+                                }
+                                if commentSnap.exists {
+                                    let commentModel = CommentModel.init(ID: commentSnap.documentID, dic: commentSnap.data()!)
+                                    let vc = RepliyCommentVC(targetCommentModel: commentModel, currentUser: self.currentUser, postId: postID, commentId: targetComment, lessonPost: nil, noticesPost: noticesPost, mainPost: nil)
+                                    self.navigationController?.pushViewController(vc, animated: true)
+                                    Utilities.dismissProgress()
+                                }else{
+                                    Utilities.dismissProgress()
+                                    Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                                    return
+                                }
+                            }else{
+                                Utilities.dismissProgress()
+                                Utilities.errorProgress(msg: "Hata Oluştu")
+                                return
+                            }
+                        }
+                    }else{
+                        Utilities.dismissProgress()
+                        Utilities.errorProgress(msg: "Gönderi Kaldırılmış")
+                        return
+                    }
+                }else{
+                    Utilities.dismissProgress()
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                    return
+                }
+            }
+            
+        }
     }
     
     private func showComment(model : NotificationModel){
@@ -429,7 +653,7 @@ class LocalNotificationController: UIViewController  {
                 }
             }
         }
-        else
+        else if model.postType == NotificationPostType.mainPost.name
         {
             
             let db = Firestore.firestore().collection("main-post")
@@ -456,6 +680,9 @@ class LocalNotificationController: UIViewController  {
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }
+        }else{
+            Utilities.dismissProgress()
+            return
         }
     }
     
@@ -490,11 +717,7 @@ class LocalNotificationController: UIViewController  {
     }
     
     
-    private func getMainText(currentUser : CurrentUser ,model : NotificationModel) ->String {
-        
-        
-        return ""
-    }
+   
     
     
 }
@@ -591,7 +814,12 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 
             }else if model[indexPath.row].type == MajorPostNotification.new_replied_comment.type ||
                         model[indexPath.row].type == MajorPostNotification.new_replied_mentioned_comment.type{
-                //show_replied_comment
+                showRepliedComment(model: model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
             }
             
         }else if model[indexPath.row].postType == NotificationPostType.notices.name{
@@ -617,9 +845,14 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 
             }else if model[indexPath.row].type == NoticesPostNotification.new_replied_comment.type ||
                         model[indexPath.row].type == NoticesPostNotification.new_replied_mentioned_comment.type{
-                //show_replied_comment
+                showRepliedComment(model: model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
             }
-        }else if model[indexPath.row].type == NotificationPostType.mainPost.name{
+        }else if model[indexPath.row].postType == NotificationPostType.mainPost.name{
             if model[indexPath.row].type == MainPostNotification.comment_like.type ||
                 model[indexPath.row].type == MainPostNotification.new_comment.type ||
                 model[indexPath.row].type == MainPostNotification.new_mentioned_comment.type
@@ -642,8 +875,16 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 
             }else if model[indexPath.row].type == MainPostNotification.new_replied_comment.type ||
                         model[indexPath.row].type == MainPostNotification.new_replied_mentioned_comment.type{
-                //show_replied_comment
+                showRepliedComment(model: model[indexPath.row])
+                makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                }
             }
+        }else{
+            Utilities.dismissProgress()
+            return
         }
         
         

@@ -197,7 +197,7 @@ enum NotificationPostType {
         case .lessonPost:
         return "lesson-post"
         case .mainPost:
-            return ""
+            return "main-post"
         case .notices:
             return "notices-post"
         case .follow:
