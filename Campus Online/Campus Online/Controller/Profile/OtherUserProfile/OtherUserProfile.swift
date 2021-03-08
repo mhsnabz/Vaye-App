@@ -515,6 +515,7 @@ class OtherUserProfile: UIViewController, ShowAllDatas, ShowNoticesAllDatas, Sho
                   
                     db.setData(["user":sself.otherUser.uid as Any], merge: true) { (err) in
                         if err == nil{
+                            
                             UserService.shared.addAsMessagesFriend(currentUserUid: sself.currentUser, otherUserUid: sself.otherUser )
                             Utilities.succesProgress(msg: "Takip Ediliyor")
                             FollowNotificationService.shared.followingNotification(postType: NotificationPostType.follow.name, currentUser: sself.currentUser, otherUser: sself.otherUser, text: FollowNotification.follow_you.desp, type: FollowNotification.follow_you.type)

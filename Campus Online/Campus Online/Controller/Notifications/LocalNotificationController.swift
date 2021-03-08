@@ -400,6 +400,7 @@ class LocalNotificationController: UIViewController  {
         
     }
     
+   
     private func showRepliedComment(model : NotificationModel){
         if model.postType == NotificationPostType.mainPost.name {
             guard let targetComment = model.targetCommentId else {
@@ -882,7 +883,16 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                     sself.collecitonView.reloadData()
                 }
             }
-        }else{
+        }
+        else if model[indexPath.row].postType == NotificationPostType.follow.name{
+            showProfile(model: model[indexPath.row])
+            makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
+                guard let sself = self else { return }
+                sself.model[indexPath.row].isRead = true
+                sself.collecitonView.reloadData()
+            }
+        }
+        else{
             Utilities.dismissProgress()
             return
         }

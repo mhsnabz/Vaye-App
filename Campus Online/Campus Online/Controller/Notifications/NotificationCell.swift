@@ -82,7 +82,12 @@ class NotificationCell: SwipeCollectionViewCell {
             msgText.append(NSAttributedString(string: " şimdi \n", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.lightGray ]))
 
         }
+        if model.postType == NotificationPostType.follow.name {
+//            msgText.append(NSAttributedString(string:"", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        }else{
             msgText.append(NSAttributedString(string:"\(getMainText(model: model)) : ", attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.darkGray ]))
+        }
+          
             msgText.append(NSAttributedString(string: model.text, attributes: [NSAttributedString.Key.font:UIFont(name: Utilities.font, size: 12)!, NSAttributedString.Key.foregroundColor : UIColor.black ]))
         
     
@@ -149,7 +154,7 @@ class NotificationCell: SwipeCollectionViewCell {
             }
         }else if model.postType == NotificationPostType.follow.name{
             if model.type == FollowNotification.follow_you.type {
-                text = FollowNotification.follow_you.desp
+                text = ""
             }
         }
         
