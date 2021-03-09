@@ -53,26 +53,48 @@ extension OtherUserProfile : ASMainOtherUserDelegate {
 
 class OtherUserProfile: UIViewController, ShowAllDatas, ShowNoticesAllDatas, ShowAllFoodMeData, ShowAllCampingData, ShowBuySellData     {
     func onClickListener(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
     }
     
     func onClickListener(for cell: CampingDataView) {
-        
+        guard let post = cell.mainPost else { return }
+
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
     }
     
     func onClickListener(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+
+
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
     }
     
     func onClickListener(for cell: NoticesDataCell) {
-        
+        guard let post = cell.noticesPost else { return }
+
+    
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
     }
     
     func onClickListener(for cell: NewPostHomeVCData) {
         guard let post = cell.lessonPostModel else { return }
         guard let data = post.data else { return }
         let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
-        modalPresentationStyle = .fullScreen
+        vc.modalPresentationStyle = .fullScreen
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -1364,8 +1386,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                        
-                        cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                        cell.stackView.frame = CGRect(x: 70, y: 38 + h + 4, width: view.frame.width - 78, height: 200)
                         cell.onClickListener = self
                         
                         cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
@@ -1393,8 +1414,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                         cell.currentUser = currentUser
                         let h = mainPost[indexPath.row].text.height(withConstrainedWidth: view.frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                         cell.msgText.frame = CGRect(x: 70, y: 38, width: view.frame.width - 78, height: h + 4)
-                        
-                        cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: view.frame.width - 78, height: 200)
+                        cell.stackView.frame = CGRect(x: 70, y: 38 + h + 4, width: view.frame.width - 78, height: 200)
                         cell.onClickListener = self
                         
                         cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
@@ -1497,7 +1517,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 20 + 5)
                 }
             }
             else if mainPost[indexPath.row].postType == PostType.camping.despription{
@@ -1507,7 +1527,7 @@ extension OtherUserProfile : UICollectionViewDataSource, UICollectionViewDelegat
                     return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
                 }
                 else{
-                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
+                    return CGSize(width: view.frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 20 + 5)
                 }
             }
             else{

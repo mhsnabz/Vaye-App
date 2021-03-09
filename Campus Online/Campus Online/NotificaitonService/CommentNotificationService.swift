@@ -10,6 +10,54 @@ import FirebaseFirestore
 class CommentNotificationService{
     static let shared = CommentNotificationService()
     
+    
+    func likeMainPostRepliedComment(targetCommentModel : CommentModel ,post : MainPostModel, currentUser : CurrentUser , text : String , type : String){
+        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+        if targetCommentModel.senderUid == currentUser.uid {
+            return
+        }else{
+            if !currentUser.slientUser.contains(post.senderUid) {
+                let db = Firestore.firestore().collection("user")
+                    .document(targetCommentModel.senderUid!)
+                    .collection("notification")
+                    .document(notificaitonId)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.comment_like.descp, senderUid: currentUser.uid)
+            }
+        }
+    }
+    func likeLessonPostReliedComment(targetCommentModel : CommentModel ,post : LessonPostModel, currentUser : CurrentUser , text : String , type : String){
+        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+        if targetCommentModel.senderUid == currentUser.uid {
+            return
+        }else{
+            if !currentUser.slientUser.contains(post.senderUid) {
+                let db = Firestore.firestore().collection("user")
+                    .document(targetCommentModel.senderUid!)
+                    .collection("notification")
+                    .document(notificaitonId)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.comment_like.descp, senderUid: currentUser.uid)
+            }
+        }
+    }
+    
+    func likeNoticesPostRepliedComment(targetCommentModel : CommentModel ,post : NoticesMainModel, currentUser : CurrentUser , text : String , type : String){
+        let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
+        if targetCommentModel.senderUid == currentUser.uid {
+            return
+        }else{
+            if !currentUser.slientUser.contains(post.senderUid) {
+                let db = Firestore.firestore().collection("user")
+                    .document(targetCommentModel.senderUid!)
+                    .collection("notification")
+                    .document(notificaitonId)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.comment_like.descp, senderUid: currentUser.uid)
+            }
+        }
+    }
+    
     func likeLessonPostComment(post : LessonPostModel ,commentModel : CommentModel, currentUser : CurrentUser , text : String , type : String){
         let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
         if commentModel.senderUid == currentUser.uid {
@@ -150,7 +198,7 @@ class CommentNotificationService{
                     .document(targetCommentModel.senderUid!)
                     .collection("notification")
                     .document(notificaitonId)
-                db.setData(Utilities.shared.getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: nil , vayeAppPostName: post.postType), merge: true)
+                db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: nil , vayeAppPostName: post.postType), merge: true)
                 PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.new_replied_comment.descp, senderUid: currentUser.uid)
             }
         }

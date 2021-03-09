@@ -99,7 +99,7 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -109,7 +109,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -119,7 +120,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -129,7 +131,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -139,7 +142,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -151,7 +155,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-        
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -162,7 +167,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.addSubview(transparentView)
         transparentView.frame = imageView.frame
         imageView.contentMode = .scaleAspectFill
@@ -174,7 +180,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -184,7 +191,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -194,7 +202,8 @@ class ImagesStack : UIView {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
-       
+        imageView.backgroundColor = UIColor(white: 0.90, alpha: 0.7)
+
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()

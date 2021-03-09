@@ -22,7 +22,13 @@ private let cellAds = "cellAds"
 
 class FoodMe_Cell: UICollectionViewCell, ShowAllFoodMeData {
     func onClickListener(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+
+        guard let currentUser = currentUser else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.rootController?.modalPresentationStyle = .fullScreen
+        self.rootController?.present(vc, animated: true, completion: nil)
     }
     
     
@@ -293,8 +299,7 @@ extension FoodMe_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowL
                 cell.currentUser = currentUser
                 let h = mainPost[indexPath.row].text.height(withConstrainedWidth: frame.width - 78, font: UIFont(name: Utilities.font, size: 13)!)
                 cell.msgText.frame = CGRect(x: 70, y: 38, width: frame.width - 78, height: h + 4)
-                
-                cell.stackView.frame = CGRect(x: 70, y: 60 + 8 + h + 4 + 4 , width: frame.width - 78, height: 200)
+                cell.stackView.frame = CGRect(x: 70, y: 38 + h + 4, width: frame.width - 78, height: 200)
                 cell.onClickListener = self
                 
                 cell.bottomBar.anchor(top: nil, left: cell.msgText.leftAnchor, bottom: cell.bottomAnchor, rigth: cell.rightAnchor, marginTop: 5, marginLeft: 0, marginBottom: 0, marginRigth: 0, width: 0, heigth: 30)
@@ -332,7 +337,7 @@ extension FoodMe_Cell : UICollectionViewDelegate , UICollectionViewDelegateFlowL
                 return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 30 + 5 )
             }
             else{
-                return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 30 + 5)
+                return CGSize(width: frame.width, height: 40 + 8 + h + 4 + 4 + 200 + 20 + 5)
             }
         }
     }

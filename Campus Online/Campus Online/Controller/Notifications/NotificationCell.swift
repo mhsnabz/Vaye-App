@@ -115,6 +115,8 @@ class NotificationCell: SwipeCollectionViewCell {
                 text = MajorPostNotification.new_replied_comment.descp
             }else if model.type == MajorPostNotification.new_replied_mentioned_comment.type{
                 text = MajorPostNotification.new_replied_mentioned_comment.descp
+            }else if model.type == MajorPostNotification.replied_comment_like.type{
+                text = MajorPostNotification.replied_comment_like.descp
             }
         }else if model.postType == NotificationPostType.notices.name{
             if model.type == NoticesPostNotification.comment_like.type{
@@ -133,6 +135,8 @@ class NotificationCell: SwipeCollectionViewCell {
                 text = NoticesPostNotification.new_replied_comment.descp
             }else if model.type == NoticesPostNotification.new_replied_mentioned_comment.type{
                 text = NoticesPostNotification.new_replied_mentioned_comment.descp
+            }else if model.type == NoticesPostNotification.replied_comment_like.type{
+                text = NoticesPostNotification.replied_comment_like.descp
             }
         }else if model.postType == NotificationPostType.mainPost.name{
             if model.type == MainPostNotification.comment_like.type{
@@ -151,6 +155,8 @@ class NotificationCell: SwipeCollectionViewCell {
                 text = MainPostNotification.new_replied_comment.descp
             }else if model.type == MainPostNotification.new_replied_mentioned_comment.type{
                 text = MainPostNotification.new_replied_mentioned_comment.type
+            }else if model.type == MainPostNotification.replied_comment_like.type{
+                text = MainPostNotification.replied_comment_like.descp
             }
         }else if model.postType == NotificationPostType.follow.name{
             if model.type == FollowNotification.follow_you.type {

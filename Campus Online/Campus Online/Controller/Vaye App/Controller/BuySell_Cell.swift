@@ -20,7 +20,13 @@ private let cellAds = "cellAds"
 
 extension BuySell_Cell : ShowBuySellData{
     func onClickListener(for cell: BuyAndSellDataView) {
-        
+        guard let post = cell.mainPost else { return }
+
+        guard let currentUser = currentUser else { return }
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.rootController?.modalPresentationStyle = .fullScreen
+        self.rootController?.present(vc, animated: true, completion: nil)
     }
     
     

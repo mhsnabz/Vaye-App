@@ -442,27 +442,52 @@ extension RepliyCommentVC : SwipeCollectionViewCellDelegate {
         
         if commentModel[indexPath.row].senderUid == currentUser.uid {
             if orientation == .right {
-                let deleteAction = SwipeAction(style: .destructive, title: "Sil") { action, indexPath in
-                    // handle action by updating model with deletion
+                let deleteAction = SwipeAction(style: .destructive, title: "Sil") {[weak self] action, indexPath in
+                    guard let sself = self else { return }
+                    
+                    let db = Firestore.firestore().collection("comment")
+                        .document(sself.commentModel[indexPath.row].postId!)
+                        .collection("comment-replied")
+                        .document("comment")
+                        .collection(sself.commentTargetCommentModel.commentId!)
+                        .document(sself.commentModel[indexPath.row].commentId!)
+                    db.delete { (err) in
+                        if err == nil {
+                            sself.commentModel.remove(at: indexPath.item)
+                            sself.collecitonView.reloadData()
+                        }
+                    }
                 }
                 deleteAction.image = #imageLiteral(resourceName: "remove")
                 return [deleteAction]
             }
             else{
                 
-                let read = SwipeAction(style: .default, title: "Cevapla") { action, indexPath in }
+                let read = SwipeAction(style: .default, title: "Cevapla") {[weak self] action, indexPath in
+                    guard let sself = self else { return }
+                    if let username = sself.commentModel[indexPath.row].username{
+                        sself.textField.text.append(username)
+                    }
+                    
+                
+                }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
                 read.hidesWhenSelected = true
                 read.accessibilityLabel = "cevapla"
                 read.backgroundColor = .mainColor()
                 read.fulfill(with: .reset)
-             //   configure(action: read, with: .flag)
+   
                 return [read]
             }
         }else{
             
             if orientation == .left {
-                let read = SwipeAction(style: .default, title: "Cevapla") { action, indexPath in }
+                let read = SwipeAction(style: .default, title: "Cevapla") {[weak self] action, indexPath in
+                    guard let sself = self else { return }
+                    if let username = sself.commentModel[indexPath.row].username{
+                        sself.textField.text.append(username)
+                    }
+                }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)
                 read.hidesWhenSelected = true
                 read.accessibilityLabel = "cevapla"
@@ -508,8 +533,15 @@ extension RepliyCommentVC : SwipeCommentCellDelegate {
           
                 commentModel.likes?.append(sself.currentUser.uid)
                 sself.collecitonView.reloadData()
-                CommentService.shared.likeRepliedComment(commentModel: commentModel, targetComment: sself.commentId, currentUser: sself.currentUser) { (_val) in
-                    //FIXME:- send notificaiton and push notificaiton
+                CommentService.shared.likeRepliedComment(commentModel: commentModel, targetComment: sself.commentId, currentUser: sself.currentUser) {[weak self] (_val) in
+                    guard let sself = self else { return }
+                    if let post = sself.lessonPost {
+                        CommentNotificationService.shared.likeLessonPostReliedComment(targetCommentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: commentModel.comment!, type: MajorPostNotification.replied_comment_like.type)
+                    }else if let post = sself.mainPost{
+                        CommentNotificationService.shared.likeMainPostRepliedComment(targetCommentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: commentModel.comment!, type: MainPostNotification.replied_comment_like.type)
+                    }else if let post = sself.noticesPost{
+                        CommentNotificationService.shared.likeNoticesPostRepliedComment(targetCommentModel: sself.commentTargetCommentModel, post: post, currentUser: sself.currentUser, text: commentModel.comment!, type: NoticesPostNotification.replied_comment_like.type)
+                    }
                 }
                 
                
@@ -526,7 +558,8 @@ extension RepliyCommentVC : SwipeCommentCellDelegate {
     }
     
     func replyClick(cell: SwipeCommentCell) {
-        
+        guard let model = cell.comment else { return }
+        self.textField.text.append(model.username!)
     }
     
     func seeAllReplies(cell: SwipeCommentCell) {

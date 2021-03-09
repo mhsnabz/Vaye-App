@@ -401,12 +401,15 @@ enum MajorPostNotification{
     case comment_like
     case new_post
     case new_comment
+    case replied_comment_like
     case new_mentioned_post
     case new_mentioned_comment
     case new_replied_comment
     case new_replied_mentioned_comment
     var descp : String{
         switch self{
+        case .replied_comment_like:
+            return "Yorumunuzu Beğendi"
         case .post_like:
             return "Gönderinizi Beğendi"
         case .comment_like:
@@ -443,6 +446,8 @@ enum MajorPostNotification{
             return "new_replied_comment"
         case .new_replied_mentioned_comment:
             return "new_replied_mentioned_comment"
+        case .replied_comment_like:
+            return "replied_comment_like"
         }
     }
 }
@@ -453,13 +458,15 @@ enum NoticesPostNotification{
     case comment_like
     case new_post
     case new_comment
-
+    case replied_comment_like
     case new_mentioned_post
     case new_mentioned_comment
     case new_replied_comment
     case new_replied_mentioned_comment
     var descp : String{
         switch self{
+        case .replied_comment_like:
+            return "Yorumunuzu Beğendi"
         case .post_like:
             return "Gönderinizi Beğendi"
         case .comment_like:
@@ -496,7 +503,8 @@ enum NoticesPostNotification{
             return "new_replied_comment"
         case .new_replied_mentioned_comment:
             return "new_replied_mentioned_comment"
-            
+        case .replied_comment_like:
+            return "replied_comment_like"
         }
     }
 }
@@ -510,8 +518,11 @@ enum MainPostNotification{
     case new_mentioned_comment
     case new_replied_comment
     case new_replied_mentioned_comment
+    case replied_comment_like
     var descp : String{
         switch self{
+        case .replied_comment_like:
+            return "Yorumunuzu Beğendi"
         case .post_like:
             return "Gönderinizi Beğendi"
         case .comment_like:
@@ -548,6 +559,8 @@ enum MainPostNotification{
             return "new_replied_comment"
         case .new_replied_mentioned_comment:
             return "new_replied_mentioned_comment"
+        case .replied_comment_like:
+            return "replied_comment_like"
         }
     }
 }

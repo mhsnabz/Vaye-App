@@ -104,7 +104,7 @@ class LocalNotificationController: UIViewController  {
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
             .collection("notification")
-            .limit(to: 10).order(by: "not_id" , descending: true)
+            .limit(toLast: 14).order(by: "not_id")
         db.getDocuments {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             if err == nil {
@@ -122,29 +122,32 @@ class LocalNotificationController: UIViewController  {
                     for item in snap.documents{
                         if item.exists {
                             sself.model.append(NotificationModel.init(not_id: item.documentID, dic: item.data()))
+                            sself.model.sort { (model1, model2) -> Bool in
+                                return model1.not_id > model2.not_id
+                            }
                         }else{
                             sself.loadMore = false
                         }
                     }
-                    sself.page = snap.documents.last
-                    sself.loadMore = false
-                    sself.collecitonView.reloadData()
                     sself.refreshControl.endRefreshing()
+                    sself.page = snap.documents.first
+                    sself.loadMore = true
+                    sself.collecitonView.reloadData()
+                   
                 }
             }
         }
     }
     
     private func loadMorePost(){
-        guard let page = page else {
+        guard let pagee = page else {
             loadMore = false
             collecitonView.reloadData()
             return }
-        loadMore = true
+      
         let db = Firestore.firestore().collection("user")
             .document(currentUser.uid)
-            .collection("notification")
-            .limit(to: 5).order(by: "not_id" , descending: true).start(atDocument: page)
+            .collection("notification").order(by: "not_id").end(beforeDocument: pagee).limit(toLast: 10)
         db.getDocuments {[weak self] (querySnap, err) in
             guard let sself = self else { return }
             if err == nil {
@@ -152,15 +155,29 @@ class LocalNotificationController: UIViewController  {
                 if snap.isEmpty{
                     sself.loadMore = false
                     sself.collecitonView.reloadData()
+         
                 }else{
                     for item in snap.documents{
-                        sself.model.append(NotificationModel.init(not_id: item.documentID, dic: item.data()))
+                        if item.exists {
+                            sself.model.append(NotificationModel.init(not_id: item.documentID, dic: item.data()))
+                            sself.model.sort { (model1, model2) -> Bool in
+                                return model1.not_id > model2.not_id
+                            }
+                            sself.loadMore = true
+                            sself.collecitonView.reloadData()
+                            
+                        }else{
+                            
+                        }
+                        
+                        
                     }
-                    sself.collecitonView.reloadData()
-                    sself.loadMore = true
-                    sself.page = snap.documents.last
+                    sself.page = snap.documents.first
+                  
                 }
+               
             }
+            
         }
         
     }
@@ -762,8 +779,11 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if model.count > 10 {
+        
+        if model.count > 13 {
+            print("load more : \(model.count)")
             if  indexPath.item == model.count - 1 {
+                print("load more : loading more")
                 loadMorePost()
             }else{
                 self.loadMore = false
@@ -814,7 +834,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 }
                 
             }else if model[indexPath.row].type == MajorPostNotification.new_replied_comment.type ||
-                        model[indexPath.row].type == MajorPostNotification.new_replied_mentioned_comment.type{
+                        model[indexPath.row].type == MajorPostNotification.new_replied_mentioned_comment.type || model[indexPath.row].type == MajorPostNotification.replied_comment_like.type{
                 showRepliedComment(model: model[indexPath.row])
                 makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
                     guard let sself = self else { return }
@@ -845,7 +865,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 }
                 
             }else if model[indexPath.row].type == NoticesPostNotification.new_replied_comment.type ||
-                        model[indexPath.row].type == NoticesPostNotification.new_replied_mentioned_comment.type{
+                        model[indexPath.row].type == NoticesPostNotification.new_replied_mentioned_comment.type || model[indexPath.row].type == NoticesPostNotification.replied_comment_like.type{
                 showRepliedComment(model: model[indexPath.row])
                 makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
                     guard let sself = self else { return }
@@ -875,7 +895,7 @@ extension LocalNotificationController : UICollectionViewDelegateFlowLayout, UICo
                 }
                 
             }else if model[indexPath.row].type == MainPostNotification.new_replied_comment.type ||
-                        model[indexPath.row].type == MainPostNotification.new_replied_mentioned_comment.type{
+                        model[indexPath.row].type == MainPostNotification.new_replied_mentioned_comment.type  || model[indexPath.row].type == MainPostNotification.replied_comment_like.type{
                 showRepliedComment(model: model[indexPath.row])
                 makeReadNotification(not_id: model[indexPath.row].not_id) {[weak self] (_val) in
                     guard let sself = self else { return }
