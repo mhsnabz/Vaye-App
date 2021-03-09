@@ -238,7 +238,7 @@ class CampingDataView: UICollectionViewCell {
         optionsButton.addTarget(self, action: #selector(optionsClick), for: .touchUpInside)
         stackView.isUserInteractionEnabled = true
         
-        stackView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(showData)))
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showData)))
         addSubview(mapBtn)
         mapBtn.anchor(top: headerView.bottomAnchor, left: leftAnchor, bottom: nil, rigth: nil, marginTop: 10, marginLeft: 8, marginBottom: 10, marginRigth: 0, width: 50, heigth: 50)
         
@@ -261,6 +261,7 @@ class CampingDataView: UICollectionViewCell {
     
     //MARK:-selectors
     @objc func showData(){
+        print("camping view data show images")
         onClickListener?.onClickListener(for : self)
 
     }

@@ -104,7 +104,7 @@ class MainPostUploadService{
             let storageRef = Storage.storage().reference().child("main-post-thumb").child(postType).child(currentUser.username).child(date).child(dataName + DataTypes.image.mimeType)
             //        let thumbData = data.jpegData(compressionQuality: 0.8) else { return }
             let image : UIImage = UIImage(data: data)!
-            guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 128, height: 128)).jpegData(compressionQuality: 1) else { return }
+            guard let uploadData = resizeImage(image: image, targetSize: CGSize(width: 512, height: 512)).jpegData(compressionQuality: 0.4) else { return }
             uploadTask = storageRef.putData(uploadData, metadata: metaDataForData) { (metaData, err) in
                 if err != nil
                 {  print("err \(err as Any)") }
