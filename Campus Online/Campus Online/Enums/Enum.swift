@@ -205,5 +205,20 @@ enum NotificationPostType {
         }
     }
 }
+enum PushNotificationTarget {
+    case like
+    case comment
+    case follow
+    case mention
+    var type : String{
+        switch self{
+        case .like: return "like"
+        case.comment: return "comment"
+        case .follow : return "follow"
+        case.mention : return "mention"
+        }
+    }
+}
+
 
 

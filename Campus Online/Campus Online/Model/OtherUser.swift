@@ -33,12 +33,15 @@ class OtherUser{
     var lessonNotices:Bool!
     var friendList :[String]!
     var slientChatUser : [String]!
+    var tokenID : String?
     init(dic : Dictionary<String,Any>) {
         
         if let email = dic["email"] as? String {
             self.email = email
         }
-        
+        if let tokenID = dic["tokenID"] as? String {
+            self.tokenID = tokenID
+        }
         if let allowRequest = dic["allowRequest"] as? Bool {
             self.allowRequest = allowRequest
         }

@@ -16,12 +16,13 @@ class MajorPostNotificationService {
         }else{
             if !post.silent.contains(post.senderUid){
                 let notificaitonId = Int64(Date().timeIntervalSince1970 * 1000).description
-                
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName, clupName: nil, vayeAppPostName: nil), merge: true)
                 
             }
+            
+            PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: post.senderUid, otherUser: nil, target: PushNotificationTarget.like.type, senderName: currentUser.name, mainText: post.text, type: MajorPostNotification.post_like.descp, senderUid: currentUser.uid)
         }
     }
     
