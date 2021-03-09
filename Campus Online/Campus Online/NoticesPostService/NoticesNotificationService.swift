@@ -19,7 +19,9 @@ class NoticesNotificationService {
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil, clupName: post.clupName, vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: post.senderUid, otherUser: nil, target: PushNotificationTarget.like.type, senderName: currentUser.name, mainText: post.text, type: NoticesPostNotification.post_like.descp, senderUid: currentUser.uid)
             }
+            
         }
         
     }
@@ -42,6 +44,7 @@ class NoticesNotificationService {
                                     let db = Firestore.firestore().collection("user")
                                         .document(item).collection("notification").document(notificaitonId)
                                     db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: postId, lessonName: nil, clupName: clupName, vayeAppPostName: nil), merge: true)
+                                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: item, otherUser: nil, target: PushNotificationTarget.like.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.post_like.descp, senderUid: currentUser.uid)
                                 }
                             }
                         }
@@ -58,9 +61,7 @@ class NoticesNotificationService {
                             let db = Firestore.firestore().collection("user")
                                 .document(user.uid).collection("notification").document(Int64(Date().timeIntervalSince1970 * 1000 + 1).description)
                             db.setData(Utilities.shared.getDictionary(postType: postType, type: NoticesPostNotification.new_mentioned_post.type, text: text, currentUser: currentUser, not_id: Int64(Date().timeIntervalSince1970 * 1000 + 1).description, targetCommentId: "", postId: postId, lessonName: nil, clupName: clupName, vayeAppPostName: nil), merge: true)
-                            if user.mention {
-                                //FIXME:- send push notificaiton
-                            }
+                            PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: item, otherUser: user, target: PushNotificationTarget.mention.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.new_mentioned_post.descp, senderUid: currentUser.uid)
                         }
                     }
                 }

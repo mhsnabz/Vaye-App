@@ -20,7 +20,9 @@ class MainPostNotificationService {
                 let db = Firestore.firestore().collection("user")
                     .document(post.senderUid).collection("notification").document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil, clupName: nil, vayeAppPostName: post.postType), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: post.senderUid, otherUser: nil, target: PushNotificationTarget.like.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.post_like.descp, senderUid: currentUser.uid)
             }
+            
         }
         
     }
@@ -35,9 +37,7 @@ class MainPostNotificationService {
                             let db = Firestore.firestore().collection("user")
                                 .document(user.uid).collection("notification").document(notificaitonId)
                             db.setData(Utilities.shared.getDictionary(postType: postType, type: MainPostNotification.new_mentioned_post.type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: postId, lessonName: nil, clupName: postType, vayeAppPostName: nil), merge: true)
-                            if user.mention {
-                                //FIXME:- send push notificaiton
-                            }
+                            PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: user.uid, otherUser: user, target: PushNotificationTarget.mention.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.new_mentioned_post.descp, senderUid: currentUser.uid)
                         }
                     
                 }

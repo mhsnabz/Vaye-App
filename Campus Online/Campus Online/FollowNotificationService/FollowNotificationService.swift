@@ -14,6 +14,7 @@ class FollowNotificationService {
         let db = Firestore.firestore().collection("user")
             .document(otherUser.uid).collection("notification").document(notificaitonId)
         db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: "", lessonName: "", clupName: "", vayeAppPostName: ""), merge: true)
+        PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.follow.type, senderName: currentUser.name, mainText: text, type: FollowNotification.follow_you.desp, senderUid: currentUser.uid)
     }
     
 }

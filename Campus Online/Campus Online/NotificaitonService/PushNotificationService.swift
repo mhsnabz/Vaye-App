@@ -9,12 +9,11 @@
 import FirebaseFirestore
 class PushNotificationService {
     static let shared = PushNotificationService()
-    
     func sendPushNotification(not_id : String ,getterUid : String , otherUser : OtherUser?, target : String ,senderName : String , mainText : String , type : String , senderUid : String ){
         let db = Firestore.firestore().collection("notification")
             .document(not_id)
         let title = senderName
-        let text = type + " :" + mainText
+        let text = type + " : " + mainText
      
         if let user = otherUser{
             guard let tokenId = user.tokenID else { return }
@@ -43,6 +42,10 @@ class PushNotificationService {
                     db.setData(dic, merge: true)
 
                 }
+            }else if target == PushNotificationTarget.newpost_lessonpost.type{
+                if user.lessonNotices{
+                    db.setData(dic, merge: true)
+                }
             }
         }else{
             UserService.shared.getOtherUser(userId: getterUid) { (user) in
@@ -70,6 +73,10 @@ class PushNotificationService {
                     if user.mention {
                         db.setData(dic, merge: true)
 
+                    }
+                }else if target == PushNotificationTarget.newpost_lessonpost.type{
+                    if user.lessonNotices{
+                        db.setData(dic, merge: true)
                     }
                 }
             }

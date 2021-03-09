@@ -21,6 +21,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser,  not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: commentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.comment_like.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -36,6 +37,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.lessonName), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: commentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.comment_like.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -52,6 +54,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: commentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.comment_like.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -67,6 +70,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: post.senderUid, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_comment.descp, senderUid: currentUser.uid)
                 
             }
         }
@@ -83,6 +87,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: post.senderUid, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.new_comment.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -97,6 +102,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_replied_comment.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -113,6 +119,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: post.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.new_comment.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -128,6 +135,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.new_replied_comment.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -143,6 +151,7 @@ class CommentNotificationService{
                     .collection("notification")
                     .document(notificaitonId)
                 db.setData(Utilities.shared.getDictionary(postType: post.postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommentModel.commentId, postId: post.postId, lessonName: nil, clupName: nil , vayeAppPostName: post.postType), merge: true)
+                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: targetCommentModel.senderUid!, otherUser: nil, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.new_replied_comment.descp, senderUid: currentUser.uid)
             }
         }
     }
@@ -159,6 +168,7 @@ class CommentNotificationService{
                             let db = Firestore.firestore().collection("user")
                                 .document(otherUser.uid).collection("notification").document(notificaitonId)
                             db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                            PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_mentioned_comment.descp, senderUid: currentUser.uid)
                         }
                     }
                 }
@@ -178,6 +188,7 @@ class CommentNotificationService{
                             let db = Firestore.firestore().collection("user")
                                 .document(otherUser.uid).collection("notification").document(notificaitonId)
                             db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.lessonPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetComment.commentId!, postId: post.postId, lessonName: post.lessonName , clupName: nil , vayeAppPostName: nil), merge: true)
+                            PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_replied_mentioned_comment.descp, senderUid: currentUser.uid)
                         }
                     }
                 }
@@ -194,6 +205,7 @@ class CommentNotificationService{
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
                     db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.new_mentioned_comment.descp, senderUid: currentUser.uid)
                 }
             }
         }
@@ -208,6 +220,7 @@ class CommentNotificationService{
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
                     db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetCommnet.commentId, postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.new_replied_mentioned_comment.descp, senderUid: currentUser.uid)
                 }
             }
         }
@@ -223,6 +236,7 @@ class CommentNotificationService{
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
                     db.setData(Utilities.shared.getDictionary(postType:NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.new_mentioned_comment.descp, senderUid: currentUser.uid)
                 }
             }
         }
@@ -237,6 +251,8 @@ class CommentNotificationService{
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
                     db.setData(Utilities.shared.getDictionary(postType:NotificationPostType.mainPost.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: targetComment.commentId!, postId: post.postId, lessonName: nil , clupName: nil , vayeAppPostName: post.postType), merge: true)
+                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: MainPostNotification.new_replied_mentioned_comment.descp, senderUid: currentUser.uid)
+                    
                 }
             }
         }
@@ -252,6 +268,7 @@ class CommentNotificationService{
                     let db = Firestore.firestore().collection("user")
                         .document(otherUser.uid).collection("notification").document(notificaitonId)
                     db.setData(Utilities.shared.getDictionary(postType: NotificationPostType.notices.name, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: post.postId, lessonName: nil , clupName: post.clupName , vayeAppPostName: nil), merge: true)
+                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser, target: PushNotificationTarget.comment.type, senderName: currentUser.name, mainText: text, type: NoticesPostNotification.new_mentioned_comment.descp, senderUid: currentUser.uid)
                 }
             }
         }

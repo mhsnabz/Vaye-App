@@ -20,7 +20,6 @@ import FirebaseStorage
 
 class Home_Cell: UICollectionViewCell {
    
-    
     //MARK: -variables
     var page : DocumentSnapshot? = nil
     var loadMore : Bool = false

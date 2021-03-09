@@ -35,6 +35,7 @@ class MajorPostNotificationService {
                         .document(item).collection("notification").document(notificaitonId)
                                   
                     db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: postId, lessonName: lessonName, clupName: nil, vayeAppPostName: nil), merge: true)
+                    PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: item, otherUser: nil, target: PushNotificationTarget.newpost_lessonpost.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_post.descp, senderUid: currentUser.uid)
                 }
                 
             }
@@ -51,9 +52,7 @@ class MajorPostNotificationService {
                                     .document(user.uid).collection("notification").document(Int64(Date().timeIntervalSince1970 * 1000 + 1).description)
                                 db.setData(Utilities.shared.getDictionary(postType: postType, type: MajorPostNotification.new_mentioned_post.type, text: text, currentUser: currentUser, not_id: Int64(Date().timeIntervalSince1970 * 1000 + 1).description, targetCommentId: "", postId: postId, lessonName: lessonName, clupName: nil, vayeAppPostName: nil), merge: true)
 
-                                if user.mention {
-                                    //FIXME:- send push notificaiton
-                                }
+                                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: item, otherUser: user, target: PushNotificationTarget.newpost_lessonpost.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_mentioned_post.descp, senderUid: currentUser.uid)
                             }
                            
                         }
@@ -80,6 +79,7 @@ class MajorPostNotificationService {
                                 let db = Firestore.firestore().collection("user")
                                     .document(uid.documentID).collection("notification").document(notificaitonId)
                                 db.setData(Utilities.shared.getDictionary(postType: postType, type: type, text: text, currentUser: currentUser, not_id: notificaitonId, targetCommentId: "", postId: postId, lessonName: lessonName, clupName: nil, vayeAppPostName: nil), merge: true)
+                                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: uid.documentID, otherUser: nil, target: PushNotificationTarget.newpost_lessonpost.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_post.descp, senderUid: currentUser.uid)
                             }
                             
                         }
@@ -101,9 +101,7 @@ class MajorPostNotificationService {
                                     .document(user.uid).collection("notification").document(Int64(Date().timeIntervalSince1970 * 1000 + 1).description)
                                 db.setData(Utilities.shared.getDictionary(postType: postType, type: MajorPostNotification.new_mentioned_post.type, text: text, currentUser: currentUser, not_id: Int64(Date().timeIntervalSince1970 * 1000 + 1).description, targetCommentId: "", postId: postId, lessonName: lessonName, clupName: nil, vayeAppPostName: nil), merge: true)
 
-                                if user.mention {
-                                    //FIXME:- send push notificaiton
-                                }
+                                PushNotificationService.shared.sendPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: user.uid, otherUser: user, target: PushNotificationTarget.newpost_lessonpost.type, senderName: currentUser.name, mainText: text, type: MajorPostNotification.new_mentioned_post.descp, senderUid: currentUser.uid)
                             }
                            
                         }
