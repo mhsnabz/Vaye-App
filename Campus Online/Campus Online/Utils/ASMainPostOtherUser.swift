@@ -386,23 +386,6 @@ extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         _ = tableView.cellForRow(at: indexPath) as! ASMainPostOtherUserCell
         if indexPath.row == 2 {
-           //FIXME: Report Post
-        }else if indexPath.row == 1 {
-          //FIXME: slient post
-            if postIsSlient {
-                setNotPostSlient(post: post) { (_) in
-                    Utilities.dismissProgress()
-                    tableView.reloadData()
-                }
-            }
-            else{
-                setPostSlient(post: post) { (_) in
-                    Utilities.dismissProgress()
-                    tableView.reloadData()
-                }
-            }
-            
-        }else if indexPath.row == 3 {
             //FIXME: Slient sender user
             if userIsSlient {
                 setUserNotSlient(slientUser: otherUser?.slientUser ?? [], otherUserUid: otherUser!.uid) { (_) in
@@ -416,10 +399,7 @@ extension ASMainPostOtherUser : UITableViewDelegate, UITableViewDataSource{
                 }
             }
         }
-        else if indexPath.row == 4 {
-            //FIXME: report user
-        }
-    
+       
         dismissTableView(indexPath)
     }
     fileprivate func dismissTableView(_ indexPath: IndexPath) {

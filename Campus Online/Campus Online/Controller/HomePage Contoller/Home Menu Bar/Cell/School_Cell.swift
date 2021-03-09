@@ -19,6 +19,8 @@ private let emptyCell = "empty_cell"
 
 class School_Cell: UICollectionViewCell {
     
+    
+    
     //MARK:- properites
     var refresher = UIRefreshControl()
     var collectionview: UICollectionView!
@@ -369,6 +371,7 @@ extension School_Cell : NewPostNoticesVCDelegate {
             Utilities.waitProgress(msg: nil)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
+            actionSheetOtherUser.delegate = self
             selectedPostID = mainPost[index.row].postId
             UserService.shared.getOtherUser(userId: post.senderUid) {(user) in
 
@@ -546,6 +549,7 @@ extension School_Cell : NewPostNoticesDataVCDelegate{
             Utilities.waitProgress(msg: nil)
             guard let  index = collectionview.indexPath(for: cell) else { return }
             selectedIndex = index
+            actionSheetOtherUser.delegate = self
             selectedPostID = mainPost[index.row].postId
             UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
               
@@ -697,6 +701,64 @@ extension School_Cell : ShowNoticesAllDatas {
         let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
         self.rootController?.modalPresentationStyle = .fullScreen
         self.rootController?.present(vc, animated: true, completion: nil)
+    }
+    
+    
+}
+extension School_Cell : ASMainOtherUserDelegate  {
+    func didSelect(option: ASMainPostOtherUserOptions) {
+        switch option{
+        
+        case .fallowUser(_):
+            Utilities.waitProgress(msg: "")
+            guard let currentUser = currentUser else { return }
+            guard let index = selectedIndex else {
+                Utilities.dismissProgress()
+                return }
+            UserService.shared.fetchOtherUser(uid: mainPost[index.row].senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return}
+                UserService.shared.getProfileModel(otherUser: user, currentUser: currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.rootController?.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.rootController?.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+               
+            }
+        case .slientUser(_):
+            break
+        case .reportPost(_):
+            guard let index = selectedIndex else {
+            Utilities.dismissProgress()
+            return }
+            guard let currentUser = currentUser else { return }
+            let vc = ReportingVC(target: ReportTarget.noticesPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)
+           
+            rootController?.navigationController?.pushViewController(vc, animated: true)
+            break
+        case .reportUser(_):
+            guard let index = selectedIndex else {
+            Utilities.dismissProgress()
+            return }
+            guard let currentUser = currentUser else { return }
+            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportUser.description)
+           
+            rootController?.navigationController?.pushViewController(vc, animated: true)
+            break
+        }
     }
     
     

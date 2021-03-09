@@ -618,21 +618,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         _ = tableView.cellForRow(at: indexPath) as! ActionOtherUserCell
-        if indexPath.row == 3 {
-            if lessonIsSlient
-            {
-                setNotSlientLesson(currentUser: currentUser, lessonName: post!.lessonName) { (_) in
-                    tableView.reloadData()
-                }
-            }
-            else
-            {
-                setSlientLesson(currentUser: currentUser, lessonName: post!.lessonName) { (_) in
-                    tableView.reloadData()
-                }
-            }
-        }
-        else if indexPath.row == 4 {
+      if indexPath.row == 2 {
             if userIsSlient {
                 setUserNotSlient(slientUser: otherUser?.slientUser ?? [], otherUserUid: otherUser!.uid) { (_) in
                     tableView.reloadData()
@@ -642,7 +628,7 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
                     tableView.reloadData()
                 }
             }
-        }else if indexPath.row == 5 {
+        }else if indexPath.row == 3 {
             if isFallowingLesson {
                 removeLesson(lessonName: post!.lessonName) { (_val) in
                     

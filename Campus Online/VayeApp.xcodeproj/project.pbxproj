@@ -378,6 +378,7 @@
 		6622D82A25F56956008366B6 /* NoticesNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticesNotificationService.swift; sourceTree = "<group>"; };
 		6622D83C25F58C03008366B6 /* MainPostNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostNotificationService.swift; sourceTree = "<group>"; };
 		6622D84525F59197008366B6 /* FollowNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowNotificationService.swift; sourceTree = "<group>"; };
+		6622D85625F7A24C008366B6 /* VayeApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VayeApp.entitlements; sourceTree = "<group>"; };
 		6628125225171F9D00923F19 /* DatasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasModel.swift; sourceTree = "<group>"; };
 		662D897C259DA8EE005E83C0 /* BasicAudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		663B27322576759900A3CABB /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -1325,6 +1326,7 @@
 		66D911C224EEA9E8002D760A = {
 			isa = PBXGroup;
 			children = (
+				6622D85625F7A24C008366B6 /* VayeApp.entitlements */,
 				66D911CD24EEA9E8002D760A /* Campus Online */,
 				66D911E424EEA9EA002D760A /* Campus OnlineTests */,
 				66D911EF24EEA9EA002D760A /* Campus OnlineUITests */,
@@ -2359,6 +2361,7 @@
 			baseConfigurationReference = E82C3D96DF02A15127A11497 /* Pods-VayeApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VayeApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F68Q68LA39;
 				INFOPLIST_FILE = "Campus Online/Info.plist";
@@ -2367,7 +2370,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.gargi.onlinecampus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vaye.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -2379,6 +2382,7 @@
 			baseConfigurationReference = 88A45E121CB14C39C7BEDE25 /* Pods-VayeApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VayeApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F68Q68LA39;
 				INFOPLIST_FILE = "Campus Online/Info.plist";
@@ -2387,7 +2391,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.gargi.onlinecampus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vaye.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
