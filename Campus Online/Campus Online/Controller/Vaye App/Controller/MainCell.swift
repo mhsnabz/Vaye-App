@@ -1405,8 +1405,7 @@ extension MainCell : ASMainOtherUserDelegate {
             break
         case .slientUser(_):
             break
-        case .slientPost(_):
-            break
+   
         case .reportPost(_):
             
             guard let index = selectedIndex else { return }

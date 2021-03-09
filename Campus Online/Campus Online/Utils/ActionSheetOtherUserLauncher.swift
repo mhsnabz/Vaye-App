@@ -249,34 +249,7 @@ class ActionSheetOtherUserLaunher : NSObject{
             }
         }
     }
-    private func checkLessonIsSlient(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
-        Utilities.waitProgress(msg: nil)
-        ///İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/notification_getter
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson").collection(currentUser.bolum).document(lessonName).collection("notification_getter").document(currentUser.uid)
-        db.getDocument {[weak self] (docSnap, err) in
-            guard let sself = self else {
-                Utilities.dismissProgress()
-                
-                completion(false)
-                return }
-            guard let snap = docSnap else {
-                Utilities.dismissProgress()
-                sself.lessonIsSlient = false
-                completion(false)
-                return}
-            if snap.exists{
-                Utilities.dismissProgress()
-                sself.lessonIsSlient = false
-                completion(false)
-            }else{
-                Utilities.dismissProgress()
-                sself.lessonIsSlient = true
-                completion(true)
-            }
-        }
-    }
-    
+
     private func setSlientLesson(currentUser : CurrentUser , lessonName : String , completion : @escaping(Bool) ->Void){
         Utilities.waitProgress(msg: nil)
         let db = Firestore.firestore().collection(currentUser.short_school)
@@ -322,55 +295,7 @@ class ActionSheetOtherUserLaunher : NSObject{
             completion(false)
         }
     }
-    private func setPostSlient(postId : String,completion : @escaping(Bool) ->Void){
-        
-        Utilities.waitProgress(msg: nil)
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(postId)
-        db.updateData(["silent":FieldValue.arrayUnion([currentUser.uid as Any])]) {[weak self] (err) in
-            guard let sself = self else {
-                Utilities.dismissProgress()
-                return}
-            if err == nil {
-                Utilities.dismissProgress()
-                sself.postIsSlient = true
-                sself.post?.silent.append(sself.currentUser.uid)
-                completion(true)
-                sself.tableView.reloadData()
-            }else{
-                Utilities.dismissProgress()
-                sself.postIsSlient = false
-                sself.post?.silent.remove(element : sself.currentUser.uid)
-                completion(false)
-                sself.tableView.reloadData()
-            }
-        }
     
-    }
-    private func setNotPostSlient(postId : String ,completion : @escaping(Bool) ->Void){
-        Utilities.waitProgress(msg: nil)
-        let db = Firestore.firestore().collection(currentUser.short_school)
-            .document("lesson-post").collection("post").document(postId)
-        db.updateData(["silent":FieldValue.arrayRemove([currentUser.uid as Any])])  {[weak self] (err) in
-            guard let sself = self else {
-                Utilities.dismissProgress()
-                return}
-            if err == nil {
-                Utilities.dismissProgress()
-                sself.postIsSlient = false
-                 sself.post?.silent.remove(element : sself.currentUser.uid)
-                completion(false)
-                sself.tableView.reloadData()
-            }else{
-                Utilities.dismissProgress()
-                sself.postIsSlient = true
-                sself.post?.silent.append(sself.currentUser.uid)
-                completion(true)
-                sself.tableView.reloadData()
-            }
-        }
-    
-    }
     
     private func checkIamSlient(slientUser : [String] , completion : @escaping(Bool) ->Void){
         if slientUser.isEmpty{
@@ -647,35 +572,8 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
           
             
         }
-        else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientLesson(currentUser).description
-        {
-            if let post = post {
-                checkLessonIsSlient(currentUser: currentUser, lessonName: post.lessonName) { (_val) in
-                    if _val {
-                        cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
-                        cell.titleLabel.text = "Dersin Bildirimlerini Aç"
-                    }
-                    else
-                    {
-                        cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
-                        cell.titleLabel.text = "Bu Dersi Sessize Al"
-                    }
-                }
-            }
-            
-        }
-        else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientPost(currentUser).description{
-             
-            isPostSlient(slientUser: post!.silent) { (val) in
-                if val {
-                    cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
-                    cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
-                }else{
-                    cell.titleLabel.text = ActionSheetOtherUserOptions.slientPost(self.currentUser).description
-                    cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
-                }
-            }
-        }
+      
+      
         else if cell.titleLabel.text == ActionSheetOtherUserOptions.slientUser(currentUser).description{
 
             if otherUser?.slientUser != nil {
@@ -730,16 +628,6 @@ extension ActionSheetOtherUserLaunher : UITableViewDataSource,UITableViewDelegat
             else
             {
                 setSlientLesson(currentUser: currentUser, lessonName: post!.lessonName) { (_) in
-                    tableView.reloadData()
-                }
-            }
-        }else if indexPath.row == 1 {
-            if postIsSlient {
-                setNotPostSlient(postId: post!.postId) { (_) in
-                    tableView.reloadData()
-                }
-            }else{
-                setPostSlient(postId: post!.postId) { (_) in
                     tableView.reloadData()
                 }
             }

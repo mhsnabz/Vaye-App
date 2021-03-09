@@ -793,8 +793,7 @@ extension CampVC : ASMainOtherUserDelegate {
             break
         case .slientUser(_):
             break
-        case .slientPost(_):
-            break
+       
         case .reportPost(_):
             guard let index = selectedIndex else { return }
             let vc = ReportingVC(target: ReportTarget.campingPost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid

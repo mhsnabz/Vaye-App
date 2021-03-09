@@ -16,9 +16,9 @@ class ActionSheetHomeOtherUserViewModel{
         if target == TargetOtherUser.otherPost.description
            {
             result.append(.fallowUser(currentUser))
-            result.append(.slientPost(currentUser))
+           
             result.append(.reportPost(currentUser))
-            result.append(.slientLesson(currentUser))
+            
             result.append(.slientUser(currentUser))
              result.append(.deleteLesson(currentUser))
             result.append(.reportUser(currentUser))
@@ -37,8 +37,7 @@ enum ActionSheetOtherUserOptions{
     case fallowUser(CurrentUser)
     case slientUser(CurrentUser)
     case deleteLesson(CurrentUser)
-    case slientLesson(CurrentUser)
-    case slientPost(CurrentUser)
+
     case reportPost(CurrentUser)
     case reportUser(CurrentUser)
 
@@ -49,15 +48,13 @@ enum ActionSheetOtherUserOptions{
             return "Bu Kullanıcı Takip Et"
         case .slientUser(_):
             return "Bu Kullanıcıyı Sessize Al"
-        case .slientLesson(_):
-            return "Bu Dersi Sessize Al"
+   
         case .reportPost(_):
             return "Bu Gönderiyi Şikayet Et"
         case .reportUser(_):
             return "Bu Kullanıcıyı Sikayet Et"
             
-        case .slientPost(_):
-            return "Bu Gönderiyi Sessize Al"
+
         case .deleteLesson(_):
             return "Dersi Takip Etmeyi Bırak"
        
@@ -65,14 +62,12 @@ enum ActionSheetOtherUserOptions{
     var image : UIImage {
         switch self {
             
-        case .slientPost(_):
-            return UIImage(named: "silent")!
+      
         case .fallowUser(_):
             return UIImage(named: "silent")!
         case .slientUser(_):
             return UIImage(named: "loud-user")!
-        case .slientLesson(_):
-            return UIImage(named: "silent")!
+      
         case .reportPost(_):
             return UIImage(named: "alert")!
         case .reportUser(_):

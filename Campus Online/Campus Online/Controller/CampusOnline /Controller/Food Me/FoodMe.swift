@@ -844,8 +844,7 @@ extension FoodMe : ASMainOtherUserDelegate {
             break
         case .slientUser(_):
             break
-        case .slientPost(_):
-            break
+        
         case .reportPost(_):
             guard let index = selectedIndex else { return }
             let vc = ReportingVC(target: ReportTarget.foodMePost.description, currentUser: currentUser, otherUser: mainPost[index.row].senderUid, postId: mainPost[index.row].postId, reportType: ReportType.reportPost.description)

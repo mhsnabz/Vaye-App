@@ -2133,10 +2133,7 @@ extension ProfileVC : ActionSheetOtherUserLauncherDelegate{
               
             }
             break
-        case .slientLesson(_):
-            break
-        case .slientPost(_):
-            break
+      
         case .reportPost(_):
             print("Report Post")
             break

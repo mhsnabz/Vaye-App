@@ -121,13 +121,7 @@ class ASNoticesPostLaunher : NSObject {
         tableView.register(ASMainPostOtherUserCell.self, forCellReuseIdentifier: "id")
         
     }
-    private func isPostSlient(slientUser : [String], completion: @escaping(Bool) ->Void){
-        if slientUser.contains(currentUser.uid){
-            completion(true)
-        }else{
-            completion(false)
-        }
-    }
+    
     //İSTE/notices/post/1607273427082
     private func setPostSlient(post : NoticesMainModel?,completion : @escaping(Bool) ->Void){
         guard let post = post else { return }
@@ -370,20 +364,7 @@ extension ASNoticesPostLaunher : UITableViewDelegate, UITableViewDataSource{
         }
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.reportPost(currentUser).description { }
         
-        else if cell.titleLabel.text == ASMainPostOtherUserOptions.slientPost(currentUser).description{
-            
-            if let slient = post?.silent {
-                isPostSlient(slientUser: slient) { (val) in
-                    if val {
-                        cell.titleLabel.text = "Gönderi Bildirimlerini Aç"
-                        cell.logo.image = #imageLiteral(resourceName: "loud").withRenderingMode(.alwaysOriginal)
-                    }else{
-                        cell.titleLabel.text = ASMainPostOtherUserOptions.slientPost(self.currentUser).description
-                        cell.logo.image = #imageLiteral(resourceName: "silent").withRenderingMode(.alwaysOriginal)
-                    }
-                }
-            }
-        }
+     
         else if cell.titleLabel.text == ASMainPostOtherUserOptions.slientUser(currentUser).description{
             
             if otherUser?.slientUser != nil {

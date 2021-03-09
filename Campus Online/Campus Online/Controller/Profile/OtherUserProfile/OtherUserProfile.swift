@@ -40,8 +40,7 @@ extension OtherUserProfile : ASMainOtherUserDelegate {
             break
         case .slientUser(_):
             break
-        case .slientPost(_):
-            break
+    
         case .reportPost(_):
             break
         case .reportUser(_):
@@ -1792,10 +1791,7 @@ extension OtherUserProfile : ActionSheetOtherUserLauncherDelegate {
               
             }
             break
-        case .slientLesson(_):
-            break
-        case .slientPost(_):
-            break
+       
         case .reportPost(_):
             guard let index = selectedIndex else {
             Utilities.dismissProgress()

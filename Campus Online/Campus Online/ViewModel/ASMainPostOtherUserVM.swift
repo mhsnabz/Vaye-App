@@ -17,7 +17,6 @@ class ASMainPostOtherUserVM{
         if target == TargetOtherUser.otherPost.description
            {
             result.append(.fallowUser(currentUser))
-            result.append(.slientPost(currentUser))
             result.append(.reportPost(currentUser))
             result.append(.slientUser(currentUser))
             result.append(.reportUser(currentUser))
@@ -33,7 +32,6 @@ class ASMainPostOtherUserVM{
 enum ASMainPostOtherUserOptions{
     case fallowUser(CurrentUser)
     case slientUser(CurrentUser)
-    case slientPost(CurrentUser)
     case reportPost(CurrentUser)
     case reportUser(CurrentUser)
     var description : String {
@@ -48,16 +46,12 @@ enum ASMainPostOtherUserOptions{
             return "Bu Gönderiyi Şikayet Et"
         case .reportUser(_):
             return "Bu Kullanıcıyı Sikayet Et"
-            
-        case .slientPost(_):
-            return "Bu Gönderiyi Sessize Al"
+ 
       
         }}
     var image : UIImage {
         switch self {
-            
-        case .slientPost(_):
-            return UIImage(named: "silent")!
+  
         case .fallowUser(_):
             return UIImage(named: "silent")!
         case .slientUser(_):

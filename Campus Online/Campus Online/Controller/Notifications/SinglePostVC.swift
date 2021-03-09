@@ -8,7 +8,7 @@
 
 import UIKit
 import MapKit
-
+import FirebaseStorage
 import CoreLocation
 import FirebaseFirestore
 private let home_post_cell = "home_post_cell"
@@ -26,7 +26,8 @@ private let foodme_post_data = "foodme_post_data"
 private let camping_post = "camping_post"
 private let camping_post_data = "camping_post_data"
 
-class SinglePostVC: UIViewController {
+
+class SinglePostVC: UIViewController  {
    
     
     
@@ -56,18 +57,37 @@ class SinglePostVC: UIViewController {
     
     var currentUser : CurrentUser
     
-    
-    var actionSheetCurrentUser : ActionSheetMainPost?{
+    var lessonPostCurrentUserActionSheet : ActionSheetHomeLauncher?{
         didSet{
             collecitonView.reloadData()
         }
     }
-    var actionSheetOtherUser : ASMainPostOtherUser?{
+    var lessonPostOtherUserActionSheet : ActionSheetOtherUserLaunher?{
         didSet{
             collecitonView.reloadData()
         }
     }
-    
+  
+    var actionSheetMainPostCurrentUser : ActionSheetMainPost?{
+        didSet{
+            collecitonView.reloadData()
+        }
+    }
+    var actionSheetMainPostOtherUser : ASMainPostOtherUser?{
+        didSet{
+            collecitonView.reloadData()
+        }
+    }
+    var noticesOtherUserActionSheet : ASNoticesPostLaunher?{
+        didSet{
+            collecitonView.reloadData()
+        }
+    }
+    var noticesCurrentUserActionSheet : ASNoticesPostCurrentUserLaunher?{
+       didSet{
+           collecitonView.reloadData()
+       }
+   }
     
     lazy var collecitonView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -84,7 +104,12 @@ class SinglePostVC: UIViewController {
     //MARK:-lifeCycle
     init( currentUser : CurrentUser ) {
         self.currentUser = currentUser
-        
+        lessonPostCurrentUserActionSheet = ActionSheetHomeLauncher(currentUser: currentUser  , target: TargetHome.ownerPost.description)
+        lessonPostOtherUserActionSheet = ActionSheetOtherUserLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        noticesCurrentUserActionSheet = ASNoticesPostCurrentUserLaunher(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
+        noticesOtherUserActionSheet = ASNoticesPostLaunher(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        actionSheetMainPostOtherUser = ASMainPostOtherUser(currentUser: currentUser, target: TargetOtherUser.otherPost.description)
+        actionSheetMainPostCurrentUser = ActionSheetMainPost(currentUser: currentUser, target: TargetASMainPost.ownerPost.description)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -375,32 +400,29 @@ extension SinglePostVC : NewPostHomeVCDataDelegate {
         }
     }
     func options(for cell: NewPostHomeVCData) {
-        //        guard let post = cell.lessonPostModel else { return }
-        //        guard let currentUser = currentUser else { return }
-        //        guard let actionSheet  = actionSheet else { return}
-        //        guard let actionOtherUserSheet = actionOtherUserSheet else { return }
-        //        if cell.lessonPostModel?.senderUid == currentUser.uid
-        //        {
-        //            actionSheet.delegate = self
-        //            actionSheet.show(post: post)
-        //            guard let  index = collectionview.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = lessonPost[index.row].postId
-        //        }else{
-        //            Utilities.waitProgress(msg: nil)
-        //            actionOtherUserSheet.delegate = self
-        //            guard let  index = collectionview.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = lessonPost[index.row].postId
-        //            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
-        //
-        //                Utilities.dismissProgress()
-        //                actionOtherUserSheet.show(post: post, otherUser: user)
-        //
-        //            }
-        //
-        //
-        //        }
+       
+                guard let post = cell.lessonPostModel else { return }
+                guard let actionSheet  = lessonPostCurrentUserActionSheet else { return}
+                guard let actionOtherUserSheet = lessonPostOtherUserActionSheet else { return }
+                if cell.lessonPostModel?.senderUid == currentUser.uid
+                {
+
+                    actionSheet.delegate = self
+                    actionSheet.show(post: post)
+                 
+                }else{
+                    Utilities.waitProgress(msg: nil)
+                    actionOtherUserSheet.delegate = self
+     
+                    UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+        
+                        Utilities.dismissProgress()
+                        actionOtherUserSheet.show(post: post, otherUser: user)
+        
+                    }
+        
+        
+                }
         
     }
     
@@ -579,33 +601,23 @@ extension SinglePostVC : NewPostHomeVCDelegate {
     }
     
     func options(for cell: NewPostHomeVC) {
-        //        guard  let post = cell.lessonPostModel else {
-        //            return
-        //        }
-        //        guard let currentUser = currentUser else { return }
-        //        guard let actionSheet = actionSheet else { return }
-        //        guard let actionOtherUserSheet = actionOtherUserSheet else { return }
-        //        if cell.lessonPostModel?.senderUid == currentUser.uid
-        //        {
-        //            actionSheet.delegate = self
-        //            actionSheet.show(post: post)
-        //            guard let  index = collecitonView.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = lessonPost[index.row].postId
-        //        }else{
-        //            Utilities.waitProgress(msg: nil)
-        //            actionOtherUserSheet.delegate = self
-        //            guard let  index = collecitonView.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = lessonPost[index.row].postId
-        //            UserService.shared.getOtherUser(userId: post.senderUid) {(user) in
-        //
-        //                Utilities.dismissProgress()
-        //                actionOtherUserSheet.show(post: post, otherUser: user)
-        //
-        //            }
-        //        }
         
+        guard let post = cell.lessonPostModel else { return }
+        guard let actionSheet  = lessonPostCurrentUserActionSheet else { return}
+        guard let actionOtherUserSheet = lessonPostOtherUserActionSheet else { return }
+        if cell.lessonPostModel?.senderUid == currentUser.uid
+        {
+            actionSheet.delegate = self
+            actionSheet.show(post: post)
+        }else{
+            Utilities.waitProgress(msg: nil)
+            actionOtherUserSheet.delegate = self
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                Utilities.dismissProgress()
+                actionOtherUserSheet.show(post: post, otherUser: user)
+                
+            }
+        }
     }
     
     func like(for cell: NewPostHomeVC) {
@@ -651,30 +663,29 @@ extension SinglePostVC : ShowAllDatas {
 }
 extension SinglePostVC : NewPostNoticesDataVCDelegate{
     func options(for cell: NoticesDataCell) {
-        //        guard let currentUser = currentUser else { return }
-        //        guard let post = cell.noticesPost else { return }
-        //        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-        //        guard let actionSheetOtherUser = actionSheetOtherUser else { return }
-        //        if post.senderUid == currentUser.uid
-        //        {
-        //            actionSheetCurrentUser.delegate = self
-        //            actionSheetCurrentUser.show(post: post)
-        //            guard let  index = collectionview.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = mainPost[index.row].postId
-        //        }
-        //        else{
-        //            Utilities.waitProgress(msg: nil)
-        //            guard let  index = collectionview.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = mainPost[index.row].postId
-        //            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
-        //
-        //                Utilities.dismissProgress()
-        //               actionSheetOtherUser.show(post: post, otherUser: user)
-        //
-        //            }
-        //        }
+            
+                guard let post = cell.noticesPost else { return }
+       
+                guard let actionSheetCurrentUser = noticesCurrentUserActionSheet else { return }
+                guard let actionSheetOtherUser = noticesOtherUserActionSheet else { return }
+                if post.senderUid == currentUser.uid
+                {
+                    guard let post = cell.noticesPost else { return }
+                    actionSheetCurrentUser.delegate = self
+                    actionSheetCurrentUser.show(post: post)
+                
+                }
+                else{
+                    Utilities.waitProgress(msg: nil)
+                    
+                    UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                            
+                        Utilities.dismissProgress()
+                        guard let post = cell.noticesPost else { return }
+                       actionSheetOtherUser.show(post: post, otherUser: user)
+        
+                    }
+                }
     }
     
     func like(for cell: NoticesDataCell) {
@@ -682,7 +693,7 @@ extension SinglePostVC : NewPostNoticesDataVCDelegate{
         
         
         NoticesService.shared.setPostLike( collectionview: collecitonView, currentUser: currentUser, post: post) { (_) in
-            print("liked")
+        
             
         }
     }
@@ -756,30 +767,28 @@ extension SinglePostVC : NewPostNoticesDataVCDelegate{
 
 extension SinglePostVC : NewPostNoticesVCDelegate{
     func options(for cell: NoticesCell) {
-        //        guard let post = cell.noticesPost else { return }
-        //        guard let currentUser = currentUser else { return }
-        //        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-        //        guard let actionSheetOtherUser = actionSheetOtherUser else { return }
-        //        if post.senderUid == currentUser.uid
-        //        {
-        //            actionSheetCurrentUser.delegate = self
-        //            actionSheetCurrentUser.show(post: post)
-        //            guard let  index = collectionview.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = mainPost[index.row].postId
-        //        }
-        //        else{
-        //            Utilities.waitProgress(msg: nil)
-        //            guard let  index = collectionview.indexPath(for: cell) else { return }
-        //            selectedIndex = index
-        //            selectedPostID = mainPost[index.row].postId
-        //            UserService.shared.getOtherUser(userId: post.senderUid) {(user) in
-        //
-        //                Utilities.dismissProgress()
-        //             actionSheetOtherUser.show(post: post, otherUser: user)
-        //
-        //            }
-        //        }
+        guard let post = cell.noticesPost else { return }
+
+        guard let actionSheetCurrentUser = noticesCurrentUserActionSheet else { return }
+        guard let actionSheetOtherUser = noticesOtherUserActionSheet else { return }
+        if post.senderUid == currentUser.uid
+        {
+            guard let post = cell.noticesPost else { return }
+            actionSheetCurrentUser.delegate = self
+            actionSheetCurrentUser.show(post: post)
+        
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+            
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                    
+                Utilities.dismissProgress()
+                guard let post = cell.noticesPost else { return }
+               actionSheetOtherUser.show(post: post, otherUser: user)
+
+            }
+        }
     }
     
     func like(for cell: NoticesCell) {
@@ -865,18 +874,40 @@ extension SinglePostVC : ShowNoticesAllDatas {
 }
 
 extension SinglePostVC : FoodMeVCDelegate {
+    
+    
+    /**
+     var actionSheetMainPostCurrentUser : ActionSheetMainPost?{
+         didSet{
+             collecitonView.reloadData()
+         }
+     }
+     var actionSheetMainPostOtherUser : ASMainPostOtherUser?{
+         didSet{
+             collecitonView.reloadData()
+         }
+     }
+     */
     func options(for cell: FoodMeView) {
         guard let post = cell.mainPost else { return }
-
-        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-      
+        guard let actionSheetCurrentUser = actionSheetMainPostCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetMainPostOtherUser else { return }
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
             actionSheetCurrentUser.show(post: post)
-           
-        }
         
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+           
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
+                Utilities.dismissProgress()
+                actionSheetOtherUser.show(post: post, otherUser: user)
+                
+            }
+        }
     }
     
     func like(for cell: FoodMeView) {
@@ -967,13 +998,23 @@ extension SinglePostVC : FoodMeVCDelegate {
 extension SinglePostVC : FoodMeVCDataDelegate {
     func options(for cell: FoodMeViewData) {
         guard let post = cell.mainPost else { return }
-        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-
+        guard let actionSheetCurrentUser = actionSheetMainPostCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetMainPostOtherUser else { return }
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
             actionSheetCurrentUser.show(post: post)
-         
+        
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+           
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
+                Utilities.dismissProgress()
+                actionSheetOtherUser.show(post: post, otherUser: user)
+                
+            }
         }
        
     }
@@ -1107,7 +1148,20 @@ extension SinglePostVC : ASMainPostLaungerDelgate{
                     }
                 }
             }
+            else if let post = noticesPost {
             
+                if let h = collecitonView.cellForItem(at: indexPath) as? NoticesCell{
+                    let vc = EditNoticesPost(currentUser: currentUser, post: post, h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }else if let h = collecitonView.cellForItem(at: indexPath) as? NoticesDataCell{
+                    let vc = EditNoticesPost(currentUser: currentUser, post: post, h: h.msgText.frame.height)
+                    let controller = UINavigationController(rootViewController: vc)
+                    controller.modalPresentationStyle = .fullScreen
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }
             break
         case .deletePost(_):
             if let post = mainPost {
@@ -1130,6 +1184,30 @@ extension SinglePostVC : ASMainPostLaungerDelgate{
                     }
                 }
             }
+            else if let post = noticesPost {
+                
+                Utilities.waitProgress(msg: "Siliniyor")
+                
+                let db = Firestore.firestore().collection(currentUser.short_school)
+                    .document("notices")
+                    .collection("post")
+                    .document(post.postId)
+                db.delete {(err) in
+                  
+                    if err == nil{
+                        NoticesService.shared.deleteToStorage(data: post.data, postId: post.postId) { (_val) in
+                            if _val{
+                                Utilities.succesProgress(msg: "Silindi")
+                            }else{
+                                Utilities.errorProgress(msg: "Hata Oluştu")
+                                
+                            }
+                        }
+                    }else{
+                        Utilities.errorProgress(msg: "Hata Oluştu")
+                    }
+                }
+            }
             break
         case .slientPost(_):
             break
@@ -1140,7 +1218,12 @@ extension SinglePostVC : ASMainPostLaungerDelgate{
 }
 extension SinglePostVC : ShowAllFoodMeData{
     func onClickListener(for cell: FoodMeViewData) {
-        
+        guard let post = cell.mainPost else { return }
+
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
     }
 }
 extension SinglePostVC : CampingVCDataDelegate {
@@ -1148,14 +1231,23 @@ extension SinglePostVC : CampingVCDataDelegate {
     
     func options(for cell: CampingDataView) {
         guard let post = cell.mainPost else { return }
-
-        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-   
+        guard let actionSheetCurrentUser = actionSheetMainPostCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetMainPostOtherUser else { return }
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
             actionSheetCurrentUser.show(post: post)
-          
+        
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+           
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
+                Utilities.dismissProgress()
+                actionSheetOtherUser.show(post: post, otherUser: user)
+                
+            }
         }
     }
     
@@ -1247,14 +1339,23 @@ extension SinglePostVC : CampingVCDataDelegate {
 extension SinglePostVC : CampingVCDelegate {
     func options(for cell: CampingView) {
         guard let post = cell.mainPost else { return }
-        
-        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-       
+        guard let actionSheetCurrentUser = actionSheetMainPostCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetMainPostOtherUser else { return }
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
             actionSheetCurrentUser.show(post: post)
         
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+           
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
+                Utilities.dismissProgress()
+                actionSheetOtherUser.show(post: post, otherUser: user)
+                
+            }
         }
     }
     
@@ -1345,19 +1446,34 @@ extension SinglePostVC : CampingVCDelegate {
 }
 extension SinglePostVC : ShowAllCampingData {
     func onClickListener(for cell: CampingDataView) {
-        
+        guard let post = cell.mainPost else { return }
+
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
     }
 }
 extension SinglePostVC : BuySellVCDelegate {
     func options(for cell: BuyAndSellView) {
         guard let post = cell.mainPost else { return }
-        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-        guard let actionSheetOtherUser = actionSheetOtherUser  else { return }
+        guard let actionSheetCurrentUser = actionSheetMainPostCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetMainPostOtherUser else { return }
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
             actionSheetCurrentUser.show(post: post)
-         
+        
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
+           
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
+                Utilities.dismissProgress()
+                actionSheetOtherUser.show(post: post, otherUser: user)
+                
+            }
         }
       
     }
@@ -1461,13 +1577,23 @@ extension SinglePostVC : BuySellVCDataDelegate {
     }
     func options(for cell: BuyAndSellDataView) {
         guard let post = cell.mainPost else { return }
-        guard let actionSheetCurrentUser = actionSheetCurrentUser else { return }
-
+        guard let actionSheetCurrentUser = actionSheetMainPostCurrentUser else { return }
+        guard let actionSheetOtherUser = actionSheetMainPostOtherUser else { return }
         if post.senderUid == currentUser.uid
         {
             actionSheetCurrentUser.delegate = self
             actionSheetCurrentUser.show(post: post)
+        
+        }
+        else{
+            Utilities.waitProgress(msg: nil)
            
+            UserService.shared.getOtherUser(userId: post.senderUid) { (user) in
+                
+                Utilities.dismissProgress()
+                actionSheetOtherUser.show(post: post, otherUser: user)
+                
+            }
         }
         
     }
@@ -1547,7 +1673,152 @@ extension SinglePostVC : BuySellVCDataDelegate {
 }
 extension SinglePostVC : ShowBuySellData {
     func onClickListener(for cell: BuyAndSellDataView) {
+        guard let post = cell.mainPost else { return }
+
+        guard let data = post.data else { return }
+        let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        self.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    
+}
+extension SinglePostVC:ActionSheetHomeLauncherDelegate{
+    func didSelect(option: ActionSheetHomeOptions) {
+        switch option{
         
+        case .editPost(_):
+            
+            guard let post = lessonPost else { return }
+            if let h = collecitonView.cellForItem(at: indexPath) as? NewPostHomeVCData {
+                let vc = StudentEditPost(currentUser: currentUser , post : post , heigth : h.msgText.frame.height )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }else if let  h = collecitonView.cellForItem(at: indexPath) as? NewPostHomeVC{
+                let vc = StudentEditPost(currentUser: currentUser , post : post , heigth : h.msgText.frame.height )
+                let controller = UINavigationController(rootViewController: vc)
+                controller.modalPresentationStyle = .fullScreen
+                self.present(controller, animated: true, completion: nil)
+            }
+            break
+        case .deletePost(_):
+
+            Utilities.waitProgress(msg: "Siliniyor")
+            guard let post = lessonPost else { return }
+          
+            let db = Firestore.firestore().collection(currentUser.short_school)
+                .document("lesson-post")
+                .collection("post")
+                .document(post.postId)
+            db.delete {[weak self] (err) in
+                guard let sself = self else { return }
+                if err == nil {
+                    sself.deleteToStorage(data: post.data, postId: post.postId) { (_val) in
+                        if (_val){
+                            //İSTE/lesson/Bilgisayar Mühendisliği/Bilgisayar Programlama/lesson-post
+                            let db = Firestore.firestore().collection(sself.currentUser.short_school)
+                                .document("lesson")
+                                .collection(sself.currentUser.bolum)
+                                .document(post.lessonName)
+                                .collection("lesson-post")
+                                .document(post.postId)
+                            db.delete { (err) in
+                                if err == nil {
+                                    Utilities.succesProgress(msg: "Silindi")
+                                    
+                                }
+                            }
+                            
+                            
+                        
+                        }
+                    }
+                    
+                }else{
+                    Utilities.errorProgress(msg: "Hata Oluştu")
+                }
+            }
+            break
+        case .slientPost(_):
+            break
+        }
+    }
+    private func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){
+        if data.count == 0{
+            completion(true)
+            return
+        }
+        for item in data{
+            let ref = Storage.storage().reference(forURL: item)
+            ref.delete { (err) in
+                completion(true)
+            }
+        }
+    }
+    
+    
+}
+extension SinglePostVC:ActionSheetOtherUserLauncherDelegate{
+    func didSelect(option: ActionSheetOtherUserOptions) {
+        switch option{
+        
+        case .fallowUser(_):
+            Utilities.waitProgress(msg: "")
+            guard let post = lessonPost else {
+                Utilities.dismissProgress()
+                return}
+            UserService.shared.fetchOtherUser(uid: post.senderUid) {[weak self] (user) in
+                guard let sself = self else {
+                    Utilities.dismissProgress()
+                    return}
+                UserService.shared.getProfileModel(otherUser: user, currentUser: sself.currentUser) { (model) in
+                    UserService.shared.checkOtherUserSocialMedia(otherUser: user) { (val) in
+                        if val {
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 285)
+                           
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }else{
+                            let vc = OtherUserProfile(currentUser: sself.currentUser, otherUser: user , profileModel: model, width: 235)
+                
+                            sself.navigationController?.pushViewController(vc, animated: true)
+                            Utilities.dismissProgress()
+                        }
+                        
+                    }
+                }
+
+               
+            }
+        case .slientUser(_):
+            break
+        case .deleteLesson(_):
+            guard let post = lessonPost else {
+                Utilities.dismissProgress()
+                return }
+            PostService.shared.removeLesson(lessonName: post.lessonName, currentUser: currentUser) { (_) in
+              
+            }
+            break
+        case .reportPost(_):
+            guard let post = lessonPost else {
+                Utilities.dismissProgress()
+                return }
+
+            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: self.currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportPost.description)
+           
+            navigationController?.pushViewController(vc, animated: true)
+            break
+        case .reportUser(_):
+            guard let post = lessonPost else {
+                Utilities.dismissProgress()
+                return }
+            let vc = ReportingVC(target: ReportTarget.homePost.description, currentUser: self.currentUser, otherUser: post.senderUid, postId: post.postId, reportType: ReportType.reportUser.description)
+           
+            navigationController?.pushViewController(vc, animated: true)
+            break
+        }
     }
     
     

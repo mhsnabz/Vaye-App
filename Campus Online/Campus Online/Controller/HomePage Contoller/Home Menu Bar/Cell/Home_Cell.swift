@@ -700,10 +700,6 @@ extension Home_Cell : ActionSheetOtherUserLauncherDelegate {
                 self.getPost()
             }
             break
-        case .slientLesson(_):
-            break
-        case .slientPost(_):
-            break
         case .reportPost(_):
             guard let index = selectedIndex else {
             Utilities.dismissProgress()
@@ -746,7 +742,7 @@ extension Home_Cell : ActionSheetHomeLauncherDelegate {
                 self.rootController?.present(controller, animated: true, completion: nil)
             }
             
-            
+            break
         case .deletePost(_):
             guard let currentUser = currentUser else { return }
             Utilities.waitProgress(msg: "Siliniyor")
@@ -786,8 +782,10 @@ extension Home_Cell : ActionSheetHomeLauncherDelegate {
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }
+            break
         case .slientPost(_):
             print("slient")
+            break
         }
     }
     private func deleteToStorage(data : [String], postId : String , completion : @escaping(Bool) -> Void){

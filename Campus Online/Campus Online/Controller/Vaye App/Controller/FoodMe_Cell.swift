@@ -720,8 +720,7 @@ extension FoodMe_Cell : ASMainOtherUserDelegate {
             break
         case .slientUser(_):
             break
-        case .slientPost(_):
-            break
+        
         case .reportPost(_):
             guard let currentUser = currentUser else { return }
             guard let index = selectedIndex else { return }

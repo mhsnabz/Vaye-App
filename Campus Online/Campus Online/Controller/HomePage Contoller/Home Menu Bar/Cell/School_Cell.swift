@@ -680,6 +680,7 @@ extension School_Cell : ASMainPostLaungerDelgate{
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }
+            break
         case .slientPost(_):
             break
         }

@@ -256,6 +256,7 @@ class NewPostHomeVC: UICollectionViewCell
         delegate?.fav(for: self)
     }
     @objc func optionsClick(){
+    
         delegate?.options(for: self)
     }
     @objc func linkClick(){
