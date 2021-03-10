@@ -20,6 +20,7 @@ import Lottie
 import MobileCoreServices
 import MapKit
 import SnapKit
+import FirebaseMessaging
 import AVFoundation
 class ConservationVC: MessagesViewController , DismisDelegate , LightboxControllerDismissalDelegate ,GalleryControllerDelegate,sendAudioProtocol, GetCoordiant {
     func getCoordinat(locaiton: GeoPoint) {
@@ -28,6 +29,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         let locaitonItem = Location(location: CLLocation(latitude: lat, longitude: long), size: .zero)
         let message = Message(sender: self.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .location(locaitonItem))
         MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: self.currentUser, otherUser: self.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+        if let isOnline = self.isOnline{
+            if !isOnline {
+                PushNotificationService.shared.sendMsgPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: self.otherUser.uid, otherUser: self.otherUser, senderName: self.currentUser.name, mainText:"", type: MsgNotification.new_location.type, senderUid: self.currentUser.uid)
+            }
+        }
     }
     
     func sendAudioItem(item: URL, fileName: String) {
@@ -42,6 +48,8 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                 let item = Audio(url: url, duration: Float(duration), size: .zero , fileName: fileName)
                 let message = Message(sender: sself.selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .audio(item))
                 MessagesService.shared.sendMessage(newMessage: message, isOnline: sself.isOnline ?? false, fileName : fileName ,currentUser: sself.currentUser, otherUser: sself.otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+              
+               
             }
         } catch {
             assertionFailure("Failed crating audio player: \(error).")
@@ -541,6 +549,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
         let message =  Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .text(text) )
         MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: currentUser, otherUser: otherUser , time : Int64(Date().timeIntervalSince1970 * 1000))
         messagesCollectionView.scrollToBottom()
+        if let isOnline = self.isOnline{
+            if !isOnline {
+                PushNotificationService.shared.sendMsgPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: self.otherUser.uid, otherUser : self.otherUser, senderName: self.currentUser.name, mainText:text, type: MsgNotification.new_msg.type, senderUid: self.currentUser.uid)
+            }
+        }
         
     }
     @objc func settingMenu(){
@@ -603,7 +616,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                     return
                                 }
                                 self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
-                                    
+                                  
                                 }
                                 completion(dataUrl)
                                 self.semaphore.signal()
@@ -641,7 +654,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                 return
                             }
                             self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
-                                
+                               
                             }
                             completion(dataUrl)
                             
@@ -669,7 +682,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                 return
                             }
                             self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
-                                
+                                if let isOnline = self.isOnline{
+                                    if !isOnline {
+                                        PushNotificationService.shared.sendMsgPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: self.otherUser.uid, otherUser : self.otherUser, senderName: self.currentUser.name, mainText:"", type: MsgNotification.new_doc.type, senderUid: self.currentUser.uid)
+                                    }
+                                }
                             }
                             completion(dataUrl)
                             
@@ -697,7 +714,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                                 return
                             }
                             self.sendImageMessage(currentUser: self.currentUser, width: width, heigth: heigth, otherUser: self.otherUser, url: dataUrl) { (val) in
-                                
+                               
                             }
                             completion(dataUrl)
                             
@@ -751,6 +768,11 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
             return }
         let media = Media(url: url, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_unselected"), size: CGSize(width: width, height: heigth))
         let message = Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .photo(media))
+        if let isOnline = self.isOnline{
+            if !isOnline {
+                PushNotificationService.shared.sendMsgPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: self.otherUser.uid, otherUser : self.otherUser, senderName: self.currentUser.name, mainText:"", type: MsgNotification.new_record.type, senderUid: self.currentUser.uid)
+            }
+        }
         MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
     }
     
@@ -760,7 +782,13 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
             return }
         let media = Media(url: url, image: nil, placeholderImage: #imageLiteral(resourceName: "camping_unselected"), size: CGSize(width: width, height: heigth))
         let message = Message(sender: selfSender!, messageId: Int64(Date().timeIntervalSince1970 * 1000).description, sentDate: Date(), kind: .photo(media))
+        if let isOnline = self.isOnline{
+            if !isOnline {
+                PushNotificationService.shared.sendMsgPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: self.otherUser.uid, otherUser : self.otherUser, senderName: self.currentUser.name, mainText:"", type: MsgNotification.new_image.type, senderUid: self.currentUser.uid)
+            }
+        }
         MessagesService.shared.sendMessage(newMessage: message, isOnline: isOnline ?? false, fileName: nil, currentUser: currentUser, otherUser: otherUser, time: Int64(Date().timeIntervalSince1970 * 1000))
+      
     }
     
     var succesCount : Int = 0
@@ -857,6 +885,7 @@ class ConservationVC: MessagesViewController , DismisDelegate , LightboxControll
                        let width = img?.size.width{
                         self.uploadImage(heigth : heigth , width: width ,data: img_data,currentUser: self.currentUser.uid, uploadCount : images.count, otherUser: self.otherUser.uid, type: DataTypes.image.description) { (url) in
                             print("url \(url)")
+                            
                         }
                         //
                         
@@ -1318,6 +1347,7 @@ extension ConservationVC : UIDocumentPickerDelegate,UIDocumentMenuDelegate{
             do{
                 self.sendDocument(heigth: 150, width: 100, data: try Data(contentsOf: myURL), currentUser: self.currentUser.uid, uploadCount: 1, otherUser: self.currentUser.uid, type: DataTypes.doc.description) { (url) in
                     print("url \(url)")
+                    
                 }
             }
             catch{

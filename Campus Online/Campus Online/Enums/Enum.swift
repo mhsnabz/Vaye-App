@@ -211,8 +211,10 @@ enum PushNotificationTarget {
     case follow
     case mention
     case newpost_lessonpost
+    
     var type : String{
         switch self{
+        
         case .like: return "like"
         case.comment: return "comment"
         case .follow : return "follow"

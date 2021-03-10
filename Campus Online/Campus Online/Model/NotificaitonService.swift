@@ -396,6 +396,48 @@ enum FollowNotification{
         }
     }
 }
+enum MsgNotification{
+    case new_msg
+    case new_rqst
+    case new_image
+    case new_doc
+    case new_location
+    case new_record
+    var type : String{
+        switch self{
+        
+        case .new_msg:
+            return "new_msg"
+        case .new_rqst:
+            return "new_rqst"
+        case .new_image:
+            return "new_image"
+        case .new_doc:
+            return "new_doc"
+        case .new_location:
+            return "new_location"
+        case .new_record:
+            return "new_record"
+        }
+    }
+    var descp : String{
+        switch self{
+        
+        case .new_msg:
+            return "Yeni Bir Mesaj Gönderdi"
+        case .new_rqst:
+            return "Size Mesaj Göndermek İstiyor"
+        case .new_image:
+            return "Size Resim Gönderdi"
+        case .new_doc:
+            return "Size Belge Gönderdi"
+        case .new_location:
+            return "Sizinle Konum Paylaştı"
+        case .new_record:
+            return "Size Yeni Bir Ses Dosyası Gönderdi"
+        }
+    }
+}
 enum MajorPostNotification{
     case post_like
     case comment_like

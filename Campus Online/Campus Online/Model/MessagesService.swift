@@ -61,6 +61,7 @@ class MessagesService {
                 heigth = mediaItem.size.height
                 width = mediaItem.size.width
                 lastMsg = "Resim"
+                
             }
             break
         case .video(_):
@@ -109,7 +110,8 @@ class MessagesService {
                 "type": newMessage.kind.messageKindString,
                 "content": msg,
                 "date": FieldValue.serverTimestamp(),
-                "time":time,"fileName":fileName ?? "",
+                "time":time,
+                "fileName":fileName ?? "",
                 "senderUid" : currentUser.uid as Any,
                 "is_read": false,
                 "width" :width ,
@@ -163,6 +165,8 @@ class MessagesService {
             }
             getBadgeCount(currentUser: currentUser, target: "msg-list", isOnline: isOnline, otherUser: otherUser)
             setBadgeCount(currentUser: currentUser, isOnline: isOnline, otherUser: otherUser, target:  "msg-list")
+           
+            
         }else
         {
             let dbSender = Firestore.firestore().collection("messages")
@@ -195,6 +199,10 @@ class MessagesService {
             }
             getBadgeCount(currentUser: currentUser, target: "msg-request", isOnline: isOnline, otherUser: otherUser)
             setBadgeCount(currentUser: currentUser, isOnline: isOnline, otherUser: otherUser, target: "msg-request")
+            if !isOnline {
+                PushNotificationService.shared.sendMsgPushNotification(not_id: Int64(Date().timeIntervalSince1970 * 1000).description, getterUid: otherUser.uid, otherUser: otherUser,  senderName: currentUser.name, mainText: msg, type: MsgNotification.new_rqst.type, senderUid: currentUser.uid)
+            }
+ 
             
         }
        
