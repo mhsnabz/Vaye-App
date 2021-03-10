@@ -265,26 +265,26 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate, ShowAllDatas, ShowNot
     let github : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "github")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goGithub), for: .touchUpInside)
         return btn
     }()
     let linkedin : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "linkedin")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goLinkedIn), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goLinkedIn), for: .touchUpInside)
         return btn
     }()
     
     let twitter : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "twitter")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goTwitter), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goTwitter), for: .touchUpInside)
         return btn
     }()
     let instagram : UIButton = {
         let btn  = UIButton(type: .system)
         btn.setImage(UIImage(named: "ig")?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        btn.addTarget(self, action: #selector(goInstagram), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(goInstagram), for: .touchUpInside)
         return btn
     }()
     
@@ -1163,8 +1163,33 @@ class ProfileVC: UIViewController  , UIScrollViewDelegate, ShowAllDatas, ShowNot
      @objc func dissmis(){
         self.dismiss(animated: true, completion: nil)
      }
-   
+    @objc func goGithub(){
+       
+             guard let url = URL(string: socialMeadialink.github.descprition + getUsername(username: currentUser.github) ) else { return }
+             UIApplication.shared.open(url)
+    }
+    @objc func goInstagram(){
+        
+             guard let url = URL(string: socialMeadialink.instagram.descprition + getUsername(username: currentUser.instagram) ) else { return }
+             UIApplication.shared.open(url)
 
+    }
+    @objc func goTwitter(){
+       
+            guard let url = URL(string: socialMeadialink.twitter.descprition + getUsername(username: currentUser.twitter) ) else { return }
+             UIApplication.shared.open(url)
+     
+    }
+    @objc func goLinkedIn(){
+       
+            guard let url = URL(string: currentUser.linkedin ) else { return }
+             UIApplication.shared.open(url)
+    }
+    private func getUsername(username : String) ->String{
+        
+        return username.replacingOccurrences(of: "@", with: "", options:NSString.CompareOptions.literal, range:nil)
+    }
+    
 }
 
 //MARK: - UICollectionViewDataSource, UICollectionViewDelegateFlowLayout

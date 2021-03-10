@@ -692,9 +692,9 @@ extension FoodMe_Cell : ASMainPostLaungerDelgate {
             guard let postId = selectedPostID else {
                 Utilities.errorProgress(msg: "Hata Oluştu")
                 return }
-            guard let target = self.mainPost[index.row].postType else { return }
+           
             let db = Firestore.firestore().collection("main-post")
-                .document(target)
+                .document("post")
                 .collection("post")
                 .document(postId)
             
@@ -707,6 +707,7 @@ extension FoodMe_Cell : ASMainPostLaungerDelgate {
                         }
                     }
                 }else{
+                    
                     Utilities.errorProgress(msg: "Hata Oluştu")
                 }
             }

@@ -392,6 +392,7 @@ extension TeacherSignUp : UITableViewDelegate , UITableViewDataSource {
                            ,"schoolName":schooll.name as String,
                            "short_school":schooll.shortName as Any 
                            ,"name":_name,
+                           "isValid":false,
                            "slient":[],
                            "profileImage":""
                            ,"unvan":_unvan,
@@ -417,30 +418,63 @@ extension TeacherSignUp : UITableViewDelegate , UITableViewDataSource {
                                         dbc.collection("status").document(result.user.uid).setData(["status":false] , merge: true) { (err) in
                                             if err == nil {
                                                 Utilities.dismissProgress()
-                                                do {
-                                                    
-                                                    try  Auth.auth().signOut()
-                                                    
+                                                
+                                                
+                                                if let email = result.user.email {
+                                                    result.user.sendEmailVerification { (err) in
+                                                        if err == nil {
+                                                            let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "\(email.description) adresine Bir Tane Doğrulama E-Postası Gönderdik. Lütfen E-Posta Adresinizi Doğrulayınız", preferredStyle: UIAlertController.Style.alert)
+                                                            do {
+                                                            
+                                                                try  Auth.auth().signOut()
+                                                               
+                                                            }
+                                                            catch {
+                                                                print("err : \(error.localizedDescription.description)")
+                                                            }
+                                                            alert.addAction(UIAlertAction(title: "TAMAM", style: UIAlertAction.Style.default, handler: {
+                                                            action in
+                                                                
+                                                                let alert2 = UIAlertController(title: "Sayın \(_name)", message: "Üniversitenizin kurumsal web sitesinden \(_name) araştıracağız. Size destek@vaye.app'den en geç 24 saat içinde onay mesajı göndereceğiz \n\n Bize destek@vaye.app'den ulaşabilirsiniz" , preferredStyle: UIAlertController.Style.alert)
+                                                                alert2.addAction(UIAlertAction(title: "TAMAM", style: .default, handler: { (action) in
+                                                                    let vc = LoginVC()
+                                                                    vc.modalPresentationStyle = .fullScreen
+
+                                                                    sself.rootController?.present(vc, animated: true, completion: {
+                                                                       
+                                                                    })
+                                                                }))
+                                                                
+                                                                sself.rootController?.present(alert2, animated: true, completion: nil)
+                                                            }))
+                                                     
+                                                         sself.rootController?.present(alert, animated: true, completion: nil)
+                                                        }
+                                                    }
+                                                   
                                                 }
-                                                catch {
-                                                    print("err : \(error.localizedDescription.description)")
-                                                }
                                                 
-                                                // create the alert
-                                                let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "Hesabınız Onay Aldıktan Sonra Kayıtlı E-Posta Adresinize En Geç 24 saat İçinde Doğrulama E-Postası Göndereceğiz.", preferredStyle: UIAlertController.Style.alert)
+//                                                let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "Hesabınız Onay Aldıktan Sonra Kayıtlı E-Posta Adresinize En Geç 24 saat İçinde Doğrulama E-Postası Göndereceğiz.", preferredStyle: UIAlertController.Style.alert)
+//
+//                                                // add an action (button)
+//                                                alert.addAction(UIAlertAction(title: "TAMAM", style: UIAlertAction.Style.default, handler: {
+//                                                    action in
+//                                                    let vc = LoginVC()
+//                                                    vc.modalPresentationStyle = .fullScreen
+//
+//                                                    sself.rootController?.present(vc, animated: true, completion: {
+//
+//                                                    })
+//                                                }))
+//
+//                                                sself.rootController?.present(alert, animated: true, completion: nil)
                                                 
-                                                // add an action (button)
-                                                alert.addAction(UIAlertAction(title: "TAMAM", style: UIAlertAction.Style.default, handler: {
-                                                    action in
-                                                    let vc = LoginVC()
-                                                    vc.modalPresentationStyle = .fullScreen
-                                                    
-                                                    sself.rootController?.present(vc, animated: true, completion: {
-                                                        
-                                                    })
-                                                }))
                                                 
-                                                sself.rootController?.present(alert, animated: true, completion: nil)
+                                                
+                                                
+                                                
+                                                
+                                                
                                                 
                                             }else{
                                                 Utilities.dismissProgress()

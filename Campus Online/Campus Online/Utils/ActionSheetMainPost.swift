@@ -209,7 +209,7 @@ extension ActionSheetMainPost : UITableViewDelegate , UITableViewDataSource{
                 self?.dismissTableView(indexPath)
             }
         }else if cell.titleLabel.text == ASCurrentUserMainPostOptions.deletePost(currentUser).description{
-            delegate?.didSelect(option: ASCurrentUserMainPostOptions.deletePost(currentUser))
+//            delegate?.didSelect(option: ASCurrentUserMainPostOptions.deletePost(currentUser))
             dismissTableView(indexPath)
         }else{
             delegate?.didSelect(option: ASCurrentUserMainPostOptions.editPost(currentUser))

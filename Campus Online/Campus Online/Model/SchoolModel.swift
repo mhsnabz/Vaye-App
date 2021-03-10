@@ -6,16 +6,16 @@
 //  Copyright © 2020 mahsun abuzeyitoğlu. All rights reserved.
 //
 
-import Foundation
+import UIKit
 class SchoolModel {
     var name : String!
-    var logo : String!
+    var logo : UIImage!
     var shortName : String!
     init(dic : Dictionary<String,Any>) {
         if let name = dic["name"] as? String {
             self.name = name
         }
-        if let logo = dic["logo"] as? String {
+        if let logo = dic["logo"] as? UIImage {
             self.logo = logo
         }
         if let shortName = dic["shortName"] as? String {

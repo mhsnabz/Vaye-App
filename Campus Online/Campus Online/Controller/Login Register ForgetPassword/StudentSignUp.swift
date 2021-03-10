@@ -320,29 +320,41 @@ class StudentSignUp: UICollectionViewCell {
                                                 dbc.collection("status").document(Auth.auth().currentUser!.uid).setData(["status":false], merge: true) { (err) in
                                                     if err == nil {
                                                         Utilities.dismissProgress()
-                                                        do {
-                                                        
-                                                            try  Auth.auth().signOut()
-                                                           
-                                                        }
-                                                        catch {
-                                                            print("err : \(error.localizedDescription.description)")
-                                                        }
-                                                        // create the alert
-                                                               let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "\(String(describing: result?.user.email) ) adresine Bir Tane Doğrulama E-Postası Gönderdik. Lütfen E-Posta Adresinizi Doğrulayıp Tekrar Giriş Yapınız", preferredStyle: UIAlertController.Style.alert)
+                                                       
+                                                        if let user = result?.user{
+                                                            if let email = user.email {
+                                                                user.sendEmailVerification { (err) in
+                                                                    if err == nil {
+                                                                        let alert = UIAlertController(title: "Kayıt Tamamlandı", message: "\(email.description) adresine Bir Tane Doğrulama E-Postası Gönderdik. Lütfen E-Posta Adresinizi Doğrulayıp Tekrar Giriş Yapınız", preferredStyle: UIAlertController.Style.alert)
+                                                                        do {
+                                                                        
+                                                                            try  Auth.auth().signOut()
+                                                                           
+                                                                        }
+                                                                        catch {
+                                                                            print("err : \(error.localizedDescription.description)")
+                                                                        }
+                                                                        alert.addAction(UIAlertAction(title: "TAMAM", style: UIAlertAction.Style.default, handler: {
+                                                                        action in
+                                                                         let vc = LoginVC()
+                                                                         vc.modalPresentationStyle = .fullScreen
 
-                                                               // add an action (button)
-                                                               alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: {
-                                                               action in
-                                                                let vc = LoginVC()
-                                                                vc.modalPresentationStyle = .fullScreen
-
-                                                                sself.rootController?.present(vc, animated: true, completion: {
-                                                                   
-                                                                })
-                                                               }))
+                                                                         sself.rootController?.present(vc, animated: true, completion: {
+                                                                            
+                                                                         })
+                                                                        }))
+                                                                 
+                                                                     sself.rootController?.present(alert, animated: true, completion: nil)
+                                                                    }
+                                                                }
+                                                               
+                                                            }
+                                                            
+                                                        }
                                                         
-                                                            sself.rootController?.present(alert, animated: true, completion: nil)
+                                                      
+
+                                                              
                                                     }
                                                 }
                                             }else{

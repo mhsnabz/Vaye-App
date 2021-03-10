@@ -27,10 +27,14 @@ class TaskUser {
     var github : String!
     var slientUser : [String]!
     var unvan : String!
+    var isValid : Bool?
     init(uid : String ,dic : Dictionary<String,Any>) {
         self.uid = uid
         if let unvan = dic["unvan"] as? String {
             self.unvan = unvan
+        }
+        if let isValid = dic["isValid"] as? Bool {
+            self.isValid = isValid
         }
         if let bolum_key = dic["bolum_key"] as? String {
             self.bolum_key = bolum_key

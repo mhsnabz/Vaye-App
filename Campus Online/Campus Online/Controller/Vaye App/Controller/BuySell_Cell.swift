@@ -28,8 +28,6 @@ extension BuySell_Cell : ShowBuySellData{
         self.rootController?.modalPresentationStyle = .fullScreen
         self.rootController?.present(vc, animated: true, completion: nil)
     }
-    
-    
 }
 
 class BuySell_Cell: UICollectionViewCell {
@@ -698,9 +696,8 @@ extension BuySell_Cell : ASMainPostLaungerDelgate {
             guard let postId = selectedPostID else {
                 Utilities.errorProgress(msg: "Hata Oluştu")
                 return }
-            guard let target = self.mainPost[index.row].postType else { return }
             let db = Firestore.firestore().collection("main-post")
-                .document(target)
+                .document("post")
                 .collection("post")
                 .document(postId)
             

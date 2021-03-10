@@ -19,6 +19,7 @@ class ChooseSchool: UITableViewController {
       var isSearching = false
     
     
+    
     //MARK: - lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +34,9 @@ class ChooseSchool: UITableViewController {
         showSearchBar(shouldShow: true)
         tableView.separatorStyle = .none
         tableView.register(ChooseSchoolCell.self, forCellReuseIdentifier: "id")
-        getSchools()
+        
+        schools.append(SchoolModel(dic: ["name":"İskenderun Teknik Üniversitesi","logo":UIImage(imageLiteralResourceName: "iste"),"shortName":"İSTE"]))
+     
         
     }
     
@@ -45,19 +48,7 @@ class ChooseSchool: UITableViewController {
     
     //MARK: -handelers
     
-    func getSchools(){
-        let db = Firestore.firestore().collection("schoolNames")
-        db.getDocuments { (querySnap, err) in
-            if err == nil {
-                for doc in querySnap!.documents{
-                    self.schools.append(SchoolModel.init(dic: doc.data()))
-                    self.tableView.reloadData()
-                }
-            }else{
-                return
-            }
-        }
-    }
+   
     
     @objc func dismis(){
         self.dismiss(animated: true, completion: nil)
@@ -90,10 +81,10 @@ class ChooseSchool: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath) as! ChooseSchoolCell
         if isSearching {
-            cell.logo.image = UIImage(named: dataSourceFiltred[indexPath.row].logo!)
+            cell.logo.image = dataSourceFiltred[indexPath.row].logo
             cell.name.text = dataSourceFiltred[indexPath.row].name
         }else{
-            cell.logo.image = UIImage(named: schools[indexPath.row].logo!)
+            cell.logo.image = schools[indexPath.row].logo
             cell.name.text = schools[indexPath.row].name
         }
    
