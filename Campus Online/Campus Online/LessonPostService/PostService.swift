@@ -63,6 +63,7 @@ class PostService{
                 }
             }
         }
+        MajorPostNotificationService.shared.setNewPostNotification(lessonName: lessonName, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text:  msgText, type: MajorPostNotification.new_post.type, postId: postId)
     }
     
     

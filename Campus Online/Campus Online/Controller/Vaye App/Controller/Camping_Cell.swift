@@ -27,6 +27,7 @@ class Camping_Cell: UICollectionViewCell, ShowAllCampingData {
         guard let currentUser = currentUser else { return }
         guard let data = post.data else { return }
         let vc = AllDatasVC(arrayListUrl: data, currentUser: currentUser)
+        vc.modalPresentationStyle = .fullScreen
         self.rootController?.modalPresentationStyle = .fullScreen
         self.rootController?.present(vc, animated: true, completion: nil)
     }

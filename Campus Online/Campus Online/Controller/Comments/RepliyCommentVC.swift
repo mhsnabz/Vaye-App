@@ -466,7 +466,8 @@ extension RepliyCommentVC : SwipeCollectionViewCellDelegate {
                 let read = SwipeAction(style: .default, title: "Cevapla") {[weak self] action, indexPath in
                     guard let sself = self else { return }
                     if let username = sself.commentModel[indexPath.row].username{
-                        sself.textField.text.append(username)
+                        sself.textField.text.append(" \(username) ")
+                        sself.textField.becomeFirstResponder()
                     }
                     
                 
@@ -485,7 +486,8 @@ extension RepliyCommentVC : SwipeCollectionViewCellDelegate {
                 let read = SwipeAction(style: .default, title: "Cevapla") {[weak self] action, indexPath in
                     guard let sself = self else { return }
                     if let username = sself.commentModel[indexPath.row].username{
-                        sself.textField.text.append(username)
+                        sself.textField.text.append(" \(username) ")
+                        sself.textField.becomeFirstResponder()
                     }
                 }
                 read.image = #imageLiteral(resourceName: "reply").withRenderingMode(.alwaysOriginal)

@@ -437,7 +437,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                     
                 }
             }
-            MajorPostNotificationService.shared.setNewPostNotification(lessonName: self.selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text:  self.text.text, type: MajorPostNotification.new_post.type, postId: date)
+            
            
         }else {
             
@@ -458,7 +458,7 @@ class StudentNewPost: UIViewController, LightboxControllerDismissalDelegate ,Gal
                 }
                 
             }
-            MajorPostNotificationService.shared.setNewPostNotification(lessonName: self.selectedLesson, postType: NotificationPostType.lessonPost.name, currentUser: currentUser, text:  self.text.text, type: MajorPostNotification.new_post.type, postId: date)
+     
         }
         
     }

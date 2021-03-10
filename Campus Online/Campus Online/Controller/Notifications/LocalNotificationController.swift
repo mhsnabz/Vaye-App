@@ -974,14 +974,21 @@ extension LocalNotificationController : SwipeCollectionViewCellDelegate {
             deleteAction.font = UIFont(name: Utilities.font, size: 11)
             return [deleteAction]
         }else {
-            let read = SwipeAction(style: .destructive, title: "Görüntüle") {[weak self] (action, indexPath) in
+            let read = SwipeAction(style: .destructive, title: "Okundu Olarak İşaretle") {[weak self] (action, indexPath) in
                 guard let sself = self else { return }
-                Utilities.waitProgress(msg: nil)
-               
+                if !sself.model[indexPath.row].isRead{
+                    sself.model[indexPath.row].isRead = true
+                    sself.collecitonView.reloadData()
+                    sself.makeReadNotification(not_id: sself.model[indexPath.row].not_id) {(_val) in
+                      
+                    }
+                }
+                
+                
             }
             read.image = #imageLiteral(resourceName: "seen").withRenderingMode(.alwaysOriginal)
             read.hidesWhenSelected = true
-            read.accessibilityLabel = "Görüntüle"
+            read.accessibilityLabel = "Okundu Olarak İşaretle"
             read.backgroundColor = .mainColor()
             read.font = UIFont(name: Utilities.font, size: 11)
             
