@@ -119,12 +119,48 @@ class SplashScreen: UIViewController {
                         UserService.shared.checkTeacherIsComplet(uid: uid) { (val) in
                             print(val)
                             if val {
-                                UserService.shared.getTaskTeacher(uid: uid) { (user) in
-                                    let cont = UINavigationController(rootViewController: SetTeacherVC(currentUser: user))
-                                    cont.modalPresentationStyle = .fullScreen
-                                    self.present(cont, animated: true) {
-                                        self.waitAnimation.removeFromSuperview()
+                                UserService.shared.getTaskTeacher(uid: uid) { (currentUser) in
+                                    guard let isValid = currentUser.isValid else{
+                                        do{
+                                            try Auth.auth().signOut()
+                                        }catch{
+                                            
+                                        }
+                                        return
                                     }
+                                    if isValid{
+                                        if let user = Auth.auth().currentUser{
+                                            if !user.isEmailVerified {
+                                                do{
+                                                    try Auth.auth().signOut()
+                                                }catch{
+                                                    
+                                                }
+                                                let vc = LoginVC()
+                                                vc.modalPresentationStyle = .fullScreen
+                                                self.present(vc, animated: true, completion: nil)
+                                            }else{
+                                                let cont = UINavigationController(rootViewController: SetTeacherVC(currentUser: currentUser))
+                                                cont.modalPresentationStyle = .fullScreen
+                                                self.present(cont, animated: true) {
+                                                    self.waitAnimation.removeFromSuperview()
+                                                }
+                                            }
+                                        }
+                                       
+                                        
+                                        
+                                    }else{
+                                        do{
+                                            try Auth.auth().signOut()
+                                        }catch{
+                                            
+                                        }
+                                        let vc = LoginVC()
+                                        vc.modalPresentationStyle = .fullScreen
+                                        self.present(vc, animated: true, completion: nil)
+                                    }
+                                    
                                 }
                             }else{
                                 Utilities.errorProgress(msg: "Kaydınız Bulunmuyor")

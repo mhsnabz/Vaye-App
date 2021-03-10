@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseMessaging
 private let cellID = "cellId"
 
 class TeacherBolum: UITableViewController {
@@ -113,6 +114,17 @@ class TeacherBolum: UITableViewController {
                 guard let sself = self else { return }
                 sself.completeRegistiration(bolum: bolum, fakulte: fakulete) { (err) in
                     if err{
+                        Messaging.messaging().token { token, error in
+                            if error != nil  {
+                                
+                            }else{
+                                guard let token = token else { return }
+                                print("Remote instance ID token: \(token)")
+                                let db = Firestore.firestore().collection("user").document(sself.currentUser.uid)
+                                db.setData(["tokenID" : token] as [String : Any], merge: true)
+                               
+                            }
+                        }
                         UserService.shared.getCurrentUser(uid: sself.currentUser.uid) { (user) in
                             Utilities.succesProgress(msg: "Kayıt Tamamlandı")
                             let vc = MainTabbar()

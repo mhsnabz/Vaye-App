@@ -114,8 +114,18 @@ extension AppDelegate : MessagingDelegate {
             return
         }
         else{
-            let db = Firestore.firestore().collection("user").document(Auth.auth().currentUser!.uid)
-            db.setData(["tokenID" : token] as [String : Any], merge: true)
+            let db = Firestore.firestore().collection("user")
+                .document(Auth.auth().currentUser!.uid)
+            db.getDocument { (docSnap, err) in
+                if err == nil {
+                    guard let snap = docSnap else { return }
+                    if snap.get("name") != nil || snap.get("bolum") != nil  {
+                        let db = Firestore.firestore().collection("user").document(Auth.auth().currentUser!.uid)
+                        db.setData(["tokenID" : token] as [String : Any], merge: true)
+                    }
+                }
+            }
+        
         }
         
     }
@@ -130,10 +140,17 @@ extension AppDelegate : MessagingDelegate {
                 guard let user = Auth.auth().currentUser else {
                    return
                 }
-                
                 let db = Firestore.firestore().collection("user")
                     .document(user.uid)
-                db.setData(["tokenID":token] , merge: true)
+                db.getDocument { (docSnap, err) in
+                    if err == nil {
+                        guard let snap = docSnap else { return }
+                        if snap.get("name") != nil || snap.get("bolum") != nil  {
+                            let db = Firestore.firestore().collection("user").document(user.uid)
+                            db.setData(["tokenID" : token] as [String : Any], merge: true)
+                        }
+                    }
+                }
             }
             application.applicationIconBadgeNumber = 0
         }

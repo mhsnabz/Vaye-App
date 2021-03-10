@@ -14,6 +14,7 @@ import JDropDownAlert
 import SVProgressHUD
 import FirebaseAuth
 import FirebaseFirestore
+import PopupDialog
 class LoginVC: UIViewController {
     
     
@@ -205,14 +206,64 @@ class LoginVC: UIViewController {
                             sself.present(vc, animated: true) {
                                 Utilities.dismissProgress()
                             }
-                        }else{
-                            let vc = SplashScreen()
-                           
-                            vc.modalPresentationStyle = .fullScreen
-                            sself.present(vc, animated: true) {
-                                Utilities.dismissProgress()
-                            }
                         }
+                        else{
+                            let getPriority = Firestore.firestore().collection("priority")
+                                .document(user.uid)
+                            getPriority.getDocument { (docSnap, err) in
+                                if err == nil {
+                                    guard let snap = docSnap else {
+                                        Utilities.dismissProgress()
+                                        return }
+                                    if snap.get("priority") as! String == "teacher" {
+                                        UserService.shared.getTaskTeacher(uid: user.uid) { (taskUser) in
+                                            guard let isValid = taskUser.isValid else {
+                                                Utilities.dismissProgress()
+                                                return
+                                            }
+                                            
+                                            if  isValid {
+                                                if user.isEmailVerified {
+                                                    let vc = SplashScreen()
+                                                    vc.modalPresentationStyle = .fullScreen
+                                                    sself.present(vc, animated: true) {
+                                                        Utilities.dismissProgress()
+                                                    }
+                                                }else{
+                                                    sself.emailDialog(email: user.email!, user: user)
+                                                    Utilities.dismissProgress()
+                                                    return
+                                                }
+                                                
+                                            }else{
+                                                Utilities.dismissProgress()
+                                                sself.showWaitingDialog(name: taskUser.name, user: user)
+                                                return
+                                            }
+                                        }
+                                    }else if snap.get("priority") as! String == "student"{
+                                        UserService.shared.getTaskUser(uid: user.uid) { (taskUser) in
+                                            guard let sself = self else { return}
+                                            if user.isEmailVerified {
+                                                sself.emailDialog(email: user.email!, user: user)
+                                                Utilities.dismissProgress()
+                                                return
+                                            }else{
+                                                let vc = SplashScreen()
+                                               
+                                                vc.modalPresentationStyle = .fullScreen
+                                                sself.present(vc, animated: true) {
+                                                    Utilities.dismissProgress()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                        
                        
                     }
                 }
@@ -259,6 +310,74 @@ class LoginVC: UIViewController {
             }
         }
     }
+    func verified (user : FirebaseAuth.User, comletion : @escaping(Bool) -> Void ){
+        
+        if !user.isEmailVerified {
+            self.emailDialog(email: user.email!, user: user)
+            do {
+                try Auth.auth().signOut()
+                //false olacak
+                comletion(false)
+                return
+            }
+            catch{
+            }
+            comletion(true)
+        }else{
+            comletion(true)
+        }
+        
+    }
+    func emailDialog(email : String , user : User)
+      {
+          let popup = PopupDialog(title: "\(email) ",
+              message: "E-poosta Adresinizi Doğrulayamadık. Tekrar E-postası Göndermemizi İstermisiniz ? ",
+              buttonAlignment: .vertical,
+              transitionStyle: .zoomIn,
+              tapGestureDismissal: false,
+              panGestureDismissal: true,
+              hideStatusBar: true) {
+                  print("Completed")
+          }
+          let buttonOne = DefaultButton(title: "Evet") {
+              user.sendEmailVerification { (err) in
+                  if err == nil {
+                    Utilities.succesProgress(msg: "E-posta Gönderildi")
+                  
+                      popup.dismiss()
+                  }else{
+                    Utilities.errorProgress(msg: "Çok Fazla İstek Gönderdiniz , Lütfen Daha Sonra Tekrar Deneyiniz")
+                      print(err?.localizedDescription as Any)
+                      popup.dismiss();
+                  }
+              }
+              popup.dismiss()
+              
+          }
+          let btn2 = CancelButton(title: "Vazgeç") {
+            Utilities.dismissProgress()
+          }
+          
+          popup.addButtons([buttonOne,btn2])
+          self.present(popup, animated: true, completion: nil)
+      }
+    func showWaitingDialog(name : String , user : User){
+        let popup = PopupDialog(title: "Sayın \(name) ",
+                                message: "Üniversitenizin kurumsal web sitesinden \(name) araştıracağız\n. Size destek@vaye.app'den en geç 24 saat içinde onay mesajı göndereceğiz \n Bize destek@vaye.app'den ulaşabilirsiniz ",
+                                buttonAlignment: .vertical,
+                                transitionStyle: .zoomIn,
+                                tapGestureDismissal: false,
+                                panGestureDismissal: true,
+                                hideStatusBar: true) {
+                                    print("Completed")
+                            }
+        let btn2 = DestructiveButton(title: "TAMAM") {
+          Utilities.dismissProgress()
+        }
+        popup.addButtons([btn2])
+        self.present(popup, animated: true, completion: nil)
+    }
+
     @objc func formValidations(){
         guard
             email.hasText , password.hasText else {
